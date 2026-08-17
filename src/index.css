@@ -34,6 +34,37 @@
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
 
+  /* Couleurs personnalisées AEJ */
+  --color-aej-orange: #E7722B;
+  --color-aej-orange-deep: #C85E18;
+  --color-aej-orange-soft: #FBEADE;
+  
+  --color-aej-green: #20A83A;
+  --color-aej-green-deep: #178A2E;
+  --color-aej-green-soft: #E3F6E7;
+
+  --color-aej-ink: #131C29;
+  --color-aej-ink-2: #1B2736;
+  --color-aej-ink-3: #243244;
+
+  --color-aej-slate: #5A6B80;
+  --color-aej-slate-2: #8595A8;
+
+  --color-aej-bg: #F3F5F8;
+  --color-aej-card: #FFFFFF;
+
+  --color-aej-line: #E5EAF1;
+  --color-aej-line-2: #EEF2F7;
+
+  --color-aej-red: #D6453B;
+  --color-aej-red-soft: #FBE7E5;
+
+  --color-aej-amber: #E0A106;
+  --color-aej-amber-soft: #FBF1D6;
+
+  --color-aej-blue: #2D6BD4;
+  --color-aej-blue-soft: #E5EDFB;
+
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);

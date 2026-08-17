@@ -72,12 +72,12 @@ export function LoginForm() {
                 )}
               />
               
-              <a href="#" className="text-sm font-medium text-orange-600 hover:text-orange-700">
+              <a href="#" className="text-sm font-medium text-[#E7722B] hover:text-[#C85E18]">
                 Mot de passe oublié ?
               </a>
             </div>
 
-            <Button type="submit" className="w-full h-12 text-base font-semibold bg-orange-600 hover:bg-orange-700 text-white">
+            <Button type="submit" className="w-full h-12 text-base font-semibold bg-[#E7722B] hover:bg-[#C85E18] text-white">
               Se connecter
             </Button>
           </form>

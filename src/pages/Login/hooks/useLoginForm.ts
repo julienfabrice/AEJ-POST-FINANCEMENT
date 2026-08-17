@@ -1,8 +1,12 @@
 import { useForm } from 'react-hook-form'
+import type { UseFormReturn, SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { loginSchema, type LoginFormValues } from '@/schema/auth.schema'
 
-export function useLoginForm() {
+export function useLoginForm(): {
+  form: UseFormReturn<LoginFormValues>
+  onSubmit: SubmitHandler<LoginFormValues>
+} {
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {

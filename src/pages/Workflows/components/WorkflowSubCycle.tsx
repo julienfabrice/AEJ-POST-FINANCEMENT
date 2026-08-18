@@ -1,0 +1,44 @@
+import { Edit2, Trash2, Users, FileText, Clock } from 'lucide-react'
+
+interface WorkflowSubCycleProps {
+  t: string
+  acteurs?: string
+  liv?: string
+  delai?: string
+}
+
+export function WorkflowSubCycle({ t, acteurs, liv, delai }: WorkflowSubCycleProps) {
+  return (
+    <div className="border-l-2 border-[#EEF2F7] pt-3 pb-1 pl-4 mt-3.5">
+      <h5 className="text-[13px] font-bold mb-1.5 text-[#131C29] flex items-center justify-between gap-2">
+        <span>{t}</span>
+        <span className="flex gap-1 flex-none">
+          <button className="flex items-center justify-center w-7 h-7 rounded text-slate-400 hover:text-[#131C29] hover:bg-slate-100 transition-colors" title="Modifier">
+            <Edit2 className="w-3.5 h-3.5" />
+          </button>
+          <button className="flex items-center justify-center w-7 h-7 rounded text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Supprimer">
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
+        </span>
+      </h5>
+      <div className="flex flex-wrap gap-1.5 mt-2">
+        <span className="text-[11.5px] bg-[#f4f6fa] border border-[#EEF2F7] rounded-[7px] px-2.5 py-1 text-[#5A6B80] inline-flex gap-1.5 items-center">
+          <Users className="w-3.5 h-3.5" />
+          <b className="text-[#131C29] font-semibold">{acteurs || '—'}</b>
+        </span>
+        {liv && (
+          <span className="text-[11.5px] bg-[#f4f6fa] border border-[#EEF2F7] rounded-[7px] px-2.5 py-1 text-[#5A6B80] inline-flex gap-1.5 items-center">
+            <FileText className="w-3.5 h-3.5" />
+            {liv}
+          </span>
+        )}
+        {delai && (
+          <span className="text-[11.5px] bg-[#f4f6fa] border border-[#EEF2F7] rounded-[7px] px-2.5 py-1 text-[#5A6B80] inline-flex gap-1.5 items-center">
+            <Clock className="w-3.5 h-3.5" />
+            {delai}
+          </span>
+        )}
+      </div>
+    </div>
+  )
+}

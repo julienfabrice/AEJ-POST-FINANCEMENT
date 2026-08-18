@@ -1,7 +1,8 @@
 export const MOCK_DISPOSITIFS = [
   { id: 'agr', libelle: 'AGR Classique' },
   { id: 'meps', libelle: 'MEPS' },
-  { id: 'mpe', libelle: 'MPE' }
+  { id: 'mpe', libelle: 'MPE' },
+  { id: 'structurants', libelle: 'Projets structurants / Start-Up' }
 ]
 
 export const MOCK_WORKFLOWS: Record<string, any> = {
@@ -61,5 +62,18 @@ export const MOCK_WORKFLOWS: Record<string, any> = {
   'mpe': {
     code: 'MPE',
     cycles: []
+  },
+  'structurants': {
+    code: 'STRUCT',
+    cycles: [
+      {
+        n: 1,
+        code: 'STRUCT.1',
+        t: 'Étude de faisabilité',
+        subs: [
+          { t: 'Validation de l\'étude', acteurs: 'Comité technique', liv: 'Rapport validé', delai: '30 jours' }
+        ]
+      }
+    ]
   }
 }

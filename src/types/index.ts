@@ -60,3 +60,10 @@ export interface SOUS_SECTEUR_T {
   id: number
   libelle: string
 }
+
+export interface PIECE_IDENTITE_T {
+  id: number
+  libelle: string
+  description?: string | null
+  actif?: boolean
+}

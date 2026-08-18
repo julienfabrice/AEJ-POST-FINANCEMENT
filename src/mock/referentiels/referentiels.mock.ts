@@ -10,15 +10,6 @@ export const MOCK_TYPE_ENTREPRISES = [
   { id: 8, libelle: 'Association' }
 ]
 
-export const MOCK_PIECES_IDENTITE = [
-  { id: 1, libelle: "Carte Nationale d'Identité (CNI)" },
-  { id: 2, libelle: 'Passeport' },
-  { id: 3, libelle: "Attestation d'Identité" },
-  { id: 4, libelle: 'Carte Consulaire' },
-  { id: 5, libelle: 'Permis de conduire' },
-  { id: 6, libelle: 'Extrait de naissance' }
-]
-
 export const MOCK_SITUATION_MATRIMONIALE = [
   { id: 1, libelle: 'Célibataire' },
   { id: 2, libelle: 'Marié(e)' },

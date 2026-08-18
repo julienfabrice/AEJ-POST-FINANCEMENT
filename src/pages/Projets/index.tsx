@@ -1,26 +1,29 @@
 import { Card } from '@/components/ui/card'
 import { DataGrid } from '@/components/ui/DataGrid'
 
-import { JeunesHeader } from './UI/JeunesHeader'
-import { JeunesFilters } from './UI/JeunesFilters'
+import { ProjetsHeader } from './UI/ProjetsHeader'
+import { ProjetsStats } from './UI/ProjetsStats'
+import { ProjetsFilters } from './UI/ProjetsFilters'
 import { useTableData } from './hooks/useTableData'
 
-import { MOCK_JEUNES } from '@/mock'
+import { MOCK_PROJETS } from '@/mock'
 
-export function JeunesPage() {
+export function ProjetsPage() {
   const { columnDefs } = useTableData()
 
   return (
     <div className="space-y-6">
-      <JeunesHeader />
+      <ProjetsHeader />
 
-      <JeunesFilters />
+      <ProjetsStats />
+
+      <ProjetsFilters />
 
       <Card className="p-0 overflow-hidden border-slate-200">
         <DataGrid
-          rowData={MOCK_JEUNES}
+          rowData={MOCK_PROJETS}
           columnDefs={columnDefs}
-          height="calc(100vh - 300px)"
+          height="calc(100vh - 400px)"
           rowHeight={60}
           defaultColDef={{
             sortable: true,

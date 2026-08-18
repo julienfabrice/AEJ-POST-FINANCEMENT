@@ -9,10 +9,9 @@ import { NavGroupDropdown } from './NavGroupDropdown'
 import { UserProfileMenu } from './UserProfileMenu'
 
 export function HeaderNav() {
-  const { user } = useAuthStore()
+  const isBenef = useAuthStore((s) => s.space() === 'entreprise')
   const router = useRouterState()
   const currentPath = router.location.pathname
-  const isBenef = user?.kind === 'benef'
 
   return (
     <header className="sticky top-0 z-40 bg-[#131C29] text-[#cdd7e4] flex items-center gap-[6px] px-5 h-[60px] shadow-lg shrink-0 before:absolute before:inset-x-0 before:bottom-0 before:h-[3px] before:bg-gradient-to-r before:from-[#E7722B] before:via-white before:to-[#20A83A]">

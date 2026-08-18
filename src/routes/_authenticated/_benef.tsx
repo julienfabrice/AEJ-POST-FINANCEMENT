@@ -3,8 +3,8 @@ import { useAuthStore } from '@/store/useAuthStore'
 
 export const Route = createFileRoute('/_authenticated/_benef')({
   beforeLoad: () => {
-    const { user } = useAuthStore.getState()
-    if (user?.kind === 'agent') {
+    // L'espace bénéficiaire n'est ouvert qu'au promoteur (`entreprise`).
+    if (useAuthStore.getState().space() !== 'entreprise') {
       throw redirect({ to: '/dashboard' })
     }
   },

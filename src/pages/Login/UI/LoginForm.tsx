@@ -1,4 +1,6 @@
+import { Link } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
+import { ROUTES } from '@/constants/routes'
 import {
   Form,
   FormControl,
@@ -8,11 +10,12 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { PasswordInput } from '@/components/ui/password-input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { useLoginForm } from '../hooks/useLoginForm'
 
 export function LoginForm() {
-  const { form, onSubmit } = useLoginForm()
+  const { form, onSubmit, isSubmitting, errorMessage } = useLoginForm()
 
   return (
     <div className="flex items-center justify-center p-8 bg-card">
@@ -23,8 +26,17 @@ export function LoginForm() {
         </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            
+          <form onSubmit={onSubmit} className="space-y-6">
+
+            {errorMessage && (
+              <div
+                role="alert"
+                className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive"
+              >
+                {errorMessage}
+              </div>
+            )}
+
             <FormField
               control={form.control}
               name="email"
@@ -46,7 +58,11 @@ export function LoginForm() {
                 <FormItem>
                   <FormLabel>Mot de passe</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} className="h-12" />
+                    <PasswordInput
+                      placeholder="••••••••"
+                      autoComplete="current-password"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -72,16 +88,37 @@ export function LoginForm() {
                 )}
               />
               
-              <a href="#" className="text-sm font-medium text-[#E7722B] hover:text-[#C85E18]">
+              <Link
+                to={ROUTES.FORGOT_PASSWORD}
+                search={{ mode: 'forgot' as const }}
+                className="text-sm font-medium text-[#E7722B] hover:text-[#C85E18]"
+              >
                 Mot de passe oublié ?
-              </a>
+              </Link>
             </div>
 
-            <Button type="submit" className="w-full h-12 text-base font-semibold bg-[#E7722B] hover:bg-[#C85E18] text-white">
-              Se connecter
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full h-12 text-base font-semibold bg-[#E7722B] hover:bg-[#C85E18] text-white cursor-pointer"
+            >
+              {isSubmitting ? 'Connexion…' : 'Se connecter'}
             </Button>
           </form>
         </Form>
+
+        {/* Première connexion : même écran que « mot de passe oublié », en mode
+            `setup` — l'utilisateur reçoit un lien d'activation par email. */}
+        <p className="mt-6 text-center text-sm text-muted-foreground">
+          Première connexion ?{' '}
+          <Link
+            to={ROUTES.FORGOT_PASSWORD}
+            search={{ mode: 'setup' as const }}
+            className="font-medium text-[#E7722B] hover:text-[#C85E18]"
+          >
+            Définissez votre mot de passe
+          </Link>
+        </p>
 
         <p className="text-xs text-center text-muted-foreground mt-8">
           Prototype de démonstration · données fictives

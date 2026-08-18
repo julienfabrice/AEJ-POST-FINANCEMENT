@@ -9,7 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as R2faRouteImport } from './routes/2fa'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedAgentRouteImport } from './routes/_authenticated/_agent'
@@ -31,6 +33,7 @@ import { Route as AuthenticatedAgentTransmissionRouteImport } from './routes/_au
 import { Route as AuthenticatedBenefMesPiecesRouteImport } from './routes/_authenticated/_benef/mes-pieces'
 import { Route as AuthenticatedBenefMesProjetsRouteImport } from './routes/_authenticated/_benef/mes-projets'
 import { Route as AuthenticatedBenefMesRemboursementsRouteImport } from './routes/_authenticated/_benef/mes-remboursements'
+import { Route as SetPasswordUidTokenRouteImport } from './routes/set-password.$uid.$token'
 import { Route as AuthenticatedAgentAdminLocalitesRouteImport } from './routes/_authenticated/_agent/admin/localites'
 import { Route as AuthenticatedAgentAdminParametresRouteImport } from './routes/_authenticated/_agent/admin/parametres'
 import { Route as AuthenticatedAgentAdminPartenairesRouteImport } from './routes/_authenticated/_agent/admin/partenaires'
@@ -40,8 +43,18 @@ import { Route as AuthenticatedAgentAdminUnitesRouteImport } from './routes/_aut
 import { Route as AuthenticatedAgentAdminUtilisateursRouteImport } from './routes/_authenticated/_agent/admin/utilisateurs'
 import { Route as AuthenticatedAgentAdminWorkflowsRouteImport } from './routes/_authenticated/_agent/admin/workflows'
 
+const R2faRoute = R2faRouteImport.update({
+  id: '/2fa',
+  path: '/2fa',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -162,6 +175,11 @@ const AuthenticatedBenefMesRemboursementsRoute =
     path: '/mes-remboursements',
     getParentRoute: () => AuthenticatedBenefRoute,
   } as any)
+const SetPasswordUidTokenRoute = SetPasswordUidTokenRouteImport.update({
+  id: '/set-password/$uid/$token',
+  path: '/set-password/$uid/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAgentAdminLocalitesRoute =
   AuthenticatedAgentAdminLocalitesRouteImport.update({
     id: '/admin/localites',
@@ -212,7 +230,9 @@ const AuthenticatedAgentAdminWorkflowsRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
+  '/2fa': typeof R2faRoute
   '/': typeof AuthenticatedIndexRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/dispositifs': typeof AuthenticatedAgentDispositifsRoute
@@ -231,6 +251,7 @@ export interface FileRoutesByFullPath {
   '/mes-pieces': typeof AuthenticatedBenefMesPiecesRoute
   '/mes-projets': typeof AuthenticatedBenefMesProjetsRoute
   '/mes-remboursements': typeof AuthenticatedBenefMesRemboursementsRoute
+  '/set-password/$uid/$token': typeof SetPasswordUidTokenRoute
   '/admin/localites': typeof AuthenticatedAgentAdminLocalitesRoute
   '/admin/parametres': typeof AuthenticatedAgentAdminParametresRoute
   '/admin/partenaires': typeof AuthenticatedAgentAdminPartenairesRoute
@@ -241,6 +262,8 @@ export interface FileRoutesByFullPath {
   '/admin/workflows': typeof AuthenticatedAgentAdminWorkflowsRoute
 }
 export interface FileRoutesByTo {
+  '/2fa': typeof R2faRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/': typeof AuthenticatedIndexRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -260,6 +283,7 @@ export interface FileRoutesByTo {
   '/mes-pieces': typeof AuthenticatedBenefMesPiecesRoute
   '/mes-projets': typeof AuthenticatedBenefMesProjetsRoute
   '/mes-remboursements': typeof AuthenticatedBenefMesRemboursementsRoute
+  '/set-password/$uid/$token': typeof SetPasswordUidTokenRoute
   '/admin/localites': typeof AuthenticatedAgentAdminLocalitesRoute
   '/admin/parametres': typeof AuthenticatedAgentAdminParametresRoute
   '/admin/partenaires': typeof AuthenticatedAgentAdminPartenairesRoute
@@ -271,7 +295,9 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/2fa': typeof R2faRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/_authenticated/_agent': typeof AuthenticatedAgentRouteWithChildren
   '/_authenticated/_benef': typeof AuthenticatedBenefRouteWithChildren
@@ -293,6 +319,7 @@ export interface FileRoutesById {
   '/_authenticated/_benef/mes-pieces': typeof AuthenticatedBenefMesPiecesRoute
   '/_authenticated/_benef/mes-projets': typeof AuthenticatedBenefMesProjetsRoute
   '/_authenticated/_benef/mes-remboursements': typeof AuthenticatedBenefMesRemboursementsRoute
+  '/set-password/$uid/$token': typeof SetPasswordUidTokenRoute
   '/_authenticated/_agent/admin/localites': typeof AuthenticatedAgentAdminLocalitesRoute
   '/_authenticated/_agent/admin/parametres': typeof AuthenticatedAgentAdminParametresRoute
   '/_authenticated/_agent/admin/partenaires': typeof AuthenticatedAgentAdminPartenairesRoute
@@ -305,7 +332,9 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/2fa'
     | '/'
+    | '/forgot-password'
     | '/login'
     | '/dashboard'
     | '/dispositifs'
@@ -324,6 +353,7 @@ export interface FileRouteTypes {
     | '/mes-pieces'
     | '/mes-projets'
     | '/mes-remboursements'
+    | '/set-password/$uid/$token'
     | '/admin/localites'
     | '/admin/parametres'
     | '/admin/partenaires'
@@ -334,6 +364,8 @@ export interface FileRouteTypes {
     | '/admin/workflows'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/2fa'
+    | '/forgot-password'
     | '/login'
     | '/'
     | '/dashboard'
@@ -353,6 +385,7 @@ export interface FileRouteTypes {
     | '/mes-pieces'
     | '/mes-projets'
     | '/mes-remboursements'
+    | '/set-password/$uid/$token'
     | '/admin/localites'
     | '/admin/parametres'
     | '/admin/partenaires'
@@ -363,7 +396,9 @@ export interface FileRouteTypes {
     | '/admin/workflows'
   id:
     | '__root__'
+    | '/2fa'
     | '/_authenticated'
+    | '/forgot-password'
     | '/login'
     | '/_authenticated/_agent'
     | '/_authenticated/_benef'
@@ -385,6 +420,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_benef/mes-pieces'
     | '/_authenticated/_benef/mes-projets'
     | '/_authenticated/_benef/mes-remboursements'
+    | '/set-password/$uid/$token'
     | '/_authenticated/_agent/admin/localites'
     | '/_authenticated/_agent/admin/parametres'
     | '/_authenticated/_agent/admin/partenaires'
@@ -396,17 +432,34 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  R2faRoute: typeof R2faRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
+  SetPasswordUidTokenRoute: typeof SetPasswordUidTokenRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/2fa': {
+      id: '/2fa'
+      path: '/2fa'
+      fullPath: '/2fa'
+      preLoaderRoute: typeof R2faRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -555,6 +608,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/mes-remboursements'
       preLoaderRoute: typeof AuthenticatedBenefMesRemboursementsRouteImport
       parentRoute: typeof AuthenticatedBenefRoute
+    }
+    '/set-password/$uid/$token': {
+      id: '/set-password/$uid/$token'
+      path: '/set-password/$uid/$token'
+      fullPath: '/set-password/$uid/$token'
+      preLoaderRoute: typeof SetPasswordUidTokenRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/_agent/admin/localites': {
       id: '/_authenticated/_agent/admin/localites'
@@ -706,8 +766,11 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 )
 
 const rootRouteChildren: RootRouteChildren = {
+  R2faRoute: R2faRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
+  SetPasswordUidTokenRoute: SetPasswordUidTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

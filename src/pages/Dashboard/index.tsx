@@ -4,16 +4,17 @@ import { BenefDashboard } from './BenefDashboard'
 import { GuichetsDashboard } from './GuichetsDashboard'
 
 export function DashboardController() {
-  const { user } = useAuthStore()
+  const user = useAuthStore((s) => s.user)
+  const space = useAuthStore((s) => s.space())
 
-  if (user?.kind === 'benef') {
+  if (space === 'entreprise') {
     return <BenefDashboard />
   }
 
   // Si agent, vérifier la permission pour les guichets.
   // Pour le moment on suppose qu'un admin va sur les guichets par défaut.
-  // Vous pourrez ajuster cette logique selon les rôles.
-  if (user?.roleCode === 'ADMIN' || user?.roleLibelle === 'Administrateur') {
+  // TODO: passer par `can('guichets')` plutôt qu'un code de rôle en dur.
+  if (user?.role?.code === 'ADMIN-1') {
     return <GuichetsDashboard />
   }
 

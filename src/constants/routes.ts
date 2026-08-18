@@ -24,6 +24,12 @@ import {
 
 export const ROUTES = {
   LOGIN: '/login',
+  // Parcours d'authentification (hors coquille applicative — aucun AppLayout)
+  OTP: '/2fa',
+  /** Écran 1 — demande du lien. `?mode=forgot` (défaut) ou `?mode=setup`. */
+  FORGOT_PASSWORD: '/forgot-password',
+  /** Écran 2 — cible du lien email : `/set-password/{uid}/{token}`. */
+  SET_PASSWORD: '/set-password/$uid/$token',
   // Pilotage (Agent)
   HOME: '/dashboard',
   DASHBOARD: '/dashboard',

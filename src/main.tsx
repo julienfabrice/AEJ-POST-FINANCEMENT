@@ -5,10 +5,14 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { routeTree } from './routeTree.gen'
+import { NotFoundPage } from '@/pages/NotFound/NotFoundPage'
 import './index.css'
 
 // Create a new router instance
-const router = createRouter({ routeTree })
+const router = createRouter({ 
+  routeTree,
+  defaultNotFoundComponent: NotFoundPage
+})
 
 // Register the router instance for type safety
 declare module '@tanstack/react-router' {

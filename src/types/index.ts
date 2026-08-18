@@ -16,7 +16,31 @@ export interface USER_T {
   organismeId?: number
 }
 
-export interface LoginResponse {
+export interface LOGIN_RESPONSE_T {
   token: string
   user: USER_T
+}
+
+export interface JEUNE_T {
+  id: string
+  matricule: string
+  prenoms: string
+  nom: string
+  telephone: string
+  ville: string
+  secteur: string
+  nb_projets: number
+  actif: boolean
+}
+
+export interface PROJET_T {
+  id: string
+  ref: string
+  titre: string
+  promoteur: string
+  dispositif: string
+  agence: string
+  montant: string
+  statut: string
+  date: string
 }

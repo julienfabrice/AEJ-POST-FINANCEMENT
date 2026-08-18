@@ -1,8 +1,8 @@
 import { useMutation } from '@tanstack/react-query'
 import { axiosInstance } from '@/constants/axiosInstance'
-import type { LoginResponse } from '@/types'
+import type { LOGIN_RESPONSE_T } from '@/types'
 
-export interface LoginCredentials {
+export interface LOGIN_CREDENTIALS_T {
   email: string
   mot_de_passe: string
 }
@@ -10,8 +10,8 @@ export interface LoginCredentials {
 // 2. Hooks TanStack Query
 export const useLogin = () => {
   return useMutation({
-    mutationFn: async (credentials: LoginCredentials) => {
-      const { data } = await axiosInstance.post<LoginResponse>('/login', credentials)
+    mutationFn: async (credentials: LOGIN_CREDENTIALS_T) => {
+      const { data } = await axiosInstance.post<LOGIN_RESPONSE_T>('/login', credentials)
       return data
     },
   })

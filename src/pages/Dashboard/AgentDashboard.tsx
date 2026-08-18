@@ -52,7 +52,7 @@ const STATUS_MAP: Record<string, { label: string; variant: 'default' | 'secondar
   REMBOURSEMENT: { label: 'Remboursement', variant: 'outline' },
 }
 
-export function DashboardPage() {
+export function AgentDashboard() {
   return (
     <div className="space-y-6">
       {/* En-tête de page */}

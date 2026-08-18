@@ -25,7 +25,7 @@ import {
 export const ROUTES = {
   LOGIN: '/login',
   // Pilotage (Agent)
-  HOME: '/',
+  HOME: '/dashboard',
   DASHBOARD: '/dashboard',
   DISPOSITIFS: '/dispositifs',
   // Circuit de financement
@@ -54,7 +54,7 @@ export const ROUTES = {
   ADMIN_PARAMETRES: '/admin/parametres',
   
   // Bénéficiaire
-  BENEF_DASHBOARD: '/benef-dashboard',
+  BENEF_DASHBOARD: '/dashboard',
   BENEF_PROJETS: '/mes-projets',
   BENEF_REMBOURSEMENTS: '/mes-remboursements',
   BENEF_PIECES: '/mes-pieces',
@@ -119,7 +119,6 @@ export const AGENT_NAV_GROUPS = [
 
 export const PAGE_TITLES: Partial<Record<AppRoute, string>> = {
   [ROUTES.LOGIN]: 'Connexion',
-  [ROUTES.HOME]: 'Guichets',
   [ROUTES.DASHBOARD]: 'Tableau de bord',
   [ROUTES.DISPOSITIFS]: 'Procédures',
   [ROUTES.TRANSMISSION]: 'Transmission par lot',
@@ -143,7 +142,6 @@ export const PAGE_TITLES: Partial<Record<AppRoute, string>> = {
   [ROUTES.ADMIN_WORKFLOWS]: 'Paramétrage des workflows',
   [ROUTES.ADMIN_PARAMETRES]: 'Paramètres système',
   
-  [ROUTES.BENEF_DASHBOARD]: 'Mon tableau de bord',
   [ROUTES.BENEF_PROJETS]: 'Mes projets',
   [ROUTES.BENEF_REMBOURSEMENTS]: 'Mes remboursements',
   [ROUTES.BENEF_PIECES]: 'Mes pièces',

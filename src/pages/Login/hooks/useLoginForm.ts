@@ -38,7 +38,7 @@ export function useLoginForm(): {
         kind: 'benef'
       }, 'demo-token-benef')
       
-      router.navigate({ to: '/benef-dashboard' })
+      router.navigate({ to: '/dashboard' })
     } else {
       // Login as Agent
       setSession({

@@ -5,7 +5,7 @@ export const Route = createFileRoute('/_authenticated/_agent')({
   beforeLoad: () => {
     const { user } = useAuthStore.getState()
     if (user?.kind === 'benef') {
-      throw redirect({ to: '/benef-dashboard' })
+      throw redirect({ to: '/dashboard' })
     }
   },
   component: AgentLayout,

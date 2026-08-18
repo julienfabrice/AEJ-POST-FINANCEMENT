@@ -14,7 +14,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedAgentRouteImport } from './routes/_authenticated/_agent'
 import { Route as AuthenticatedBenefRouteImport } from './routes/_authenticated/_benef'
-import { Route as AuthenticatedAgentDashboardRouteImport } from './routes/_authenticated/_agent/dashboard'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAgentDispositifsRouteImport } from './routes/_authenticated/_agent/dispositifs'
 import { Route as AuthenticatedAgentFinancementsRouteImport } from './routes/_authenticated/_agent/financements'
 import { Route as AuthenticatedAgentImputationRouteImport } from './routes/_authenticated/_agent/imputation'
@@ -28,7 +28,6 @@ import { Route as AuthenticatedAgentRecouvrementRouteImport } from './routes/_au
 import { Route as AuthenticatedAgentRemboursementsRouteImport } from './routes/_authenticated/_agent/remboursements'
 import { Route as AuthenticatedAgentSuiviRouteImport } from './routes/_authenticated/_agent/suivi'
 import { Route as AuthenticatedAgentTransmissionRouteImport } from './routes/_authenticated/_agent/transmission'
-import { Route as AuthenticatedBenefBenefDashboardRouteImport } from './routes/_authenticated/_benef/benef-dashboard'
 import { Route as AuthenticatedBenefMesPiecesRouteImport } from './routes/_authenticated/_benef/mes-pieces'
 import { Route as AuthenticatedBenefMesProjetsRouteImport } from './routes/_authenticated/_benef/mes-projets'
 import { Route as AuthenticatedBenefMesRemboursementsRouteImport } from './routes/_authenticated/_benef/mes-remboursements'
@@ -63,12 +62,11 @@ const AuthenticatedBenefRoute = AuthenticatedBenefRouteImport.update({
   id: '/_benef',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedAgentDashboardRoute =
-  AuthenticatedAgentDashboardRouteImport.update({
-    id: '/dashboard',
-    path: '/dashboard',
-    getParentRoute: () => AuthenticatedAgentRoute,
-  } as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedAgentDispositifsRoute =
   AuthenticatedAgentDispositifsRouteImport.update({
     id: '/dispositifs',
@@ -146,12 +144,6 @@ const AuthenticatedAgentTransmissionRoute =
     path: '/transmission',
     getParentRoute: () => AuthenticatedAgentRoute,
   } as any)
-const AuthenticatedBenefBenefDashboardRoute =
-  AuthenticatedBenefBenefDashboardRouteImport.update({
-    id: '/benef-dashboard',
-    path: '/benef-dashboard',
-    getParentRoute: () => AuthenticatedBenefRoute,
-  } as any)
 const AuthenticatedBenefMesPiecesRoute =
   AuthenticatedBenefMesPiecesRouteImport.update({
     id: '/mes-pieces',
@@ -222,7 +214,7 @@ const AuthenticatedAgentAdminWorkflowsRoute =
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/login': typeof LoginRoute
-  '/dashboard': typeof AuthenticatedAgentDashboardRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
   '/dispositifs': typeof AuthenticatedAgentDispositifsRoute
   '/financements': typeof AuthenticatedAgentFinancementsRoute
   '/imputation': typeof AuthenticatedAgentImputationRoute
@@ -236,7 +228,6 @@ export interface FileRoutesByFullPath {
   '/remboursements': typeof AuthenticatedAgentRemboursementsRoute
   '/suivi': typeof AuthenticatedAgentSuiviRoute
   '/transmission': typeof AuthenticatedAgentTransmissionRoute
-  '/benef-dashboard': typeof AuthenticatedBenefBenefDashboardRoute
   '/mes-pieces': typeof AuthenticatedBenefMesPiecesRoute
   '/mes-projets': typeof AuthenticatedBenefMesProjetsRoute
   '/mes-remboursements': typeof AuthenticatedBenefMesRemboursementsRoute
@@ -252,7 +243,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/': typeof AuthenticatedIndexRoute
-  '/dashboard': typeof AuthenticatedAgentDashboardRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
   '/dispositifs': typeof AuthenticatedAgentDispositifsRoute
   '/financements': typeof AuthenticatedAgentFinancementsRoute
   '/imputation': typeof AuthenticatedAgentImputationRoute
@@ -266,7 +257,6 @@ export interface FileRoutesByTo {
   '/remboursements': typeof AuthenticatedAgentRemboursementsRoute
   '/suivi': typeof AuthenticatedAgentSuiviRoute
   '/transmission': typeof AuthenticatedAgentTransmissionRoute
-  '/benef-dashboard': typeof AuthenticatedBenefBenefDashboardRoute
   '/mes-pieces': typeof AuthenticatedBenefMesPiecesRoute
   '/mes-projets': typeof AuthenticatedBenefMesProjetsRoute
   '/mes-remboursements': typeof AuthenticatedBenefMesRemboursementsRoute
@@ -285,8 +275,8 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_authenticated/_agent': typeof AuthenticatedAgentRouteWithChildren
   '/_authenticated/_benef': typeof AuthenticatedBenefRouteWithChildren
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
-  '/_authenticated/_agent/dashboard': typeof AuthenticatedAgentDashboardRoute
   '/_authenticated/_agent/dispositifs': typeof AuthenticatedAgentDispositifsRoute
   '/_authenticated/_agent/financements': typeof AuthenticatedAgentFinancementsRoute
   '/_authenticated/_agent/imputation': typeof AuthenticatedAgentImputationRoute
@@ -300,7 +290,6 @@ export interface FileRoutesById {
   '/_authenticated/_agent/remboursements': typeof AuthenticatedAgentRemboursementsRoute
   '/_authenticated/_agent/suivi': typeof AuthenticatedAgentSuiviRoute
   '/_authenticated/_agent/transmission': typeof AuthenticatedAgentTransmissionRoute
-  '/_authenticated/_benef/benef-dashboard': typeof AuthenticatedBenefBenefDashboardRoute
   '/_authenticated/_benef/mes-pieces': typeof AuthenticatedBenefMesPiecesRoute
   '/_authenticated/_benef/mes-projets': typeof AuthenticatedBenefMesProjetsRoute
   '/_authenticated/_benef/mes-remboursements': typeof AuthenticatedBenefMesRemboursementsRoute
@@ -332,7 +321,6 @@ export interface FileRouteTypes {
     | '/remboursements'
     | '/suivi'
     | '/transmission'
-    | '/benef-dashboard'
     | '/mes-pieces'
     | '/mes-projets'
     | '/mes-remboursements'
@@ -362,7 +350,6 @@ export interface FileRouteTypes {
     | '/remboursements'
     | '/suivi'
     | '/transmission'
-    | '/benef-dashboard'
     | '/mes-pieces'
     | '/mes-projets'
     | '/mes-remboursements'
@@ -380,8 +367,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/_authenticated/_agent'
     | '/_authenticated/_benef'
+    | '/_authenticated/dashboard'
     | '/_authenticated/'
-    | '/_authenticated/_agent/dashboard'
     | '/_authenticated/_agent/dispositifs'
     | '/_authenticated/_agent/financements'
     | '/_authenticated/_agent/imputation'
@@ -395,7 +382,6 @@ export interface FileRouteTypes {
     | '/_authenticated/_agent/remboursements'
     | '/_authenticated/_agent/suivi'
     | '/_authenticated/_agent/transmission'
-    | '/_authenticated/_benef/benef-dashboard'
     | '/_authenticated/_benef/mes-pieces'
     | '/_authenticated/_benef/mes-projets'
     | '/_authenticated/_benef/mes-remboursements'
@@ -451,12 +437,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedBenefRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/_agent/dashboard': {
-      id: '/_authenticated/_agent/dashboard'
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthenticatedAgentDashboardRouteImport
-      parentRoute: typeof AuthenticatedAgentRoute
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/_agent/dispositifs': {
       id: '/_authenticated/_agent/dispositifs'
@@ -549,13 +535,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAgentTransmissionRouteImport
       parentRoute: typeof AuthenticatedAgentRoute
     }
-    '/_authenticated/_benef/benef-dashboard': {
-      id: '/_authenticated/_benef/benef-dashboard'
-      path: '/benef-dashboard'
-      fullPath: '/benef-dashboard'
-      preLoaderRoute: typeof AuthenticatedBenefBenefDashboardRouteImport
-      parentRoute: typeof AuthenticatedBenefRoute
-    }
     '/_authenticated/_benef/mes-pieces': {
       id: '/_authenticated/_benef/mes-pieces'
       path: '/mes-pieces'
@@ -637,7 +616,6 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAgentRouteChildren {
-  AuthenticatedAgentDashboardRoute: typeof AuthenticatedAgentDashboardRoute
   AuthenticatedAgentDispositifsRoute: typeof AuthenticatedAgentDispositifsRoute
   AuthenticatedAgentFinancementsRoute: typeof AuthenticatedAgentFinancementsRoute
   AuthenticatedAgentImputationRoute: typeof AuthenticatedAgentImputationRoute
@@ -662,7 +640,6 @@ interface AuthenticatedAgentRouteChildren {
 }
 
 const AuthenticatedAgentRouteChildren: AuthenticatedAgentRouteChildren = {
-  AuthenticatedAgentDashboardRoute: AuthenticatedAgentDashboardRoute,
   AuthenticatedAgentDispositifsRoute: AuthenticatedAgentDispositifsRoute,
   AuthenticatedAgentFinancementsRoute: AuthenticatedAgentFinancementsRoute,
   AuthenticatedAgentImputationRoute: AuthenticatedAgentImputationRoute,
@@ -695,14 +672,12 @@ const AuthenticatedAgentRouteWithChildren =
   AuthenticatedAgentRoute._addFileChildren(AuthenticatedAgentRouteChildren)
 
 interface AuthenticatedBenefRouteChildren {
-  AuthenticatedBenefBenefDashboardRoute: typeof AuthenticatedBenefBenefDashboardRoute
   AuthenticatedBenefMesPiecesRoute: typeof AuthenticatedBenefMesPiecesRoute
   AuthenticatedBenefMesProjetsRoute: typeof AuthenticatedBenefMesProjetsRoute
   AuthenticatedBenefMesRemboursementsRoute: typeof AuthenticatedBenefMesRemboursementsRoute
 }
 
 const AuthenticatedBenefRouteChildren: AuthenticatedBenefRouteChildren = {
-  AuthenticatedBenefBenefDashboardRoute: AuthenticatedBenefBenefDashboardRoute,
   AuthenticatedBenefMesPiecesRoute: AuthenticatedBenefMesPiecesRoute,
   AuthenticatedBenefMesProjetsRoute: AuthenticatedBenefMesProjetsRoute,
   AuthenticatedBenefMesRemboursementsRoute:
@@ -715,12 +690,14 @@ const AuthenticatedBenefRouteWithChildren =
 interface AuthenticatedRouteChildren {
   AuthenticatedAgentRoute: typeof AuthenticatedAgentRouteWithChildren
   AuthenticatedBenefRoute: typeof AuthenticatedBenefRouteWithChildren
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAgentRoute: AuthenticatedAgentRouteWithChildren,
   AuthenticatedBenefRoute: AuthenticatedBenefRouteWithChildren,
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
 

@@ -8,6 +8,7 @@ import {
   
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { KPICard } from '@/components/ui/KPICard'
 import {
   Table,
   TableBody,
@@ -74,27 +75,17 @@ export function AgentDashboard() {
       </div>
 
       {/* Cartes KPI */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
-        {STATS.map((stat) => {
-          const Icon = stat.icon
-          return (
-            <Card key={stat.label}>
-              <CardContent className="pt-5">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm text-[#5A6B80] font-medium">{stat.label}</span>
-                  <div
-                    className="w-9 h-9 rounded-lg grid place-items-center"
-                    style={{ background: `${stat.color}18` }}
-                  >
-                    <Icon className="w-4 h-4" style={{ color: stat.color }} />
-                  </div>
-                </div>
-                <p className="text-2xl font-extrabold text-[#131C29]">{stat.value}</p>
-                <p className="text-xs text-[#20A83A] font-semibold mt-1">{stat.change} ce mois</p>
-              </CardContent>
-            </Card>
-          )
-        })}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {STATS.map((stat, i) => (
+          <KPICard
+            key={i}
+            label={stat.label}
+            value={stat.value}
+            change={stat.change + ' ce mois'}
+            icon={stat.icon}
+            color={stat.color}
+          />
+        ))}
       </div>
 
       {/* Tableau des dossiers récents */}

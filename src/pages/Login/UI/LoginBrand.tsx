@@ -20,7 +20,7 @@ export function LoginBrand() {
         {/* Logo AEJ */}
         <div className="mb-2">
           <img
-            src={IMAGES.logo}
+            src={IMAGES.logoLogin}
             alt="République de Côte d'Ivoire — Agence Emploi Jeunes"
             className="h-30 object-contain rounded-lg" />
         </div>

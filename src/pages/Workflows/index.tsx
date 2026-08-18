@@ -8,7 +8,7 @@ import { MOCK_DISPOSITIFS, MOCK_WORKFLOWS } from '@/mock'
 
 export function WorkflowsPage() {
   const [activeTab, setActiveTab] = useState<string>(MOCK_DISPOSITIFS[0].id)
-  const wf = MOCK_WORKFLOWS[activeTab]
+  const workflow = MOCK_WORKFLOWS[activeTab]
 
   return (
     <div className="space-y-6">
@@ -40,7 +40,7 @@ export function WorkflowsPage() {
             </Button>
           </div>
 
-          <WorkflowTimeline cycles={wf.cycles} />
+          <WorkflowTimeline etapes={workflow.etapes} />
         </TabsContent>
       </Tabs>
     </div>

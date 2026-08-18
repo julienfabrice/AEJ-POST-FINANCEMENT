@@ -1,17 +1,17 @@
 import { Edit2, Trash2, Users, FileText, Clock } from 'lucide-react'
 
 interface WorkflowSubCycleProps {
-  t: string
+  titre: string
   acteurs?: string
-  liv?: string
+  livrable?: string
   delai?: string
 }
 
-export function WorkflowSubCycle({ t, acteurs, liv, delai }: WorkflowSubCycleProps) {
+export function WorkflowSubCycle({ titre, acteurs, livrable, delai }: WorkflowSubCycleProps) {
   return (
     <div className="border-l-2 border-[#EEF2F7] pt-3 pb-1 pl-4 mt-3.5">
       <h5 className="text-[13px] font-bold mb-1.5 text-[#131C29] flex items-center justify-between gap-2">
-        <span>{t}</span>
+        <span>{titre}</span>
         <span className="flex gap-1 flex-none">
           <button className="flex items-center justify-center w-7 h-7 rounded text-slate-400 hover:text-[#131C29] hover:bg-slate-100 transition-colors" title="Modifier">
             <Edit2 className="w-3.5 h-3.5" />
@@ -26,10 +26,10 @@ export function WorkflowSubCycle({ t, acteurs, liv, delai }: WorkflowSubCyclePro
           <Users className="w-3.5 h-3.5" />
           <b className="text-[#131C29] font-semibold">{acteurs || '—'}</b>
         </span>
-        {liv && (
+        {livrable && (
           <span className="text-[11.5px] bg-[#f4f6fa] border border-[#EEF2F7] rounded-[7px] px-2.5 py-1 text-[#5A6B80] inline-flex gap-1.5 items-center">
             <FileText className="w-3.5 h-3.5" />
-            {liv}
+            {livrable}
           </span>
         )}
         {delai && (

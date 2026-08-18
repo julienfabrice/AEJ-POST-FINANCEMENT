@@ -8,70 +8,70 @@ export const MOCK_DISPOSITIFS = [
 export const MOCK_WORKFLOWS: Record<string, any> = {
   'agr': {
     code: 'AGR',
-    cycles: [
+    etapes: [
       {
-        n: 1,
+        numero: 1,
         code: 'AGR.1',
-        t: 'Soumission du micro-projet',
-        subs: [
-          { t: 'Création du dossier par le promoteur', acteurs: 'Promoteur', liv: 'Dossier de candidature', delai: '' },
-          { t: 'Vérification administrative', acteurs: 'Conseiller', liv: 'Fiche de contrôle', delai: '3 jours' }
+        titre: 'Soumission du micro-projet',
+        sousEtapes: [
+          { titre: 'Création du dossier par le promoteur', acteurs: 'Promoteur', livrable: 'Dossier de candidature', delai: '' },
+          { titre: 'Vérification administrative', acteurs: 'Conseiller', livrable: 'Fiche de contrôle', delai: '3 jours' }
         ]
       },
       {
-        n: 2,
+        numero: 2,
         code: 'AGR.2',
-        t: 'Analyse et certification',
-        subs: [
-          { t: 'Analyse technique et financière', acteurs: 'Analyste', liv: 'Note d\'analyse', delai: '7 jours' },
-          { t: 'Avis du comité de certification', acteurs: 'Comité de crédit', liv: 'PV de validation', delai: '2 jours' }
+        titre: 'Analyse et certification',
+        sousEtapes: [
+          { titre: 'Analyse technique et financière', acteurs: 'Analyste', livrable: 'Note d\'analyse', delai: '7 jours' },
+          { titre: 'Avis du comité de certification', acteurs: 'Comité de crédit', livrable: 'PV de validation', delai: '2 jours' }
         ]
       },
       {
-        n: 3,
+        numero: 3,
         code: 'AGR.3',
-        t: 'Financement et décaissement',
-        subs: [
-          { t: 'Transmission au partenaire financier', acteurs: 'Agent AEJ', liv: 'Convention signée', delai: '1 jour' },
-          { t: 'Décaissement des fonds', acteurs: 'Partenaire Financier', liv: 'Preuve de virement', delai: '5 jours' }
+        titre: 'Financement et décaissement',
+        sousEtapes: [
+          { titre: 'Transmission au partenaire financier', acteurs: 'Agent AEJ', livrable: 'Convention signée', delai: '1 jour' },
+          { titre: 'Décaissement des fonds', acteurs: 'Partenaire Financier', livrable: 'Preuve de virement', delai: '5 jours' }
         ]
       }
     ]
   },
   'meps': {
     code: 'MEPS',
-    cycles: [
+    etapes: [
       {
-        n: 1,
+        numero: 1,
         code: 'MEPS.1',
-        t: 'Candidature spontanée',
-        subs: [
-          { t: 'Enregistrement en ligne', acteurs: 'Promoteur', liv: '', delai: '' }
+        titre: 'Candidature spontanée',
+        sousEtapes: [
+          { titre: 'Enregistrement en ligne', acteurs: 'Promoteur', livrable: '', delai: '' }
         ]
       },
       {
-        n: 2,
+        numero: 2,
         code: 'MEPS.2',
-        t: 'Formation obligatoire',
-        subs: [
-          { t: 'Participation aux ateliers', acteurs: 'Formateur', liv: 'Attestation', delai: '14 jours' }
+        titre: 'Formation obligatoire',
+        sousEtapes: [
+          { titre: 'Participation aux ateliers', acteurs: 'Formateur', livrable: 'Attestation', delai: '14 jours' }
         ]
       }
     ]
   },
   'mpe': {
     code: 'MPE',
-    cycles: []
+    etapes: []
   },
   'structurants': {
     code: 'STRUCT',
-    cycles: [
+    etapes: [
       {
-        n: 1,
+        numero: 1,
         code: 'STRUCT.1',
-        t: 'Étude de faisabilité',
-        subs: [
-          { t: 'Validation de l\'étude', acteurs: 'Comité technique', liv: 'Rapport validé', delai: '30 jours' }
+        titre: 'Étude de faisabilité',
+        sousEtapes: [
+          { titre: 'Validation de l\'étude', acteurs: 'Comité technique', livrable: 'Rapport validé', delai: '30 jours' }
         ]
       }
     ]

@@ -3,14 +3,14 @@ import { Button } from '@/components/ui/button'
 import { WorkflowSubCycle } from './WorkflowSubCycle'
 
 interface WorkflowCycleProps {
-  n: number
+  numero: number
   code: string
-  t: string
-  subs: any[]
+  titre: string
+  sousEtapes: any[]
   isLast?: boolean
 }
 
-export function WorkflowCycle({ n, code, t, subs, isLast }: WorkflowCycleProps) {
+export function WorkflowCycle({ numero, code, titre, sousEtapes, isLast }: WorkflowCycleProps) {
   return (
     <div className="relative pb-1.5 pl-10 mb-1.5">
       {/* Ligne verticale de connexion */}
@@ -20,7 +20,7 @@ export function WorkflowCycle({ n, code, t, subs, isLast }: WorkflowCycleProps) 
       
       {/* Numéro */}
       <div className="absolute left-0 top-0.5 w-7 h-7 rounded-[9px] bg-[#131C29] text-white flex items-center justify-center font-bold text-[13px] z-10">
-        {n}
+        {numero}
       </div>
       
       {/* Carte du cycle */}
@@ -29,7 +29,7 @@ export function WorkflowCycle({ n, code, t, subs, isLast }: WorkflowCycleProps) 
         {/* Header */}
         <div className="px-4 py-[13px] flex items-center flex-wrap gap-2.5 cursor-default">
           <div className="flex-1 min-w-0">
-            <h4 className="text-[14px] font-bold text-[#131C29]">{t}</h4>
+            <h4 className="text-[14px] font-bold text-[#131C29]">{titre}</h4>
             <div className="text-[11px] text-[#5A6B80] font-mono">{code}</div>
           </div>
           <div className="flex items-center gap-1">
@@ -44,16 +44,16 @@ export function WorkflowCycle({ n, code, t, subs, isLast }: WorkflowCycleProps) 
         
         {/* Body */}
         <div className="px-4 pb-4 border-t border-[#EEF2F7] block">
-          {subs.length === 0 ? (
+          {sousEtapes.length === 0 ? (
             <div className="text-slate-500 text-sm py-2">Aucune sous-étape</div>
           ) : (
-            subs.map((s, idx) => (
+            sousEtapes.map((sousEtape, index) => (
               <WorkflowSubCycle 
-                key={idx}
-                t={s.t}
-                acteurs={s.acteurs}
-                liv={s.liv}
-                delai={s.delai}
+                key={index}
+                titre={sousEtape.titre}
+                acteurs={sousEtape.acteurs}
+                livrable={sousEtape.livrable}
+                delai={sousEtape.delai}
               />
             ))
           )}

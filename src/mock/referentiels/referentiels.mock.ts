@@ -10,14 +10,6 @@ export const MOCK_TYPE_ENTREPRISES = [
   { id: 8, libelle: 'Association' }
 ]
 
-export const MOCK_SITUATION_MATRIMONIALE = [
-  { id: 1, libelle: 'Célibataire' },
-  { id: 2, libelle: 'Marié(e)' },
-  { id: 3, libelle: 'Veuf / Veuve' },
-  { id: 4, libelle: 'Divorcé(e)' },
-  { id: 5, libelle: 'En concubinage' }
-]
-
 export const MOCK_TYPE_EMPLOIS = [
   { id: 1, libelle: 'Temps plein (CDI)' },
   { id: 2, libelle: 'Temps partiel' },

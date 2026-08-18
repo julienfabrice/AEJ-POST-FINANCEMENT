@@ -67,3 +67,8 @@ export interface PIECE_IDENTITE_T {
   description?: string | null
   actif?: boolean
 }
+
+export interface SITUATION_MATRIMONIALE_T {
+  id: number
+  libelle: string
+}

@@ -6,6 +6,16 @@ import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
+    server: {
+    proxy: {
+      '/api': {
+        target: 'https://apis.aej-ci.net',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '/public/api')
+      }
+    }
+  },
   plugins: [
     TanStackRouterVite(),
     react(),

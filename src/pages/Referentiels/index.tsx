@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DataGrid } from '@/components/ui/DataGrid'
 import { useReferentielsGrid, type ReferentielTab } from './hooks/useReferentielsGrid'
+import { useGetSecteurs } from '@/api/secteurs/useGetSecteurs'
 
 import {
   MOCK_SECTEURS,
@@ -31,6 +32,15 @@ export function ReferentielsPage() {
   const [activeTab, setActiveTab] = useState<ReferentielTab>('secteurs')
   const { columnDefs } = useReferentielsGrid(activeTab)
 
+  const { data: fetchedSecteurs = [], isLoading: isLoadingSecteurs } = useGetSecteurs()
+
+  const tabsWithData = TABS.map(tab => {
+    if (tab.id === 'secteurs') {
+      return { ...tab, data: fetchedSecteurs.length > 0 ? fetchedSecteurs : tab.data }
+    }
+    return tab
+  })
+
   return (
     <div className="space-y-2">
 
@@ -41,7 +51,7 @@ export function ReferentielsPage() {
       >
         <div className="overflow-x-auto w-full no-scrollbar">
           <TabsList className="flex items-center gap-1 border-b border-slate-200 w-max min-w-full bg-transparent p-0 h-auto rounded-none justify-start">
-            {TABS.map(tab => (
+            {tabsWithData.map(tab => (
               <TabsTrigger 
                 key={tab.id} 
                 value={tab.id}
@@ -53,7 +63,7 @@ export function ReferentielsPage() {
           </TabsList>
         </div>
 
-        {TABS.map(tab => (
+        {tabsWithData.map(tab => (
           <TabsContent key={tab.id} value={tab.id} className="mt-0 outline-none">
             {/* Toolbar (.pgt) */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 my-4">
@@ -65,7 +75,7 @@ export function ReferentielsPage() {
                 />
               </div>
               <span className="text-[12.5px] text-slate-500 whitespace-nowrap">
-                {tab.data.length} {tab.label.toLowerCase()}
+                {tab.id === 'secteurs' && isLoadingSecteurs ? 'Chargement...' : `${tab.data.length} ${tab.label.toLowerCase()}`}
               </span>
               <div className="flex-1" />
               <Button className="h-9">

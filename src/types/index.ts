@@ -44,3 +44,14 @@ export interface PROJET_T {
   statut: string
   date: string
 }
+
+export interface SECTEUR_T {
+  id: number
+  libelle: string
+  nom: string
+}
+
+export interface API_RESPONSE_T<T> {
+  message: string
+  data: T
+}

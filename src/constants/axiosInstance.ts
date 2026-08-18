@@ -1,23 +1,24 @@
 import axios from 'axios'
+import { useAuthStore } from '@/store/useAuthStore'
 
-// Vous pourrez remplacer cette URL par votre variable d'environnement (ex: import.meta.env.VITE_API_URL)
-const API_BASE_URL = 'http://localhost:3000/api'
+// URL de base de l'API (à définir dans le fichier .env)
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
 
 export const axiosInstance = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: 10000,
+  baseURL,
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
   },
 })
 
-// Intercepteur pour les requêtes (ex: ajouter le token d'authentification)
+// Intercepteur pour injecter le token d'authentification
 axiosInstance.interceptors.request.use(
   (config) => {
-    // const token = localStorage.getItem('token')
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`
-    // }
+    const token = useAuthStore.getState().token
+    if (token && config.headers) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
     return config
   },
   (error) => {
@@ -25,16 +26,18 @@ axiosInstance.interceptors.request.use(
   }
 )
 
-// Intercepteur pour les réponses (ex: gestion globale des erreurs)
+// Intercepteur pour gérer les erreurs globales (ex: 401 Non Autorisé)
 axiosInstance.interceptors.response.use(
-  (response) => {
-    return response
-  },
+  (response) => response,
   (error) => {
-    // Gestion des erreurs d'authentification par exemple
-    // if (error.response?.status === 401) {
-    //   // Rediriger vers la page de login ou rafraîchir le token
-    // }
+    if (error.response?.status === 401) {
+      // Le token est expiré ou invalide : on déconnecte l'utilisateur
+      useAuthStore.getState().clearSession()
+      
+      // Optionnel: rediriger vers la page de login, mais le store déclenchera
+      // probablement déjà une redirection via la logique des routes.
+      window.location.href = '/login'
+    }
     return Promise.reject(error)
   }
 )

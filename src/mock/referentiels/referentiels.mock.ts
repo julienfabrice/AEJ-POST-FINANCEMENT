@@ -1,27 +1,4 @@
 
-export const MOCK_SOUS_SECTEURS = [
-  { id: 1, libelle: 'Aviculture', secteur_id: 1, secteur: 'Agriculture & Élevage' },
-  { id: 2, libelle: 'Pisciculture', secteur_id: 1, secteur: 'Agriculture & Élevage' },
-  { id: 3, libelle: 'Cultures vivrières', secteur_id: 1, secteur: 'Agriculture & Élevage' },
-  { id: 4, libelle: 'Vente au détail', secteur_id: 2, secteur: 'Commerce & Distribution' },
-  { id: 5, libelle: 'Vente en gros', secteur_id: 2, secteur: 'Commerce & Distribution' },
-  { id: 6, libelle: 'Menuiserie', secteur_id: 3, secteur: 'Artisanat' },
-  { id: 7, libelle: 'Couture & Tailleur', secteur_id: 3, secteur: 'Artisanat' },
-  { id: 8, libelle: 'Mécanique', secteur_id: 3, secteur: 'Artisanat' },
-  { id: 9, libelle: 'Nettoyage & Entretien', secteur_id: 4, secteur: 'Services' },
-  { id: 10, libelle: 'Sécurité privée', secteur_id: 4, secteur: 'Services' },
-  { id: 11, libelle: 'Développement Web', secteur_id: 5, secteur: 'TIC & Numérique' },
-  { id: 12, libelle: 'Infographie & Design', secteur_id: 5, secteur: 'TIC & Numérique' },
-  { id: 13, libelle: 'Livraison express (2 roues)', secteur_id: 6, secteur: 'Transport & Logistique' },
-  { id: 14, libelle: 'Transport VTC', secteur_id: 6, secteur: 'Transport & Logistique' },
-  { id: 15, libelle: 'Maçonnerie', secteur_id: 7, secteur: 'BTP & Construction' },
-  { id: 16, libelle: 'Peinture bâtiment', secteur_id: 7, secteur: 'BTP & Construction' },
-  { id: 17, libelle: 'Restauration rapide (Maquis)', secteur_id: 8, secteur: 'Restauration & Hôtellerie' },
-  { id: 18, libelle: 'Service traiteur', secteur_id: 8, secteur: 'Restauration & Hôtellerie' },
-  { id: 19, libelle: 'Transformation agroalimentaire', secteur_id: 9, secteur: 'Industrie & Transformation' },
-  { id: 20, libelle: 'Salon de coiffure', secteur_id: 10, secteur: 'Santé & Beauté' }
-]
-
 export const MOCK_TYPE_ENTREPRISES = [
   { id: 1, libelle: 'Entreprise Individuelle (EI)' },
   { id: 2, libelle: 'Société à Responsabilité Limitée (SARL)' },

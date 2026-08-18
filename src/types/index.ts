@@ -55,3 +55,8 @@ export interface API_RESPONSE_T<T> {
   message: string
   data: T
 }
+
+export interface SOUS_SECTEUR_T {
+  id: number
+  libelle: string
+}

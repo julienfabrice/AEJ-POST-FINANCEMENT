@@ -6,9 +6,9 @@ import { ActionsCellRenderer } from '../components/ActionsCellRenderer'
 import { BadgeCellRenderer } from '../components/BadgeCellRenderer'
 import { PrimaryTextCellRenderer } from '../components/PrimaryTextCellRenderer'
 import { useSecteursGrid } from './useSecteursGrid'
+import { useSousSecteursGrid } from './useSousSecteursGrid'
 
 import {
-  MOCK_SOUS_SECTEURS,
   MOCK_TYPE_ENTREPRISES,
   MOCK_PIECES_IDENTITE,
   MOCK_SITUATION_MATRIMONIALE,
@@ -21,6 +21,7 @@ export type ReferentielTab = 'secteurs' | 'sous_secteurs' | 'type_entreprises' |
 export function useReferentielsGrid(activeTab: ReferentielTab, searchQuery: string) {
   // Hooks spécifiques
   const { columnDefs: secteursDefs, data: secteursData, isLoading: secteursLoading } = useSecteursGrid(searchQuery)
+  const { columnDefs: sousSecteursDefs, data: sousSecteursData, isLoading: sousSecteursLoading } = useSousSecteursGrid(searchQuery)
 
   const columnDefs = useMemo<ColDef[]>(() => {
     const commonAction: ColDef = {
@@ -34,12 +35,7 @@ export function useReferentielsGrid(activeTab: ReferentielTab, searchQuery: stri
 
     switch (activeTab) {
       case 'secteurs': return secteursDefs
-      case 'sous_secteurs': return [
-          { field: 'id', headerName: 'ID', width: 80, cellClass: 'font-mono text-slate-500' },
-          { field: 'libelle', headerName: 'Sous-secteur', flex: 1, cellRenderer: PrimaryTextCellRenderer },
-          { field: 'secteur', headerName: 'Secteur parent', flex: 1, cellRenderer: BadgeCellRenderer },
-          commonAction
-        ]
+      case 'sous_secteurs': return sousSecteursDefs
       case 'type_entreprises': return [
           { field: 'id', headerName: 'ID', width: 80, cellClass: 'font-mono text-slate-500' },
           { field: 'libelle', headerName: 'Type d\'entreprise', flex: 1, cellRenderer: PrimaryTextCellRenderer },
@@ -69,15 +65,15 @@ export function useReferentielsGrid(activeTab: ReferentielTab, searchQuery: stri
         ]
       default: return []
     }
-  }, [activeTab, secteursDefs])
+  }, [activeTab, secteursDefs, sousSecteursDefs])
 
   // Données et recherche pour les onglets qui utilisent encore les mocks
   const data = useMemo(() => {
     if (activeTab === 'secteurs') return secteursData
+    if (activeTab === 'sous_secteurs') return sousSecteursData
 
     let currentMock: any[] = []
     switch (activeTab) {
-      case 'sous_secteurs': currentMock = MOCK_SOUS_SECTEURS; break;
       case 'type_entreprises': currentMock = MOCK_TYPE_ENTREPRISES; break;
       case 'pieces_identite': currentMock = MOCK_PIECES_IDENTITE; break;
       case 'situation_matrimoniale': currentMock = MOCK_SITUATION_MATRIMONIALE; break;
@@ -93,9 +89,9 @@ export function useReferentielsGrid(activeTab: ReferentielTab, searchQuery: stri
       ignoreLocation: true
     })
     return fuse.search(searchQuery).map(res => res.item)
-  }, [activeTab, searchQuery, secteursData])
+  }, [activeTab, searchQuery, secteursData, sousSecteursData])
 
-  const isLoading = activeTab === 'secteurs' ? secteursLoading : false
+  const isLoading = activeTab === 'secteurs' ? secteursLoading : activeTab === 'sous_secteurs' ? sousSecteursLoading : false
 
   return { columnDefs, data, isLoading }
 }

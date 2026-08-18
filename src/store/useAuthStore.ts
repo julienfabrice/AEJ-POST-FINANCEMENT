@@ -1,25 +1,14 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-
-export interface AuthUser {
-  id: number
-  nom: string
-  prenoms: string
-  email: string
-  roleId: number
-  roleCode: string
-  roleLibelle: string
-  kind: 'agent' | 'benef'
-  agenceId?: number
-  organismeId?: number
-}
+import { type USER_T, type ZUSTAND_T } from '@/types'
 
 interface AuthState {
-  user: AuthUser | null
-  token: string | null
-  isAuthenticated: boolean
+  set : ZUSTAND_T<AuthState>
+  user?: USER_T 
+  token?: string 
+  isAuthenticated?: boolean
 
-  setSession: (user: AuthUser, token: string) => void
+  setSession: (user: USER_T, token: string) => void
   clearSession: () => void
 
   // Vérification des permissions (basé sur la maquette)
@@ -39,15 +28,13 @@ const PERMS: Record<string, Record<string, Record<string, number>>> = {
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
-      user: null,
-      token: null,
-      isAuthenticated: false,
+      set,
 
       setSession: (user, token) =>
         set({ user, token, isAuthenticated: true }),
 
       clearSession: () =>
-        set({ user: null, token: null, isAuthenticated: false }),
+        set({ user: undefined, token: undefined, isAuthenticated: undefined }),
 
       can: (module, action = 'v') => {
         const { user } = get()

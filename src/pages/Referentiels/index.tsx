@@ -5,17 +5,16 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DataGrid } from '@/components/ui/DataGrid'
-import { ReferentielsHeader } from './UI/ReferentielsHeader'
 import { useReferentielsGrid, type ReferentielTab } from './hooks/useReferentielsGrid'
 
-import { 
-  MOCK_SECTEURS, 
-  MOCK_SOUS_SECTEURS, 
-  MOCK_TYPE_ENTREPRISES, 
-  MOCK_PIECES_IDENTITE, 
-  MOCK_SITUATION_MATRIMONIALE, 
-  MOCK_TYPE_EMPLOIS, 
-  MOCK_INDICATEURS 
+import {
+  MOCK_SECTEURS,
+  MOCK_SOUS_SECTEURS,
+  MOCK_TYPE_ENTREPRISES,
+  MOCK_PIECES_IDENTITE,
+  MOCK_SITUATION_MATRIMONIALE,
+  MOCK_TYPE_EMPLOIS,
+  MOCK_INDICATEURS
 } from '@/mock'
 
 const TABS: { id: ReferentielTab; label: string; data: any[]; sing: string }[] = [
@@ -32,10 +31,8 @@ export function ReferentielsPage() {
   const [activeTab, setActiveTab] = useState<ReferentielTab>('secteurs')
   const { columnDefs } = useReferentielsGrid(activeTab)
 
-
   return (
     <div className="space-y-2">
-      <ReferentielsHeader />
 
       <Tabs 
         value={activeTab} 

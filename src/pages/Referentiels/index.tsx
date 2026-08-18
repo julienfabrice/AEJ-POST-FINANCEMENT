@@ -3,55 +3,38 @@ import { Plus, Search } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DataGrid } from '@/components/ui/DataGrid'
 import { useReferentielsGrid, type ReferentielTab } from './hooks/useReferentielsGrid'
-import { useGetSecteurs } from '@/api/secteurs/useGetSecteurs'
 
-import {
-  MOCK_SECTEURS,
-  MOCK_SOUS_SECTEURS,
-  MOCK_TYPE_ENTREPRISES,
-  MOCK_PIECES_IDENTITE,
-  MOCK_SITUATION_MATRIMONIALE,
-  MOCK_TYPE_EMPLOIS,
-  MOCK_INDICATEURS
-} from '@/mock'
-
-const TABS: { id: ReferentielTab; label: string; data: any[]; sing: string }[] = [
-  { id: 'secteurs', label: 'Secteurs d\'activité', data: MOCK_SECTEURS, sing: 'secteur' },
-  { id: 'sous_secteurs', label: 'Sous-secteurs', data: MOCK_SOUS_SECTEURS, sing: 'sous-secteur' },
-  { id: 'type_entreprises', label: 'Types d\'entreprise', data: MOCK_TYPE_ENTREPRISES, sing: 'type' },
-  { id: 'pieces_identite', label: 'Pièces d\'identité', data: MOCK_PIECES_IDENTITE, sing: 'pièce' },
-  { id: 'situation_matrimoniale', label: 'Situations matrimoniales', data: MOCK_SITUATION_MATRIMONIALE, sing: 'situation' },
-  { id: 'type_emplois', label: 'Types d\'emploi', data: MOCK_TYPE_EMPLOIS, sing: 'type' },
-  { id: 'indicateurs', label: 'Indicateurs de suivi', data: MOCK_INDICATEURS, sing: 'indicateur' },
-]
+const TABS_CONFIG = [
+  { id: 'secteurs', label: 'Secteurs d\'activité', sing: 'secteur' },
+  { id: 'sous_secteurs', label: 'Sous-secteurs', sing: 'sous-secteur' },
+  { id: 'type_entreprises', label: 'Types d\'entreprise', sing: 'type' },
+  { id: 'pieces_identite', label: 'Pièces d\'identité', sing: 'pièce' },
+  { id: 'situation_matrimoniale', label: 'Situations matrimoniales', sing: 'situation' },
+  { id: 'type_emplois', label: 'Types d\'emploi', sing: 'type' },
+  { id: 'indicateurs', label: 'Indicateurs de suivi', sing: 'indicateur' },
+] as const
 
 export function ReferentielsPage() {
   const [activeTab, setActiveTab] = useState<ReferentielTab>('secteurs')
-  const { columnDefs } = useReferentielsGrid(activeTab)
-
-  const { data: fetchedSecteurs = [], isLoading: isLoadingSecteurs } = useGetSecteurs()
-
-  const tabsWithData = TABS.map(tab => {
-    if (tab.id === 'secteurs') {
-      return { ...tab, data: fetchedSecteurs.length > 0 ? fetchedSecteurs : tab.data }
-    }
-    return tab
-  })
+  const [searchQuery, setSearchQuery] = useState('')
+  
+  const { columnDefs, data, isLoading } = useReferentielsGrid(activeTab, searchQuery)
 
   return (
     <div className="space-y-2">
 
       <Tabs 
         value={activeTab} 
-        onValueChange={(val) => setActiveTab(val as ReferentielTab)} 
+        onValueChange={(val) => { setActiveTab(val as ReferentielTab); setSearchQuery(''); }} 
         className="w-full"
       >
         <div className="overflow-x-auto w-full no-scrollbar">
           <TabsList className="flex items-center gap-1 border-b border-slate-200 w-max min-w-full bg-transparent p-0 h-auto rounded-none justify-start">
-            {tabsWithData.map(tab => (
+            {TABS_CONFIG.map(tab => (
               <TabsTrigger 
                 key={tab.id} 
                 value={tab.id}
@@ -63,7 +46,7 @@ export function ReferentielsPage() {
           </TabsList>
         </div>
 
-        {tabsWithData.map(tab => (
+        {TABS_CONFIG.map(tab => (
           <TabsContent key={tab.id} value={tab.id} className="mt-0 outline-none">
             {/* Toolbar (.pgt) */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 my-4">
@@ -72,10 +55,12 @@ export function ReferentielsPage() {
                 <Input 
                   placeholder={`Rechercher un ${tab.sing}…`} 
                   className="pl-9 h-9 bg-white border-slate-200"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
               <span className="text-[12.5px] text-slate-500 whitespace-nowrap">
-                {tab.id === 'secteurs' && isLoadingSecteurs ? 'Chargement...' : `${tab.data.length} ${tab.label.toLowerCase()}`}
+                {isLoading ? 'Chargement...' : `${data.length} ${tab.label.toLowerCase()}`}
               </span>
               <div className="flex-1" />
               <Button className="h-9">
@@ -85,17 +70,43 @@ export function ReferentielsPage() {
             </div>
 
             <Card className="p-0 overflow-hidden border-slate-200 rounded-lg shadow-sm">
-              <DataGrid 
-                rowData={tab.data} 
-                columnDefs={columnDefs} 
-                height="calc(100vh - 300px)"
-                rowHeight={55}
-                defaultColDef={{
-                  sortable: true,
-                  filter: true,
-                  resizable: true,
-                }}
-              />
+              {isLoading ? (
+                <div className="w-full h-[calc(100vh-300px)] flex flex-col">
+                  {/* Entête du tableau simulé */}
+                  <div className="h-[48px] bg-[#fafbfd] border-b border-[#E5EAF1] flex items-center px-4 gap-4">
+                    <Skeleton className="h-4 w-12" />
+                    <Skeleton className="h-4 w-32" />
+                    <div className="flex-1" />
+                    <Skeleton className="h-4 w-16" />
+                  </div>
+                  {/* Lignes du tableau */}
+                  <div className="flex-1 p-4 space-y-4">
+                    {Array.from({ length: 8 }).map((_, i) => (
+                      <div key={i} className="flex items-center gap-4 py-2 border-b border-slate-50 last:border-0">
+                        <Skeleton className="h-5 w-12" />
+                        <Skeleton className="h-5 w-48" />
+                        <div className="flex-1" />
+                        <div className="flex items-center gap-2">
+                          <Skeleton className="h-7 w-7 rounded-md" />
+                          <Skeleton className="h-7 w-7 rounded-md" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <DataGrid 
+                  rowData={data} 
+                  columnDefs={columnDefs} 
+                  height="calc(100vh - 300px)"
+                  rowHeight={55}
+                  defaultColDef={{
+                    sortable: true,
+                    filter: true,
+                    resizable: true,
+                  }}
+                />
+              )}
             </Card>
           </TabsContent>
         ))}

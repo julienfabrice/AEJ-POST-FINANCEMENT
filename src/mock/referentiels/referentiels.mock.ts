@@ -1,17 +1,4 @@
 
-export const MOCK_SECTEURS = [
-  { id: 1, libelle: 'Agriculture & Élevage' },
-  { id: 2, libelle: 'Commerce & Distribution' },
-  { id: 3, libelle: 'Artisanat' },
-  { id: 4, libelle: 'Services' },
-  { id: 5, libelle: 'TIC & Numérique' },
-  { id: 6, libelle: 'Transport & Logistique' },
-  { id: 7, libelle: 'BTP & Construction' },
-  { id: 8, libelle: 'Restauration & Hôtellerie' },
-  { id: 9, libelle: 'Industrie & Transformation' },
-  { id: 10, libelle: 'Santé & Beauté' }
-]
-
 export const MOCK_SOUS_SECTEURS = [
   { id: 1, libelle: 'Aviculture', secteur_id: 1, secteur: 'Agriculture & Élevage' },
   { id: 2, libelle: 'Pisciculture', secteur_id: 1, secteur: 'Agriculture & Élevage' },

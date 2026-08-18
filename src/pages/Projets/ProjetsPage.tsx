@@ -1,32 +1,23 @@
-import { useState } from 'react'
-import { MOCK_PROJETS } from '@/mock'
+import { useMemo } from 'react'
+
 import {
+  Search,
+  Plus,
+  Download,
   FolderOpen,
   ClipboardList,
   Banknote,
   TrendingUp,
-  Search,
-  Plus,
-  Download,
   MoreHorizontal,
   Eye,
   ArrowRight,
   Pencil,
   Trash2,
-  ChevronLeft,
-  ChevronRight,
 } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardHeader,  } from '@/components/ui/card'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
   Select,
@@ -42,7 +33,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { DataGrid } from '@/components/ui/DataGrid'
 
+import { MOCK_PROJETS } from '@/mock'
+import type { PROJET_T } from '@/types'
+import type { ColDef, ICellRendererParams } from 'ag-grid-community'
 
 const STATS = [
   { label: 'Total dossiers', value: '1 256', change: '+12 cette semaine', icon: FolderOpen, color: '#E7722B' },
@@ -50,8 +45,6 @@ const STATS = [
   { label: 'Financés', value: '874', change: '+8 ce mois', icon: Banknote, color: '#20A83A' },
   { label: 'Taux de couverture', value: '78%', change: '+2,1 pts', icon: TrendingUp, color: '#E0A106' },
 ]
-
-
 
 const STATUS_STYLES: Record<string, string> = {
   SOUMISSION: 'bg-slate-100 text-slate-700 hover:bg-slate-100 border-0',
@@ -63,19 +56,108 @@ const STATUS_STYLES: Record<string, string> = {
   REMBOURSEMENT: 'bg-green-50 text-green-700 hover:bg-green-50 border-0',
 }
 
-export function ProjetsPage() {
-  const [page, setPage] = useState(1)
-  const itemsPerPage = 5
-  const totalPages = Math.ceil(MOCK_PROJETS.length / itemsPerPage)
-  
-  const currentItems = MOCK_PROJETS.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage
+const ProjectTitleCellRenderer = (params: ICellRendererParams<PROJET_T>) => {
+  if (!params.data) return null
+  return (
+    <div className="flex flex-col justify-center h-full">
+      <span className="font-semibold text-[#131C29] truncate">{params.data.titre}</span>
+      <span className="text-[11px] text-slate-500 font-medium leading-none">{params.data.dispositif}</span>
+    </div>
   )
+}
+
+const AmountCellRenderer = (params: ICellRendererParams<PROJET_T>) => (
+  <div className="flex items-center justify-end h-full font-mono font-semibold">
+    {params.value} <span className="text-slate-400 font-normal ml-1 text-[11px]">FCFA</span>
+  </div>
+)
+
+const StatusCellRenderer = (params: ICellRendererParams<PROJET_T>) => {
+  if (!params.value) return null
+  const badgeClass = STATUS_STYLES[params.value] || STATUS_STYLES.SOUMISSION
+  return (
+    <div className="flex items-center h-full">
+      <Badge className={badgeClass}>{params.value}</Badge>
+    </div>
+  )
+}
+
+const ActionsCellRenderer = () => {
+  return (
+    <div className="flex items-center justify-end h-full">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-500">
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48">
+          <DropdownMenuItem>
+            <Eye className="mr-2 h-4 w-4 text-slate-500" />
+            Ouvrir le dossier
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <ArrowRight className="mr-2 h-4 w-4 text-slate-500" />
+            Avancer l'étape
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>
+            <Pencil className="mr-2 h-4 w-4 text-slate-500" />
+            Modifier
+          </DropdownMenuItem>
+          <DropdownMenuItem className="text-red-600 focus:text-red-600">
+            <Trash2 className="mr-2 h-4 w-4" />
+            Supprimer
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  )
+}
+
+export function ProjetsPage() {
+  const columnDefs = useMemo<ColDef<PROJET_T>[]>(() => [
+    { 
+      field: 'ref', 
+      headerName: 'Référence', 
+      width: 130,
+      cellRenderer: (p: any) => <span className="font-mono text-xs text-slate-500">{p.value}</span>
+    },
+    { 
+      field: 'titre', 
+      headerName: 'Titre du projet', 
+      flex: 1, 
+      minWidth: 200,
+      cellRenderer: ProjectTitleCellRenderer 
+    },
+    { field: 'promoteur', headerName: 'Promoteur', width: 180 },
+    { field: 'agence', headerName: 'Agence', width: 130 },
+    { 
+      field: 'montant', 
+      headerName: 'Montant', 
+      width: 140,
+      cellRenderer: AmountCellRenderer,
+      headerClass: 'ag-right-aligned-header',
+    },
+    { 
+      field: 'statut', 
+      headerName: 'Statut', 
+      width: 140,
+      cellRenderer: StatusCellRenderer 
+    },
+    { field: 'date', headerName: 'Date', width: 110 },
+    {
+      headerName: 'Actions',
+      width: 80,
+      sortable: false,
+      filter: false,
+      cellRenderer: ActionsCellRenderer,
+    }
+  ], [])
 
   return (
     <div className="space-y-6">
-      {/* En-tête */}
+      {/* En-tête de page */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-extrabold text-[#131C29]">Micro-projets</h1>
@@ -93,180 +175,96 @@ export function ProjetsPage() {
         </div>
       </div>
 
-      {/* Cartes KPI */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {STATS.map((stat) => {
+      {/* KPIs */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {STATS.map((stat, i) => {
           const Icon = stat.icon
           return (
-            <Card key={stat.label}>
-              <CardContent className="pt-5">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm text-[#5A6B80] font-medium">{stat.label}</span>
-                  <div
-                    className="w-9 h-9 rounded-lg grid place-items-center"
-                    style={{ background: `${stat.color}18` }}
-                  >
-                    <Icon className="w-4 h-4" style={{ color: stat.color }} />
-                  </div>
+            <Card key={i} className="border-slate-100 shadow-sm">
+              <CardContent className="p-5 flex items-start justify-between">
+                <div>
+                  <p className="text-sm font-medium text-[#5A6B80] mb-1">{stat.label}</p>
+                  <h3 className="text-2xl font-bold text-[#131C29]">{stat.value}</h3>
+                  <p className="text-xs font-medium mt-1" style={{ color: stat.color }}>
+                    {stat.change}
+                  </p>
                 </div>
-                <p className="text-2xl font-extrabold text-[#131C29]">{stat.value}</p>
-                <p className="text-xs text-slate-500 font-medium mt-1">{stat.change}</p>
+                <div 
+                  className="w-10 h-10 rounded-xl flex items-center justify-center bg-opacity-10"
+                  style={{ backgroundColor: `${stat.color}15` }}
+                >
+                  <Icon className="w-5 h-5" style={{ color: stat.color }} />
+                </div>
               </CardContent>
             </Card>
           )
         })}
       </div>
 
-      {/* Filtres & Tableau */}
-      <Card>
-        <CardHeader className="pb-4 border-b border-slate-100">
-          <div className="flex flex-col md:flex-row items-center gap-4">
-            <div className="relative flex-1 w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <Input
-                placeholder="Référence, titre du projet ou nom du promoteur..."
-                className="pl-9 bg-[#F3F5F8] border-none"
-              />
-            </div>
-            <Select defaultValue="tous">
-              <SelectTrigger className="w-full md:w-[160px] bg-[#F3F5F8] border-none">
-                <SelectValue placeholder="Dispositif" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="tous">Tous dispositifs</SelectItem>
-                <SelectItem value="agr">AGR Classique</SelectItem>
-                <SelectItem value="meps">MEPS</SelectItem>
-                <SelectItem value="mpe">MPE</SelectItem>
-                <SelectItem value="struct">Projets structurants</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select defaultValue="tous">
-              <SelectTrigger className="w-full md:w-[160px] bg-[#F3F5F8] border-none">
-                <SelectValue placeholder="Statut" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="tous">Tous statuts</SelectItem>
-                <SelectItem value="soumission">Soumission</SelectItem>
-                <SelectItem value="analyse">Analyse</SelectItem>
-                <SelectItem value="certification">Certification</SelectItem>
-                <SelectItem value="financement">Financement</SelectItem>
-                <SelectItem value="decaissement">Décaissement</SelectItem>
-                <SelectItem value="suivi">Suivi</SelectItem>
-                <SelectItem value="remboursement">Remboursement</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select defaultValue="toutes">
-              <SelectTrigger className="w-full md:w-[160px] bg-[#F3F5F8] border-none">
-                <SelectValue placeholder="Agence" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="toutes">Toutes agences</SelectItem>
-                <SelectItem value="abidjan">Abidjan</SelectItem>
-                <SelectItem value="bouake">Bouaké</SelectItem>
-                <SelectItem value="korhogo">Korhogo</SelectItem>
-                <SelectItem value="daloa">Daloa</SelectItem>
-                <SelectItem value="san-pedro">San-Pedro</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow className="hover:bg-transparent">
-                <TableHead className="w-[120px]">Référence</TableHead>
-                <TableHead>Titre du projet</TableHead>
-                <TableHead>Promoteur</TableHead>
-                <TableHead>Agence</TableHead>
-                <TableHead className="text-right">Montant (FCFA)</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {currentItems.map((projet) => (
-                <TableRow key={projet.id} className="hover:bg-[#F3F5F8] cursor-pointer">
-                  <TableCell className="font-mono text-xs font-medium text-slate-500">
-                    {projet.ref}
-                  </TableCell>
-                  <TableCell>
-                    <div className="font-semibold text-[#131C29] max-w-[200px] truncate" title={projet.titre}>
-                      {projet.titre}
-                    </div>
-                    <div className="text-xs text-slate-500">{projet.dispositif}</div>
-                  </TableCell>
-                  <TableCell className="text-slate-700">{projet.promoteur}</TableCell>
-                  <TableCell className="text-sm text-slate-600">{projet.agence}</TableCell>
-                  <TableCell className="text-right font-semibold tabular-nums text-[#131C29]">
-                    {projet.montant}
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={STATUS_STYLES[projet.statut] || 'bg-slate-100 text-slate-700 border-0'}>
-                      {projet.statut.charAt(0) + projet.statut.slice(1).toLowerCase()}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-sm text-slate-500">{projet.date}</TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-500">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48">
-                        <DropdownMenuItem>
-                          <Eye className="mr-2 h-4 w-4 text-slate-500" />
-                          Ouvrir le dossier
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <ArrowRight className="mr-2 h-4 w-4 text-slate-500" />
-                          Avancer l'étape
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                          <Pencil className="mr-2 h-4 w-4 text-slate-500" />
-                          Modifier
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600 focus:text-red-600">
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          Supprimer
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+      {/* Barre de filtres */}
+      <Card className="p-4 flex flex-col sm:flex-row items-center gap-4 bg-white shadow-sm border-slate-100">
+        <div className="relative flex-1 w-full">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Input
+            placeholder="Référence, titre du projet ou nom du promoteur..."
+            className="pl-9 bg-[#F3F5F8] border-none"
+          />
+        </div>
+        <Select defaultValue="tous_disp">
+          <SelectTrigger className="w-full sm:w-[180px] bg-[#F3F5F8] border-none">
+            <SelectValue placeholder="Dispositif" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="tous_disp">Tous les dispositifs</SelectItem>
+            <SelectItem value="agr">AGR Classique</SelectItem>
+            <SelectItem value="meps">MEPS</SelectItem>
+            <SelectItem value="mpe">MPE</SelectItem>
+            <SelectItem value="struct">Projets structurants</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select defaultValue="tous_statut">
+          <SelectTrigger className="w-full sm:w-[180px] bg-[#F3F5F8] border-none">
+            <SelectValue placeholder="Statut" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="tous_statut">Tous les statuts</SelectItem>
+            <SelectItem value="SOUMISSION">Soumission</SelectItem>
+            <SelectItem value="ANALYSE">Analyse</SelectItem>
+            <SelectItem value="CERTIFICATION">Certification</SelectItem>
+            <SelectItem value="FINANCEMENT">Financement</SelectItem>
+            <SelectItem value="DECAISSEMENT">Décaissement</SelectItem>
+            <SelectItem value="SUIVI">Suivi</SelectItem>
+            <SelectItem value="REMBOURSEMENT">Remboursement</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select defaultValue="toutes_agences">
+          <SelectTrigger className="w-full sm:w-[160px] bg-[#F3F5F8] border-none">
+            <SelectValue placeholder="Agence" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="toutes_agences">Toutes les agences</SelectItem>
+            <SelectItem value="abidjan">Abidjan</SelectItem>
+            <SelectItem value="bouake">Bouaké</SelectItem>
+            <SelectItem value="korhogo">Korhogo</SelectItem>
+            <SelectItem value="daloa">Daloa</SelectItem>
+            <SelectItem value="san-pedro">San-Pedro</SelectItem>
+          </SelectContent>
+        </Select>
+      </Card>
 
-          {/* Pagination */}
-          <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100">
-            <div className="text-sm text-slate-500">
-              {(page - 1) * itemsPerPage + 1}–{Math.min(page * itemsPerPage, MOCK_PROJETS.length)} sur {MOCK_PROJETS.length}
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-              >
-                <ChevronLeft className="h-4 w-4 mr-1" />
-                Précédent
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-              >
-                Suivant
-                <ChevronRight className="h-4 w-4 ml-1" />
-              </Button>
-            </div>
-          </div>
-        </CardContent>
+      {/* Tableau AG Grid */}
+      <Card className="p-0 overflow-hidden border-slate-200">
+        <DataGrid 
+          rowData={MOCK_PROJETS} 
+          columnDefs={columnDefs} 
+          height="calc(100vh - 400px)"
+          rowHeight={60}
+          defaultColDef={{
+            sortable: true,
+            filter: true,
+            resizable: true,
+          }}
+        />
       </Card>
     </div>
   )

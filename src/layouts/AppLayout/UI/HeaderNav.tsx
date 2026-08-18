@@ -37,7 +37,7 @@ export function HeaderNav() {
     <header className="sticky top-0 z-40 bg-[#131C29] text-[#cdd7e4] flex items-center gap-[6px] px-5 h-[60px] shadow-lg shrink-0 before:absolute before:inset-x-0 before:bottom-0 before:h-[3px] before:bg-gradient-to-r before:from-[#E7722B] before:via-white before:to-[#20A83A]">
       {/* Logo */}
       <div className="flex items-center gap-[11px] pr-[14px] mr-[6px] border-r border-white/10 h-[38px]">
-        <img src={IMAGES.logo} alt="AEJ" className="h-[34px] w-auto block bg-white rounded-[7px] py-1 px-[7px]" />
+        <img src={IMAGES.logo} alt="AEJ" className="h-[34px] w-auto shrink-0 object-contain block bg-white rounded-[7px] py-1 px-[7px]" />
       </div>
 
       {/* Main Nav */}

@@ -9,12 +9,40 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedAgentRouteImport } from './routes/_authenticated/_agent'
+import { Route as AuthenticatedBenefRouteImport } from './routes/_authenticated/_benef'
+import { Route as AuthenticatedAgentDashboardRouteImport } from './routes/_authenticated/_agent/dashboard'
+import { Route as AuthenticatedAgentDispositifsRouteImport } from './routes/_authenticated/_agent/dispositifs'
+import { Route as AuthenticatedAgentFinancementsRouteImport } from './routes/_authenticated/_agent/financements'
+import { Route as AuthenticatedAgentImputationRouteImport } from './routes/_authenticated/_agent/imputation'
+import { Route as AuthenticatedAgentIndicateursRouteImport } from './routes/_authenticated/_agent/indicateurs'
+import { Route as AuthenticatedAgentJeunesRouteImport } from './routes/_authenticated/_agent/jeunes'
+import { Route as AuthenticatedAgentPfEspaceRouteImport } from './routes/_authenticated/_agent/pf-espace'
+import { Route as AuthenticatedAgentPlansDecaissementRouteImport } from './routes/_authenticated/_agent/plans-decaissement'
+import { Route as AuthenticatedAgentProjetsRouteImport } from './routes/_authenticated/_agent/projets'
+import { Route as AuthenticatedAgentRapportsRouteImport } from './routes/_authenticated/_agent/rapports'
+import { Route as AuthenticatedAgentRecouvrementRouteImport } from './routes/_authenticated/_agent/recouvrement'
+import { Route as AuthenticatedAgentRemboursementsRouteImport } from './routes/_authenticated/_agent/remboursements'
+import { Route as AuthenticatedAgentSuiviRouteImport } from './routes/_authenticated/_agent/suivi'
+import { Route as AuthenticatedAgentTransmissionRouteImport } from './routes/_authenticated/_agent/transmission'
+import { Route as AuthenticatedBenefBenefDashboardRouteImport } from './routes/_authenticated/_benef/benef-dashboard'
+import { Route as AuthenticatedBenefMesPiecesRouteImport } from './routes/_authenticated/_benef/mes-pieces'
+import { Route as AuthenticatedBenefMesProjetsRouteImport } from './routes/_authenticated/_benef/mes-projets'
+import { Route as AuthenticatedBenefMesRemboursementsRouteImport } from './routes/_authenticated/_benef/mes-remboursements'
+import { Route as AuthenticatedAgentAdminLocalitesRouteImport } from './routes/_authenticated/_agent/admin/localites'
+import { Route as AuthenticatedAgentAdminParametresRouteImport } from './routes/_authenticated/_agent/admin/parametres'
+import { Route as AuthenticatedAgentAdminPartenairesRouteImport } from './routes/_authenticated/_agent/admin/partenaires'
+import { Route as AuthenticatedAgentAdminProfilsRouteImport } from './routes/_authenticated/_agent/admin/profils'
+import { Route as AuthenticatedAgentAdminReferentielsRouteImport } from './routes/_authenticated/_agent/admin/referentiels'
+import { Route as AuthenticatedAgentAdminUnitesRouteImport } from './routes/_authenticated/_agent/admin/unites'
+import { Route as AuthenticatedAgentAdminUtilisateursRouteImport } from './routes/_authenticated/_agent/admin/utilisateurs'
+import { Route as AuthenticatedAgentAdminWorkflowsRouteImport } from './routes/_authenticated/_agent/admin/workflows'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -22,40 +50,377 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedAgentRoute = AuthenticatedAgentRouteImport.update({
+  id: '/_agent',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedBenefRoute = AuthenticatedBenefRouteImport.update({
+  id: '/_benef',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedAgentDashboardRoute =
+  AuthenticatedAgentDashboardRouteImport.update({
+    id: '/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
+const AuthenticatedAgentDispositifsRoute =
+  AuthenticatedAgentDispositifsRouteImport.update({
+    id: '/dispositifs',
+    path: '/dispositifs',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
+const AuthenticatedAgentFinancementsRoute =
+  AuthenticatedAgentFinancementsRouteImport.update({
+    id: '/financements',
+    path: '/financements',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
+const AuthenticatedAgentImputationRoute =
+  AuthenticatedAgentImputationRouteImport.update({
+    id: '/imputation',
+    path: '/imputation',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
+const AuthenticatedAgentIndicateursRoute =
+  AuthenticatedAgentIndicateursRouteImport.update({
+    id: '/indicateurs',
+    path: '/indicateurs',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
+const AuthenticatedAgentJeunesRoute =
+  AuthenticatedAgentJeunesRouteImport.update({
+    id: '/jeunes',
+    path: '/jeunes',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
+const AuthenticatedAgentPfEspaceRoute =
+  AuthenticatedAgentPfEspaceRouteImport.update({
+    id: '/pf-espace',
+    path: '/pf-espace',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
+const AuthenticatedAgentPlansDecaissementRoute =
+  AuthenticatedAgentPlansDecaissementRouteImport.update({
+    id: '/plans-decaissement',
+    path: '/plans-decaissement',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
+const AuthenticatedAgentProjetsRoute =
+  AuthenticatedAgentProjetsRouteImport.update({
+    id: '/projets',
+    path: '/projets',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
+const AuthenticatedAgentRapportsRoute =
+  AuthenticatedAgentRapportsRouteImport.update({
+    id: '/rapports',
+    path: '/rapports',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
+const AuthenticatedAgentRecouvrementRoute =
+  AuthenticatedAgentRecouvrementRouteImport.update({
+    id: '/recouvrement',
+    path: '/recouvrement',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
+const AuthenticatedAgentRemboursementsRoute =
+  AuthenticatedAgentRemboursementsRouteImport.update({
+    id: '/remboursements',
+    path: '/remboursements',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
+const AuthenticatedAgentSuiviRoute = AuthenticatedAgentSuiviRouteImport.update({
+  id: '/suivi',
+  path: '/suivi',
+  getParentRoute: () => AuthenticatedAgentRoute,
+} as any)
+const AuthenticatedAgentTransmissionRoute =
+  AuthenticatedAgentTransmissionRouteImport.update({
+    id: '/transmission',
+    path: '/transmission',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
+const AuthenticatedBenefBenefDashboardRoute =
+  AuthenticatedBenefBenefDashboardRouteImport.update({
+    id: '/benef-dashboard',
+    path: '/benef-dashboard',
+    getParentRoute: () => AuthenticatedBenefRoute,
+  } as any)
+const AuthenticatedBenefMesPiecesRoute =
+  AuthenticatedBenefMesPiecesRouteImport.update({
+    id: '/mes-pieces',
+    path: '/mes-pieces',
+    getParentRoute: () => AuthenticatedBenefRoute,
+  } as any)
+const AuthenticatedBenefMesProjetsRoute =
+  AuthenticatedBenefMesProjetsRouteImport.update({
+    id: '/mes-projets',
+    path: '/mes-projets',
+    getParentRoute: () => AuthenticatedBenefRoute,
+  } as any)
+const AuthenticatedBenefMesRemboursementsRoute =
+  AuthenticatedBenefMesRemboursementsRouteImport.update({
+    id: '/mes-remboursements',
+    path: '/mes-remboursements',
+    getParentRoute: () => AuthenticatedBenefRoute,
+  } as any)
+const AuthenticatedAgentAdminLocalitesRoute =
+  AuthenticatedAgentAdminLocalitesRouteImport.update({
+    id: '/admin/localites',
+    path: '/admin/localites',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
+const AuthenticatedAgentAdminParametresRoute =
+  AuthenticatedAgentAdminParametresRouteImport.update({
+    id: '/admin/parametres',
+    path: '/admin/parametres',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
+const AuthenticatedAgentAdminPartenairesRoute =
+  AuthenticatedAgentAdminPartenairesRouteImport.update({
+    id: '/admin/partenaires',
+    path: '/admin/partenaires',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
+const AuthenticatedAgentAdminProfilsRoute =
+  AuthenticatedAgentAdminProfilsRouteImport.update({
+    id: '/admin/profils',
+    path: '/admin/profils',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
+const AuthenticatedAgentAdminReferentielsRoute =
+  AuthenticatedAgentAdminReferentielsRouteImport.update({
+    id: '/admin/referentiels',
+    path: '/admin/referentiels',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
+const AuthenticatedAgentAdminUnitesRoute =
+  AuthenticatedAgentAdminUnitesRouteImport.update({
+    id: '/admin/unites',
+    path: '/admin/unites',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
+const AuthenticatedAgentAdminUtilisateursRoute =
+  AuthenticatedAgentAdminUtilisateursRouteImport.update({
+    id: '/admin/utilisateurs',
+    path: '/admin/utilisateurs',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
+const AuthenticatedAgentAdminWorkflowsRoute =
+  AuthenticatedAgentAdminWorkflowsRouteImport.update({
+    id: '/admin/workflows',
+    path: '/admin/workflows',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof AuthenticatedIndexRoute
   '/login': typeof LoginRoute
+  '/dashboard': typeof AuthenticatedAgentDashboardRoute
+  '/dispositifs': typeof AuthenticatedAgentDispositifsRoute
+  '/financements': typeof AuthenticatedAgentFinancementsRoute
+  '/imputation': typeof AuthenticatedAgentImputationRoute
+  '/indicateurs': typeof AuthenticatedAgentIndicateursRoute
+  '/jeunes': typeof AuthenticatedAgentJeunesRoute
+  '/pf-espace': typeof AuthenticatedAgentPfEspaceRoute
+  '/plans-decaissement': typeof AuthenticatedAgentPlansDecaissementRoute
+  '/projets': typeof AuthenticatedAgentProjetsRoute
+  '/rapports': typeof AuthenticatedAgentRapportsRoute
+  '/recouvrement': typeof AuthenticatedAgentRecouvrementRoute
+  '/remboursements': typeof AuthenticatedAgentRemboursementsRoute
+  '/suivi': typeof AuthenticatedAgentSuiviRoute
+  '/transmission': typeof AuthenticatedAgentTransmissionRoute
+  '/benef-dashboard': typeof AuthenticatedBenefBenefDashboardRoute
+  '/mes-pieces': typeof AuthenticatedBenefMesPiecesRoute
+  '/mes-projets': typeof AuthenticatedBenefMesProjetsRoute
+  '/mes-remboursements': typeof AuthenticatedBenefMesRemboursementsRoute
+  '/admin/localites': typeof AuthenticatedAgentAdminLocalitesRoute
+  '/admin/parametres': typeof AuthenticatedAgentAdminParametresRoute
+  '/admin/partenaires': typeof AuthenticatedAgentAdminPartenairesRoute
+  '/admin/profils': typeof AuthenticatedAgentAdminProfilsRoute
+  '/admin/referentiels': typeof AuthenticatedAgentAdminReferentielsRoute
+  '/admin/unites': typeof AuthenticatedAgentAdminUnitesRoute
+  '/admin/utilisateurs': typeof AuthenticatedAgentAdminUtilisateursRoute
+  '/admin/workflows': typeof AuthenticatedAgentAdminWorkflowsRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/': typeof AuthenticatedIndexRoute
+  '/dashboard': typeof AuthenticatedAgentDashboardRoute
+  '/dispositifs': typeof AuthenticatedAgentDispositifsRoute
+  '/financements': typeof AuthenticatedAgentFinancementsRoute
+  '/imputation': typeof AuthenticatedAgentImputationRoute
+  '/indicateurs': typeof AuthenticatedAgentIndicateursRoute
+  '/jeunes': typeof AuthenticatedAgentJeunesRoute
+  '/pf-espace': typeof AuthenticatedAgentPfEspaceRoute
+  '/plans-decaissement': typeof AuthenticatedAgentPlansDecaissementRoute
+  '/projets': typeof AuthenticatedAgentProjetsRoute
+  '/rapports': typeof AuthenticatedAgentRapportsRoute
+  '/recouvrement': typeof AuthenticatedAgentRecouvrementRoute
+  '/remboursements': typeof AuthenticatedAgentRemboursementsRoute
+  '/suivi': typeof AuthenticatedAgentSuiviRoute
+  '/transmission': typeof AuthenticatedAgentTransmissionRoute
+  '/benef-dashboard': typeof AuthenticatedBenefBenefDashboardRoute
+  '/mes-pieces': typeof AuthenticatedBenefMesPiecesRoute
+  '/mes-projets': typeof AuthenticatedBenefMesProjetsRoute
+  '/mes-remboursements': typeof AuthenticatedBenefMesRemboursementsRoute
+  '/admin/localites': typeof AuthenticatedAgentAdminLocalitesRoute
+  '/admin/parametres': typeof AuthenticatedAgentAdminParametresRoute
+  '/admin/partenaires': typeof AuthenticatedAgentAdminPartenairesRoute
+  '/admin/profils': typeof AuthenticatedAgentAdminProfilsRoute
+  '/admin/referentiels': typeof AuthenticatedAgentAdminReferentielsRoute
+  '/admin/unites': typeof AuthenticatedAgentAdminUnitesRoute
+  '/admin/utilisateurs': typeof AuthenticatedAgentAdminUtilisateursRoute
+  '/admin/workflows': typeof AuthenticatedAgentAdminWorkflowsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
+  '/_authenticated/_agent': typeof AuthenticatedAgentRouteWithChildren
+  '/_authenticated/_benef': typeof AuthenticatedBenefRouteWithChildren
+  '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/_agent/dashboard': typeof AuthenticatedAgentDashboardRoute
+  '/_authenticated/_agent/dispositifs': typeof AuthenticatedAgentDispositifsRoute
+  '/_authenticated/_agent/financements': typeof AuthenticatedAgentFinancementsRoute
+  '/_authenticated/_agent/imputation': typeof AuthenticatedAgentImputationRoute
+  '/_authenticated/_agent/indicateurs': typeof AuthenticatedAgentIndicateursRoute
+  '/_authenticated/_agent/jeunes': typeof AuthenticatedAgentJeunesRoute
+  '/_authenticated/_agent/pf-espace': typeof AuthenticatedAgentPfEspaceRoute
+  '/_authenticated/_agent/plans-decaissement': typeof AuthenticatedAgentPlansDecaissementRoute
+  '/_authenticated/_agent/projets': typeof AuthenticatedAgentProjetsRoute
+  '/_authenticated/_agent/rapports': typeof AuthenticatedAgentRapportsRoute
+  '/_authenticated/_agent/recouvrement': typeof AuthenticatedAgentRecouvrementRoute
+  '/_authenticated/_agent/remboursements': typeof AuthenticatedAgentRemboursementsRoute
+  '/_authenticated/_agent/suivi': typeof AuthenticatedAgentSuiviRoute
+  '/_authenticated/_agent/transmission': typeof AuthenticatedAgentTransmissionRoute
+  '/_authenticated/_benef/benef-dashboard': typeof AuthenticatedBenefBenefDashboardRoute
+  '/_authenticated/_benef/mes-pieces': typeof AuthenticatedBenefMesPiecesRoute
+  '/_authenticated/_benef/mes-projets': typeof AuthenticatedBenefMesProjetsRoute
+  '/_authenticated/_benef/mes-remboursements': typeof AuthenticatedBenefMesRemboursementsRoute
+  '/_authenticated/_agent/admin/localites': typeof AuthenticatedAgentAdminLocalitesRoute
+  '/_authenticated/_agent/admin/parametres': typeof AuthenticatedAgentAdminParametresRoute
+  '/_authenticated/_agent/admin/partenaires': typeof AuthenticatedAgentAdminPartenairesRoute
+  '/_authenticated/_agent/admin/profils': typeof AuthenticatedAgentAdminProfilsRoute
+  '/_authenticated/_agent/admin/referentiels': typeof AuthenticatedAgentAdminReferentielsRoute
+  '/_authenticated/_agent/admin/unites': typeof AuthenticatedAgentAdminUnitesRoute
+  '/_authenticated/_agent/admin/utilisateurs': typeof AuthenticatedAgentAdminUtilisateursRoute
+  '/_authenticated/_agent/admin/workflows': typeof AuthenticatedAgentAdminWorkflowsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/dashboard'
+    | '/dispositifs'
+    | '/financements'
+    | '/imputation'
+    | '/indicateurs'
+    | '/jeunes'
+    | '/pf-espace'
+    | '/plans-decaissement'
+    | '/projets'
+    | '/rapports'
+    | '/recouvrement'
+    | '/remboursements'
+    | '/suivi'
+    | '/transmission'
+    | '/benef-dashboard'
+    | '/mes-pieces'
+    | '/mes-projets'
+    | '/mes-remboursements'
+    | '/admin/localites'
+    | '/admin/parametres'
+    | '/admin/partenaires'
+    | '/admin/profils'
+    | '/admin/referentiels'
+    | '/admin/unites'
+    | '/admin/utilisateurs'
+    | '/admin/workflows'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login'
-  id: '__root__' | '/' | '/login'
+  to:
+    | '/login'
+    | '/'
+    | '/dashboard'
+    | '/dispositifs'
+    | '/financements'
+    | '/imputation'
+    | '/indicateurs'
+    | '/jeunes'
+    | '/pf-espace'
+    | '/plans-decaissement'
+    | '/projets'
+    | '/rapports'
+    | '/recouvrement'
+    | '/remboursements'
+    | '/suivi'
+    | '/transmission'
+    | '/benef-dashboard'
+    | '/mes-pieces'
+    | '/mes-projets'
+    | '/mes-remboursements'
+    | '/admin/localites'
+    | '/admin/parametres'
+    | '/admin/partenaires'
+    | '/admin/profils'
+    | '/admin/referentiels'
+    | '/admin/unites'
+    | '/admin/utilisateurs'
+    | '/admin/workflows'
+  id:
+    | '__root__'
+    | '/_authenticated'
+    | '/login'
+    | '/_authenticated/_agent'
+    | '/_authenticated/_benef'
+    | '/_authenticated/'
+    | '/_authenticated/_agent/dashboard'
+    | '/_authenticated/_agent/dispositifs'
+    | '/_authenticated/_agent/financements'
+    | '/_authenticated/_agent/imputation'
+    | '/_authenticated/_agent/indicateurs'
+    | '/_authenticated/_agent/jeunes'
+    | '/_authenticated/_agent/pf-espace'
+    | '/_authenticated/_agent/plans-decaissement'
+    | '/_authenticated/_agent/projets'
+    | '/_authenticated/_agent/rapports'
+    | '/_authenticated/_agent/recouvrement'
+    | '/_authenticated/_agent/remboursements'
+    | '/_authenticated/_agent/suivi'
+    | '/_authenticated/_agent/transmission'
+    | '/_authenticated/_benef/benef-dashboard'
+    | '/_authenticated/_benef/mes-pieces'
+    | '/_authenticated/_benef/mes-projets'
+    | '/_authenticated/_benef/mes-remboursements'
+    | '/_authenticated/_agent/admin/localites'
+    | '/_authenticated/_agent/admin/parametres'
+    | '/_authenticated/_agent/admin/partenaires'
+    | '/_authenticated/_agent/admin/profils'
+    | '/_authenticated/_agent/admin/referentiels'
+    | '/_authenticated/_agent/admin/unites'
+    | '/_authenticated/_agent/admin/utilisateurs'
+    | '/_authenticated/_agent/admin/workflows'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -65,11 +430,306 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/': {
+      id: '/_authenticated/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/_agent': {
+      id: '/_authenticated/_agent'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedAgentRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/_benef': {
+      id: '/_authenticated/_benef'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedBenefRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/_agent/dashboard': {
+      id: '/_authenticated/_agent/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedAgentDashboardRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
+    '/_authenticated/_agent/dispositifs': {
+      id: '/_authenticated/_agent/dispositifs'
+      path: '/dispositifs'
+      fullPath: '/dispositifs'
+      preLoaderRoute: typeof AuthenticatedAgentDispositifsRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
+    '/_authenticated/_agent/financements': {
+      id: '/_authenticated/_agent/financements'
+      path: '/financements'
+      fullPath: '/financements'
+      preLoaderRoute: typeof AuthenticatedAgentFinancementsRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
+    '/_authenticated/_agent/imputation': {
+      id: '/_authenticated/_agent/imputation'
+      path: '/imputation'
+      fullPath: '/imputation'
+      preLoaderRoute: typeof AuthenticatedAgentImputationRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
+    '/_authenticated/_agent/indicateurs': {
+      id: '/_authenticated/_agent/indicateurs'
+      path: '/indicateurs'
+      fullPath: '/indicateurs'
+      preLoaderRoute: typeof AuthenticatedAgentIndicateursRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
+    '/_authenticated/_agent/jeunes': {
+      id: '/_authenticated/_agent/jeunes'
+      path: '/jeunes'
+      fullPath: '/jeunes'
+      preLoaderRoute: typeof AuthenticatedAgentJeunesRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
+    '/_authenticated/_agent/pf-espace': {
+      id: '/_authenticated/_agent/pf-espace'
+      path: '/pf-espace'
+      fullPath: '/pf-espace'
+      preLoaderRoute: typeof AuthenticatedAgentPfEspaceRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
+    '/_authenticated/_agent/plans-decaissement': {
+      id: '/_authenticated/_agent/plans-decaissement'
+      path: '/plans-decaissement'
+      fullPath: '/plans-decaissement'
+      preLoaderRoute: typeof AuthenticatedAgentPlansDecaissementRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
+    '/_authenticated/_agent/projets': {
+      id: '/_authenticated/_agent/projets'
+      path: '/projets'
+      fullPath: '/projets'
+      preLoaderRoute: typeof AuthenticatedAgentProjetsRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
+    '/_authenticated/_agent/rapports': {
+      id: '/_authenticated/_agent/rapports'
+      path: '/rapports'
+      fullPath: '/rapports'
+      preLoaderRoute: typeof AuthenticatedAgentRapportsRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
+    '/_authenticated/_agent/recouvrement': {
+      id: '/_authenticated/_agent/recouvrement'
+      path: '/recouvrement'
+      fullPath: '/recouvrement'
+      preLoaderRoute: typeof AuthenticatedAgentRecouvrementRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
+    '/_authenticated/_agent/remboursements': {
+      id: '/_authenticated/_agent/remboursements'
+      path: '/remboursements'
+      fullPath: '/remboursements'
+      preLoaderRoute: typeof AuthenticatedAgentRemboursementsRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
+    '/_authenticated/_agent/suivi': {
+      id: '/_authenticated/_agent/suivi'
+      path: '/suivi'
+      fullPath: '/suivi'
+      preLoaderRoute: typeof AuthenticatedAgentSuiviRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
+    '/_authenticated/_agent/transmission': {
+      id: '/_authenticated/_agent/transmission'
+      path: '/transmission'
+      fullPath: '/transmission'
+      preLoaderRoute: typeof AuthenticatedAgentTransmissionRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
+    '/_authenticated/_benef/benef-dashboard': {
+      id: '/_authenticated/_benef/benef-dashboard'
+      path: '/benef-dashboard'
+      fullPath: '/benef-dashboard'
+      preLoaderRoute: typeof AuthenticatedBenefBenefDashboardRouteImport
+      parentRoute: typeof AuthenticatedBenefRoute
+    }
+    '/_authenticated/_benef/mes-pieces': {
+      id: '/_authenticated/_benef/mes-pieces'
+      path: '/mes-pieces'
+      fullPath: '/mes-pieces'
+      preLoaderRoute: typeof AuthenticatedBenefMesPiecesRouteImport
+      parentRoute: typeof AuthenticatedBenefRoute
+    }
+    '/_authenticated/_benef/mes-projets': {
+      id: '/_authenticated/_benef/mes-projets'
+      path: '/mes-projets'
+      fullPath: '/mes-projets'
+      preLoaderRoute: typeof AuthenticatedBenefMesProjetsRouteImport
+      parentRoute: typeof AuthenticatedBenefRoute
+    }
+    '/_authenticated/_benef/mes-remboursements': {
+      id: '/_authenticated/_benef/mes-remboursements'
+      path: '/mes-remboursements'
+      fullPath: '/mes-remboursements'
+      preLoaderRoute: typeof AuthenticatedBenefMesRemboursementsRouteImport
+      parentRoute: typeof AuthenticatedBenefRoute
+    }
+    '/_authenticated/_agent/admin/localites': {
+      id: '/_authenticated/_agent/admin/localites'
+      path: '/admin/localites'
+      fullPath: '/admin/localites'
+      preLoaderRoute: typeof AuthenticatedAgentAdminLocalitesRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
+    '/_authenticated/_agent/admin/parametres': {
+      id: '/_authenticated/_agent/admin/parametres'
+      path: '/admin/parametres'
+      fullPath: '/admin/parametres'
+      preLoaderRoute: typeof AuthenticatedAgentAdminParametresRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
+    '/_authenticated/_agent/admin/partenaires': {
+      id: '/_authenticated/_agent/admin/partenaires'
+      path: '/admin/partenaires'
+      fullPath: '/admin/partenaires'
+      preLoaderRoute: typeof AuthenticatedAgentAdminPartenairesRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
+    '/_authenticated/_agent/admin/profils': {
+      id: '/_authenticated/_agent/admin/profils'
+      path: '/admin/profils'
+      fullPath: '/admin/profils'
+      preLoaderRoute: typeof AuthenticatedAgentAdminProfilsRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
+    '/_authenticated/_agent/admin/referentiels': {
+      id: '/_authenticated/_agent/admin/referentiels'
+      path: '/admin/referentiels'
+      fullPath: '/admin/referentiels'
+      preLoaderRoute: typeof AuthenticatedAgentAdminReferentielsRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
+    '/_authenticated/_agent/admin/unites': {
+      id: '/_authenticated/_agent/admin/unites'
+      path: '/admin/unites'
+      fullPath: '/admin/unites'
+      preLoaderRoute: typeof AuthenticatedAgentAdminUnitesRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
+    '/_authenticated/_agent/admin/utilisateurs': {
+      id: '/_authenticated/_agent/admin/utilisateurs'
+      path: '/admin/utilisateurs'
+      fullPath: '/admin/utilisateurs'
+      preLoaderRoute: typeof AuthenticatedAgentAdminUtilisateursRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
+    '/_authenticated/_agent/admin/workflows': {
+      id: '/_authenticated/_agent/admin/workflows'
+      path: '/admin/workflows'
+      fullPath: '/admin/workflows'
+      preLoaderRoute: typeof AuthenticatedAgentAdminWorkflowsRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
   }
 }
 
+interface AuthenticatedAgentRouteChildren {
+  AuthenticatedAgentDashboardRoute: typeof AuthenticatedAgentDashboardRoute
+  AuthenticatedAgentDispositifsRoute: typeof AuthenticatedAgentDispositifsRoute
+  AuthenticatedAgentFinancementsRoute: typeof AuthenticatedAgentFinancementsRoute
+  AuthenticatedAgentImputationRoute: typeof AuthenticatedAgentImputationRoute
+  AuthenticatedAgentIndicateursRoute: typeof AuthenticatedAgentIndicateursRoute
+  AuthenticatedAgentJeunesRoute: typeof AuthenticatedAgentJeunesRoute
+  AuthenticatedAgentPfEspaceRoute: typeof AuthenticatedAgentPfEspaceRoute
+  AuthenticatedAgentPlansDecaissementRoute: typeof AuthenticatedAgentPlansDecaissementRoute
+  AuthenticatedAgentProjetsRoute: typeof AuthenticatedAgentProjetsRoute
+  AuthenticatedAgentRapportsRoute: typeof AuthenticatedAgentRapportsRoute
+  AuthenticatedAgentRecouvrementRoute: typeof AuthenticatedAgentRecouvrementRoute
+  AuthenticatedAgentRemboursementsRoute: typeof AuthenticatedAgentRemboursementsRoute
+  AuthenticatedAgentSuiviRoute: typeof AuthenticatedAgentSuiviRoute
+  AuthenticatedAgentTransmissionRoute: typeof AuthenticatedAgentTransmissionRoute
+  AuthenticatedAgentAdminLocalitesRoute: typeof AuthenticatedAgentAdminLocalitesRoute
+  AuthenticatedAgentAdminParametresRoute: typeof AuthenticatedAgentAdminParametresRoute
+  AuthenticatedAgentAdminPartenairesRoute: typeof AuthenticatedAgentAdminPartenairesRoute
+  AuthenticatedAgentAdminProfilsRoute: typeof AuthenticatedAgentAdminProfilsRoute
+  AuthenticatedAgentAdminReferentielsRoute: typeof AuthenticatedAgentAdminReferentielsRoute
+  AuthenticatedAgentAdminUnitesRoute: typeof AuthenticatedAgentAdminUnitesRoute
+  AuthenticatedAgentAdminUtilisateursRoute: typeof AuthenticatedAgentAdminUtilisateursRoute
+  AuthenticatedAgentAdminWorkflowsRoute: typeof AuthenticatedAgentAdminWorkflowsRoute
+}
+
+const AuthenticatedAgentRouteChildren: AuthenticatedAgentRouteChildren = {
+  AuthenticatedAgentDashboardRoute: AuthenticatedAgentDashboardRoute,
+  AuthenticatedAgentDispositifsRoute: AuthenticatedAgentDispositifsRoute,
+  AuthenticatedAgentFinancementsRoute: AuthenticatedAgentFinancementsRoute,
+  AuthenticatedAgentImputationRoute: AuthenticatedAgentImputationRoute,
+  AuthenticatedAgentIndicateursRoute: AuthenticatedAgentIndicateursRoute,
+  AuthenticatedAgentJeunesRoute: AuthenticatedAgentJeunesRoute,
+  AuthenticatedAgentPfEspaceRoute: AuthenticatedAgentPfEspaceRoute,
+  AuthenticatedAgentPlansDecaissementRoute:
+    AuthenticatedAgentPlansDecaissementRoute,
+  AuthenticatedAgentProjetsRoute: AuthenticatedAgentProjetsRoute,
+  AuthenticatedAgentRapportsRoute: AuthenticatedAgentRapportsRoute,
+  AuthenticatedAgentRecouvrementRoute: AuthenticatedAgentRecouvrementRoute,
+  AuthenticatedAgentRemboursementsRoute: AuthenticatedAgentRemboursementsRoute,
+  AuthenticatedAgentSuiviRoute: AuthenticatedAgentSuiviRoute,
+  AuthenticatedAgentTransmissionRoute: AuthenticatedAgentTransmissionRoute,
+  AuthenticatedAgentAdminLocalitesRoute: AuthenticatedAgentAdminLocalitesRoute,
+  AuthenticatedAgentAdminParametresRoute:
+    AuthenticatedAgentAdminParametresRoute,
+  AuthenticatedAgentAdminPartenairesRoute:
+    AuthenticatedAgentAdminPartenairesRoute,
+  AuthenticatedAgentAdminProfilsRoute: AuthenticatedAgentAdminProfilsRoute,
+  AuthenticatedAgentAdminReferentielsRoute:
+    AuthenticatedAgentAdminReferentielsRoute,
+  AuthenticatedAgentAdminUnitesRoute: AuthenticatedAgentAdminUnitesRoute,
+  AuthenticatedAgentAdminUtilisateursRoute:
+    AuthenticatedAgentAdminUtilisateursRoute,
+  AuthenticatedAgentAdminWorkflowsRoute: AuthenticatedAgentAdminWorkflowsRoute,
+}
+
+const AuthenticatedAgentRouteWithChildren =
+  AuthenticatedAgentRoute._addFileChildren(AuthenticatedAgentRouteChildren)
+
+interface AuthenticatedBenefRouteChildren {
+  AuthenticatedBenefBenefDashboardRoute: typeof AuthenticatedBenefBenefDashboardRoute
+  AuthenticatedBenefMesPiecesRoute: typeof AuthenticatedBenefMesPiecesRoute
+  AuthenticatedBenefMesProjetsRoute: typeof AuthenticatedBenefMesProjetsRoute
+  AuthenticatedBenefMesRemboursementsRoute: typeof AuthenticatedBenefMesRemboursementsRoute
+}
+
+const AuthenticatedBenefRouteChildren: AuthenticatedBenefRouteChildren = {
+  AuthenticatedBenefBenefDashboardRoute: AuthenticatedBenefBenefDashboardRoute,
+  AuthenticatedBenefMesPiecesRoute: AuthenticatedBenefMesPiecesRoute,
+  AuthenticatedBenefMesProjetsRoute: AuthenticatedBenefMesProjetsRoute,
+  AuthenticatedBenefMesRemboursementsRoute:
+    AuthenticatedBenefMesRemboursementsRoute,
+}
+
+const AuthenticatedBenefRouteWithChildren =
+  AuthenticatedBenefRoute._addFileChildren(AuthenticatedBenefRouteChildren)
+
+interface AuthenticatedRouteChildren {
+  AuthenticatedAgentRoute: typeof AuthenticatedAgentRouteWithChildren
+  AuthenticatedBenefRoute: typeof AuthenticatedBenefRouteWithChildren
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAgentRoute: AuthenticatedAgentRouteWithChildren,
+  AuthenticatedBenefRoute: AuthenticatedBenefRouteWithChildren,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport

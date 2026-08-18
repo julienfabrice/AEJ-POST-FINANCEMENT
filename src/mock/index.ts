@@ -1,2 +1,5 @@
 export * from './jeunes.mock'
 export * from './projets.mock'
+export * from './dashboard/recent.mock'
+export * from './dashboard/stats.mock'
+export * from './projets/stats.mock'

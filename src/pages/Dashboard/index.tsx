@@ -2,7 +2,7 @@ import { MODULES } from '@/constants/modules'
 import { useAuthStore } from '@/store/useAuthStore'
 import { AgentDashboard } from './AgentDashboard'
 import { BenefDashboard } from './BenefDashboard'
-import { GuichetsDashboard } from './GuichetsDashboard'
+import { AdminDashboard } from './AdminDashboard'
 
 export function DashboardController() {
   const space = useAuthStore((s) => s.space())

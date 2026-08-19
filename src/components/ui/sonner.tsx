@@ -1,24 +1,45 @@
-import { Toaster as Sonner } from 'sonner'
-import type { ComponentProps } from 'react'
+import {
+  CircleCheckIcon,
+  InfoIcon,
+  Loader2Icon,
+  OctagonXIcon,
+  TriangleAlertIcon,
+} from "lucide-react"
+import { useTheme } from "next-themes"
+import { Toaster as Sonner, type ToasterProps } from "sonner"
 
-type ToasterProps = ComponentProps<typeof Sonner>
+const Toaster = ({ ...props }: ToasterProps) => {
+  const { theme = "system" } = useTheme()
 
-export function Toaster({ ...props }: ToasterProps) {
   return (
     <Sonner
+      theme={theme as ToasterProps["theme"]}
       className="toaster group"
-      position="top-right"
+      icons={{
+        success: <CircleCheckIcon className="size-4" />,
+        info: <InfoIcon className="size-4" />,
+        warning: <TriangleAlertIcon className="size-4" />,
+        error: <OctagonXIcon className="size-4" />,
+        loading: <Loader2Icon className="size-4 animate-spin" />,
+      }}
+      style={
+        {
+          "--normal-bg": "#ffffff",
+          "--normal-text": "#131C29",
+          "--normal-border": "#E5EAF1",
+          "--border-radius": "8px",
+        } as React.CSSProperties
+      }
       toastOptions={{
         classNames: {
-          toast:
-            'group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg',
-          description: 'group-[.toast]:text-muted-foreground',
-          actionButton: 'group-[.toast]:bg-primary group-[.toast]:text-primary-foreground',
-          cancelButton: 'group-[.toast]:bg-muted group-[.toast]:text-muted-foreground',
-          error: 'group-[.toaster]:border-destructive/30',
-        },
+          toast: "shadow-lg border border-slate-200",
+          actionButton: "bg-[#E7722B] text-white hover:bg-[#d6621a]",
+          cancelButton: "bg-slate-100 text-slate-600 hover:bg-slate-200",
+        }
       }}
       {...props}
     />
   )
 }
+
+export { Toaster }

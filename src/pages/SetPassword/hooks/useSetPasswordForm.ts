@@ -7,10 +7,12 @@ import { toast } from 'sonner'
 import { ROUTES } from '@/constants/routes'
 import { useResetPasswordMutation } from '@/hooks/auth.hooks'
 import { useSetPasswordSchema, type SetPasswordFormValues } from '@/schema/password.schema'
+import type { PASSWORD_LINK_MODE_T } from '@/types/auth.types'
+import { SET_PASSWORD_COPY } from '../copy'
 
 export function useSetPasswordForm(
-  uid: string,
   token: string,
+  mode: PASSWORD_LINK_MODE_T,
 ): {
   form: UseFormReturn<SetPasswordFormValues>
   onSubmit: (e?: BaseSyntheticEvent) => Promise<void>
@@ -19,7 +21,8 @@ export function useSetPasswordForm(
 } {
   const navigate = useNavigate()
   const schema = useSetPasswordSchema()
-  const { mutateAsync: setPassword } = useResetPasswordMutation()
+  // Le `mode` sélectionne l'endpoint : `/password/set` ou `/password/reset`.
+  const { mutateAsync: submitPassword } = useResetPasswordMutation(mode)
 
   const form = useForm<SetPasswordFormValues>({
     resolver: zodResolver(schema),
@@ -28,10 +31,11 @@ export function useSetPasswordForm(
 
   const submit = async (values: SetPasswordFormValues) => {
     try {
-      // `uid` / `token` viennent de l'URL, pas du formulaire : ils identifient
-      // l'utilisateur à la place d'une session.
-      await setPassword({ ...values, uid, token })
-      toast.success('Mot de passe réinitialisé avec succès')
+      // Le backend n'attend qu'un `password` : la confirmation ne sert qu'à la
+      // validation côté client. Le `token`, lui, vient de l'URL — c'est lui qui
+      // identifie l'utilisateur à la place d'une session.
+      await submitPassword({ password: values.new_password, token })
+      toast.success(SET_PASSWORD_COPY[mode].toast)
       await navigate({ to: ROUTES.LOGIN, replace: true })
     } catch {
       form.setError('root', {

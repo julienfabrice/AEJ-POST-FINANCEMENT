@@ -54,7 +54,11 @@ export const useLogin = () => {
       return result
     },
     onSuccess: (result) => {
-      if (result.otpRequired) setPending(result.userId)
+      // L'email vient de la RÉPONSE du backend, pas du formulaire : c'est lui
+      // qui fait autorité pour la suite du défi.
+      if (result.otpRequired) {
+        setPending({ email: result.email, hasPhone: result.hasPhone })
+      }
     },
   })
 }
@@ -69,11 +73,13 @@ export const useVerifyOtp = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (code: string) => {
-      const userId = useAuthFlowStore.getState().pendingUserId
-      if (!userId) throw new Error('Aucune connexion en attente.')
+    // `mode` = le canal réellement utilisé pour l'envoi ; le backend l'exige
+    // pour retrouver le code émis.
+    mutationFn: async ({ code, mode }: { code: string; mode: OTP_METHOD_T }) => {
+      const pending = useAuthFlowStore.getState().pending
+      if (!pending) throw new Error('Aucune connexion en attente.')
 
-      await authServices.verifyOtp({ code, user_id: userId })
+      await authServices.verifyOtp({ code, email: pending.email, mode })
       const user = await authServices.me()
       queryClient.setQueryData(AUTH_ME_KEY, user)
       setSession(user)
@@ -89,20 +95,21 @@ export const useVerifyOtp = () => {
  */
 export const useSendOtp = () =>
   useMutation({
-    mutationFn: async (method: OTP_METHOD_T) => {
-      const userId = useAuthFlowStore.getState().pendingUserId
-      if (!userId) throw new Error('Aucune connexion en attente.')
-      await authServices.sendOtp(userId, method)
+    mutationFn: async (mode: OTP_METHOD_T) => {
+      const pending = useAuthFlowStore.getState().pending
+      if (!pending) throw new Error('Aucune connexion en attente.')
+      await authServices.sendOtp(pending.email, mode)
     },
   })
 
 /**
- * Écran 1 — demande du lien envoyé par email. Le `mode` (`forgot` | `setup`)
- * ne sélectionne que l'endpoint ; le formulaire est le même.
+ * Écran 1 — demande d'un lien de réinitialisation (compte existant uniquement).
+ * Pas d'équivalent « première connexion » : le lien d'activation part à la
+ * création du compte, côté backend.
  */
-export const useResetLinkMutation = (mode: PASSWORD_LINK_MODE_T) =>
+export const useResetLinkMutation = () =>
   useMutation({
-    mutationFn: (email: string) => authServices.requestResetLink(email, mode),
+    mutationFn: (email: string) => authServices.requestResetLink(email),
   })
 
 /**
@@ -110,9 +117,11 @@ export const useResetLinkMutation = (mode: PASSWORD_LINK_MODE_T) =>
  * `uid` / `token` extrait du lien. Aucune session n'est ouverte : l'utilisateur
  * repart de l'écran de connexion.
  */
-export const useResetPasswordMutation = () =>
+export const useResetPasswordMutation = (mode: PASSWORD_LINK_MODE_T) =>
   useMutation({
-    mutationFn: (payload: SET_PASSWORD_PAYLOAD_T) => authServices.setPassword(payload),
+    // Deux endpoints distincts — le `mode` porté par le lien choisit lequel.
+    mutationFn: (payload: SET_PASSWORD_PAYLOAD_T) =>
+      mode === 'setup' ? authServices.setPassword(payload) : authServices.resetPassword(payload),
   })
 
 /** Déconnexion : invalide la session serveur, puis purge le cache client. */

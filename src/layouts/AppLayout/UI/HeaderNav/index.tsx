@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useRouterState } from '@tanstack/react-router'
 import { Bell } from 'lucide-react'
 import { AGENT_NAV_ITEMS, AGENT_NAV_GROUPS, BENEF_NAV_ITEMS } from '@/constants/routes'
@@ -10,8 +11,18 @@ import { UserProfileMenu } from './UserProfileMenu'
 
 export function HeaderNav() {
   const isBenef = useAuthStore((s) => s.space() === 'entreprise')
+  const can = useAuthStore((s) => s.can)
+  // `can` est une référence stable : on s'abonne aussi à l'index lui-même pour
+  // que le menu se recalcule quand les droits changent (login, /me rafraîchi).
+  const permissions = useAuthStore((s) => s.permissions)
   const router = useRouterState()
   const currentPath = router.location.pathname
+
+  // Un item sans `module` reste toujours visible (ex. le tableau de bord).
+  const visibleAgentItems = useMemo(
+    () => AGENT_NAV_ITEMS.filter((item) => !item.module || can(item.module, 'v')),
+    [can, permissions],
+  )
 
   return (
     <header className="sticky top-0 z-40 bg-[#131C29] text-[#cdd7e4] flex items-center gap-[6px] px-5 h-[60px] shadow-lg shrink-0 before:absolute before:inset-x-0 before:bottom-0 before:h-[3px] before:bg-gradient-to-r before:from-[#E7722B] before:via-white before:to-[#20A83A]">
@@ -25,7 +36,8 @@ export function HeaderNav() {
           ))
         ) : (
           AGENT_NAV_GROUPS.map((group) => {
-            const items = AGENT_NAV_ITEMS.filter((item) => item.group === group)
+            const items = visibleAgentItems.filter((item) => item.group === group)
+            // Un groupe dont tous les modules sont refusés disparaît entièrement.
             if (!items.length) return null
 
             if (group === 'PILOTAGE') {

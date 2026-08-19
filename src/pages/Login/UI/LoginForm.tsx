@@ -90,7 +90,6 @@ export function LoginForm() {
               
               <Link
                 to={ROUTES.FORGOT_PASSWORD}
-                search={{ mode: 'forgot' as const }}
                 className="text-sm font-medium text-[#E7722B] hover:text-[#C85E18]"
               >
                 Mot de passe oublié ?
@@ -107,22 +106,11 @@ export function LoginForm() {
           </form>
         </Form>
 
-        {/* Première connexion : même écran que « mot de passe oublié », en mode
-            `setup` — l'utilisateur reçoit un lien d'activation par email. */}
-        <p className="mt-6 text-center text-sm text-muted-foreground">
-          Première connexion ?{' '}
-          <Link
-            to={ROUTES.FORGOT_PASSWORD}
-            search={{ mode: 'setup' as const }}
-            className="font-medium text-[#E7722B] hover:text-[#C85E18]"
-          >
-            Définissez votre mot de passe
-          </Link>
-        </p>
-
-        <p className="text-xs text-center text-muted-foreground mt-8">
+        {/* Pas de lien « première connexion » : le lien d'activation est envoyé
+            par le backend à la création du compte, il ne se demande pas ici. */}
+        {/* <p className="text-xs text-center text-muted-foreground mt-8">
           Prototype de démonstration · données fictives
-        </p>
+        </p> */}
       </div>
     </div>
   )

@@ -9,35 +9,39 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { PasswordInput } from '@/components/ui/password-input'
+import type { PASSWORD_LINK_MODE_T } from '@/types/auth.types'
 import { LoginBrand } from '../Login/UI/LoginBrand'
+import { SET_PASSWORD_COPY } from './copy'
 import { useSetPasswordForm } from './hooks/useSetPasswordForm'
 import { InvalidLink } from './components/InvalidLink'
 
 interface SetPasswordPageProps {
-  uid?: string
   token?: string
+  /** Porté par le lien email (`?mode=setup|forgot`) — affichage + endpoint. */
+  mode: PASSWORD_LINK_MODE_T
 }
 
 /**
  * Écran 2 du parcours mot de passe — atteint UNIQUEMENT par le lien reçu par
- * email (`/set-password/{uid}/{token}`), quel que soit le mode d'origine
- * (`forgot` ou `setup`) : les deux parcours convergent ici.
+ * email (`/setup-password?mode=…&token=…`). Les deux parcours convergent sur cet
+ * écran ; le `mode` en change les textes et l'endpoint appelé.
  */
-export function SetPasswordPage({ uid, token }: SetPasswordPageProps) {
+export function SetPasswordPage({ token, mode }: SetPasswordPageProps) {
   return (
     <div className="fixed inset-0 z-50 grid grid-cols-1 bg-background text-foreground md:grid-cols-2">
       <LoginBrand />
       <div className="flex min-h-screen items-center justify-center bg-muted/30 p-6">
         <div className="w-full max-w-md rounded-xl border border-border bg-card p-8 shadow-sm">
-          {!uid || !token ? <InvalidLink /> : <SetPasswordForm uid={uid} token={token} />}
+          {token ? <SetPasswordForm token={token} mode={mode} /> : <InvalidLink />}
         </div>
       </div>
     </div>
   )
 }
 
-function SetPasswordForm({ uid, token }: { uid: string; token: string }) {
-  const { form, onSubmit, isSubmitting, errorMessage } = useSetPasswordForm(uid, token)
+function SetPasswordForm({ token, mode }: { token: string; mode: PASSWORD_LINK_MODE_T }) {
+  const { form, onSubmit, isSubmitting, errorMessage } = useSetPasswordForm(token, mode)
+  const copy = SET_PASSWORD_COPY[mode]
 
   return (
     <>
@@ -45,10 +49,8 @@ function SetPasswordForm({ uid, token }: { uid: string; token: string }) {
         <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-[#E7722B]/10">
           <KeyRound className="size-6 text-[#E7722B]" />
         </div>
-        <h1 className="mb-2 text-2xl font-extrabold">Choisissez votre mot de passe</h1>
-        <p className="text-sm text-muted-foreground">
-          Il vous servira à vous connecter à la plateforme. Choisissez-le robuste.
-        </p>
+        <h1 className="mb-2 text-2xl font-extrabold">{copy.title}</h1>
+        <p className="text-sm text-muted-foreground">{copy.description}</p>
       </div>
 
       <Form {...form}>
@@ -104,7 +106,7 @@ function SetPasswordForm({ uid, token }: { uid: string; token: string }) {
             disabled={isSubmitting}
             className="h-12 w-full cursor-pointer bg-[#E7722B] text-base font-semibold text-white hover:bg-[#C85E18]"
           >
-            {isSubmitting ? 'Enregistrement…' : 'Enregistrer le mot de passe'}
+            {isSubmitting ? 'Enregistrement…' : copy.submitLabel}
           </Button>
         </form>
       </Form>

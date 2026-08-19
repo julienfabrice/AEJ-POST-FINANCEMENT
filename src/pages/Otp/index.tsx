@@ -12,6 +12,7 @@ export function OtpPage() {
     method,
     onSelectMethod,
     onSendCode,
+    hasPhone,
     codeSent,
     sentTo,
     code,
@@ -26,7 +27,7 @@ export function OtpPage() {
     validityLabel,
   } = useOtpChallenge()
 
-  const channelLabel = sentTo === 'email' ? 'email' : 'SMS'
+  const channelLabel = sentTo === 'MAIL' ? 'email' : 'WhatsApp'
 
   return (
     <div className="fixed inset-0 grid grid-cols-1 md:grid-cols-2 z-50 bg-background text-foreground">
@@ -53,7 +54,12 @@ export function OtpPage() {
             </p>
           </div>
 
-          <MethodPicker value={method} onSelect={onSelectMethod} disabled={isSending || isVerifying} />
+          <MethodPicker
+            value={method}
+            onSelect={onSelectMethod}
+            disabled={isSending || isVerifying}
+            hasPhone={hasPhone}
+          />
 
           {/* Étape 1 — le code ne part qu'à la validation du choix. */}
           {!codeSent && (
@@ -115,9 +121,9 @@ export function OtpPage() {
                   {canResend ? 'Renvoyer le code' : `Renvoyer le code (${resendIn} s)`}
                 </Button>
                 <span className="text-xs text-muted-foreground">
-                  {sentTo === 'email'
+                  {sentTo === 'MAIL'
                     ? 'Vérifiez vos courriers indésirables si le code tarde à arriver.'
-                    : 'Le SMS peut prendre quelques instants à arriver.'}
+                    : 'Le message WhatsApp peut prendre quelques instants à arriver.'}
                 </span>
               </div>
             </>

@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 import { useSendOtp, useVerifyOtp } from '@/hooks/auth.hooks'
 import { ROUTES } from '@/constants/routes'
 import { OTP_CONFIG, formatCountdown } from '@/constants/security'
+import { useAuthFlowStore } from '@/store/useAuthFlowStore'
 import type { OTP_METHOD_T } from '@/types/auth.types'
 import { useCountdown } from './useCountdown'
 
@@ -23,6 +24,8 @@ export function useOtpChallenge() {
   const navigate = useNavigate()
   const verify = useVerifyOtp()
   const send = useSendOtp()
+  // `has_phone` vient de la réponse de login : sans numéro, pas de WhatsApp.
+  const hasPhone = useAuthFlowStore((s) => s.pending?.hasPhone ?? false)
 
   const resend = useCountdown()
   const expiry = useCountdown()
@@ -77,7 +80,7 @@ export function useOtpChallenge() {
         submittedRef.current = ''
         resend.start(OTP_CONFIG.resendCooldownSeconds)
         expiry.start(OTP_CONFIG.ttlSeconds)
-        toast.success(method === 'email' ? 'Code envoyé par email' : 'Code envoyé par SMS')
+        toast.success(method === 'MAIL' ? 'Code envoyé par email' : 'Code envoyé par WhatsApp')
       },
       onError: () => toast.error("Impossible d'envoyer le code. Réessayez."),
     })
@@ -85,21 +88,26 @@ export function useOtpChallenge() {
 
   const submit = useCallback(
     (value: string) => {
-      if (submittedRef.current === value) return
+      // `sentTo` est le canal effectivement utilisé — pas `method`, qui peut
+      // avoir été changé sans nouvel envoi.
+      if (!sentTo || submittedRef.current === value) return
       submittedRef.current = value
 
-      verify.mutate(value, {
-        onSuccess: () => {
-          void navigate({ to: ROUTES.DASHBOARD, replace: true })
+      verify.mutate(
+        { code: value, mode: sentTo },
+        {
+          onSuccess: () => {
+            void navigate({ to: ROUTES.DASHBOARD, replace: true })
+          },
+          onError: () => {
+            toast.error('Code invalide ou expiré')
+            setCode('')
+            submittedRef.current = ''
+          },
         },
-        onError: () => {
-          toast.error('Code invalide ou expiré')
-          setCode('')
-          submittedRef.current = ''
-        },
-      })
+      )
     },
-    [navigate, verify],
+    [navigate, verify, sentTo],
   )
 
   // Auto-soumission dès le dernier chiffre — sauf code expiré.
@@ -113,6 +121,7 @@ export function useOtpChallenge() {
     method,
     onSelectMethod,
     onSendCode,
+    hasPhone,
     /** Un code a bien été expédié : la saisie s'ouvre. */
     codeSent,
     sentTo,

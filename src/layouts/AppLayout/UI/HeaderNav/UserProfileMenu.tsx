@@ -8,6 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { ROUTES } from '@/constants/routes'
 import { useLogout } from '@/hooks/auth.hooks'
 import { useAuthStore } from '@/store/useAuthStore'
 import { cn } from '@/lib/utils'
@@ -113,7 +114,7 @@ export function UserProfileMenu() {
             className="cursor-pointer rounded-lg px-3 py-2.5"
           >
             <Link
-              to={'.'}
+              to={ROUTES.COMPTE}
               className="flex items-center gap-3"
             >
               <div className="flex size-7 items-center justify-center rounded-md bg-muted">

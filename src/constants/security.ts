@@ -55,13 +55,16 @@ export const PASSWORD_RULES = [
 ] as const
 
 /**
- * Lien mot de passe envoyé par email (`/set-password/{uid}/{token}`).
+ * Lien mot de passe envoyé par email (`/setup-password?mode=…&token=…`).
  * Même réserve que ci-dessus : valeur annoncée à l'utilisateur, appliquée par
  * le serveur.
  */
 export const RESET_LINK_CONFIG = {
-  /** Durée de validité du lien, en minutes. */
-  ttlMinutes: 15,
+  /**
+   * Durée de validité du lien, en JOURS. Portée à 3 jours côté backend : le
+   * lien n'est plus une contrainte de temps forte, on l'annonce simplement.
+   */
+  ttlDays: 3,
   /** Délai avant de pouvoir redemander un lien, en secondes. */
   resendCooldownSeconds: 60,
 } as const

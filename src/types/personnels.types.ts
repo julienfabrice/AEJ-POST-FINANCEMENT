@@ -1,5 +1,7 @@
 
 
+import type { PERMISSION_T } from '@/types/permissions.types'
+
 export interface ROLE_T {
   id: number
   code: string
@@ -58,4 +60,10 @@ export interface PERSONNEL_T {
   fonction: FONCTION_T | null
   agence: AGENCE_T | null
   organisme: ORGANISME_T | null
+
+  /**
+   * Permissions du compte, déjà portées à son rôle par le backend. C'est la
+   * SEULE source des droits côté frontend — le rôle ne donne aucune capacité.
+   */
+  permissions: PERMISSION_T[]
 }

@@ -6,6 +6,8 @@ import { useNavigate, useSearch } from '@tanstack/react-router'
 import { loginSchema, type LoginFormValues } from '@/schema/auth.schema'
 import { useLogin } from '@/hooks/auth.hooks'
 import { ROUTES } from '@/constants/routes'
+import { resolveHome } from '@/lib/resolveHome'
+import { useAuthStore } from '@/store/useAuthStore'
 
 export function useLoginForm(): {
   form: UseFormReturn<LoginFormValues>
@@ -41,7 +43,9 @@ export function useLoginForm(): {
         return
       }
         
-      await navigate({ to: redirect ?? ROUTES.DASHBOARD, replace: true })
+      // Le rôle ne choisit QUE l'atterrissage — jamais les droits.
+      const home = resolveHome(useAuthStore.getState().user)
+      await navigate({ to: redirect ?? home, replace: true })
     } catch (error){
       // Erreur de formulaire et non de champ : `root` est vidé automatiquement
       // à chaque nouvelle soumission.

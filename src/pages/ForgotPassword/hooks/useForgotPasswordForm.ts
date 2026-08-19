@@ -6,14 +6,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import { useResetLinkMutation } from '@/hooks/auth.hooks'
 import { RESET_LINK_CONFIG } from '@/constants/security'
-import {
-  useForgotPasswordSchema,
-  type ForgotPasswordFormValues,
-} from '@/schema/password.schema'
-import type { PASSWORD_LINK_MODE_T } from '@/types/auth.types'
+import { useForgotPasswordSchema, type ForgotPasswordFormValues } from '@/schema/password.schema'
 import { FORGOT_COPY } from '../copy'
 
-export function useForgotPasswordForm(mode: PASSWORD_LINK_MODE_T): {
+export function useForgotPasswordForm(): {
   form: UseFormReturn<ForgotPasswordFormValues>
   onSubmit: (e?: BaseSyntheticEvent) => Promise<void>
   isSubmitting: boolean
@@ -25,9 +21,10 @@ export function useForgotPasswordForm(mode: PASSWORD_LINK_MODE_T): {
   canResend: boolean
 } {
   const schema = useForgotPasswordSchema()
-  const { mutateAsync: requestLink, isPending } = useResetLinkMutation(mode)
+  const { mutateAsync: requestLink, isPending } = useResetLinkMutation()
 
-  
+  // On NE navigue PAS après l'envoi : l'écran bascule en confirmation, ce qui
+  // permet de renvoyer le lien sans repasser par le formulaire.
   const [sentTo, setSentTo] = useState<string>()
   const [resendIn, setResendIn] = useState(0)
 
@@ -46,7 +43,7 @@ export function useForgotPasswordForm(mode: PASSWORD_LINK_MODE_T): {
     await requestLink(email)
     setSentTo(email)
     setResendIn(RESET_LINK_CONFIG.resendCooldownSeconds)
-    toast.success(FORGOT_COPY[mode].toast)
+    toast.success(FORGOT_COPY.toast)
   }
 
   const submit = async (values: ForgotPasswordFormValues) => {
@@ -61,7 +58,7 @@ export function useForgotPasswordForm(mode: PASSWORD_LINK_MODE_T): {
 
   const onResend = () => {
     if (!sentTo || resendIn > 0 || isPending) return
-    void send(sentTo).catch(() => toast.error("Impossible de renvoyer le lien. Réessayez."))
+    void send(sentTo).catch(() => toast.error('Impossible de renvoyer le lien. Réessayez.'))
   }
 
   return {

@@ -9,14 +9,12 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { RESET_LINK_CONFIG } from '@/constants/security'
-import type { PASSWORD_LINK_MODE_T } from '@/types/auth.types'
 import { FORGOT_COPY } from '../copy'
 import { useForgotPasswordForm } from '../hooks/useForgotPasswordForm'
 
-export function ForgotPasswordForm({ mode }: { mode: PASSWORD_LINK_MODE_T }) {
+export function ForgotPasswordForm() {
   const { form, onSubmit, isSubmitting, errorMessage, sentTo, onResend, resendIn, canResend } =
-    useForgotPasswordForm(mode)
-  const copy = FORGOT_COPY[mode]
+    useForgotPasswordForm()
 
   return (
     <Form {...form}>
@@ -55,16 +53,16 @@ export function ForgotPasswordForm({ mode }: { mode: PASSWORD_LINK_MODE_T }) {
           disabled={isSubmitting}
           className="h-12 w-full cursor-pointer bg-[#E7722B] text-base font-semibold text-white hover:bg-[#C85E18]"
         >
-          {isSubmitting ? 'Envoi…' : copy.submitLabel}
+          {isSubmitting ? 'Envoi…' : FORGOT_COPY.submitLabel}
         </Button>
 
         {/* Une fois le lien parti : rappel anti-spam + renvoi, sans quitter l'écran. */}
         {sentTo && (
           <p className="text-sm leading-relaxed text-muted-foreground" role="status" aria-live="polite">
             Lien envoyé à <span className="font-medium text-foreground">{sentTo}</span>, valable{' '}
-            {RESET_LINK_CONFIG.ttlMinutes} minutes.
+            {RESET_LINK_CONFIG.ttlDays} jours.
             <br />
-            {copy.resend}{' '}
+            {FORGOT_COPY.resend}{' '}
             <button
               type="button"
               onClick={onResend}

@@ -21,6 +21,7 @@ import {
   Settings,
   type LucideIcon,
 } from 'lucide-react'
+import { MODULES, type ModuleKey } from '@/constants/modules'
 
 export const ROUTES = {
   LOGIN: '/login',
@@ -28,8 +29,10 @@ export const ROUTES = {
   OTP: '/2fa',
   /** Écran 1 — demande du lien. `?mode=forgot` (défaut) ou `?mode=setup`. */
   FORGOT_PASSWORD: '/forgot-password',
-  /** Écran 2 — cible du lien email : `/set-password/{uid}/{token}`. */
-  SET_PASSWORD: '/set-password/$uid/$token',
+  /** Écran 2 — cible du lien email : `/setup-password?mode=…&token=…`. */
+  SET_PASSWORD: '/setup-password',
+  /** Compte de l'utilisateur connecté — accessible à tous, sans permission. */
+  COMPTE: '/compte',
   // Pilotage (Agent)
   HOME: '/dashboard',
   DASHBOARD: '/dashboard',
@@ -74,37 +77,42 @@ export interface NavItem {
   path: AppRoute
   icon: LucideIcon
   group: string
+  /**
+   * Module de permission conditionnant l'affichage. Absent = toujours visible
+   * (ex. le tableau de bord). Jamais une chaîne libre : toujours `MODULES.*`.
+   */
+  module?: ModuleKey
 }
 
 export const AGENT_NAV_ITEMS: NavItem[] = [
   // PILOTAGE
-  { key: 'guichets_home', label: 'Guichets', path: ROUTES.HOME, icon: Building2, group: 'PILOTAGE' },
+  { key: 'guichets_home', label: 'Guichets', path: ROUTES.HOME, icon: Building2, group: 'PILOTAGE', module: MODULES.GUICHETS },
   { key: 'dashboard', label: 'Tableau de bord', path: ROUTES.DASHBOARD, icon: LayoutDashboard, group: 'PILOTAGE' },
-  { key: 'dispositifs', label: 'Procédures', path: ROUTES.DISPOSITIFS, icon: GitBranch, group: 'PILOTAGE' },
+  { key: 'dispositifs', label: 'Procédures', path: ROUTES.DISPOSITIFS, icon: GitBranch, group: 'PILOTAGE', module: MODULES.DISPOSITIFS },
   // CIRCUIT DE FINANCEMENT
-  { key: 'transmission', label: 'Transmission par lot', path: ROUTES.TRANSMISSION, icon: ArrowUpFromLine, group: 'CIRCUIT DE FINANCEMENT' },
-  { key: 'pf_espace', label: 'Espace partenaire financier', path: ROUTES.PF_ESPACE, icon: Landmark, group: 'CIRCUIT DE FINANCEMENT' },
-  { key: 'imputation', label: 'Imputation aux agences', path: ROUTES.IMPUTATION, icon: MapPin, group: 'CIRCUIT DE FINANCEMENT' },
-  { key: 'plans_dec', label: 'Plans de décaissement', path: ROUTES.PLANS_DECAISSEMENT, icon: Wallet, group: 'CIRCUIT DE FINANCEMENT' },
-  { key: 'recouvrement', label: 'Recouvrement & garanties', path: ROUTES.RECOUVREMENT, icon: RefreshCcw, group: 'CIRCUIT DE FINANCEMENT' },
+  { key: 'transmission', label: 'Transmission par lot', path: ROUTES.TRANSMISSION, icon: ArrowUpFromLine, group: 'CIRCUIT DE FINANCEMENT', module: MODULES.TRANSMISSION },
+  { key: 'pf_espace', label: 'Espace partenaire financier', path: ROUTES.PF_ESPACE, icon: Landmark, group: 'CIRCUIT DE FINANCEMENT', module: MODULES.PF_ESPACE },
+  { key: 'imputation', label: 'Imputation aux agences', path: ROUTES.IMPUTATION, icon: MapPin, group: 'CIRCUIT DE FINANCEMENT', module: MODULES.IMPUTATION },
+  { key: 'plans_dec', label: 'Plans de décaissement', path: ROUTES.PLANS_DECAISSEMENT, icon: Wallet, group: 'CIRCUIT DE FINANCEMENT', module: MODULES.PLANS_DEC },
+  { key: 'recouvrement', label: 'Recouvrement & garanties', path: ROUTES.RECOUVREMENT, icon: RefreshCcw, group: 'CIRCUIT DE FINANCEMENT', module: MODULES.RECOUVREMENT },
   // OPÉRATIONS
-  { key: 'jeunes', label: 'Promoteurs (porteurs)', path: ROUTES.JEUNES, icon: Users, group: 'OPÉRATIONS' },
-  { key: 'projets', label: 'Micro-projets', path: ROUTES.PROJETS, icon: FolderOpen, group: 'OPÉRATIONS' },
-  { key: 'financements', label: 'Financements', path: ROUTES.FINANCEMENTS, icon: Banknote, group: 'OPÉRATIONS' },
-  { key: 'remboursements', label: 'Remboursements', path: ROUTES.REMBOURSEMENTS, icon: RefreshCcw, group: 'OPÉRATIONS' },
-  { key: 'indicateurs', label: 'Indicateurs & suivi', path: ROUTES.INDICATEURS, icon: BarChart3, group: 'OPÉRATIONS' },
+  { key: 'jeunes', label: 'Promoteurs (porteurs)', path: ROUTES.JEUNES, icon: Users, group: 'OPÉRATIONS', module: MODULES.JEUNES },
+  { key: 'projets', label: 'Micro-projets', path: ROUTES.PROJETS, icon: FolderOpen, group: 'OPÉRATIONS', module: MODULES.PROJETS },
+  { key: 'financements', label: 'Financements', path: ROUTES.FINANCEMENTS, icon: Banknote, group: 'OPÉRATIONS', module: MODULES.FINANCEMENTS },
+  { key: 'remboursements', label: 'Remboursements', path: ROUTES.REMBOURSEMENTS, icon: RefreshCcw, group: 'OPÉRATIONS', module: MODULES.REMBOURSEMENTS },
+  { key: 'indicateurs', label: 'Indicateurs & suivi', path: ROUTES.INDICATEURS, icon: BarChart3, group: 'OPÉRATIONS', module: MODULES.INDICATEURS },
   // SUIVI & ÉVALUATION
-  { key: 'suivi', label: 'Suivi & exploitation', path: ROUTES.SUIVI, icon: Eye, group: 'SUIVI & ÉVALUATION' },
-  { key: 'rapports', label: 'Rapports', path: ROUTES.RAPPORTS, icon: FileText, group: 'SUIVI & ÉVALUATION' },
+  { key: 'suivi', label: 'Suivi & exploitation', path: ROUTES.SUIVI, icon: Eye, group: 'SUIVI & ÉVALUATION', module: MODULES.SUIVI },
+  { key: 'rapports', label: 'Rapports', path: ROUTES.RAPPORTS, icon: FileText, group: 'SUIVI & ÉVALUATION', module: MODULES.RAPPORTS },
   // ADMINISTRATION
-  { key: 'admin_profils', label: 'Profils & permissions', path: ROUTES.ADMIN_PROFILS, icon: Shield, group: 'ADMINISTRATION' },
-  { key: 'admin_utilisateurs', label: 'Utilisateurs', path: ROUTES.ADMIN_UTILISATEURS, icon: Users, group: 'ADMINISTRATION' },
-  { key: 'admin_localites', label: 'Localités', path: ROUTES.ADMIN_LOCALITES, icon: Globe, group: 'ADMINISTRATION' },
-  { key: 'admin_unites', label: 'Unités de gestion', path: ROUTES.ADMIN_UNITES, icon: Boxes, group: 'ADMINISTRATION' },
-  { key: 'admin_partenaires', label: 'Partenaires financiers', path: ROUTES.ADMIN_PARTENAIRES, icon: Landmark, group: 'ADMINISTRATION' },
-  { key: 'admin_referentiels', label: 'Référentiels métier', path: ROUTES.ADMIN_REFERENTIELS, icon: Tags, group: 'ADMINISTRATION' },
-  { key: 'admin_workflows', label: 'Paramétrage des workflows', path: ROUTES.ADMIN_WORKFLOWS, icon: Workflow, group: 'ADMINISTRATION' },
-  { key: 'admin_parametres', label: 'Paramètres système', path: ROUTES.ADMIN_PARAMETRES, icon: Settings, group: 'ADMINISTRATION' },
+  { key: 'admin_profils', label: 'Profils & permissions', path: ROUTES.ADMIN_PROFILS, icon: Shield, group: 'ADMINISTRATION', module: MODULES.PROFILS },
+  { key: 'admin_utilisateurs', label: 'Utilisateurs', path: ROUTES.ADMIN_UTILISATEURS, icon: Users, group: 'ADMINISTRATION', module: MODULES.UTILISATEURS },
+  { key: 'admin_localites', label: 'Localités', path: ROUTES.ADMIN_LOCALITES, icon: Globe, group: 'ADMINISTRATION', module: MODULES.LOCALITES },
+  { key: 'admin_unites', label: 'Unités de gestion', path: ROUTES.ADMIN_UNITES, icon: Boxes, group: 'ADMINISTRATION', module: MODULES.UNITES },
+  { key: 'admin_partenaires', label: 'Partenaires financiers', path: ROUTES.ADMIN_PARTENAIRES, icon: Landmark, group: 'ADMINISTRATION', module: MODULES.PARTENAIRES },
+  { key: 'admin_referentiels', label: 'Référentiels métier', path: ROUTES.ADMIN_REFERENTIELS, icon: Tags, group: 'ADMINISTRATION', module: MODULES.REFERENTIELS },
+  { key: 'admin_workflows', label: 'Paramétrage des workflows', path: ROUTES.ADMIN_WORKFLOWS, icon: Workflow, group: 'ADMINISTRATION', module: MODULES.WORKFLOWS },
+  { key: 'admin_parametres', label: 'Paramètres système', path: ROUTES.ADMIN_PARAMETRES, icon: Settings, group: 'ADMINISTRATION', module: MODULES.PARAMETRES },
 ]
 
 export const BENEF_NAV_ITEMS: NavItem[] = [
@@ -125,6 +133,7 @@ export const AGENT_NAV_GROUPS = [
 
 export const PAGE_TITLES: Partial<Record<AppRoute, string>> = {
   [ROUTES.LOGIN]: 'Connexion',
+  [ROUTES.COMPTE]: 'Mon compte',
   [ROUTES.DASHBOARD]: 'Tableau de bord',
   [ROUTES.DISPOSITIFS]: 'Procédures',
   [ROUTES.TRANSMISSION]: 'Transmission par lot',

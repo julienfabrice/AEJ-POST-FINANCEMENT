@@ -83,3 +83,11 @@ export interface INDICATEUR_T {
   created_at?: string
   updated_at?: string
 }
+
+export interface TYPE_ENTREPRISE_T {
+  id: number
+  code: string
+  libelle: string
+  created_at?: string
+  updated_at?: string
+}

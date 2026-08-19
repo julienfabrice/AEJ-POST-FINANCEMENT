@@ -9,9 +9,9 @@ import { useSousSecteursGrid } from './useSousSecteursGrid'
 import { usePiecesIdentiteGrid } from './usePiecesIdentiteGrid'
 import { useSituationsMatrimonialesGrid } from './useSituationsMatrimonialesGrid'
 import { useIndicateursGrid } from './useIndicateursGrid'
+import { useTypeEntreprisesGrid } from './useTypeEntreprisesGrid'
 
 import {
-  MOCK_TYPE_ENTREPRISES,
   MOCK_TYPE_EMPLOIS,
   
 } from '@/mock'
@@ -25,6 +25,7 @@ export function useReferentielsGrid(activeTab: ReferentielTab, searchQuery: stri
   const { columnDefs: piecesDefs, data: piecesData, isLoading: piecesLoading } = usePiecesIdentiteGrid(searchQuery)
   const { columnDefs: situationsDefs, data: situationsData, isLoading: situationsLoading } = useSituationsMatrimonialesGrid(searchQuery)
   const { columnDefs: indicateursDefs, data: indicateursData, isLoading: indicateursLoading } = useIndicateursGrid(searchQuery)
+  const { columnDefs: typeEntreprisesDefs, data: typeEntreprisesData, isLoading: typeEntreprisesLoading } = useTypeEntreprisesGrid(searchQuery)
 
   const columnDefs = useMemo<ColDef[]>(() => {
     const commonAction: ColDef = {
@@ -39,11 +40,7 @@ export function useReferentielsGrid(activeTab: ReferentielTab, searchQuery: stri
     switch (activeTab) {
       case 'secteurs': return secteursDefs
       case 'sous_secteurs': return sousSecteursDefs
-      case 'type_entreprises': return [
-          { field: 'id', headerName: 'ID', width: 80, cellClass: 'font-mono text-slate-500' },
-          { field: 'libelle', headerName: 'Type d\'entreprise', flex: 1, cellRenderer: PrimaryTextCellRenderer },
-          commonAction
-        ]
+      case 'type_entreprises': return typeEntreprisesDefs
       case 'pieces_identite': return piecesDefs
       case 'situation_matrimoniale': return situationsDefs
       case 'type_emplois': return [
@@ -54,7 +51,7 @@ export function useReferentielsGrid(activeTab: ReferentielTab, searchQuery: stri
       case 'indicateurs': return indicateursDefs
       default: return []
     }
-  }, [activeTab, secteursDefs, sousSecteursDefs, piecesDefs, situationsDefs, indicateursDefs])
+  }, [activeTab, secteursDefs, sousSecteursDefs, piecesDefs, situationsDefs, indicateursDefs, typeEntreprisesDefs])
 
   // Données et recherche pour les onglets qui utilisent encore les mocks
   const data = useMemo(() => {
@@ -63,10 +60,10 @@ export function useReferentielsGrid(activeTab: ReferentielTab, searchQuery: stri
     if (activeTab === 'pieces_identite') return piecesData
     if (activeTab === 'situation_matrimoniale') return situationsData
     if (activeTab === 'indicateurs') return indicateursData
+    if (activeTab === 'type_entreprises') return typeEntreprisesData
 
     let currentMock: any[] = []
     switch (activeTab) {
-      case 'type_entreprises': currentMock = MOCK_TYPE_ENTREPRISES; break;
       case 'type_emplois': currentMock = MOCK_TYPE_EMPLOIS; break;
       }
 
@@ -78,9 +75,9 @@ export function useReferentielsGrid(activeTab: ReferentielTab, searchQuery: stri
       ignoreLocation: true
     })
     return fuse.search(searchQuery).map(res => res.item)
-  }, [activeTab, searchQuery, secteursData, sousSecteursData, piecesData, situationsData, indicateursData])
+  }, [activeTab, searchQuery, secteursData, sousSecteursData, piecesData, situationsData, indicateursData, typeEntreprisesData])
 
-  const isLoading = activeTab === 'secteurs' ? secteursLoading : activeTab === 'sous_secteurs' ? sousSecteursLoading : activeTab === 'pieces_identite' ? piecesLoading : activeTab === 'situation_matrimoniale' ? situationsLoading : activeTab === 'indicateurs' ? indicateursLoading : false
+  const isLoading = activeTab === 'secteurs' ? secteursLoading : activeTab === 'sous_secteurs' ? sousSecteursLoading : activeTab === 'pieces_identite' ? piecesLoading : activeTab === 'situation_matrimoniale' ? situationsLoading : activeTab === 'indicateurs' ? indicateursLoading : activeTab === 'type_entreprises' ? typeEntreprisesLoading : false
 
   return { columnDefs, data, isLoading }
 }

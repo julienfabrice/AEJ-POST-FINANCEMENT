@@ -3,22 +3,13 @@ export type ZUSTAND_T<T> = {
   (state: T | ((state: T) => T), replace: true): void;
 }
 
-export interface USER_T {
-  id: number
-  nom: string
-  prenoms: string
-  email: string
-  roleId: number
-  roleCode: string
-  roleLibelle: string
-  kind: 'agent' | 'benef'
-  agenceId?: number
-  organismeId?: number
-}
-
-export interface LOGIN_RESPONSE_T {
-  token: string
-  user: USER_T
+/**
+ * Enveloppe standard des réponses du backend AEJ : `{ message, data }`.
+ * Les types de réponse par feature s'en dérivent (voir `auth.types.ts`).
+ */
+export interface API_RESPONSE_T<T> {
+  message: string
+  data: T
 }
 
 export interface JEUNE_T {
@@ -43,4 +34,58 @@ export interface PROJET_T {
   montant: string
   statut: string
   date: string
+}
+
+export interface SECTEUR_T {
+  id: number
+  libelle: string
+}
+
+export interface API_RESPONSE_T<T> {
+  message: string
+  data: T
+}
+
+export interface SOUS_SECTEUR_T {
+  id: number
+  libelle: string
+}
+
+export interface PIECE_IDENTITE_T {
+  id: number
+  libelle: string
+  description?: string | null
+  actif?: boolean
+}
+
+export interface SITUATION_MATRIMONIALE_T {
+  id: number
+  libelle: string
+}
+
+export interface INDICATEUR_T {
+  id: number
+  nom: string
+  description?: string | null
+  type_valeur: string
+  unite: string
+  statut: boolean
+  created_at?: string
+  updated_at?: string
+}
+
+export interface TYPE_ENTREPRISE_T {
+  id: number
+  code: string
+  libelle: string
+  created_at?: string
+  updated_at?: string
+}
+
+export interface TYPE_EMPLOI_T {
+  id: number
+  code: string
+  libelle: string
+  created_at?: string
+  updated_at?: string
 }

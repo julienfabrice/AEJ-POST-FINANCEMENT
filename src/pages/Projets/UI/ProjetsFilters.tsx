@@ -28,7 +28,7 @@ export function ProjetsFilters() {
           <SelectItem value="agr">AGR Classique</SelectItem>
           <SelectItem value="meps">MEPS</SelectItem>
           <SelectItem value="mpe">MPE</SelectItem>
-          <SelectItem value="struct">Projets structurants</SelectItem>
+          <SelectItem value="struct">Projets structurants / Start-Up</SelectItem>
         </SelectContent>
       </Select>
       <Select defaultValue="tous_statut">

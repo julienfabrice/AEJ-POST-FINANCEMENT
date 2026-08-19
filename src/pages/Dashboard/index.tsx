@@ -1,22 +1,22 @@
+import { MODULES } from '@/constants/modules'
 import { useAuthStore } from '@/store/useAuthStore'
 import { AgentDashboard } from './AgentDashboard'
 import { BenefDashboard } from './BenefDashboard'
-import { GuichetsDashboard } from './GuichetsDashboard'
+import { AdminDashboard } from './AdminDashboard'
 
 export function DashboardController() {
-  const { user } = useAuthStore()
+  const space = useAuthStore((s) => s.space())
+  // Droit, pas rôle : le tableau de bord guichets s'affiche pour quiconque a
+  // accès au module, quel que soit son profil.
+  const canSeeGuichets = useAuthStore((s) => s.can(MODULES.GUICHETS))
 
-  if (user?.kind === 'benef') {
+  if (space === 'entreprise') {
     return <BenefDashboard />
   }
 
-  // Si agent, vérifier la permission pour les guichets.
-  // Pour le moment on suppose qu'un admin va sur les guichets par défaut.
-  // Vous pourrez ajuster cette logique selon les rôles.
-  if (user?.roleCode === 'ADMIN' || user?.roleLibelle === 'Administrateur') {
-    return <GuichetsDashboard />
+  if (canSeeGuichets) {
+    return <AdminDashboard />
   }
 
-  // Par défaut, le tableau de bord agent
   return <AgentDashboard />
 }

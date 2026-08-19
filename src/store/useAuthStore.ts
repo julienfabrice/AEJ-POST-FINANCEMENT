@@ -1,54 +1,92 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { type USER_T, type ZUSTAND_T } from '@/types'
+import { canFrom, indexPermissions } from '@/lib/permissions'
+import type { PERMISSION_ACTION_T, USER_SPACE_T } from '@/types/auth.types'
+import type { PermissionIndex } from '@/types/permissions.types'
+import type { PERSONNEL_T } from '@/types/personnels.types'
 
 interface AuthState {
-  set : ZUSTAND_T<AuthState>
-  user?: USER_T 
-  token?: string 
+  user?: PERSONNEL_T
   isAuthenticated?: boolean
 
-  setSession: (user: USER_T, token: string) => void
+  /**
+   * DÉRIVÉ de `user.permissions`.
+   */
+  permissions?: PermissionIndex
+
+  setSession: (user: PERSONNEL_T) => void
   clearSession: () => void
 
-  // Vérification des permissions (basé sur la maquette)
-  can: (module: string, action?: 'v' | 'c' | 'e' | 'd') => boolean
+  /** Espace applicatif de l'utilisateur — pilote l'arbre de routes. */
+  space: () => USER_SPACE_T
+
+  /**
+   * Unique point de vérification des droits. Lit exclusivement les permissions
+   */
+  can: (module: string, action?: PERMISSION_ACTION_T) => boolean
 }
 
-// Matrice des permissions extraite de la maquette
-const PERMS: Record<string, Record<string, Record<string, number>>> = {
-  ADMIN: { '*': { v: 1, c: 1, e: 1, d: 1 }, remboursements: { v: 1 }, transmission: { v: 1 }, pf_espace: { v: 1 }, imputation: { v: 1 }, plans_dec: { v: 1 }, recouvrement: { v: 1 } },
-  DPF: { dashboard: { v: 1 }, dispositifs: { v: 1, c: 1, e: 1 }, jeunes: { v: 1 }, projets: { v: 1, c: 1, e: 1, d: 1 }, financements: { v: 1, c: 1, e: 1, d: 1 }, remboursements: { v: 1 }, suivi: { v: 1, e: 1 }, rapports: { v: 1, c: 1, e: 1 }, indicateurs: { v: 1 } },
-  DAICG: { dashboard: { v: 1 }, dispositifs: { v: 1 }, jeunes: { v: 1 }, projets: { v: 1 }, financements: { v: 1 }, remboursements: { v: 1, c: 1, e: 1, d: 1 }, suivi: { v: 1 }, rapports: { v: 1, c: 1, e: 1 }, indicateurs: { v: 1, c: 1, e: 1, d: 1 } },
-  CAR: { dashboard: { v: 1 }, dispositifs: { v: 1 }, jeunes: { v: 1, c: 1, e: 1, d: 1 }, projets: { v: 1, c: 1, e: 1, d: 1 }, financements: { v: 1 }, remboursements: { v: 1, c: 1, e: 1, d: 1 }, suivi: { v: 1, c: 1, e: 1, d: 1 }, rapports: { v: 1 }, indicateurs: { v: 1, c: 1, e: 1, d: 1 } },
-  CIP: { dashboard: { v: 1 }, jeunes: { v: 1, c: 1, e: 1 }, projets: { v: 1, c: 1, e: 1 }, financements: { v: 1 }, remboursements: { v: 1, c: 1, e: 1, d: 1 }, suivi: { v: 1, c: 1, e: 1, d: 1 }, rapports: { v: 1 }, indicateurs: { v: 1, c: 1, e: 1, d: 1 } },
-  PF: { dashboard: { v: 1 }, projets: { v: 1 }, financements: { v: 1, c: 1, e: 1, d: 1 }, remboursements: { v: 1, c: 1, e: 1, d: 1 }, suivi: { v: 1 }, indicateurs: { v: 1, c: 1, e: 1, d: 1 } },
+
+const ROLE_SPACES: Record<string, USER_SPACE_T> = {
+  // Personnel AEJ
+  'ADMIN-1': 'agence',
+  CIP: 'agence',
+  CAR: 'agence',
+  DPF: 'agence',
+  DIC: 'agence',
+  DESSE: 'agence',
+  SDRF: 'agence',
+  CSFM: 'agence',
+  CSRGC: 'agence',
+  AGENT_DIR: 'agence',
+  SDEF: 'agence',
+  SDPF: 'agence',
+
+  // Partenaire financier
+  PF: 'organisme',
+
+  // Promoteur bénéficiaire
+  BENEF: 'entreprise',
 }
+
+const DEFAULT_SPACE: USER_SPACE_T = 'agence'
 
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
-      set,
-
-      setSession: (user, token) =>
-        set({ user, token, isAuthenticated: true }),
+      setSession: (user) =>
+        set({
+          user,
+          isAuthenticated: true,
+          permissions: indexPermissions(user.permissions ?? []),
+        }),
 
       clearSession: () =>
-        set({ user: undefined, token: undefined, isAuthenticated: undefined }),
+        set({ user: undefined, isAuthenticated: undefined, permissions: undefined }),
 
-      can: (module, action = 'v') => {
-        const { user } = get()
-        if (!user) return false
-        const rolePerms = PERMS[user.roleCode]
-        if (!rolePerms) return false
-        // Wildcard '*' = toutes les permissions sauf exceptions
-        if (rolePerms[module]) return !!rolePerms[module][action]
-        return !!rolePerms['*']?.[action]
+      space: () => {
+        const roleCode = get().user?.role?.code
+        if (!roleCode) return DEFAULT_SPACE
+        return ROLE_SPACES[roleCode] ?? DEFAULT_SPACE
       },
+
+     
+      can: (module, action = 'v') => canFrom(get().permissions, module, action),
     }),
     {
       name: 'aej-auth',
-      partialize: (state) => ({ user: state.user, token: state.token, isAuthenticated: state.isAuthenticated }),
-    }
-  )
+
+      version: 3,
+      migrate: () => ({ user: undefined, isAuthenticated: undefined }),
+
+      partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated }),
+      // …et elle est reconstruite depuis `user.permissions` au réhydratage,
+      // sinon `can()` renverrait `false` partout après un rechargement de page.
+      onRehydrateStorage: () => (state) => {
+        if (state?.user) {
+          state.permissions = indexPermissions(state.user.permissions ?? [])
+        }
+      },
+    },
+  ),
 )

@@ -143,3 +143,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes shrink-x {
+  from { width: 100%; }
+  to { width: 0%; }
+}

@@ -9,11 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as R2faRouteImport } from './routes/2fa'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as SetupPasswordRouteImport } from './routes/setup-password'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedAgentRouteImport } from './routes/_authenticated/_agent'
 import { Route as AuthenticatedBenefRouteImport } from './routes/_authenticated/_benef'
+import { Route as AuthenticatedCompteRouteImport } from './routes/_authenticated/compte'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAgentDispositifsRouteImport } from './routes/_authenticated/_agent/dispositifs'
 import { Route as AuthenticatedAgentFinancementsRouteImport } from './routes/_authenticated/_agent/financements'
@@ -40,13 +44,28 @@ import { Route as AuthenticatedAgentAdminUnitesRouteImport } from './routes/_aut
 import { Route as AuthenticatedAgentAdminUtilisateursRouteImport } from './routes/_authenticated/_agent/admin/utilisateurs'
 import { Route as AuthenticatedAgentAdminWorkflowsRouteImport } from './routes/_authenticated/_agent/admin/workflows'
 
+const R2faRoute = R2faRouteImport.update({
+  id: '/2fa',
+  path: '/2fa',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SetupPasswordRoute = SetupPasswordRouteImport.update({
+  id: '/setup-password',
+  path: '/setup-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
@@ -60,6 +79,11 @@ const AuthenticatedAgentRoute = AuthenticatedAgentRouteImport.update({
 } as any)
 const AuthenticatedBenefRoute = AuthenticatedBenefRouteImport.update({
   id: '/_benef',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedCompteRoute = AuthenticatedCompteRouteImport.update({
+  id: '/compte',
+  path: '/compte',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -212,8 +236,12 @@ const AuthenticatedAgentAdminWorkflowsRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
+  '/2fa': typeof R2faRoute
   '/': typeof AuthenticatedIndexRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/setup-password': typeof SetupPasswordRoute
+  '/compte': typeof AuthenticatedCompteRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/dispositifs': typeof AuthenticatedAgentDispositifsRoute
   '/financements': typeof AuthenticatedAgentFinancementsRoute
@@ -241,8 +269,12 @@ export interface FileRoutesByFullPath {
   '/admin/workflows': typeof AuthenticatedAgentAdminWorkflowsRoute
 }
 export interface FileRoutesByTo {
+  '/2fa': typeof R2faRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/setup-password': typeof SetupPasswordRoute
   '/': typeof AuthenticatedIndexRoute
+  '/compte': typeof AuthenticatedCompteRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/dispositifs': typeof AuthenticatedAgentDispositifsRoute
   '/financements': typeof AuthenticatedAgentFinancementsRoute
@@ -271,10 +303,14 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/2fa': typeof R2faRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/setup-password': typeof SetupPasswordRoute
   '/_authenticated/_agent': typeof AuthenticatedAgentRouteWithChildren
   '/_authenticated/_benef': typeof AuthenticatedBenefRouteWithChildren
+  '/_authenticated/compte': typeof AuthenticatedCompteRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/_agent/dispositifs': typeof AuthenticatedAgentDispositifsRoute
@@ -305,8 +341,12 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/2fa'
     | '/'
+    | '/forgot-password'
     | '/login'
+    | '/setup-password'
+    | '/compte'
     | '/dashboard'
     | '/dispositifs'
     | '/financements'
@@ -334,8 +374,12 @@ export interface FileRouteTypes {
     | '/admin/workflows'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/2fa'
+    | '/forgot-password'
     | '/login'
+    | '/setup-password'
     | '/'
+    | '/compte'
     | '/dashboard'
     | '/dispositifs'
     | '/financements'
@@ -363,10 +407,14 @@ export interface FileRouteTypes {
     | '/admin/workflows'
   id:
     | '__root__'
+    | '/2fa'
     | '/_authenticated'
+    | '/forgot-password'
     | '/login'
+    | '/setup-password'
     | '/_authenticated/_agent'
     | '/_authenticated/_benef'
+    | '/_authenticated/compte'
     | '/_authenticated/dashboard'
     | '/_authenticated/'
     | '/_authenticated/_agent/dispositifs'
@@ -396,12 +444,22 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  R2faRoute: typeof R2faRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
+  SetupPasswordRoute: typeof SetupPasswordRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/2fa': {
+      id: '/2fa'
+      path: '/2fa'
+      fullPath: '/2fa'
+      preLoaderRoute: typeof R2faRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
@@ -409,11 +467,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/setup-password': {
+      id: '/setup-password'
+      path: '/setup-password'
+      fullPath: '/setup-password'
+      preLoaderRoute: typeof SetupPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/': {
@@ -435,6 +507,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedBenefRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/compte': {
+      id: '/_authenticated/compte'
+      path: '/compte'
+      fullPath: '/compte'
+      preLoaderRoute: typeof AuthenticatedCompteRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard': {
@@ -690,6 +769,7 @@ const AuthenticatedBenefRouteWithChildren =
 interface AuthenticatedRouteChildren {
   AuthenticatedAgentRoute: typeof AuthenticatedAgentRouteWithChildren
   AuthenticatedBenefRoute: typeof AuthenticatedBenefRouteWithChildren
+  AuthenticatedCompteRoute: typeof AuthenticatedCompteRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
@@ -697,6 +777,7 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAgentRoute: AuthenticatedAgentRouteWithChildren,
   AuthenticatedBenefRoute: AuthenticatedBenefRouteWithChildren,
+  AuthenticatedCompteRoute: AuthenticatedCompteRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
@@ -706,8 +787,11 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 )
 
 const rootRouteChildren: RootRouteChildren = {
+  R2faRoute: R2faRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
+  SetupPasswordRoute: SetupPasswordRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

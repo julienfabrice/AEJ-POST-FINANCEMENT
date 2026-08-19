@@ -2,14 +2,13 @@ import { useMemo } from 'react'
 import type { ColDef } from 'ag-grid-community'
 import Fuse from 'fuse.js'
 
-import { ActionsCellRenderer } from '../components/ActionsCellRenderer'
-import { PrimaryTextCellRenderer } from '../components/PrimaryTextCellRenderer'
 import { useSecteursGrid } from './useSecteursGrid'
 import { useSousSecteursGrid } from './useSousSecteursGrid'
 import { usePiecesIdentiteGrid } from './usePiecesIdentiteGrid'
 import { useSituationsMatrimonialesGrid } from './useSituationsMatrimonialesGrid'
 import { useIndicateursGrid } from './useIndicateursGrid'
 import { useTypeEntreprisesGrid } from './useTypeEntreprisesGrid'
+import { useTypeEmploisGrid } from './useTypeEmploisGrid'
 
 import {
   MOCK_TYPE_EMPLOIS,
@@ -20,38 +19,27 @@ export type ReferentielTab = 'secteurs' | 'sous_secteurs' | 'type_entreprises' |
 
 export function useReferentielsGrid(activeTab: ReferentielTab, searchQuery: string) {
   // Hooks spécifiques
-  const { columnDefs: secteursDefs, data: secteursData, isLoading: secteursLoading } = useSecteursGrid(searchQuery)
-  const { columnDefs: sousSecteursDefs, data: sousSecteursData, isLoading: sousSecteursLoading } = useSousSecteursGrid(searchQuery)
+  const { columnDefs: secteursDefs, data: secteursData, isLoading: secteursLoading, modalNode: secteursModal } = useSecteursGrid(searchQuery)
+  const { columnDefs: sousSecteursDefs, data: sousSecteursData, isLoading: sousSecteursLoading, modalNode: sousSecteursModal } = useSousSecteursGrid(searchQuery)
   const { columnDefs: piecesDefs, data: piecesData, isLoading: piecesLoading } = usePiecesIdentiteGrid(searchQuery)
-  const { columnDefs: situationsDefs, data: situationsData, isLoading: situationsLoading } = useSituationsMatrimonialesGrid(searchQuery)
-  const { columnDefs: indicateursDefs, data: indicateursData, isLoading: indicateursLoading } = useIndicateursGrid(searchQuery)
+  const { columnDefs: situationsDefs, data: situationsData, isLoading: situationsLoading, modalNode: situationsModal } = useSituationsMatrimonialesGrid(searchQuery)
+  const { columnDefs: indicateursDefs, data: indicateursData, isLoading: indicateursLoading, modalNode: indicateursModal } = useIndicateursGrid(searchQuery)
   const { columnDefs: typeEntreprisesDefs, data: typeEntreprisesData, isLoading: typeEntreprisesLoading, modalNode: typeEntreprisesModal } = useTypeEntreprisesGrid(searchQuery)
+  const { columnDefs: typeEmploisDefs, data: typeEmploisData, isLoading: typeEmploisLoading, modalNode: typeEmploisModal } = useTypeEmploisGrid(searchQuery)
 
   const columnDefs = useMemo<ColDef[]>(() => {
-    const commonAction: ColDef = {
-      headerName: 'Actions',
-      width: 120,
-      minWidth : 120,
-      sortable: false,
-      filter: false,
-      cellRenderer: ActionsCellRenderer,
-    }
-
+    
     switch (activeTab) {
       case 'secteurs': return secteursDefs
       case 'sous_secteurs': return sousSecteursDefs
       case 'type_entreprises': return typeEntreprisesDefs
       case 'pieces_identite': return piecesDefs
       case 'situation_matrimoniale': return situationsDefs
-      case 'type_emplois': return [
-          { field: 'id', headerName: 'ID', width: 80, cellClass: 'font-mono text-slate-500' },
-          { field: 'libelle', headerName: 'Type d\'emploi', flex: 1, cellRenderer: PrimaryTextCellRenderer },
-          commonAction
-        ]
+      case 'type_emplois': return typeEmploisDefs
       case 'indicateurs': return indicateursDefs
       default: return []
     }
-  }, [activeTab, secteursDefs, sousSecteursDefs, piecesDefs, situationsDefs, indicateursDefs, typeEntreprisesDefs])
+  }, [activeTab, secteursDefs, sousSecteursDefs, piecesDefs, situationsDefs, indicateursDefs, typeEntreprisesDefs, typeEmploisDefs])
 
   // Données et recherche pour les onglets qui utilisent encore les mocks
   const data = useMemo(() => {
@@ -61,6 +49,7 @@ export function useReferentielsGrid(activeTab: ReferentielTab, searchQuery: stri
     if (activeTab === 'situation_matrimoniale') return situationsData
     if (activeTab === 'indicateurs') return indicateursData
     if (activeTab === 'type_entreprises') return typeEntreprisesData
+    if (activeTab === 'type_emplois') return typeEmploisData
 
     let currentMock: any[] = []
     switch (activeTab) {
@@ -75,15 +64,20 @@ export function useReferentielsGrid(activeTab: ReferentielTab, searchQuery: stri
       ignoreLocation: true
     })
     return fuse.search(searchQuery).map(res => res.item)
-  }, [activeTab, searchQuery, secteursData, sousSecteursData, piecesData, situationsData, indicateursData, typeEntreprisesData])
+  }, [activeTab, searchQuery, secteursData, sousSecteursData, piecesData, situationsData, indicateursData, typeEntreprisesData, typeEmploisData])
 
-  const isLoading = activeTab === 'secteurs' ? secteursLoading : activeTab === 'sous_secteurs' ? sousSecteursLoading : activeTab === 'pieces_identite' ? piecesLoading : activeTab === 'situation_matrimoniale' ? situationsLoading : activeTab === 'indicateurs' ? indicateursLoading : activeTab === 'type_entreprises' ? typeEntreprisesLoading : false
+  const isLoading = activeTab === 'secteurs' ? secteursLoading : activeTab === 'sous_secteurs' ? sousSecteursLoading : activeTab === 'pieces_identite' ? piecesLoading : activeTab === 'situation_matrimoniale' ? situationsLoading : activeTab === 'indicateurs' ? indicateursLoading : activeTab === 'type_entreprises' ? typeEntreprisesLoading : activeTab === 'type_emplois' ? typeEmploisLoading : false
 
   
   const modalNode = useMemo(() => {
     if (activeTab === 'type_entreprises') return typeEntreprisesModal
+    if (activeTab === 'type_emplois') return typeEmploisModal
+    if (activeTab === 'indicateurs') return indicateursModal
+    if (activeTab === 'secteurs') return secteursModal
+    if (activeTab === 'sous_secteurs') return sousSecteursModal
+    if (activeTab === 'situation_matrimoniale') return situationsModal
     return null
-  }, [activeTab, typeEntreprisesModal])
+  }, [activeTab, typeEntreprisesModal, secteursModal, sousSecteursModal, situationsModal, typeEmploisModal, indicateursModal])
 
   return { columnDefs, data, isLoading, modalNode }
 }

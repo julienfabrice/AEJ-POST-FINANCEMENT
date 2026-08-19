@@ -1,12 +1,17 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import type { ColDef } from 'ag-grid-community'
 import Fuse from 'fuse.js'
 import { ActionsCellRenderer } from '../components/ActionsCellRenderer'
 import { PrimaryTextCellRenderer } from '../components/PrimaryTextCellRenderer'
 import { useGetSituationsMatrimoniales } from '@/api/situations-matrimoniales/useGetSituationsMatrimoniales'
+import { useDeleteSituationMatrimoniale } from '@/api/situations-matrimoniales/useDeleteSituationMatrimoniale'
+import { SituationMatrimonialeFormModal } from '../components/SituationMatrimonialeFormModal'
+import type { SITUATION_MATRIMONIALE_T } from '@/types'
 
 export function useSituationsMatrimonialesGrid(searchQuery: string) {
   const { data: fetchedData = [], isLoading } = useGetSituationsMatrimoniales()
+  const { mutate: deleteMutation } = useDeleteSituationMatrimoniale()
+  const [editingItem, setEditingItem] = useState<SITUATION_MATRIMONIALE_T | null>(null)
 
   const columnDefs = useMemo<ColDef[]>(() => {
     return [
@@ -19,9 +24,13 @@ export function useSituationsMatrimonialesGrid(searchQuery: string) {
         sortable: false,
         filter: false,
         cellRenderer: ActionsCellRenderer,
+        cellRendererParams: {
+          onEdit: (row: SITUATION_MATRIMONIALE_T) => setEditingItem(row),
+          onDelete: (id: number) => deleteMutation(id)
+        },
       }
     ]
-  }, [])
+  }, [deleteMutation])
 
   const filteredData = useMemo(() => {
     if (!searchQuery.trim() || fetchedData.length === 0) return fetchedData
@@ -33,5 +42,13 @@ export function useSituationsMatrimonialesGrid(searchQuery: string) {
     return fuse.search(searchQuery).map(res => res.item)
   }, [fetchedData, searchQuery])
 
-  return { columnDefs, data: filteredData, isLoading }
+  const modalNode = (
+    <SituationMatrimonialeFormModal 
+      open={!!editingItem} 
+      onOpenChange={(open) => !open && setEditingItem(null)} 
+      initialData={editingItem} 
+    />
+  )
+
+  return { columnDefs, data: filteredData, isLoading, modalNode }
 }

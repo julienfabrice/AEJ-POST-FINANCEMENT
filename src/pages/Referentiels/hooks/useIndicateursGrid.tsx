@@ -5,10 +5,16 @@ import { Badge } from '@/components/ui/badge'
 import { ActionsCellRenderer } from '../components/ActionsCellRenderer'
 import { PrimaryTextCellRenderer } from '../components/PrimaryTextCellRenderer'
 import { BadgeCellRenderer } from '../components/BadgeCellRenderer'
+import { useState } from 'react'
 import { useGetIndicateurs } from '@/api/indicateurs/useGetIndicateurs'
+import { useDeleteIndicateur } from '@/api/indicateurs/useDeleteIndicateur'
+import { IndicateurFormModal } from '../components/IndicateurFormModal'
+import type { INDICATEUR_T } from '@/types'
 
 export function useIndicateursGrid(searchQuery: string) {
   const { data: fetchedData = [], isLoading } = useGetIndicateurs()
+  const { mutate: deleteMutation } = useDeleteIndicateur()
+  const [editingItem, setEditingItem] = useState<INDICATEUR_T | null>(null)
 
   const columnDefs = useMemo<ColDef[]>(() => {
     return [
@@ -38,6 +44,10 @@ export function useIndicateursGrid(searchQuery: string) {
         sortable: false,
         filter: false,
         cellRenderer: ActionsCellRenderer,
+        cellRendererParams: {
+          onEdit: (row: INDICATEUR_T) => setEditingItem(row),
+          onDelete: (id: number) => deleteMutation(id)
+        },
       }
     ]
   }, [])
@@ -52,5 +62,13 @@ export function useIndicateursGrid(searchQuery: string) {
     return fuse.search(searchQuery).map(res => res.item)
   }, [fetchedData, searchQuery])
 
-  return { columnDefs, data: filteredData, isLoading }
+  const modalNode = (
+    <IndicateurFormModal 
+      open={!!editingItem} 
+      onOpenChange={(open) => !open && setEditingItem(null)} 
+      initialData={editingItem} 
+    />
+  )
+
+  return { columnDefs, data: filteredData, isLoading, modalNode }
 }

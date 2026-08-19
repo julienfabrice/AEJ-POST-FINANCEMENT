@@ -1,12 +1,17 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import type { ColDef } from 'ag-grid-community'
 import Fuse from 'fuse.js'
 import { ActionsCellRenderer } from '../components/ActionsCellRenderer'
 import { PrimaryTextCellRenderer } from '../components/PrimaryTextCellRenderer'
 import { useGetSousSecteurs } from '@/api/sous-secteurs/useGetSousSecteurs'
+import { useDeleteSousSecteur } from '@/api/sous-secteurs/useDeleteSousSecteur'
+import { SousSecteurFormModal } from '../components/SousSecteurFormModal'
+import type { SOUS_SECTEUR_T } from '@/types'
 
 export function useSousSecteursGrid(searchQuery: string) {
-  const { data: fetchedSousSecteurs = [], isLoading } = useGetSousSecteurs()
+  const { data: fetchedData = [], isLoading } = useGetSousSecteurs()
+  const { mutate: deleteMutation } = useDeleteSousSecteur()
+  const [editingItem, setEditingItem] = useState<SOUS_SECTEUR_T | null>(null)
 
   const columnDefs = useMemo<ColDef[]>(() => {
     return [
@@ -19,19 +24,31 @@ export function useSousSecteursGrid(searchQuery: string) {
         sortable: false,
         filter: false,
         cellRenderer: ActionsCellRenderer,
+        cellRendererParams: {
+          onEdit: (row: SOUS_SECTEUR_T) => setEditingItem(row),
+          onDelete: (id: number) => deleteMutation(id)
+        },
       }
     ]
-  }, [])
+  }, [deleteMutation])
 
   const filteredData = useMemo(() => {
-    if (!searchQuery.trim() || fetchedSousSecteurs.length === 0) return fetchedSousSecteurs
-    const fuse = new Fuse(fetchedSousSecteurs, {
+    if (!searchQuery.trim() || fetchedData.length === 0) return fetchedData
+    const fuse = new Fuse(fetchedData, {
       keys: ['libelle', 'id'],
       threshold: 0.3,
       ignoreLocation: true
     })
     return fuse.search(searchQuery).map(res => res.item)
-  }, [fetchedSousSecteurs, searchQuery])
+  }, [fetchedData, searchQuery])
 
-  return { columnDefs, data: filteredData, isLoading }
+  const modalNode = (
+    <SousSecteurFormModal 
+      open={!!editingItem} 
+      onOpenChange={(open) => !open && setEditingItem(null)} 
+      initialData={editingItem} 
+    />
+  )
+
+  return { columnDefs, data: filteredData, isLoading, modalNode }
 }

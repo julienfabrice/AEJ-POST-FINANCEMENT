@@ -48,7 +48,6 @@ export interface PROJET_T {
 export interface SECTEUR_T {
   id: number
   libelle: string
-  nom: string
 }
 
 export interface API_RESPONSE_T<T> {
@@ -85,6 +84,14 @@ export interface INDICATEUR_T {
 }
 
 export interface TYPE_ENTREPRISE_T {
+  id: number
+  code: string
+  libelle: string
+  created_at?: string
+  updated_at?: string
+}
+
+export interface TYPE_EMPLOI_T {
   id: number
   code: string
   libelle: string

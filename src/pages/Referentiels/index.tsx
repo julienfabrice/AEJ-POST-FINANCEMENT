@@ -7,6 +7,11 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DataGrid } from '@/components/ui/DataGrid'
 import { TypeEntrepriseFormModal } from './components/TypeEntrepriseFormModal'
+import { SecteurFormModal } from './components/SecteurFormModal'
+import { SousSecteurFormModal } from './components/SousSecteurFormModal'
+import { SituationMatrimonialeFormModal } from './components/SituationMatrimonialeFormModal'
+import { TypeEmploiFormModal } from './components/TypeEmploiFormModal'
+import { IndicateurFormModal } from './components/IndicateurFormModal'
 import { useReferentielsGrid, type ReferentielTab } from './hooks/useReferentielsGrid'
 
 const TABS_CONFIG = [
@@ -66,19 +71,23 @@ export function ReferentielsPage() {
                 {isLoading ? 'Chargement...' : `${data.length} ${tab.label.toLowerCase()}`}
               </span>
               <div className="flex-1" />
-              {tab.id === 'type_entreprises' ? (
-                <TypeEntrepriseFormModal>
-                  <Button className="h-9">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Nouveau {tab.sing}
-                  </Button>
-                </TypeEntrepriseFormModal>
-              ) : (
+              {(() => {
+              const btn = (
                 <Button className="h-9">
                   <Plus className="w-4 h-4 mr-2" />
                   Nouveau {tab.sing}
                 </Button>
-              )}
+              )
+              switch (tab.id) {
+                case 'type_entreprises': return <TypeEntrepriseFormModal>{btn}</TypeEntrepriseFormModal>
+                case 'secteurs': return <SecteurFormModal>{btn}</SecteurFormModal>
+                case 'sous_secteurs': return <SousSecteurFormModal>{btn}</SousSecteurFormModal>
+                case 'situation_matrimoniale': return <SituationMatrimonialeFormModal>{btn}</SituationMatrimonialeFormModal>
+                case 'type_emplois': return <TypeEmploiFormModal>{btn}</TypeEmploiFormModal>
+                case 'indicateurs': return <IndicateurFormModal>{btn}</IndicateurFormModal>
+                default: return btn
+              }
+            })()}
             </div>
 
             <Card className="p-0 overflow-hidden border-slate-200 rounded-lg shadow-sm">

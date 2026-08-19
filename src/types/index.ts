@@ -72,3 +72,14 @@ export interface SITUATION_MATRIMONIALE_T {
   id: number
   libelle: string
 }
+
+export interface INDICATEUR_T {
+  id: number
+  nom: string
+  description?: string | null
+  type_valeur: string
+  unite: string
+  statut: boolean
+  created_at?: string
+  updated_at?: string
+}

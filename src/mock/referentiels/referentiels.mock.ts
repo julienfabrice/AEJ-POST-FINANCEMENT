@@ -19,13 +19,3 @@ export const MOCK_TYPE_EMPLOIS = [
   { id: 6, libelle: 'Apprenti / Stagiaire' }
 ]
 
-export const MOCK_INDICATEURS = [
-  { id: 1, libelle: "Chiffre d'affaires mensuel", unite: 'FCFA', type_valeur: 'Numérique' },
-  { id: 2, libelle: 'Nombre d\'emplois créés', unite: 'Personne', type_valeur: 'Numérique' },
-  { id: 3, libelle: 'Charges opérationnelles', unite: 'FCFA', type_valeur: 'Numérique' },
-  { id: 4, libelle: 'Bénéfice net', unite: 'FCFA', type_valeur: 'Numérique' },
-  { id: 5, libelle: 'Niveau de satisfaction client', unite: 'Pourcentage', type_valeur: 'Numérique' },
-  { id: 6, libelle: 'Volume de production', unite: 'Kilogrammes', type_valeur: 'Numérique' },
-  { id: 7, libelle: 'Nombre de clients réguliers', unite: 'Personne', type_valeur: 'Numérique' },
-  { id: 8, libelle: 'Taux de remboursement', unite: 'Pourcentage', type_valeur: 'Numérique' }
-]

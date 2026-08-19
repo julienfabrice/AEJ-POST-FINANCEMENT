@@ -3,17 +3,17 @@ import type { ColDef } from 'ag-grid-community'
 import Fuse from 'fuse.js'
 
 import { ActionsCellRenderer } from '../components/ActionsCellRenderer'
-import { BadgeCellRenderer } from '../components/BadgeCellRenderer'
 import { PrimaryTextCellRenderer } from '../components/PrimaryTextCellRenderer'
 import { useSecteursGrid } from './useSecteursGrid'
 import { useSousSecteursGrid } from './useSousSecteursGrid'
 import { usePiecesIdentiteGrid } from './usePiecesIdentiteGrid'
 import { useSituationsMatrimonialesGrid } from './useSituationsMatrimonialesGrid'
+import { useIndicateursGrid } from './useIndicateursGrid'
 
 import {
   MOCK_TYPE_ENTREPRISES,
   MOCK_TYPE_EMPLOIS,
-  MOCK_INDICATEURS
+  
 } from '@/mock'
 
 export type ReferentielTab = 'secteurs' | 'sous_secteurs' | 'type_entreprises' | 'pieces_identite' | 'situation_matrimoniale' | 'type_emplois' | 'indicateurs'
@@ -24,6 +24,7 @@ export function useReferentielsGrid(activeTab: ReferentielTab, searchQuery: stri
   const { columnDefs: sousSecteursDefs, data: sousSecteursData, isLoading: sousSecteursLoading } = useSousSecteursGrid(searchQuery)
   const { columnDefs: piecesDefs, data: piecesData, isLoading: piecesLoading } = usePiecesIdentiteGrid(searchQuery)
   const { columnDefs: situationsDefs, data: situationsData, isLoading: situationsLoading } = useSituationsMatrimonialesGrid(searchQuery)
+  const { columnDefs: indicateursDefs, data: indicateursData, isLoading: indicateursLoading } = useIndicateursGrid(searchQuery)
 
   const columnDefs = useMemo<ColDef[]>(() => {
     const commonAction: ColDef = {
@@ -50,16 +51,10 @@ export function useReferentielsGrid(activeTab: ReferentielTab, searchQuery: stri
           { field: 'libelle', headerName: 'Type d\'emploi', flex: 1, cellRenderer: PrimaryTextCellRenderer },
           commonAction
         ]
-      case 'indicateurs': return [
-          { field: 'id', headerName: 'ID', width: 80, cellClass: 'font-mono text-slate-500' },
-          { field: 'libelle', headerName: 'Indicateur', flex: 1, cellRenderer: PrimaryTextCellRenderer },
-          { field: 'unite', headerName: 'Unité', width: 150, cellRenderer: BadgeCellRenderer },
-          { field: 'type_valeur', headerName: 'Type de valeur', width: 150 },
-          commonAction
-        ]
+      case 'indicateurs': return indicateursDefs
       default: return []
     }
-  }, [activeTab, secteursDefs, sousSecteursDefs, piecesDefs, situationsDefs])
+  }, [activeTab, secteursDefs, sousSecteursDefs, piecesDefs, situationsDefs, indicateursDefs])
 
   // Données et recherche pour les onglets qui utilisent encore les mocks
   const data = useMemo(() => {
@@ -67,13 +62,13 @@ export function useReferentielsGrid(activeTab: ReferentielTab, searchQuery: stri
     if (activeTab === 'sous_secteurs') return sousSecteursData
     if (activeTab === 'pieces_identite') return piecesData
     if (activeTab === 'situation_matrimoniale') return situationsData
+    if (activeTab === 'indicateurs') return indicateursData
 
     let currentMock: any[] = []
     switch (activeTab) {
       case 'type_entreprises': currentMock = MOCK_TYPE_ENTREPRISES; break;
       case 'type_emplois': currentMock = MOCK_TYPE_EMPLOIS; break;
-      case 'indicateurs': currentMock = MOCK_INDICATEURS; break;
-    }
+      }
 
     if (!searchQuery.trim()) return currentMock
 
@@ -83,9 +78,9 @@ export function useReferentielsGrid(activeTab: ReferentielTab, searchQuery: stri
       ignoreLocation: true
     })
     return fuse.search(searchQuery).map(res => res.item)
-  }, [activeTab, searchQuery, secteursData, sousSecteursData, piecesData, situationsData])
+  }, [activeTab, searchQuery, secteursData, sousSecteursData, piecesData, situationsData, indicateursData])
 
-  const isLoading = activeTab === 'secteurs' ? secteursLoading : activeTab === 'sous_secteurs' ? sousSecteursLoading : activeTab === 'pieces_identite' ? piecesLoading : activeTab === 'situation_matrimoniale' ? situationsLoading : false
+  const isLoading = activeTab === 'secteurs' ? secteursLoading : activeTab === 'sous_secteurs' ? sousSecteursLoading : activeTab === 'pieces_identite' ? piecesLoading : activeTab === 'situation_matrimoniale' ? situationsLoading : activeTab === 'indicateurs' ? indicateursLoading : false
 
   return { columnDefs, data, isLoading }
 }

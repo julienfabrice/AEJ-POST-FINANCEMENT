@@ -1,3 +1,4 @@
+import { indicateurServices } from '@/services/indicateurs.services'
 import { useMemo } from 'react'
 import type { ColDef, ICellRendererParams } from 'ag-grid-community'
 import Fuse from 'fuse.js'
@@ -6,14 +7,12 @@ import { ActionsCellRenderer } from '../../components/ActionsCellRenderer'
 import { PrimaryTextCellRenderer } from '../../components/PrimaryTextCellRenderer'
 import { BadgeCellRenderer } from '../../components/BadgeCellRenderer'
 import { useState } from 'react'
-import { useGetIndicateurs } from '@/api/indicateurs/useGetIndicateurs'
-import { useDeleteIndicateur } from '@/api/indicateurs/useDeleteIndicateur'
 import { IndicateurFormModal } from '../../components/IndicateurFormModal'
 import type { INDICATEUR_T } from '@/types'
 
 export function useIndicateursGrid(searchQuery: string) {
-  const { data: fetchedData = [], isLoading } = useGetIndicateurs()
-  const { mutate: deleteMutation } = useDeleteIndicateur()
+  const { data: fetchedData = [], isLoading } = indicateurServices.useGetAll()
+  const { mutate: deleteMutation } = indicateurServices.useDelete()
   const [editingItem, setEditingItem] = useState<INDICATEUR_T | null>(null)
 
   const columnDefs = useMemo<ColDef[]>(() => {

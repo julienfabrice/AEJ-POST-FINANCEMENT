@@ -1,3 +1,4 @@
+import { typeEntrepriseServices } from '@/services/typeEntreprises.services'
 import { useMemo } from 'react'
 import type { ColDef } from 'ag-grid-community'
 import Fuse from 'fuse.js'
@@ -5,14 +6,12 @@ import { ActionsCellRenderer } from '../../components/ActionsCellRenderer'
 import { PrimaryTextCellRenderer } from '../../components/PrimaryTextCellRenderer'
 import { BadgeCellRenderer } from '../../components/BadgeCellRenderer'
 import { useState } from 'react'
-import { useGetTypeEntreprises } from '@/api/type-entreprises/useGetTypeEntreprises'
 import { TypeEntrepriseFormModal } from '../../components/TypeEntrepriseFormModal'
 import type { TYPE_ENTREPRISE_T } from '@/types'
-import { useDeleteTypeEntreprise } from '@/api/type-entreprises/useDeleteTypeEntreprise'
 
 export function useTypeEntreprisesGrid(searchQuery: string) {
-  const { data: fetchedData = [], isLoading } = useGetTypeEntreprises()
-  const { mutate: deleteTypeEntreprise } = useDeleteTypeEntreprise()
+  const { data: fetchedData = [], isLoading } = typeEntrepriseServices.useGetAll()
+  const { mutate: deleteTypeEntreprise } = typeEntrepriseServices.useDelete()
   const [editingItem, setEditingItem] = useState<TYPE_ENTREPRISE_T | null>(null)
 
   const columnDefs = useMemo<ColDef[]>(() => {

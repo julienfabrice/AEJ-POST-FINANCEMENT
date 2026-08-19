@@ -15,7 +15,7 @@ export function DashboardController() {
   }
 
   if (canSeeGuichets) {
-    return <GuichetsDashboard />
+    return <AdminDashboard />
   }
 
   return <AgentDashboard />

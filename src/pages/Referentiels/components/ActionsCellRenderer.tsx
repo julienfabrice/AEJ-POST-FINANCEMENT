@@ -16,7 +16,7 @@ import {
 
 export interface ActionsCellRendererParams extends ICellRendererParams {
   onDelete?: (id: number | string) => void;
-  onEdit?: (id: number | string) => void;
+  onEdit?: (row: any) => void;
 }
 
 export const ActionsCellRenderer = (params: ActionsCellRendererParams) => {
@@ -25,7 +25,7 @@ export const ActionsCellRenderer = (params: ActionsCellRendererParams) => {
 
   const handleEdit = () => {
     if (params.onEdit && params.data) {
-      params.onEdit(params.data.id)
+      params.onEdit(params.data)
     }
   }
 

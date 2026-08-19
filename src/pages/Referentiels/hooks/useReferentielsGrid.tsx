@@ -25,7 +25,7 @@ export function useReferentielsGrid(activeTab: ReferentielTab, searchQuery: stri
   const { columnDefs: piecesDefs, data: piecesData, isLoading: piecesLoading } = usePiecesIdentiteGrid(searchQuery)
   const { columnDefs: situationsDefs, data: situationsData, isLoading: situationsLoading } = useSituationsMatrimonialesGrid(searchQuery)
   const { columnDefs: indicateursDefs, data: indicateursData, isLoading: indicateursLoading } = useIndicateursGrid(searchQuery)
-  const { columnDefs: typeEntreprisesDefs, data: typeEntreprisesData, isLoading: typeEntreprisesLoading } = useTypeEntreprisesGrid(searchQuery)
+  const { columnDefs: typeEntreprisesDefs, data: typeEntreprisesData, isLoading: typeEntreprisesLoading, modalNode: typeEntreprisesModal } = useTypeEntreprisesGrid(searchQuery)
 
   const columnDefs = useMemo<ColDef[]>(() => {
     const commonAction: ColDef = {
@@ -79,5 +79,11 @@ export function useReferentielsGrid(activeTab: ReferentielTab, searchQuery: stri
 
   const isLoading = activeTab === 'secteurs' ? secteursLoading : activeTab === 'sous_secteurs' ? sousSecteursLoading : activeTab === 'pieces_identite' ? piecesLoading : activeTab === 'situation_matrimoniale' ? situationsLoading : activeTab === 'indicateurs' ? indicateursLoading : activeTab === 'type_entreprises' ? typeEntreprisesLoading : false
 
-  return { columnDefs, data, isLoading }
+  
+  const modalNode = useMemo(() => {
+    if (activeTab === 'type_entreprises') return typeEntreprisesModal
+    return null
+  }, [activeTab, typeEntreprisesModal])
+
+  return { columnDefs, data, isLoading, modalNode }
 }

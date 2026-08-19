@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DataGrid } from '@/components/ui/DataGrid'
+import { TypeEntrepriseFormModal } from './components/TypeEntrepriseFormModal'
 import { useReferentielsGrid, type ReferentielTab } from './hooks/useReferentielsGrid'
 
 const TABS_CONFIG = [
@@ -22,9 +23,11 @@ export function ReferentielsPage() {
   const [activeTab, setActiveTab] = useState<ReferentielTab>('secteurs')
   const [searchQuery, setSearchQuery] = useState('')
   
-  const { columnDefs, data, isLoading } = useReferentielsGrid(activeTab, searchQuery)
+  const { columnDefs, data, isLoading, modalNode } = useReferentielsGrid(activeTab, searchQuery)
 
   return (
+    <>
+      {modalNode}
     <div className="space-y-2">
 
       <Tabs 
@@ -63,10 +66,19 @@ export function ReferentielsPage() {
                 {isLoading ? 'Chargement...' : `${data.length} ${tab.label.toLowerCase()}`}
               </span>
               <div className="flex-1" />
-              <Button className="h-9">
-                <Plus className="w-4 h-4 mr-2" />
-                Nouveau {tab.sing}
-              </Button>
+              {tab.id === 'type_entreprises' ? (
+                <TypeEntrepriseFormModal>
+                  <Button className="h-9">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Nouveau {tab.sing}
+                  </Button>
+                </TypeEntrepriseFormModal>
+              ) : (
+                <Button className="h-9">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Nouveau {tab.sing}
+                </Button>
+              )}
             </div>
 
             <Card className="p-0 overflow-hidden border-slate-200 rounded-lg shadow-sm">
@@ -112,5 +124,6 @@ export function ReferentielsPage() {
         ))}
       </Tabs>
     </div>
+    </>
   )
 }

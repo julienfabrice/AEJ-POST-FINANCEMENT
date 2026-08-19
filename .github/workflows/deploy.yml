@@ -3,8 +3,8 @@ run-name: CI/CD Pipeline sur le ${{ github.ref_name }}, ref commit ${{ github.sh
 
 on:
   push:
-    branches:
-      - '**'
+    branches-ignore:
+      - 'younouss'
   pull_request:
     branches:
       - '**'
@@ -28,6 +28,8 @@ jobs:
 
       - name: 🏗️ Build du projet (Vérification)
         run: npm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
       - name: 🚀 Déploiement via SCP (Uniquement sur deploiement)
         if: github.ref == 'refs/heads/deploiement' || (github.event_name == 'pull_request' && github.base_ref == 'deploiement')
@@ -36,6 +38,6 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
-          source: "dist/*"
-          target: "/web/"
+          source: "dist"
+          target: "web"
           strip_components: 1

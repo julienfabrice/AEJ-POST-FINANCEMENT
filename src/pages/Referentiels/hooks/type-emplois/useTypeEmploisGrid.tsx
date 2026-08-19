@@ -1,22 +1,24 @@
 import { useMemo, useState } from 'react'
 import type { ColDef } from 'ag-grid-community'
 import Fuse from 'fuse.js'
-import { ActionsCellRenderer } from '../components/ActionsCellRenderer'
-import { PrimaryTextCellRenderer } from '../components/PrimaryTextCellRenderer'
-import { useGetSituationsMatrimoniales } from '@/api/situations-matrimoniales/useGetSituationsMatrimoniales'
-import { useDeleteSituationMatrimoniale } from '@/api/situations-matrimoniales/useDeleteSituationMatrimoniale'
-import { SituationMatrimonialeFormModal } from '../components/SituationMatrimonialeFormModal'
-import type { SITUATION_MATRIMONIALE_T } from '@/types'
+import { ActionsCellRenderer } from '../../components/ActionsCellRenderer'
+import { PrimaryTextCellRenderer } from '../../components/PrimaryTextCellRenderer'
+import { BadgeCellRenderer } from '../../components/BadgeCellRenderer'
+import { useGetTypeEmplois } from '@/api/type-emplois/useGetTypeEmplois'
+import { useDeleteTypeEmploi } from '@/api/type-emplois/useDeleteTypeEmploi'
+import { TypeEmploiFormModal } from '../../components/TypeEmploiFormModal'
+import type { TYPE_EMPLOI_T } from '@/types'
 
-export function useSituationsMatrimonialesGrid(searchQuery: string) {
-  const { data: fetchedData = [], isLoading } = useGetSituationsMatrimoniales()
-  const { mutate: deleteMutation } = useDeleteSituationMatrimoniale()
-  const [editingItem, setEditingItem] = useState<SITUATION_MATRIMONIALE_T | null>(null)
+export function useTypeEmploisGrid(searchQuery: string) {
+  const { data: fetchedData = [], isLoading } = useGetTypeEmplois()
+  const { mutate: deleteMutation } = useDeleteTypeEmploi()
+  const [editingItem, setEditingItem] = useState<TYPE_EMPLOI_T | null>(null)
 
   const columnDefs = useMemo<ColDef[]>(() => {
     return [
       { field: 'id', headerName: 'ID', width: 80, cellClass: 'font-mono text-slate-500' },
-      { field: 'libelle', headerName: 'Situation matrimoniale', flex: 1, cellRenderer: PrimaryTextCellRenderer },
+      { field: 'code', headerName: 'Code', width: 120, cellRenderer: BadgeCellRenderer },
+      { field: 'libelle', headerName: 'Type d\'emploi', flex: 1, cellRenderer: PrimaryTextCellRenderer },
       {
         headerName: 'Actions',
         width: 120,
@@ -25,7 +27,7 @@ export function useSituationsMatrimonialesGrid(searchQuery: string) {
         filter: false,
         cellRenderer: ActionsCellRenderer,
         cellRendererParams: {
-          onEdit: (row: SITUATION_MATRIMONIALE_T) => setEditingItem(row),
+          onEdit: (row: TYPE_EMPLOI_T) => setEditingItem(row),
           onDelete: (id: number) => deleteMutation(id)
         },
       }
@@ -35,7 +37,7 @@ export function useSituationsMatrimonialesGrid(searchQuery: string) {
   const filteredData = useMemo(() => {
     if (!searchQuery.trim() || fetchedData.length === 0) return fetchedData
     const fuse = new Fuse(fetchedData, {
-      keys: ['libelle', 'id'],
+      keys: ['libelle', 'id', 'code'],
       threshold: 0.3,
       ignoreLocation: true
     })
@@ -43,7 +45,7 @@ export function useSituationsMatrimonialesGrid(searchQuery: string) {
   }, [fetchedData, searchQuery])
 
   const modalNode = (
-    <SituationMatrimonialeFormModal 
+    <TypeEmploiFormModal 
       open={!!editingItem} 
       onOpenChange={(open) => !open && setEditingItem(null)} 
       initialData={editingItem} 

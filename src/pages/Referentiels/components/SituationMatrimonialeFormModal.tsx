@@ -1,15 +1,8 @@
-import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger,
-} from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { useCreateSituationMatrimoniale } from '@/api/situations-matrimoniales/useCreateSituationMatrimoniale'
-import { useUpdateSituationMatrimoniale } from '@/api/situations-matrimoniales/useUpdateSituationMatrimoniale'
-import { SituationMatrimonialeSchema, type SituationMatrimonialeFormValues } from '@/schema/situations-matrimoniales/SituationMatrimonialeSchema'
+import { useSituationMatrimonialeForm } from '../hooks/situations-matrimoniales/useSituationMatrimonialeForm'
 
 interface Props {
   children?: React.ReactNode
@@ -19,40 +12,7 @@ interface Props {
 }
 
 export function SituationMatrimonialeFormModal({ children, open: controlledOpen, onOpenChange, initialData }: Props) {
-  const [internalOpen, setInternalOpen] = useState(false)
-  const isControlled = controlledOpen !== undefined
-  const open = isControlled ? controlledOpen : internalOpen
-  
-  const setOpen = (newOpen: boolean) => {
-    if (!isControlled) setInternalOpen(newOpen)
-    if (onOpenChange) onOpenChange(newOpen)
-  }
-
-  const { mutate: createMutation, isPending: isCreating } = useCreateSituationMatrimoniale()
-  const { mutate: updateMutation, isPending: isUpdating } = useUpdateSituationMatrimoniale()
-  
-  const isPending = isCreating || isUpdating
-  const isEdit = !!initialData
-
-  const form = useForm<SituationMatrimonialeFormValues>({
-    resolver: zodResolver(SituationMatrimonialeSchema),
-    defaultValues: { libelle: '' },
-  })
-
-  useEffect(() => {
-    if (open) {
-      if (initialData) form.reset({ libelle: initialData.libelle || '' })
-      else form.reset({ libelle: '' })
-    }
-  }, [open, initialData, form])
-
-  const onSubmit = (values: SituationMatrimonialeFormValues) => {
-    if (isEdit && initialData) {
-      updateMutation({ id: initialData.id, data: values }, { onSuccess: () => setOpen(false) })
-    } else {
-      createMutation(values, { onSuccess: () => setOpen(false) })
-    }
-  }
+  const { form, onSubmit, isPending, isEdit, open, setOpen } = useSituationMatrimonialeForm(initialData, controlledOpen, onOpenChange)
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

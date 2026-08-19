@@ -2,13 +2,13 @@ import { useMemo } from 'react'
 import type { ColDef } from 'ag-grid-community'
 import Fuse from 'fuse.js'
 
-import { useSecteursGrid } from './useSecteursGrid'
-import { useSousSecteursGrid } from './useSousSecteursGrid'
+import { useSecteursGrid } from './secteurs/useSecteursGrid'
+import { useSousSecteursGrid } from './sous-secteurs/useSousSecteursGrid'
 import { usePiecesIdentiteGrid } from './usePiecesIdentiteGrid'
-import { useSituationsMatrimonialesGrid } from './useSituationsMatrimonialesGrid'
-import { useIndicateursGrid } from './useIndicateursGrid'
-import { useTypeEntreprisesGrid } from './useTypeEntreprisesGrid'
-import { useTypeEmploisGrid } from './useTypeEmploisGrid'
+import { useSituationsMatrimonialesGrid } from './situations-matrimoniales/useSituationsMatrimonialesGrid'
+import { useIndicateursGrid } from './indicateurs/useIndicateursGrid'
+import { useTypeEntreprisesGrid } from './type-entreprises/useTypeEntreprisesGrid'
+import { useTypeEmploisGrid } from './type-emplois/useTypeEmploisGrid'
 
 import {
   MOCK_TYPE_EMPLOIS,

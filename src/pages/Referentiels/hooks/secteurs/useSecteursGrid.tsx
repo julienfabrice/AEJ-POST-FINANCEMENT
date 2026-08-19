@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react'
 import type { ColDef } from 'ag-grid-community'
 import Fuse from 'fuse.js'
-import { ActionsCellRenderer } from '../components/ActionsCellRenderer'
-import { PrimaryTextCellRenderer } from '../components/PrimaryTextCellRenderer'
+import { ActionsCellRenderer } from '../../components/ActionsCellRenderer'
+import { PrimaryTextCellRenderer } from '../../components/PrimaryTextCellRenderer'
 import { useGetSecteurs } from '@/api/secteurs/useGetSecteurs'
 import { useDeleteSecteur } from '@/api/secteurs/useDeleteSecteur'
-import { SecteurFormModal } from '../components/SecteurFormModal'
+import { SecteurFormModal } from '../../components/SecteurFormModal'
 import type { SECTEUR_T } from '@/types'
 
 export function useSecteursGrid(searchQuery: string) {

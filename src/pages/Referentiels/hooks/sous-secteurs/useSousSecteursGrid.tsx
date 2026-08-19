@@ -1,24 +1,22 @@
 import { useMemo, useState } from 'react'
 import type { ColDef } from 'ag-grid-community'
 import Fuse from 'fuse.js'
-import { ActionsCellRenderer } from '../components/ActionsCellRenderer'
-import { PrimaryTextCellRenderer } from '../components/PrimaryTextCellRenderer'
-import { BadgeCellRenderer } from '../components/BadgeCellRenderer'
-import { useGetTypeEmplois } from '@/api/type-emplois/useGetTypeEmplois'
-import { useDeleteTypeEmploi } from '@/api/type-emplois/useDeleteTypeEmploi'
-import { TypeEmploiFormModal } from '../components/TypeEmploiFormModal'
-import type { TYPE_EMPLOI_T } from '@/types'
+import { ActionsCellRenderer } from '../../components/ActionsCellRenderer'
+import { PrimaryTextCellRenderer } from '../../components/PrimaryTextCellRenderer'
+import { useGetSousSecteurs } from '@/api/sous-secteurs/useGetSousSecteurs'
+import { useDeleteSousSecteur } from '@/api/sous-secteurs/useDeleteSousSecteur'
+import { SousSecteurFormModal } from '../../components/SousSecteurFormModal'
+import type { SOUS_SECTEUR_T } from '@/types'
 
-export function useTypeEmploisGrid(searchQuery: string) {
-  const { data: fetchedData = [], isLoading } = useGetTypeEmplois()
-  const { mutate: deleteMutation } = useDeleteTypeEmploi()
-  const [editingItem, setEditingItem] = useState<TYPE_EMPLOI_T | null>(null)
+export function useSousSecteursGrid(searchQuery: string) {
+  const { data: fetchedData = [], isLoading } = useGetSousSecteurs()
+  const { mutate: deleteMutation } = useDeleteSousSecteur()
+  const [editingItem, setEditingItem] = useState<SOUS_SECTEUR_T | null>(null)
 
   const columnDefs = useMemo<ColDef[]>(() => {
     return [
       { field: 'id', headerName: 'ID', width: 80, cellClass: 'font-mono text-slate-500' },
-      { field: 'code', headerName: 'Code', width: 120, cellRenderer: BadgeCellRenderer },
-      { field: 'libelle', headerName: 'Type d\'emploi', flex: 1, cellRenderer: PrimaryTextCellRenderer },
+      { field: 'libelle', headerName: 'Sous-secteur', flex: 1, cellRenderer: PrimaryTextCellRenderer },
       {
         headerName: 'Actions',
         width: 120,
@@ -27,7 +25,7 @@ export function useTypeEmploisGrid(searchQuery: string) {
         filter: false,
         cellRenderer: ActionsCellRenderer,
         cellRendererParams: {
-          onEdit: (row: TYPE_EMPLOI_T) => setEditingItem(row),
+          onEdit: (row: SOUS_SECTEUR_T) => setEditingItem(row),
           onDelete: (id: number) => deleteMutation(id)
         },
       }
@@ -37,7 +35,7 @@ export function useTypeEmploisGrid(searchQuery: string) {
   const filteredData = useMemo(() => {
     if (!searchQuery.trim() || fetchedData.length === 0) return fetchedData
     const fuse = new Fuse(fetchedData, {
-      keys: ['libelle', 'id', 'code'],
+      keys: ['libelle', 'id'],
       threshold: 0.3,
       ignoreLocation: true
     })
@@ -45,7 +43,7 @@ export function useTypeEmploisGrid(searchQuery: string) {
   }, [fetchedData, searchQuery])
 
   const modalNode = (
-    <TypeEmploiFormModal 
+    <SousSecteurFormModal 
       open={!!editingItem} 
       onOpenChange={(open) => !open && setEditingItem(null)} 
       initialData={editingItem} 

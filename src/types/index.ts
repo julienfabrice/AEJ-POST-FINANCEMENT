@@ -3,22 +3,13 @@ export type ZUSTAND_T<T> = {
   (state: T | ((state: T) => T), replace: true): void;
 }
 
-export interface USER_T {
-  id: number
-  nom: string
-  prenoms: string
-  email: string
-  roleId: number
-  roleCode: string
-  roleLibelle: string
-  kind: 'agent' | 'benef'
-  agenceId?: number
-  organismeId?: number
-}
-
-export interface LOGIN_RESPONSE_T {
-  token: string
-  user: USER_T
+/**
+ * Enveloppe standard des réponses du backend AEJ : `{ message, data }`.
+ * Les types de réponse par feature s'en dérivent (voir `auth.types.ts`).
+ */
+export interface API_RESPONSE_T<T> {
+  message: string
+  data: T
 }
 
 export interface JEUNE_T {

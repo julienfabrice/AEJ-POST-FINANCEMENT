@@ -3,8 +3,9 @@ import { useAuthStore } from '@/store/useAuthStore'
 
 export const Route = createFileRoute('/_authenticated/_agent')({
   beforeLoad: () => {
-    const { user } = useAuthStore.getState()
-    if (user?.kind === 'benef') {
+    // Espace agent = personnel AEJ (`agence`) ou partenaire (`organisme`) ;
+    // seul le promoteur (`entreprise`) est renvoyé vers son propre espace.
+    if (useAuthStore.getState().space() === 'entreprise') {
       throw redirect({ to: '/dashboard' })
     }
   },

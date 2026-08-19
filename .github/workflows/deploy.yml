@@ -28,6 +28,8 @@ jobs:
 
       - name: 🏗️ Build du projet (Vérification)
         run: npm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
       - name: 🚀 Déploiement via SCP (Uniquement sur deploiement)
         if: github.ref == 'refs/heads/deploiement' || (github.event_name == 'pull_request' && github.base_ref == 'deploiement')

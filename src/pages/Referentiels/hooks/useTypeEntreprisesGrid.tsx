@@ -5,9 +5,11 @@ import { ActionsCellRenderer } from '../components/ActionsCellRenderer'
 import { PrimaryTextCellRenderer } from '../components/PrimaryTextCellRenderer'
 import { BadgeCellRenderer } from '../components/BadgeCellRenderer'
 import { useGetTypeEntreprises } from '@/api/type-entreprises/useGetTypeEntreprises'
+import { useDeleteTypeEntreprise } from '@/api/type-entreprises/useDeleteTypeEntreprise'
 
 export function useTypeEntreprisesGrid(searchQuery: string) {
   const { data: fetchedData = [], isLoading } = useGetTypeEntreprises()
+  const { mutate: deleteTypeEntreprise } = useDeleteTypeEntreprise()
 
   const columnDefs = useMemo<ColDef[]>(() => {
     return [
@@ -21,9 +23,14 @@ export function useTypeEntreprisesGrid(searchQuery: string) {
         sortable: false,
         filter: false,
         cellRenderer: ActionsCellRenderer,
+        cellRendererParams: {
+          onDelete: (id: number) => {
+            deleteTypeEntreprise(id)
+          }
+        },
       }
     ]
-  }, [])
+  }, [deleteTypeEntreprise])
 
   const filteredData = useMemo(() => {
     if (!searchQuery.trim() || fetchedData.length === 0) return fetchedData

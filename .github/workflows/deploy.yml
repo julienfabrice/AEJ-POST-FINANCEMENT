@@ -39,5 +39,5 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           source: "dist"
-          target: "/web"
+          target: "web"
           strip_components: 1

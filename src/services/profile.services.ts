@@ -4,12 +4,8 @@ import type { PERSONNEL_T } from '@/types/personnels.types'
 import type { CHANGE_PASSWORD_T, UPDATE_PROFILE_T } from '@/types/profile.types'
 
 /**
- * ⚠️ CHEMIN PROVISOIRE — à confirmer (cf. leftover #14).
- *
- * Isolé dans une constante : le jour où le backend tranche, c'est la seule
- * ligne à changer, avec éventuellement les noms de champs de `CHANGE_PASSWORD_T`.
- * NE PAS pointer vers `/password/setup` ni `/password/reset` : ceux-là relèvent
- * du parcours par lien email, sans session.
+ * Changement authentifié. À NE PAS confondre avec `/password/setup` et
+ * `/password/reset`, qui relèvent du parcours par lien email, sans session.
  */
 const CHANGE_PASSWORD_PATH = '/password/change'
 

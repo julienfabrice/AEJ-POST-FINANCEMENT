@@ -15,13 +15,7 @@ import { PasswordInput } from '@/components/ui/password-input'
 import { useChangePassword } from '@/hooks/profile.hooks'
 import { changePasswordSchema, type ChangePasswordFormValues } from '@/schema/profile.schema'
 
-/**
- * Changement de mot de passe authentifié (ancien → nouveau).
- *
- * ⚠️ Le chemin de l'endpoint est PROVISOIRE (`profileServices.changePassword`),
- * de même que les noms de champs de `CHANGE_PASSWORD_T` : à réaligner dès que
- * le backend expose le contrat définitif.
- */
+/** Changement de mot de passe authentifié (ancien → nouveau). */
 export function ChangePasswordForm({ onSuccess }: { onSuccess: () => void }) {
   const { mutateAsync: changePassword } = useChangePassword()
 
@@ -36,7 +30,12 @@ export function ChangePasswordForm({ onSuccess }: { onSuccess: () => void }) {
 
   const submit = async (values: ChangePasswordFormValues) => {
     try {
-      await changePassword(values)
+      // La confirmation reste côté client : le backend n'attend que l'ancien
+      // et le nouveau mot de passe.
+      await changePassword({
+        password_old: values.mot_de_passe_actuel,
+        password_new: values.mot_de_passe,
+      })
       toast.success('Mot de passe modifié')
       onSuccess()
     } catch (error) {

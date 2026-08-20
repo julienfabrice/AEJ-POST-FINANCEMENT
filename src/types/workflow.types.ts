@@ -14,6 +14,15 @@ export interface WORKFLOW_ETAPE_T {
     created_at: string;
     updated_at: string;
     slas?: WORKFLOW_ETAPE_SLA_T[];
+    deliverables?: WORKFLOW_ETAPE_DELIVERABLE_T[];
+}
+
+export interface WORKFLOW_ETAPE_DELIVERABLE_T {
+    id: number;
+    etape_code: string;
+    deliverable_code: string;
+    is_required: boolean;
+    etape?: any;
 }
 
 export interface WORKFLOW_ETAPE_SLA_T {

@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as R2faRouteImport } from './routes/2fa'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as DevPreviewRouteImport } from './routes/dev-preview'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SetupPasswordRouteImport } from './routes/setup-password'
@@ -51,6 +52,11 @@ const R2faRoute = R2faRouteImport.update({
 } as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevPreviewRoute = DevPreviewRouteImport.update({
+  id: '/dev-preview',
+  path: '/dev-preview',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
@@ -238,6 +244,7 @@ const AuthenticatedAgentAdminWorkflowsRoute =
 export interface FileRoutesByFullPath {
   '/2fa': typeof R2faRoute
   '/': typeof AuthenticatedIndexRoute
+  '/dev-preview': typeof DevPreviewRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/setup-password': typeof SetupPasswordRoute
@@ -270,6 +277,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/2fa': typeof R2faRoute
+  '/dev-preview': typeof DevPreviewRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/setup-password': typeof SetupPasswordRoute
@@ -305,6 +313,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/2fa': typeof R2faRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/dev-preview': typeof DevPreviewRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/setup-password': typeof SetupPasswordRoute
@@ -343,6 +352,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/2fa'
     | '/'
+    | '/dev-preview'
     | '/forgot-password'
     | '/login'
     | '/setup-password'
@@ -375,6 +385,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/2fa'
+    | '/dev-preview'
     | '/forgot-password'
     | '/login'
     | '/setup-password'
@@ -409,6 +420,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/2fa'
     | '/_authenticated'
+    | '/dev-preview'
     | '/forgot-password'
     | '/login'
     | '/setup-password'
@@ -446,6 +458,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   R2faRoute: typeof R2faRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  DevPreviewRoute: typeof DevPreviewRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   SetupPasswordRoute: typeof SetupPasswordRoute
@@ -465,6 +478,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev-preview': {
+      id: '/dev-preview'
+      path: '/dev-preview'
+      fullPath: '/dev-preview'
+      preLoaderRoute: typeof DevPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forgot-password': {
@@ -789,6 +809,7 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   R2faRoute: R2faRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  DevPreviewRoute: DevPreviewRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   SetupPasswordRoute: SetupPasswordRoute,

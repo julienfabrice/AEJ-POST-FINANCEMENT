@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Skeleton } from '@/components/ui/skeleton'
 
 import { WorkflowVersionsKanban } from './UI/WorkflowVersionsKanban'
-import { workflowServices } from '@/services/workflow.services'
+import { workflowServices } from '@/services/workflow'
 import type { WORKFLOW_VERSION_T } from '@/types'
 
 export function WorkflowsPage() {
@@ -13,7 +13,7 @@ export function WorkflowsPage() {
   const workflowsMap = useMemo(() => {
     if (!versions) return new Map<string, WORKFLOW_VERSION_T[]>()
     const map = new Map<string, WORKFLOW_VERSION_T[]>()
-    versions.forEach(v => {
+    versions.forEach((v: WORKFLOW_VERSION_T) => {
       if (!map.has(v.workflow.code)) {
         map.set(v.workflow.code, [])
       }
@@ -26,7 +26,7 @@ export function WorkflowsPage() {
   const uniqueWorkflows = useMemo(() => {
     if (!versions) return []
     const map = new Map<string, any>()
-    versions.forEach(v => {
+    versions.forEach((v: WORKFLOW_VERSION_T) => {
       if (!map.has(v.workflow.code)) {
         map.set(v.workflow.code, v.workflow)
       }

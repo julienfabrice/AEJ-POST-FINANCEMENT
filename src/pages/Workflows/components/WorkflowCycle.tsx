@@ -21,9 +21,10 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { WorkflowSubCycle } from './WorkflowSubCycle'
+import { DeleteConfirmModal } from '@/components/DeleteConfirmModal'
 import type { WORKFLOW_ETAPE_T } from '@/types'
-import { workflowServices } from '@/services/workflow.services'
-import { etapeSchema, type EtapeFormValues } from '@/schema/workflows.schema'
+import { workflowServices } from '@/services/workflow'
+import { etapeSchema, type EtapeFormValues } from '@/schema/workflow'
 
 interface WorkflowCycleProps {
   etape?: WORKFLOW_ETAPE_T
@@ -38,6 +39,7 @@ export function WorkflowCycle({ etape, numero, code, titre, sousEtapes, isLast }
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   
   const updateEtapeMutation = workflowServices.useUpdateEtape()
+  const deleteEtapeMutation = workflowServices.useDeleteEtape()
 
   const editForm = useForm<EtapeFormValues>({
     resolver: zodResolver(etapeSchema),
@@ -79,6 +81,11 @@ export function WorkflowCycle({ etape, numero, code, titre, sousEtapes, isLast }
     )
   }
 
+  const handleDelete = () => {
+    if (!etape) return
+    deleteEtapeMutation.mutate(etape.id)
+  }
+
   const openEditModal = () => {
     setIsEditModalOpen(true)
   }
@@ -113,9 +120,17 @@ export function WorkflowCycle({ etape, numero, code, titre, sousEtapes, isLast }
               >
                 <Edit2 className="w-4 h-4" />
               </button>
-              <button className="flex items-center justify-center w-8 h-8 rounded text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Supprimer l'étape">
-                <Trash2 className="w-4 h-4" />
-              </button>
+              
+              <DeleteConfirmModal
+                itemLabel={titre}
+                description={`Cette action supprimera définitivement l'étape "${titre}". Vous aurez 5 secondes pour annuler cette action avant qu'elle ne soit définitive.`}
+                onConfirm={handleDelete}
+                trigger={
+                  <button className="flex items-center justify-center w-8 h-8 rounded text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors" title="Supprimer l'étape">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                }
+              />
             </div>
           </div>
           

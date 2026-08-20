@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Plus, MoreVertical, Info, Pencil, CheckCircle, Calendar, Tag, FileText, Loader2 } from 'lucide-react'
+import { Plus, MoreVertical, Info, Pencil, CheckCircle, Calendar, Tag, FileText, Loader2, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
+import { DeleteConfirmModal } from '@/components/DeleteConfirmModal'
 import {
   Form,
   FormControl,
@@ -34,7 +35,7 @@ import {
 } from "@/components/ui/form"
 import { WorkflowTimeline } from './WorkflowTimeline'
 import type { WORKFLOW_VERSION_T } from '@/types'
-import { workflowServices } from '@/services/workflow.services'
+import { workflowServices } from '@/services/workflow'
 import { 
   createVersionSchema, 
   updateVersionSchema, 
@@ -42,7 +43,7 @@ import {
   type CreateVersionFormValues,
   type UpdateVersionFormValues,
   type EtapeFormValues
-} from '@/schema/workflows.schema'
+} from '@/schema/workflow'
 
 interface WorkflowVersionsKanbanProps {
   versions: WORKFLOW_VERSION_T[]
@@ -58,11 +59,13 @@ export function WorkflowVersionsKanban({ versions, activeWorkflowCode }: Workflo
   const [isEtapeModalOpen, setIsEtapeModalOpen] = useState(false)
   
   const [editingVersion, setEditingVersion] = useState<WORKFLOW_VERSION_T | null>(null)
+  const [versionToDelete, setVersionToDelete] = useState<WORKFLOW_VERSION_T | null>(null)
   const [targetVersionCode, setTargetVersionCode] = useState('')
   
   const createMutation = workflowServices.useCreateVersion()
   const updateVersionMutation = workflowServices.useUpdateVersion()
   const createEtapeMutation = workflowServices.useCreateEtape()
+  const deleteVersionMutation = workflowServices.useDeleteVersion()
 
   // Forms setup
   const createForm = useForm<CreateVersionFormValues>({
@@ -144,6 +147,15 @@ export function WorkflowVersionsKanban({ versions, activeWorkflowCode }: Workflo
     )
   }
   
+  const handleDeleteVersion = () => {
+    if (!versionToDelete) return
+    deleteVersionMutation.mutate(versionToDelete.id, {
+      onSuccess: () => {
+        setVersionToDelete(null)
+      }
+    })
+  }
+
   const renderColumn = (version: WORKFLOW_VERSION_T) => {
     const statusText = version.is_active ? 'Active' : 'Archivée'
     const statusClass = version.is_active 
@@ -214,6 +226,13 @@ export function WorkflowVersionsKanban({ versions, activeWorkflowCode }: Workflo
                   <span>Activer cette version</span>
                 </DropdownMenuItem>
               )}
+              <DropdownMenuItem 
+                className="text-red-600 focus:text-red-700 focus:bg-red-50 cursor-pointer"
+                onClick={() => setVersionToDelete(version)}
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                <span>Supprimer</span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -524,6 +543,15 @@ export function WorkflowVersionsKanban({ versions, activeWorkflowCode }: Workflo
           )}
         </SheetContent>
       </Sheet>
+
+      {/* Modal de suppression de version */}
+      <DeleteConfirmModal 
+        open={!!versionToDelete} 
+        onOpenChange={(open) => !open && setVersionToDelete(null)}
+        itemLabel={versionToDelete?.name}
+        description={`Cette action supprimera définitivement la version "${versionToDelete?.name}" et toutes ses étapes. Vous aurez 5 secondes pour annuler cette action avant qu'elle ne soit définitive.`}
+        onConfirm={handleDeleteVersion}
+      />
     </>
   )
 }

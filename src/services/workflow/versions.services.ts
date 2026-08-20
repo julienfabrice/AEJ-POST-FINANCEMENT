@@ -4,11 +4,10 @@ import { toast } from 'sonner'
 import type { WORKFLOW_VERSION_T, API_RESPONSE_T } from '@/types'
 import type { 
   CreateVersionFormValues, 
-  UpdateVersionFormValues, 
-  EtapeFormValues 
-} from '@/schema/workflows.schema'
+  UpdateVersionFormValues 
+} from '@/schema/workflow'
 
-export const workflowServices = {
+export const versionServices = {
   useGetVersions: () => {
     return useQuery({
       queryKey: ['workflow', 'versions'],
@@ -37,24 +36,6 @@ export const workflowServices = {
     })
   },
 
-  useCreateEtape: () => {
-    const queryClient = useQueryClient()
-    return useMutation({
-      mutationFn: async (payload: EtapeFormValues & { workflow_version: string }) => {
-        const response = await axiosInstance.post('/workflow/etapes', payload)
-        return response.data
-      },
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['workflow', 'versions'] })
-        toast.success("Étape ajoutée avec succès !")
-      },
-      onError: (error) => {
-        toast.error("Erreur lors de l'ajout de l'étape.")
-        console.error(error)
-      }
-    })
-  },
-
   useUpdateVersion: () => {
     const queryClient = useQueryClient()
     return useMutation({
@@ -73,19 +54,19 @@ export const workflowServices = {
     })
   },
 
-  useUpdateEtape: () => {
+  useDeleteVersion: () => {
     const queryClient = useQueryClient()
     return useMutation({
-      mutationFn: async ({ id, ...payload }: EtapeFormValues & { id: number }) => {
-        const response = await axiosInstance.put(`/workflow/etapes/${id}`, payload)
+      mutationFn: async (id: number) => {
+        const response = await axiosInstance.delete(`/workflow/versions/${id}`)
         return response.data
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['workflow', 'versions'] })
-        toast.success("Étape mise à jour avec succès !")
+        toast.success("Version supprimée avec succès !")
       },
       onError: (error) => {
-        toast.error("Erreur lors de la modification de l'étape.")
+        toast.error("Erreur lors de la suppression de la version.")
         console.error(error)
       }
     })

@@ -1,25 +1,16 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { TooltipProvider } from '@/components/ui/tooltip'
-import { Toaster } from '@/components/ui/sonner'
+import { queryClient } from '@/lib/queryClient'
+import { wireSessionBridge } from '@/lib/sessionBridge'
 import { routeTree } from './routeTree.gen'
 import { NotFoundPage } from '@/pages/NotFound/NotFoundPage'
 import './index.css'
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: false,
-    },
-  },
-})
 
-// Create a new router instance. Le `queryClient` passe par le contexte : les
-// gardes `beforeLoad` s'en servent pour lire `/personnel/me` (cf. __root.tsx).
 const router = createRouter({
   routeTree,
   context: { queryClient },
@@ -33,12 +24,17 @@ declare module '@tanstack/react-router' {
   }
 }
 
+// Branche la réaction à « session perdue » AVANT le premier rendu : le tout
+// premier `/auth/me` part depuis `beforeLoad`, donc avant qu'un composant
+// n'existe. 
+wireSessionBridge(router, queryClient)
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
+
         <RouterProvider router={router} />
-        <Toaster />
       </TooltipProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

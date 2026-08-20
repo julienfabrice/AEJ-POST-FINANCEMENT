@@ -1,4 +1,4 @@
-import { axiosInstance, ensureCsrf } from '@/constants/axiosInstance'
+import { axiosInstance, ensureCsrf, resetSessionGuard } from '@/constants/axiosInstance'
 import type {
   LOGIN_CREDENTIALS_T,
   LOGIN_RESPONSE_T,
@@ -20,6 +20,10 @@ export const authServices = {
   login: async (credentials: LOGIN_CREDENTIALS_T): Promise<LOGIN_RESULT_T> => {
     await ensureCsrf()
     const {data} = await axiosInstance.post<LOGIN_RESPONSE_T>(`${BASE_URL}/login`, credentials)
+    // Réarme le garde « une seule notification de déconnexion » : sans ça, une
+    // session perdue puis reconnectée laisserait le drapeau à `true` et la
+    // PROCHAINE expiration passerait totalement inaperçue.
+    resetSessionGuard()
     return {
       userId: data.user_id,
       // L'email renvoyé par le backend fait autorité ; à défaut, on retombe sur

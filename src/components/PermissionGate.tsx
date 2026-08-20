@@ -16,9 +16,6 @@ interface PermissionGateProps {
  *   <PermissionGate module={MODULES.PROJETS} action="c">
  *     <Button>Nouveau projet</Button>
  *   </PermissionGate>
- *
- * Ne remplace PAS le garde de route (`requireModule`) : masquer une action ne
- * protège pas l'URL correspondante.
  */
 export function PermissionGate({
   module,
@@ -26,8 +23,7 @@ export function PermissionGate({
   fallback = null,
   children,
 }: PermissionGateProps) {
-  // On s'abonne au BOOLÉEN, pas au store entier : re-rendu seulement quand le
-  // droit lui-même change.
+
   const allowed = useAuthStore((s) => s.can(module, action))
   return <>{allowed ? children : fallback}</>
 }

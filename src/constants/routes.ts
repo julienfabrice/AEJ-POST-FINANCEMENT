@@ -77,10 +77,7 @@ export interface NavItem {
   path: AppRoute
   icon: LucideIcon
   group: string
-  /**
-   * Module de permission conditionnant l'affichage. Absent = toujours visible
-   * (ex. le tableau de bord). Jamais une chaîne libre : toujours `MODULES.*`.
-   */
+
   module?: ModuleKey
 }
 

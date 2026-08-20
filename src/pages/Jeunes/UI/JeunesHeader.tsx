@@ -1,5 +1,7 @@
 import { Download, UserPlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { PermissionGate } from '@/components/PermissionGate'
+import { MODULES } from '@/constants/modules'
 
 export function JeunesHeader() {
   return (
@@ -13,10 +15,13 @@ export function JeunesHeader() {
           <Download className="w-4 h-4 mr-2" />
           Exporter
         </Button>
-        <Button size="sm">
-          <UserPlus className="w-4 h-4 mr-2" />
-          Nouveau promoteur
-        </Button>
+        {/* Création : réservée au `full_access` sur le module. */}
+        <PermissionGate module={MODULES.JEUNES} action="c">
+          <Button size="sm">
+            <UserPlus className="w-4 h-4 mr-2" />
+            Nouveau promoteur
+          </Button>
+        </PermissionGate>
       </div>
     </div>
   )

@@ -13,6 +13,20 @@ export interface WORKFLOW_ETAPE_T {
     valid_to: string | null;
     created_at: string;
     updated_at: string;
+    slas?: WORKFLOW_ETAPE_SLA_T[];
+}
+
+export interface WORKFLOW_ETAPE_SLA_T {
+    id: number;
+    etape_code: string;
+    description?: string;
+    duration_value: number;
+    duration_unit: string;
+    delay_type?: string;
+    is_active?: boolean;
+    created_at?: string;
+    updated_at?: string;
+    etape?: any;
 }
 
 export interface WORKFLOW_BASE_T {

@@ -20,13 +20,6 @@ export function WorkflowTimeline({ etapes }: WorkflowTimelineProps) {
             numero={etape.order || index + 1}
             code={etape.code}
             titre={etape.name}
-            sousEtapes={[
-              {
-                titre: etape.description,
-                roles: etape.impact ? [etape.impact.replace(/_/g, ' ')] : [],
-                documents: etape.statut ? [`Statut: ${etape.statut}`] : []
-              }
-            ]}
             isLast={index === etapes.length - 1}
           />
         ))

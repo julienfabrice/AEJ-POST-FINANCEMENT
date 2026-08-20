@@ -22,24 +22,63 @@ import {
 } from "@/components/ui/form"
 import { WorkflowSubCycle } from './WorkflowSubCycle'
 import { DeleteConfirmModal } from '@/components/DeleteConfirmModal'
-import type { WORKFLOW_ETAPE_T } from '@/types'
+import type { WORKFLOW_ETAPE_T, WORKFLOW_ETAPE_SLA_T } from '@/types'
 import { workflowServices } from '@/services/workflow'
-import { etapeSchema, type EtapeFormValues } from '@/schema/workflow'
+import { 
+  etapeSchema, type EtapeFormValues,
+  etapeSlaSchema, type EtapeSlaFormValues
+} from '@/schema/workflow'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 interface WorkflowCycleProps {
   etape?: WORKFLOW_ETAPE_T
   numero: number
   code: string
   titre: string
-  sousEtapes: any[]
   isLast?: boolean
 }
 
-export function WorkflowCycle({ etape, numero, code, titre, sousEtapes, isLast }: WorkflowCycleProps) {
+export function WorkflowCycle({ etape, numero, code, titre, isLast }: WorkflowCycleProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   
   const updateEtapeMutation = workflowServices.useUpdateEtape()
   const deleteEtapeMutation = workflowServices.useDeleteEtape()
+  const createSlaMutation = workflowServices.useCreateEtapeSla()
+  const { data: fetchedSlas, isLoading: isSlasLoading } = workflowServices.useGetEtapeSlas(code)
+
+  const [isSlaModalOpen, setIsSlaModalOpen] = useState(false)
+
+  const addSlaForm = useForm<EtapeSlaFormValues>({
+    resolver: zodResolver(etapeSlaSchema),
+    defaultValues: {
+      etape_code: code,
+      description: '',
+      duration_value: 1,
+      duration_unit: 'JOURS',
+      delay_type: 'MAX' // Valeur temporaire
+    }
+  })
+
+  const onAddSla = (data: EtapeSlaFormValues) => {
+    createSlaMutation.mutate(
+      {
+        ...data,
+        etape_code: code
+      },
+      {
+        onSuccess: () => {
+          setIsSlaModalOpen(false)
+          addSlaForm.reset()
+        }
+      }
+    )
+  }
 
   const editForm = useForm<EtapeFormValues>({
     resolver: zodResolver(etapeSchema),
@@ -90,6 +129,8 @@ export function WorkflowCycle({ etape, numero, code, titre, sousEtapes, isLast }
     setIsEditModalOpen(true)
   }
 
+  const displaySlas = (etape?.slas && etape.slas.length > 0) ? etape.slas : (fetchedSlas || [])
+
   return (
     <>
       <div className="relative pb-1.5 pl-10 mb-1.5">
@@ -136,24 +177,30 @@ export function WorkflowCycle({ etape, numero, code, titre, sousEtapes, isLast }
           
           {/* Body */}
           <CardContent className="px-4 pb-4 border-t border-[#EEF2F7] block pt-4">
-            {(!sousEtapes || sousEtapes.length === 0) ? (
-              <div className="text-slate-500 text-sm py-2">Aucune sous-étape</div>
+            {isSlasLoading ? (
+               <div className="flex justify-center py-4 text-slate-400">
+                 <Loader2 className="w-5 h-5 animate-spin" />
+               </div>
+            ) : displaySlas.length === 0 ? (
+              <div className="text-slate-500 text-sm py-2">Aucun SLA configuré</div>
             ) : (
-              sousEtapes.map((sousEtape, index) => (
+              displaySlas.map((sla: WORKFLOW_ETAPE_SLA_T) => (
                 <WorkflowSubCycle 
-                  key={index}
-                  titre={sousEtape.titre}
-                  roles={sousEtape.roles}
-                  documents={sousEtape.documents}
-                  duree={sousEtape.duree}
+                  key={sla.id}
+                  sla={sla}
                 />
               ))
             )}
             
             <div className="mt-4">
-              <Button variant="outline" size="sm" className="h-8 text-xs font-medium text-slate-600">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="h-8 text-xs font-medium text-slate-600"
+                onClick={() => setIsSlaModalOpen(true)}
+              >
                 <Plus className="w-3.5 h-3.5 mr-1" />
-                Ajouter une sous-étape
+                Ajouter un SLA
               </Button>
             </div>
           </CardContent>
@@ -233,6 +280,109 @@ export function WorkflowCycle({ etape, numero, code, titre, sousEtapes, isLast }
                 <Button type="submit" disabled={updateEtapeMutation.isPending} className="bg-[#E7722B] hover:bg-[#C85E18] text-white">
                   {updateEtapeMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   Enregistrer
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isSlaModalOpen} onOpenChange={setIsSlaModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Ajouter un SLA pour l'étape {titre}</DialogTitle>
+          </DialogHeader>
+          <Form {...addSlaForm}>
+            <form onSubmit={addSlaForm.handleSubmit(onAddSla)} className="space-y-4">
+              <FormField
+                control={addSlaForm.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description du délai</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ex: Délai de traitement du dossier" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="flex gap-4 w-full">
+                <FormField
+                  control={addSlaForm.control}
+                  name="duration_value"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Valeur</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          placeholder="Ex: 5" 
+                          {...field} 
+                          onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : '')} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={addSlaForm.control}
+                  name="duration_unit"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Unité</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Sélectionner" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="HEURES">Heures</SelectItem>
+                          <SelectItem value="JOURS">Jours</SelectItem>
+                          <SelectItem value="SEMAINES">Semaines</SelectItem>
+                          <SelectItem value="MOIS">Mois</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={addSlaForm.control}
+                  name="delay_type"
+                  render={({ field }) => (
+                    <FormItem className="flex-1">
+                      <FormLabel>Type de délai</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Sélectionner" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="MAX">Maximum</SelectItem>
+                          <SelectItem value="MIN">Minimum</SelectItem>
+                          <SelectItem value="WARNING">Alerte</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <DialogFooter>
+                <Button variant="outline" type="button" onClick={() => setIsSlaModalOpen(false)}>
+                  Annuler
+                </Button>
+                <Button type="submit" disabled={createSlaMutation.isPending} className="bg-[#E7722B] hover:bg-[#C85E18] text-white">
+                  {createSlaMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Ajouter
                 </Button>
               </DialogFooter>
             </form>

@@ -108,15 +108,22 @@ export function WorkflowsPage() {
       >
         <div className="overflow-x-auto w-full no-scrollbar">
           <TabsList className="flex items-center gap-1 border-b border-slate-200 w-max min-w-full bg-transparent p-0 h-auto rounded-none justify-start">
-            {uniqueWorkflows.map(w => (
-              <TabsTrigger 
-                key={w.code} 
-                value={w.code}
-                className="!bg-transparent !shadow-none after:hidden px-4 py-2.5 text-[13.5px] font-semibold text-slate-500 border-t-0 border-l-0 border-r-0 border-b-[2.5px] border-transparent data-[state=active]:text-[#E7722B] data-[state=active]:!border-[#E7722B] hover:text-[#131C29] whitespace-nowrap -mb-[1px] transition-colors rounded-none"
-              >
-                {w.name}
-              </TabsTrigger>
-            ))}
+            {uniqueWorkflows.map(w => {
+              const count = workflowsMap.get(w.code)?.length ?? 0
+              const isActive = activeTab === w.code
+              return (
+                <TabsTrigger
+                  key={w.code}
+                  value={w.code}
+                  className="!bg-transparent !shadow-none after:hidden px-4 py-2.5 text-[13.5px] font-semibold text-slate-500 border-t-0 border-l-0 border-r-0 border-b-[2.5px] border-transparent data-[state=active]:text-[#E7722B] data-[state=active]:!border-[#E7722B] hover:text-[#131C29] whitespace-nowrap -mb-[1px] transition-colors rounded-none flex items-center gap-2"
+                >
+                  {w.name}
+                  <span className={`inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full text-[11px] font-bold transition-colors ${isActive ? 'bg-[#E7722B]/10 text-[#E7722B]' : 'bg-slate-100 text-slate-500'}`}>
+                    {count}
+                  </span>
+                </TabsTrigger>
+              )
+            })}
           </TabsList>
         </div>
 

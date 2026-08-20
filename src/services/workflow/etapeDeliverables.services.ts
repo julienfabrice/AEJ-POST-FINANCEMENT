@@ -29,7 +29,9 @@ export const etapeDeliverablesServices = {
     const queryClient = useQueryClient()
     return useMutation({
       mutationFn: async (payload: EtapeDeliverableFormValues) => {
-        const response = await axiosInstance.post('/workflow/etape-deliverables', payload)
+        // Le backend requiert parfois "name" même s'il n'est pas dans la DB
+        const dataToSend = { ...payload, name: payload.deliverable_code };
+        const response = await axiosInstance.post('/workflow/etape-deliverables', dataToSend)
         return response.data
       },
       onSuccess: () => {
@@ -56,7 +58,8 @@ export const etapeDeliverablesServices = {
     const queryClient = useQueryClient()
     return useMutation({
       mutationFn: async ({ id, ...payload }: EtapeDeliverableFormValues & { id: number }) => {
-        const response = await axiosInstance.put(`/workflow/etape-deliverables/${id}`, payload)
+        const dataToSend = { ...payload, name: payload.deliverable_code };
+        const response = await axiosInstance.put(`/workflow/etape-deliverables/${id}`, dataToSend)
         return response.data
       },
       onSuccess: () => {

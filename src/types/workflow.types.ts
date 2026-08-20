@@ -15,6 +15,16 @@ export interface WORKFLOW_ETAPE_T {
     updated_at: string;
     slas?: WORKFLOW_ETAPE_SLA_T[];
     deliverables?: WORKFLOW_ETAPE_DELIVERABLE_T[];
+    roles?: WORKFLOW_ETAPE_ROLE_T[];
+}
+
+export interface WORKFLOW_ETAPE_ROLE_T {
+    id: number;
+    etape_code: string;
+    role_code: string;
+    action: string;
+    etape?: any;
+    role?: any;
 }
 
 export interface WORKFLOW_ETAPE_DELIVERABLE_T {

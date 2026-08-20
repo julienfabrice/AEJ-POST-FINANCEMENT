@@ -65,6 +65,12 @@ export function WorkflowCycle({ etape, numero, code, titre, isLast }: WorkflowCy
     }
   })
 
+  useEffect(() => {
+    if (!isSlaModalOpen) addSlaForm.reset()
+  }, [isSlaModalOpen, addSlaForm])
+
+  const displaySlas = fetchedSlas || (etape?.slas || [])
+
   const onAddSla = (data: EtapeSlaFormValues) => {
     createSlaMutation.mutate(
       {
@@ -79,7 +85,6 @@ export function WorkflowCycle({ etape, numero, code, titre, isLast }: WorkflowCy
       }
     )
   }
-
   const editForm = useForm<EtapeFormValues>({
     resolver: zodResolver(etapeSchema),
     defaultValues: {
@@ -129,7 +134,6 @@ export function WorkflowCycle({ etape, numero, code, titre, isLast }: WorkflowCy
     setIsEditModalOpen(true)
   }
 
-  const displaySlas = (etape?.slas && etape.slas.length > 0) ? etape.slas : (fetchedSlas || [])
 
   return (
     <>

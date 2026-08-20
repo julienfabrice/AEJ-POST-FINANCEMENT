@@ -26,7 +26,8 @@ export const etapeSlasServices = {
     const queryClient = useQueryClient()
     return useMutation({
       mutationFn: async (payload: EtapeSlaFormValues) => {
-        const response = await axiosInstance.post('/workflow/etape-slas', payload)
+        const dataToSend = { ...payload, name: payload.description };
+        const response = await axiosInstance.post('/workflow/etape-slas', dataToSend)
         return response.data
       },
       onSuccess: () => {
@@ -54,7 +55,8 @@ export const etapeSlasServices = {
     const queryClient = useQueryClient()
     return useMutation({
       mutationFn: async ({ id, ...payload }: EtapeSlaFormValues & { id: number }) => {
-        const response = await axiosInstance.put(`/workflow/etape-slas/${id}`, payload)
+        const dataToSend = { ...payload, name: payload.description };
+        const response = await axiosInstance.put(`/workflow/etape-slas/${id}`, dataToSend)
         return response.data
       },
       onSuccess: () => {

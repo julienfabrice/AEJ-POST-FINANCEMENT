@@ -16,6 +16,7 @@ export function WorkflowTimeline({ etapes }: WorkflowTimelineProps) {
         etapes.map((etape, index: number) => (
           <WorkflowCycle 
             key={etape.id || index}
+            etape={etape}
             numero={etape.order || index + 1}
             code={etape.code}
             titre={etape.name}

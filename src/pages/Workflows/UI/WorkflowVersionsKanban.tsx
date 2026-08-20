@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Plus, MoreVertical, Info, Pencil, CheckCircle, Calendar, Tag, FileText, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,10 +23,26 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Card, CardContent } from "@/components/ui/card"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
 import { WorkflowTimeline } from './WorkflowTimeline'
 import type { WORKFLOW_VERSION_T } from '@/types'
 import { workflowServices } from '@/services/workflow.services'
+import { 
+  createVersionSchema, 
+  updateVersionSchema, 
+  etapeSchema,
+  type CreateVersionFormValues,
+  type UpdateVersionFormValues,
+  type EtapeFormValues
+} from '@/schema/workflows.schema'
 
 interface WorkflowVersionsKanbanProps {
   versions: WORKFLOW_VERSION_T[]
@@ -34,58 +52,93 @@ interface WorkflowVersionsKanbanProps {
 export function WorkflowVersionsKanban({ versions, activeWorkflowCode }: WorkflowVersionsKanbanProps) {
   const [selectedVersion, setSelectedVersion] = useState<WORKFLOW_VERSION_T | null>(null)
   
-  // Create Version State
+  // Modals state
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
-  const [newVersionName, setNewVersionName] = useState('')
-  const [newVersionCode, setNewVersionCode] = useState('')
-  
-  // Create Etape State
+  const [isUpdateVersionModalOpen, setIsUpdateVersionModalOpen] = useState(false)
   const [isEtapeModalOpen, setIsEtapeModalOpen] = useState(false)
+  
+  const [editingVersion, setEditingVersion] = useState<WORKFLOW_VERSION_T | null>(null)
   const [targetVersionCode, setTargetVersionCode] = useState('')
-  const [newEtapeName, setNewEtapeName] = useState('')
-  const [newEtapeCode, setNewEtapeCode] = useState('')
-  const [newEtapeOrder, setNewEtapeOrder] = useState<number>(1)
   
   const createMutation = workflowServices.useCreateVersion()
+  const updateVersionMutation = workflowServices.useUpdateVersion()
   const createEtapeMutation = workflowServices.useCreateEtape()
 
-  const handleCreateVersion = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!activeWorkflowCode || !newVersionName || !newVersionCode) return
+  // Forms setup
+  const createForm = useForm<CreateVersionFormValues>({
+    resolver: zodResolver(createVersionSchema),
+    defaultValues: { name: '', version: '' }
+  })
 
+  const updateForm = useForm<UpdateVersionFormValues>({
+    resolver: zodResolver(updateVersionSchema),
+    defaultValues: { name: '', version: '', description: '' }
+  })
+
+  const etapeForm = useForm<EtapeFormValues>({
+    resolver: zodResolver(etapeSchema),
+    defaultValues: { code: '', name: '', order: 1, description: '' }
+  })
+
+  // Sync update form with selected version
+  useEffect(() => {
+    if (editingVersion) {
+      updateForm.reset({
+        name: editingVersion.name,
+        version: editingVersion.version,
+        description: editingVersion.description || ''
+      })
+    }
+  }, [editingVersion, updateForm])
+
+  const onSubmitCreate = (data: CreateVersionFormValues) => {
+    if (!activeWorkflowCode) return
     createMutation.mutate(
       {
         workflow_code: activeWorkflowCode,
-        name: newVersionName,
-        version: newVersionCode
+        name: data.name,
+        version: data.version
       },
       {
         onSuccess: () => {
           setIsCreateModalOpen(false)
-          setNewVersionName('')
-          setNewVersionCode('')
+          createForm.reset()
         }
       }
     )
   }
 
-  const handleCreateEtape = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!targetVersionCode || !newEtapeName || !newEtapeCode || !newEtapeOrder) return
+  const onSubmitUpdate = (data: UpdateVersionFormValues) => {
+    if (!editingVersion) return
+    updateVersionMutation.mutate(
+      {
+        id: editingVersion.id,
+        name: data.name,
+        version: data.version,
+        description: data.description || undefined
+      },
+      {
+        onSuccess: () => {
+          setIsUpdateVersionModalOpen(false)
+          setEditingVersion(null)
+        }
+      }
+    )
+  }
 
+  const onSubmitEtape = (data: EtapeFormValues) => {
+    if (!targetVersionCode) return
     createEtapeMutation.mutate(
       {
         workflow_version: targetVersionCode,
-        code: newEtapeCode,
-        name: newEtapeName,
-        order: Number(newEtapeOrder)
+        code: data.code,
+        name: data.name,
+        order: data.order
       },
       {
         onSuccess: () => {
           setIsEtapeModalOpen(false)
-          setNewEtapeName('')
-          setNewEtapeCode('')
-          setNewEtapeOrder(1)
+          etapeForm.reset()
         }
       }
     )
@@ -98,9 +151,9 @@ export function WorkflowVersionsKanban({ versions, activeWorkflowCode }: Workflo
       : 'bg-slate-200 text-slate-600'
 
     return (
-      <div key={version.id} className="min-w-[550px] w-[550px] bg-slate-50 border border-slate-200 rounded-xl flex flex-col h-[calc(100vh-280px)]">
+      <Card key={version.id} className="min-w-[550px] w-[550px] bg-slate-50 border-slate-200 rounded-xl flex flex-col h-[calc(100vh-280px)] p-0 gap-0 shadow-none overflow-hidden">
         {/* Header de la colonne */}
-        <div className="p-4 border-b border-slate-200 bg-white rounded-t-xl flex items-center justify-between sticky top-0 z-10 shadow-sm">
+        <div className="p-4 border-b border-slate-200 bg-white flex flex-row items-center justify-between sticky top-0 z-10 shadow-sm">
           <div className="flex items-center gap-2">
             <h3 className="font-bold text-slate-800 text-lg">
               {version.name}
@@ -129,7 +182,13 @@ export function WorkflowVersionsKanban({ versions, activeWorkflowCode }: Workflo
                 <Info className="mr-2 h-4 w-4" />
                 <span>Infos de la version</span>
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
+              <DropdownMenuItem 
+                className="cursor-pointer"
+                onClick={() => {
+                  setEditingVersion(version)
+                  setIsUpdateVersionModalOpen(true)
+                }}
+              >
                 <Pencil className="mr-2 h-4 w-4" />
                 <span>Modifier</span>
               </DropdownMenuItem>
@@ -137,7 +196,12 @@ export function WorkflowVersionsKanban({ versions, activeWorkflowCode }: Workflo
                 className="bg-[#E7722B] text-white focus:bg-[#C85E18] focus:text-white cursor-pointer my-1"
                 onClick={() => {
                   setTargetVersionCode(version.code)
-                  setNewEtapeOrder((version.etapes?.length || 0) + 1)
+                  etapeForm.reset({
+                    code: '',
+                    name: '',
+                    description: '',
+                    order: (version.etapes?.length || 0) + 1
+                  })
                   setIsEtapeModalOpen(true)
                 }}
               >
@@ -155,10 +219,10 @@ export function WorkflowVersionsKanban({ versions, activeWorkflowCode }: Workflo
         </div>
 
         {/* Contenu de la colonne (Workflow Timeline) */}
-        <div className="p-4 flex-1 overflow-y-auto custom-scrollbar">
+        <CardContent className="p-4 flex-1 overflow-y-auto custom-scrollbar">
           <WorkflowTimeline etapes={version.etapes || []} />
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     )
   }
 
@@ -169,112 +233,201 @@ export function WorkflowVersionsKanban({ versions, activeWorkflowCode }: Workflo
         {versions.map(renderColumn)}
 
         {/* Colonne Ajouter une version */}
-        <div 
-          onClick={() => setIsCreateModalOpen(true)}
-          className="min-w-[400px] w-[400px] border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center text-slate-500 hover:border-[#E7722B] hover:text-[#E7722B] hover:bg-orange-50/30 transition-all cursor-pointer h-[calc(100vh-280px)]"
+        <Card 
+          onClick={() => {
+            createForm.reset()
+            setIsCreateModalOpen(true)
+          }}
+          className="min-w-[400px] w-[400px] border-2 border-dashed border-slate-300 bg-transparent shadow-none rounded-xl flex flex-col items-center justify-center text-slate-500 hover:border-[#E7722B] hover:text-[#E7722B] hover:bg-orange-50/30 transition-all cursor-pointer h-[calc(100vh-280px)] p-6"
         >
           <div className="h-14 w-14 rounded-full bg-slate-100 flex items-center justify-center mb-4 transition-colors">
             <Plus className="h-7 w-7" />
           </div>
           <span className="font-semibold text-xl">Ajouter une version</span>
-          <span className="text-sm text-slate-400 mt-2 text-center px-6">
+          <span className="text-sm text-slate-400 mt-2 text-center">
             Créer un nouveau brouillon de workflow
           </span>
-        </div>
+        </Card>
       </div>
 
       {/* Modal d'ajout d'une version */}
       <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
-          <form onSubmit={handleCreateVersion}>
-            <DialogHeader>
-              <DialogTitle>Ajouter une nouvelle version</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4 py-6">
-              <div className="space-y-2">
-                <Label htmlFor="name">Nom de la version</Label>
-                <Input 
-                  id="name" 
-                  placeholder="ex: AGR classique v2026" 
-                  value={newVersionName}
-                  onChange={(e) => setNewVersionName(e.target.value)}
-                  required
+          <Form {...createForm}>
+            <form onSubmit={createForm.handleSubmit(onSubmitCreate)}>
+              <DialogHeader>
+                <DialogTitle>Ajouter une nouvelle version</DialogTitle>
+              </DialogHeader>
+              <div className="grid gap-4 py-6">
+                <FormField
+                  control={createForm.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nom de la version</FormLabel>
+                      <FormControl>
+                        <Input placeholder="ex: AGR classique v2026" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={createForm.control}
+                  name="version"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Numéro de version (ex: 2026)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="ex: 2026" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="version">Numéro de version (ex: 2026)</Label>
-                <Input 
-                  id="version" 
-                  placeholder="ex: 2026" 
-                  value={newVersionCode}
-                  onChange={(e) => setNewVersionCode(e.target.value)}
-                  required
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setIsCreateModalOpen(false)}>
+                  Annuler
+                </Button>
+                <Button type="submit" disabled={createMutation.isPending} className="bg-[#E7722B] hover:bg-[#C85E18] text-white">
+                  {createMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Créer
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de modification d'une version */}
+      <Dialog open={isUpdateVersionModalOpen} onOpenChange={setIsUpdateVersionModalOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <Form {...updateForm}>
+            <form onSubmit={updateForm.handleSubmit(onSubmitUpdate)}>
+              <DialogHeader>
+                <DialogTitle>Modifier la version</DialogTitle>
+              </DialogHeader>
+              <div className="grid gap-4 py-6">
+                <FormField
+                  control={updateForm.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nom de la version</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={updateForm.control}
+                  name="version"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Numéro de version</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={updateForm.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
-            </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setIsCreateModalOpen(false)}>
-                Annuler
-              </Button>
-              <Button type="submit" disabled={createMutation.isPending} className="bg-[#E7722B] hover:bg-[#C85E18] text-white">
-                {createMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Créer
-              </Button>
-            </DialogFooter>
-          </form>
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setIsUpdateVersionModalOpen(false)}>
+                  Annuler
+                </Button>
+                <Button type="submit" disabled={updateVersionMutation.isPending} className="bg-[#E7722B] hover:bg-[#C85E18] text-white">
+                  {updateVersionMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Enregistrer
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
 
       {/* Modal d'ajout d'une étape */}
       <Dialog open={isEtapeModalOpen} onOpenChange={setIsEtapeModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
-          <form onSubmit={handleCreateEtape}>
-            <DialogHeader>
-              <DialogTitle>Ajouter une étape au workflow</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4 py-6">
-              <div className="space-y-2">
-                <Label htmlFor="etapeCode">Code de l'étape</Label>
-                <Input 
-                  id="etapeCode" 
-                  placeholder="ex: AGRC_PRCO_1" 
-                  value={newEtapeCode}
-                  onChange={(e) => setNewEtapeCode(e.target.value)}
-                  required
+          <Form {...etapeForm}>
+            <form onSubmit={etapeForm.handleSubmit(onSubmitEtape)}>
+              <DialogHeader>
+                <DialogTitle>Ajouter une étape au workflow</DialogTitle>
+              </DialogHeader>
+              <div className="grid gap-4 py-6">
+                <FormField
+                  control={etapeForm.control}
+                  name="code"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Code de l'étape</FormLabel>
+                      <FormControl>
+                        <Input placeholder="ex: AGRC_PRCO_1" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={etapeForm.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nom de l'étape</FormLabel>
+                      <FormControl>
+                        <Input placeholder="ex: RÉCUPÉRATION DES PROJETS..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={etapeForm.control}
+                  name="order"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Ordre d'exécution</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          min="1" 
+                          {...field} 
+                          onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : '')} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="etapeName">Nom de l'étape</Label>
-                <Input 
-                  id="etapeName" 
-                  placeholder="ex: RÉCUPÉRATION DES PROJETS..." 
-                  value={newEtapeName}
-                  onChange={(e) => setNewEtapeName(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="etapeOrder">Ordre d'exécution</Label>
-                <Input 
-                  id="etapeOrder" 
-                  type="number"
-                  min="1"
-                  value={newEtapeOrder}
-                  onChange={(e) => setNewEtapeOrder(Number(e.target.value))}
-                  required
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setIsEtapeModalOpen(false)}>
-                Annuler
-              </Button>
-              <Button type="submit" disabled={createEtapeMutation.isPending} className="bg-[#E7722B] hover:bg-[#C85E18] text-white">
-                {createEtapeMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Ajouter
-              </Button>
-            </DialogFooter>
-          </form>
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setIsEtapeModalOpen(false)}>
+                  Annuler
+                </Button>
+                <Button type="submit" disabled={createEtapeMutation.isPending} className="bg-[#E7722B] hover:bg-[#C85E18] text-white">
+                  {createEtapeMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  Ajouter
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
 

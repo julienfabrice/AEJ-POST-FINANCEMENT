@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Skeleton } from '@/components/ui/skeleton'
 
 import { WorkflowVersionsKanban } from './UI/WorkflowVersionsKanban'
 import { workflowServices } from '@/services/workflow.services'
@@ -43,7 +44,52 @@ export function WorkflowsPage() {
   }, [uniqueWorkflows, activeTab])
 
   if (isLoading) {
-    return <div className="p-8 text-center text-slate-500">Chargement des workflows...</div>
+    return (
+      <div className="space-y-6">
+        {/* Skeleton Tabs */}
+        <div className="flex items-center gap-4 border-b border-slate-200 pb-[1px]">
+          <Skeleton className="h-10 w-32 rounded-none border-b-2 border-slate-300" />
+          <Skeleton className="h-10 w-24 rounded-none" />
+          <Skeleton className="h-10 w-40 rounded-none" />
+        </div>
+        
+        {/* Skeleton Kanban Columns */}
+        <div className="flex gap-6 overflow-hidden mt-6">
+          {[1, 2].map((i) => (
+            <div key={i} className="min-w-[550px] w-[550px] h-[calc(100vh-280px)] bg-slate-50 border border-slate-200 rounded-xl flex flex-col overflow-hidden">
+              <div className="p-4 border-b border-slate-200 bg-white h-[68px] flex items-center justify-between">
+                <div className="flex items-center gap-2 w-full">
+                  <Skeleton className="h-6 w-1/3" />
+                  <Skeleton className="h-5 w-16 rounded-full" />
+                </div>
+                <Skeleton className="h-8 w-8 rounded-md" />
+              </div>
+              <div className="p-4 space-y-4 flex-1">
+                {[1, 2, 3].map((j) => (
+                  <div key={j} className="bg-white rounded-lg border border-slate-200 p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <Skeleton className="h-6 w-8 rounded-md bg-slate-900" />
+                      <Skeleton className="h-5 w-24 rounded-full" />
+                    </div>
+                    <Skeleton className="h-4 w-3/4 mb-4" />
+                    <div className="flex gap-2">
+                      <Skeleton className="h-6 w-20 rounded-md" />
+                      <Skeleton className="h-6 w-24 rounded-md" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+          {/* Skeleton "Ajouter une version" */}
+          <div className="min-w-[400px] w-[400px] h-[calc(100vh-280px)] border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center bg-slate-50/50">
+             <Skeleton className="h-14 w-14 rounded-full mb-4" />
+             <Skeleton className="h-6 w-40 mb-2" />
+             <Skeleton className="h-4 w-56" />
+          </div>
+        </div>
+      </div>
+    )
   }
 
   if (isError) {

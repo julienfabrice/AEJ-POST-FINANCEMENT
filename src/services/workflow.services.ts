@@ -30,5 +30,23 @@ export const workflowServices = {
         console.error(error)
       }
     })
+  },
+
+  useCreateEtape: () => {
+    const queryClient = useQueryClient()
+    return useMutation({
+      mutationFn: async (payload: { workflow_version: string; code: string; name: string; order: number }) => {
+        const response = await axiosInstance.post('/workflow/etapes', payload)
+        return response.data
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['workflow', 'versions'] })
+        toast.success("Étape ajoutée avec succès !")
+      },
+      onError: (error) => {
+        toast.error("Erreur lors de l'ajout de l'étape.")
+        console.error(error)
+      }
+    })
   }
 }

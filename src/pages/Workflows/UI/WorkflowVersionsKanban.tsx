@@ -39,7 +39,15 @@ export function WorkflowVersionsKanban({ versions, activeWorkflowCode }: Workflo
   const [newVersionName, setNewVersionName] = useState('')
   const [newVersionCode, setNewVersionCode] = useState('')
   
+  // Create Etape State
+  const [isEtapeModalOpen, setIsEtapeModalOpen] = useState(false)
+  const [targetVersionCode, setTargetVersionCode] = useState('')
+  const [newEtapeName, setNewEtapeName] = useState('')
+  const [newEtapeCode, setNewEtapeCode] = useState('')
+  const [newEtapeOrder, setNewEtapeOrder] = useState<number>(1)
+  
   const createMutation = workflowServices.useCreateVersion()
+  const createEtapeMutation = workflowServices.useCreateEtape()
 
   const handleCreateVersion = (e: React.FormEvent) => {
     e.preventDefault()
@@ -56,6 +64,28 @@ export function WorkflowVersionsKanban({ versions, activeWorkflowCode }: Workflo
           setIsCreateModalOpen(false)
           setNewVersionName('')
           setNewVersionCode('')
+        }
+      }
+    )
+  }
+
+  const handleCreateEtape = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!targetVersionCode || !newEtapeName || !newEtapeCode || !newEtapeOrder) return
+
+    createEtapeMutation.mutate(
+      {
+        workflow_version: targetVersionCode,
+        code: newEtapeCode,
+        name: newEtapeName,
+        order: Number(newEtapeOrder)
+      },
+      {
+        onSuccess: () => {
+          setIsEtapeModalOpen(false)
+          setNewEtapeName('')
+          setNewEtapeCode('')
+          setNewEtapeOrder(1)
         }
       }
     )
@@ -103,9 +133,16 @@ export function WorkflowVersionsKanban({ versions, activeWorkflowCode }: Workflo
                 <Pencil className="mr-2 h-4 w-4" />
                 <span>Modifier</span>
               </DropdownMenuItem>
-              <DropdownMenuItem className="bg-[#E7722B] text-white focus:bg-[#C85E18] focus:text-white cursor-pointer my-1">
+              <DropdownMenuItem 
+                className="bg-[#E7722B] text-white focus:bg-[#C85E18] focus:text-white cursor-pointer my-1"
+                onClick={() => {
+                  setTargetVersionCode(version.code)
+                  setNewEtapeOrder((version.etapes?.length || 0) + 1)
+                  setIsEtapeModalOpen(true)
+                }}
+              >
                 <Plus className="mr-2 h-4 w-4" />
-                <span>Ajouter une option</span>
+                <span>Ajouter une étape</span>
               </DropdownMenuItem>
               {!version.is_active && (
                 <DropdownMenuItem className="text-orange-600 focus:text-orange-700 focus:bg-orange-50 cursor-pointer">
@@ -182,6 +219,59 @@ export function WorkflowVersionsKanban({ versions, activeWorkflowCode }: Workflo
               <Button type="submit" disabled={createMutation.isPending} className="bg-[#E7722B] hover:bg-[#C85E18] text-white">
                 {createMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Créer
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal d'ajout d'une étape */}
+      <Dialog open={isEtapeModalOpen} onOpenChange={setIsEtapeModalOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <form onSubmit={handleCreateEtape}>
+            <DialogHeader>
+              <DialogTitle>Ajouter une étape au workflow</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-6">
+              <div className="space-y-2">
+                <Label htmlFor="etapeCode">Code de l'étape</Label>
+                <Input 
+                  id="etapeCode" 
+                  placeholder="ex: AGRC_PRCO_1" 
+                  value={newEtapeCode}
+                  onChange={(e) => setNewEtapeCode(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="etapeName">Nom de l'étape</Label>
+                <Input 
+                  id="etapeName" 
+                  placeholder="ex: RÉCUPÉRATION DES PROJETS..." 
+                  value={newEtapeName}
+                  onChange={(e) => setNewEtapeName(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="etapeOrder">Ordre d'exécution</Label>
+                <Input 
+                  id="etapeOrder" 
+                  type="number"
+                  min="1"
+                  value={newEtapeOrder}
+                  onChange={(e) => setNewEtapeOrder(Number(e.target.value))}
+                  required
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsEtapeModalOpen(false)}>
+                Annuler
+              </Button>
+              <Button type="submit" disabled={createEtapeMutation.isPending} className="bg-[#E7722B] hover:bg-[#C85E18] text-white">
+                {createEtapeMutation.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Ajouter
               </Button>
             </DialogFooter>
           </form>

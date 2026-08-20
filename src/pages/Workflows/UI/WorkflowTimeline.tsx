@@ -7,7 +7,7 @@ interface WorkflowTimelineProps {
 export function WorkflowTimeline({ etapes }: WorkflowTimelineProps) {
   return (
     <div className="relative pl-2 max-w-[820px]">
-      {etapes.length === 0 ? (
+      {(!etapes || etapes.length === 0) ? (
         <div className="text-center py-10 text-slate-500 bg-slate-50 rounded-lg border border-slate-200 border-dashed">
           Aucune étape configurée pour ce guichet.
         </div>

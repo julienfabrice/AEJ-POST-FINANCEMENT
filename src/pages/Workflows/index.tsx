@@ -1,9 +1,7 @@
 import { useState } from 'react'
-import { Plus } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-import { WorkflowTimeline } from './UI/WorkflowTimeline'
+import { WorkflowVersionsKanban } from './UI/WorkflowVersionsKanban'
 import { MOCK_DISPOSITIFS, MOCK_WORKFLOWS } from '@/mock'
 
 export function WorkflowsPage() {
@@ -33,14 +31,7 @@ export function WorkflowsPage() {
         </div>
 
         <TabsContent value={activeTab} className="mt-6 outline-none">
-          <div className="mb-6">
-            <Button size="sm" className="bg-[#E7722B] hover:bg-[#C85E18] text-white">
-              <Plus className="w-4 h-4 mr-2" />
-              Ajouter une étape
-            </Button>
-          </div>
-
-          <WorkflowTimeline etapes={workflow.etapes} />
+          <WorkflowVersionsKanban etapes={workflow.etapes || []} />
         </TabsContent>
       </Tabs>
     </div>

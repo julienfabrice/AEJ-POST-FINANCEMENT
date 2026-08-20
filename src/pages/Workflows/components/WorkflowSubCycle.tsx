@@ -2,12 +2,12 @@ import { Edit2, Trash2, Users, FileText, Clock } from 'lucide-react'
 
 interface WorkflowSubCycleProps {
   titre: string
-  acteurs?: string
-  livrable?: string
-  delai?: string
+  roles?: string[]
+  documents?: string[]
+  duree?: string
 }
 
-export function WorkflowSubCycle({ titre, acteurs, livrable, delai }: WorkflowSubCycleProps) {
+export function WorkflowSubCycle({ titre, roles = [], documents = [], duree }: WorkflowSubCycleProps) {
   return (
     <div className="border-l-2 border-[#EEF2F7] pt-3 pb-1 pl-4 mt-3.5">
       <h5 className="text-[13px] font-bold mb-1.5 text-[#131C29] flex items-center justify-between gap-2">
@@ -22,20 +22,22 @@ export function WorkflowSubCycle({ titre, acteurs, livrable, delai }: WorkflowSu
         </span>
       </h5>
       <div className="flex flex-wrap gap-1.5 mt-2">
-        <span className="text-[11.5px] bg-[#f4f6fa] border border-[#EEF2F7] rounded-[7px] px-2.5 py-1 text-[#5A6B80] inline-flex gap-1.5 items-center">
-          <Users className="w-3.5 h-3.5" />
-          <b className="text-[#131C29] font-semibold">{acteurs || '—'}</b>
-        </span>
-        {livrable && (
-          <span className="text-[11.5px] bg-[#f4f6fa] border border-[#EEF2F7] rounded-[7px] px-2.5 py-1 text-[#5A6B80] inline-flex gap-1.5 items-center">
-            <FileText className="w-3.5 h-3.5" />
-            {livrable}
+        {roles.map((role, i) => (
+          <span key={`role-${i}`} className="text-[11.5px] bg-[#f4f6fa] border border-[#EEF2F7] rounded-[7px] px-2.5 py-1 text-[#5A6B80] inline-flex gap-1.5 items-center">
+            <Users className="w-3.5 h-3.5" />
+            <b className="text-[#131C29] font-semibold">{role}</b>
           </span>
-        )}
-        {delai && (
+        ))}
+        {documents.map((doc, i) => (
+          <span key={`doc-${i}`} className="text-[11.5px] bg-[#f4f6fa] border border-[#EEF2F7] rounded-[7px] px-2.5 py-1 text-[#5A6B80] inline-flex gap-1.5 items-center">
+            <FileText className="w-3.5 h-3.5" />
+            {doc}
+          </span>
+        ))}
+        {duree && (
           <span className="text-[11.5px] bg-[#f4f6fa] border border-[#EEF2F7] rounded-[7px] px-2.5 py-1 text-[#5A6B80] inline-flex gap-1.5 items-center">
             <Clock className="w-3.5 h-3.5" />
-            {delai}
+            {duree}
           </span>
         )}
       </div>

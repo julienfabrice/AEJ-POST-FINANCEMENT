@@ -44,16 +44,16 @@ export function WorkflowCycle({ numero, code, titre, sousEtapes, isLast }: Workf
         
         {/* Body */}
         <div className="px-4 pb-4 border-t border-[#EEF2F7] block">
-          {sousEtapes.length === 0 ? (
+          {(!sousEtapes || sousEtapes.length === 0) ? (
             <div className="text-slate-500 text-sm py-2">Aucune sous-étape</div>
           ) : (
             sousEtapes.map((sousEtape, index) => (
               <WorkflowSubCycle 
                 key={index}
                 titre={sousEtape.titre}
-                acteurs={sousEtape.acteurs}
-                livrable={sousEtape.livrable}
-                delai={sousEtape.delai}
+                roles={sousEtape.roles}
+                documents={sousEtape.documents}
+                duree={sousEtape.duree}
               />
             ))
           )}

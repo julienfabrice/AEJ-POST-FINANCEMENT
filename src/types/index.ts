@@ -89,3 +89,5 @@ export interface TYPE_EMPLOI_T {
   created_at?: string
   updated_at?: string
 }
+export * from './workflow.types';
+export * from './workflow.types';

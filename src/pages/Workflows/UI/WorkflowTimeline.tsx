@@ -1,7 +1,8 @@
 import { WorkflowCycle } from '../components/WorkflowCycle'
+import type { WORKFLOW_ETAPE_T } from '@/types'
 
 interface WorkflowTimelineProps {
-  etapes: any[]
+  etapes: WORKFLOW_ETAPE_T[]
 }
 
 export function WorkflowTimeline({ etapes }: WorkflowTimelineProps) {
@@ -12,13 +13,19 @@ export function WorkflowTimeline({ etapes }: WorkflowTimelineProps) {
           Aucune étape configurée pour ce guichet.
         </div>
       ) : (
-        etapes.map((etape: any, index: number) => (
+        etapes.map((etape, index: number) => (
           <WorkflowCycle 
-            key={index}
-            numero={etape.numero}
+            key={etape.id || index}
+            numero={etape.order || index + 1}
             code={etape.code}
-            titre={etape.titre}
-            sousEtapes={etape.sousEtapes}
+            titre={etape.name}
+            sousEtapes={[
+              {
+                titre: etape.description,
+                roles: etape.impact ? [etape.impact.replace(/_/g, ' ')] : [],
+                documents: etape.statut ? [`Statut: ${etape.statut}`] : []
+              }
+            ]}
             isLast={index === etapes.length - 1}
           />
         ))

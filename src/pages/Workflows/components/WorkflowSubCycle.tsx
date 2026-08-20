@@ -10,9 +10,11 @@ interface WorkflowSubCycleProps {
 export function WorkflowSubCycle({ titre, roles = [], documents = [], duree }: WorkflowSubCycleProps) {
   return (
     <div className="border-l-2 border-[#EEF2F7] pt-3 pb-1 pl-4 mt-3.5">
-      <h5 className="text-[13px] font-bold mb-1.5 text-[#131C29] flex items-center justify-between gap-2">
-        <span>{titre}</span>
-        <span className="flex gap-1 flex-none">
+      <div className="flex items-start justify-between gap-2 mb-2">
+        <p className="text-[13px] text-slate-600 leading-relaxed">
+          {titre}
+        </p>
+        <span className="flex gap-1 flex-none ml-2">
           <button className="flex items-center justify-center w-7 h-7 rounded text-slate-400 hover:text-[#131C29] hover:bg-slate-100 transition-colors" title="Modifier">
             <Edit2 className="w-3.5 h-3.5" />
           </button>
@@ -20,7 +22,7 @@ export function WorkflowSubCycle({ titre, roles = [], documents = [], duree }: W
             <Trash2 className="w-3.5 h-3.5" />
           </button>
         </span>
-      </h5>
+      </div>
       <div className="flex flex-wrap gap-1.5 mt-2">
         {roles.map((role, i) => (
           <span key={`role-${i}`} className="text-[11.5px] bg-[#f4f6fa] border border-[#EEF2F7] rounded-[7px] px-2.5 py-1 text-[#5A6B80] inline-flex gap-1.5 items-center">

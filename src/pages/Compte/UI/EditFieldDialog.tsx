@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { KeyRound, MapPin, Phone } from 'lucide-react'
+import { KeyRound, Mail, MapPin, Phone, UserCog } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import {
   Dialog,
@@ -11,6 +11,8 @@ import {
 import type { PERSONNEL_T } from '@/types/personnels.types'
 import { AdresseForm } from '../components/AdresseForm'
 import { ChangePasswordForm } from '../components/ChangePasswordForm'
+import { EmailForm } from '../components/EmailForm'
+import { IdentiteForm } from '../components/IdentiteForm'
 import { TelephoneForm } from '../components/TelephoneForm'
 import type { EditableField } from '../fields'
 
@@ -20,20 +22,36 @@ interface EditFieldDialogProps {
   onClose: () => void
 }
 
-/**
- * Même habillage pour tous les champs : icône, titre, description, puis le
- * petit formulaire propre au champ. Seule cette table change quand on rend un
- * champ modifiable.
- */
+// Un composant pour assurer l'uniformité
 function useFieldItem(
   field: EditableField,
   user: PERSONNEL_T,
   onClose: () => void,
 ): { label: string; icon: LucideIcon; description: string; component: ReactNode } {
+
+
   const items: Record<
     EditableField,
     { label: string; icon: LucideIcon; description: string; component: ReactNode }
   > = {
+    identite: {
+      label: 'Nom complet',
+      icon: UserCog,
+      description: 'Modifier votre prénom et votre nom',
+      component: (
+        <IdentiteForm
+          currentPrenom={user.prenom}
+          currentNom={user.nom}
+          onSuccess={onClose}
+        />
+      ),
+    },
+    email: {
+      label: 'Email',
+      icon: Mail,
+      description: 'Modifier votre adresse email',
+      component: <EmailForm currentValue={user.email} onSuccess={onClose} />,
+    },
     telephone: {
       label: 'Téléphone',
       icon: Phone,
@@ -50,7 +68,7 @@ function useFieldItem(
       label: 'Mot de passe',
       icon: KeyRound,
       description: 'Modifier votre mot de passe',
-      component: <ChangePasswordForm />,
+      component: <ChangePasswordForm onSuccess={onClose} />,
     },
   }
 

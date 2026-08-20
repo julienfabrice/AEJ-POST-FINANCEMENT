@@ -65,6 +65,11 @@ const AUTH_PATHS = [
   '/password/forgot',
   '/password/reset',
   '/password/setup',
+  // Changement authentifié : un 401 ici signifie « mot de passe actuel
+  // incorrect », pas « session perdue ». Sans cette exclusion, une simple faute
+  // de frappe déclencherait un refresh, un REJEU de la requête, puis une
+  // déconnexion — au lieu d'un message d'erreur sur le champ.
+  '/password/change',
   // Le refresh lui-même : son 401 signifie « session définitivement perdue ».
   REFRESH_PATH,
 ]

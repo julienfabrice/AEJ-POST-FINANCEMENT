@@ -35,6 +35,7 @@ export const authServices = {
 //  Recuperation des infos de l'utilisateur connecté
   me: async (): Promise<PERSONNEL_T> => {
     const { data } = await axiosInstance.get<ME_RESPONSE_T>(`${BASE_URL}/me`)
+    console.log("Connected uer", data)
     return data.data
   },
 

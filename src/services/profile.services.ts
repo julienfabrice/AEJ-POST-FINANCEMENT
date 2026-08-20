@@ -1,21 +1,19 @@
 import { axiosInstance } from '@/constants/axiosInstance'
 import type { API_RESPONSE_T } from '@/types'
 import type { PERSONNEL_T } from '@/types/personnels.types'
-import type { UPDATE_PROFILE_T } from '@/types/profile.types'
+import type { CHANGE_PASSWORD_T, UPDATE_PROFILE_T } from '@/types/profile.types'
 
 /**
- * Couche transport du compte connecté : une méthode = un endpoint.
+ * ⚠️ CHEMIN PROVISOIRE — à confirmer (cf. leftover #14).
  *
- * L'`id` est toujours celui de l'utilisateur connecté ; il est fourni par le
- * hook (qui le lit dans le store), pas deviné ici.
- *
- * TODO(backend) — deux endpoints restent à confirmer avant d'être câblés
- * (cf. leftover #14) :
- *   • changePassword : changement authentifié ancien → nouveau. NE PAS réutiliser
- *     `/password/reset` ni `/password/set`, qui relèvent du parcours par lien
- *     email (non authentifié).
- *   • uploadAvatar   : envoi multipart de `profile_picture`.
+ * Isolé dans une constante : le jour où le backend tranche, c'est la seule
+ * ligne à changer, avec éventuellement les noms de champs de `CHANGE_PASSWORD_T`.
+ * NE PAS pointer vers `/password/setup` ni `/password/reset` : ceux-là relèvent
+ * du parcours par lien email, sans session.
  */
+const CHANGE_PASSWORD_PATH = '/password/change'
+
+
 export const profileServices = {
   /** Met à jour l'identité du compte connecté. */
   update: async (id: number, payload: UPDATE_PROFILE_T): Promise<PERSONNEL_T> => {
@@ -24,5 +22,13 @@ export const profileServices = {
       payload,
     )
     return data.data
+  },
+
+  /**
+   * Changement de mot de passe par l'utilisateur CONNECTÉ (ancien → nouveau).
+   * La session reste ouverte : le cookie n'est pas invalidé côté serveur.
+   */
+  changePassword: async (payload: CHANGE_PASSWORD_T): Promise<void> => {
+    await axiosInstance.post(CHANGE_PASSWORD_PATH, payload)
   },
 }

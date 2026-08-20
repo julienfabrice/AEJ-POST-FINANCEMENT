@@ -1,16 +1,15 @@
+import { sousSecteurServices } from '@/services/sousSecteurs.services'
 import { useMemo, useState } from 'react'
 import type { ColDef } from 'ag-grid-community'
 import Fuse from 'fuse.js'
 import { ActionsCellRenderer } from '../../components/ActionsCellRenderer'
 import { PrimaryTextCellRenderer } from '../../components/PrimaryTextCellRenderer'
-import { useGetSousSecteurs } from '@/api/sous-secteurs/useGetSousSecteurs'
-import { useDeleteSousSecteur } from '@/api/sous-secteurs/useDeleteSousSecteur'
 import { SousSecteurFormModal } from '../../components/SousSecteurFormModal'
 import type { SOUS_SECTEUR_T } from '@/types'
 
 export function useSousSecteursGrid(searchQuery: string) {
-  const { data: fetchedData = [], isLoading } = useGetSousSecteurs()
-  const { mutate: deleteMutation } = useDeleteSousSecteur()
+  const { data: fetchedData = [], isLoading } = sousSecteurServices.useGetAll()
+  const { mutate: deleteMutation } = sousSecteurServices.useDelete()
   const [editingItem, setEditingItem] = useState<SOUS_SECTEUR_T | null>(null)
 
   const columnDefs = useMemo<ColDef[]>(() => {

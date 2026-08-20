@@ -1,8 +1,7 @@
+import { indicateurServices } from '@/services/indicateurs.services'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useCreateIndicateur } from '@/api/indicateurs/useCreateIndicateur'
-import { useUpdateIndicateur } from '@/api/indicateurs/useUpdateIndicateur'
 import { indicateurSchema, type IndicateurFormValues } from '@/schema/indicateurs/indicateurSchema'
 
 export function useIndicateurForm(initialData: any | null, controlledOpen?: boolean, onOpenChange?: (open: boolean) => void) {
@@ -15,8 +14,8 @@ export function useIndicateurForm(initialData: any | null, controlledOpen?: bool
     if (onOpenChange) onOpenChange(newOpen)
   }
 
-  const { mutate: createMutation, isPending: isCreating } = useCreateIndicateur()
-  const { mutate: updateMutation, isPending: isUpdating } = useUpdateIndicateur()
+  const { mutate: createMutation, isPending: isCreating } = indicateurServices.useCreate()
+  const { mutate: updateMutation, isPending: isUpdating } = indicateurServices.useUpdate()
   
   const isPending = isCreating || isUpdating
   const isEdit = !!initialData

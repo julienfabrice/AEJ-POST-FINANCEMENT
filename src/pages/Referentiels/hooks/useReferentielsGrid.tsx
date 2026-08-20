@@ -4,7 +4,7 @@ import Fuse from 'fuse.js'
 
 import { useSecteursGrid } from './secteurs/useSecteursGrid'
 import { useSousSecteursGrid } from './sous-secteurs/useSousSecteursGrid'
-import { usePiecesIdentiteGrid } from './usePiecesIdentiteGrid'
+import { usePiecesIdentiteGrid } from './pieces-identites/usePiecesIdentiteGrid'
 import { useSituationsMatrimonialesGrid } from './situations-matrimoniales/useSituationsMatrimonialesGrid'
 import { useIndicateursGrid } from './indicateurs/useIndicateursGrid'
 import { useTypeEntreprisesGrid } from './type-entreprises/useTypeEntreprisesGrid'

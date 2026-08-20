@@ -1,8 +1,7 @@
+import { sousSecteurServices } from '@/services/sousSecteurs.services'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useCreateSousSecteur } from '@/api/sous-secteurs/useCreateSousSecteur'
-import { useUpdateSousSecteur } from '@/api/sous-secteurs/useUpdateSousSecteur'
 import { SousSecteurSchema, type SousSecteurFormValues } from '@/schema/sous-secteurs/SousSecteurSchema'
 
 export function useSousSecteurForm(initialData: any | null, controlledOpen?: boolean, onOpenChange?: (open: boolean) => void) {
@@ -15,8 +14,8 @@ export function useSousSecteurForm(initialData: any | null, controlledOpen?: boo
     if (onOpenChange) onOpenChange(newOpen)
   }
 
-  const { mutate: createMutation, isPending: isCreating } = useCreateSousSecteur()
-  const { mutate: updateMutation, isPending: isUpdating } = useUpdateSousSecteur()
+  const { mutate: createMutation, isPending: isCreating } = sousSecteurServices.useCreate()
+  const { mutate: updateMutation, isPending: isUpdating } = sousSecteurServices.useUpdate()
   
   const isPending = isCreating || isUpdating
   const isEdit = !!initialData

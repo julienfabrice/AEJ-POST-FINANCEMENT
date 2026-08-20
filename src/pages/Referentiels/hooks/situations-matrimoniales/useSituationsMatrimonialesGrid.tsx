@@ -1,16 +1,15 @@
+import { situationMatrimonialeServices } from '@/services/situationsMatrimoniales.services'
 import { useMemo, useState } from 'react'
 import type { ColDef } from 'ag-grid-community'
 import Fuse from 'fuse.js'
 import { ActionsCellRenderer } from '../../components/ActionsCellRenderer'
 import { PrimaryTextCellRenderer } from '../../components/PrimaryTextCellRenderer'
-import { useGetSituationsMatrimoniales } from '@/api/situations-matrimoniales/useGetSituationsMatrimoniales'
-import { useDeleteSituationMatrimoniale } from '@/api/situations-matrimoniales/useDeleteSituationMatrimoniale'
 import { SituationMatrimonialeFormModal } from '../../components/SituationMatrimonialeFormModal'
 import type { SITUATION_MATRIMONIALE_T } from '@/types'
 
 export function useSituationsMatrimonialesGrid(searchQuery: string) {
-  const { data: fetchedData = [], isLoading } = useGetSituationsMatrimoniales()
-  const { mutate: deleteMutation } = useDeleteSituationMatrimoniale()
+  const { data: fetchedData = [], isLoading } = situationMatrimonialeServices.useGetAll()
+  const { mutate: deleteMutation } = situationMatrimonialeServices.useDelete()
   const [editingItem, setEditingItem] = useState<SITUATION_MATRIMONIALE_T | null>(null)
 
   const columnDefs = useMemo<ColDef[]>(() => {

@@ -1,13 +1,13 @@
+import { pieceIdentiteServices } from '@/services/piecesIdentites.services'
 import { useMemo } from 'react'
 import type { ColDef, ICellRendererParams } from 'ag-grid-community'
 import { Badge } from '@/components/ui/badge'
 import Fuse from 'fuse.js'
-import { ActionsCellRenderer } from '../components/ActionsCellRenderer'
-import { PrimaryTextCellRenderer } from '../components/PrimaryTextCellRenderer'
-import { useGetPiecesIdentites } from '@/api/pieces-identites/useGetPiecesIdentites'
+import { ActionsCellRenderer } from '../../components/ActionsCellRenderer'
+import { PrimaryTextCellRenderer } from '../../components/PrimaryTextCellRenderer'
 
 export function usePiecesIdentiteGrid(searchQuery: string) {
-  const { data: fetchedPieces = [], isLoading } = useGetPiecesIdentites()
+  const { data: fetchedPieces = [], isLoading } = pieceIdentiteServices.useGetAll()
 
   const columnDefs = useMemo<ColDef[]>(() => {
     return [

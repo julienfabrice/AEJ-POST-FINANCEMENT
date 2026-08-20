@@ -6,27 +6,17 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-    // server: {
-    //   port : 3000,
-  //   proxy: {
-  //     '/api': {
-  //       target: 'https://apis.aej-ci.net',
-  //       changeOrigin: true,
-  //       secure: false,
-  //       rewrite: (path) => path.replace(/^\/api/, '/public/api')
-  //     }
-  //   }
-  // },
-  // plugins: [
-  //   TanStackRouterVite(),
-  //   react(),
-  //   tailwindcss()
-  // ],
-  // resolve: {
-  //   alias: {
-  //     "@": path.resolve(__dirname, "./src"),
-  //   },
-  // },
+
+  plugins: [
+    TanStackRouterVite(),
+    react(),
+    tailwindcss()
+  ],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
 
   server: {
     port: 3000,

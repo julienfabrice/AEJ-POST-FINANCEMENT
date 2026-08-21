@@ -4,6 +4,7 @@ import Fuse from 'fuse.js'
 import { localiteServices } from '@/services/localites.services'
 import { PrimaryTextCellRenderer } from '@/pages/Referentiels/components/PrimaryTextCellRenderer'
 import { BadgeCellRenderer } from '@/pages/Referentiels/components/BadgeCellRenderer'
+import { ActionsCellRenderer } from '@/pages/Referentiels/components/ActionsCellRenderer'
 
 export type LocaliteTab = 'divisions' | 'villes' | 'communes' | 'lieux'
 
@@ -41,11 +42,35 @@ export function useLocalitesGrid(activeTab: LocaliteTab, searchQuery: string) {
   const divisionsColumnDefs = useMemo<ColDef[]>(() => [
     { field: 'code', headerName: 'Code', width: 130, valueGetter: (p) => p.data.code, cellRenderer: BadgeCellRenderer },
     { field: 'nom', headerName: 'Division régionale', flex: 1, minWidth: 260, cellRenderer: PrimaryTextCellRenderer },
+    {
+      headerName: 'Actions',
+      width: 120,
+      minWidth: 120,
+      sortable: false,
+      filter: false,
+      cellRenderer: ActionsCellRenderer,
+      cellRendererParams: {
+        readonly: true,
+        readonlyMessage: "Les données de cette table proviennent directement du système de l'AEJ."
+      },
+    }
   ], [])
 
   const villesColumnDefs = useMemo<ColDef[]>(() => [
     { field: 'id', headerName: 'ID', width: 130, valueGetter: (p) => p.data.id, cellRenderer: BadgeCellRenderer },
     { field: 'nom', headerName: 'Ville', flex: 1, minWidth: 260, cellRenderer: PrimaryTextCellRenderer },
+    {
+      headerName: 'Actions',
+      width: 120,
+      minWidth: 120,
+      sortable: false,
+      filter: false,
+      cellRenderer: ActionsCellRenderer,
+      cellRendererParams: {
+        readonly: true,
+        readonlyMessage: "Les données de cette table proviennent directement du système de l'AEJ."
+      },
+    }
   ], [])
 
   const communesColumnDefs = useMemo<ColDef[]>(() => [
@@ -53,12 +78,36 @@ export function useLocalitesGrid(activeTab: LocaliteTab, searchQuery: string) {
     { field: 'ville_id', headerName: 'ID Ville', width: 150, valueGetter: (p) => villeCodeOrId(p.data.ville_id), tooltipValueGetter: (p) => villeLabel(p.data.ville_id), cellRenderer: BadgeCellRenderer },
     { field: 'id', headerName: 'ID', width: 130, valueGetter: (p) => p.data.id, cellRenderer: BadgeCellRenderer },
     { field: 'nom', headerName: 'Commune', flex: 1, minWidth: 220, cellRenderer: PrimaryTextCellRenderer },
+    {
+      headerName: 'Actions',
+      width: 120,
+      minWidth: 120,
+      sortable: false,
+      filter: false,
+      cellRenderer: ActionsCellRenderer,
+      cellRendererParams: {
+        readonly: true,
+        readonlyMessage: "Les données de cette table proviennent directement du système de l'AEJ."
+      },
+    }
   ], [villeCodeOrId, divisionCodeOrId, villeLabel, divisionLabel])
 
   const lieuxColumnDefs = useMemo<ColDef[]>(() => [
     { field: 'ville_id', headerName: 'ID Ville', width: 150, valueGetter: (p) => villeCodeOrId(p.data.ville_id), tooltipValueGetter: (p) => villeLabel(p.data.ville_id), cellRenderer: BadgeCellRenderer },
     { field: 'id', headerName: 'ID', width: 150, valueGetter: (p) => p.data.id, cellRenderer: BadgeCellRenderer },
     { field: 'nom', headerName: "Lieu d'habitation", flex: 1, minWidth: 260, cellRenderer: PrimaryTextCellRenderer },
+    {
+      headerName: 'Actions',
+      width: 120,
+      minWidth: 120,
+      sortable: false,
+      filter: false,
+      cellRenderer: ActionsCellRenderer,
+      cellRendererParams: {
+        readonly: true,
+        readonlyMessage: "Les données de cette table proviennent directement du système de l'AEJ."
+      },
+    }
   ], [villeCodeOrId, villeLabel])
 
   const byTab = {

@@ -1,7 +1,9 @@
 import { useState } from 'react'
-import { Search } from 'lucide-react'
+import { Search, Plus } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -66,9 +68,25 @@ export function LocalitesPage() {
                 {isLoading ? 'Chargement...' : `${data.length} ${tab.label.toLowerCase()}`}
               </span>
               <div className="flex-1" />
-              <Badge variant="outline" className="ml-auto bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 whitespace-nowrap">
+              <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 whitespace-nowrap hidden sm:inline-flex">
                 Fourni par l'AEJ
               </Badge>
+              
+              <TooltipProvider delayDuration={200}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="inline-block">
+                      <Button disabled className="bg-[#E7722B]/50 text-white h-9 px-4 cursor-not-allowed">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Nouveau
+                      </Button>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="left" className="max-w-[250px] text-center">
+                    Les données de cette table proviennent directement du système de l'AEJ.
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
 
             <Card className="p-0 overflow-hidden border-slate-200 rounded-lg shadow-sm">

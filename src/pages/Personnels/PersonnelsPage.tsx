@@ -21,7 +21,7 @@ export function PersonnelsPage() {
 
       <Card className="p-0 overflow-hidden border-slate-200 rounded-lg shadow-sm">
         {isLoading ? (
-          <div className="w-full h-[calc(100vh-320px)] flex flex-col">
+          <div className="w-full h-[calc(100vh-190px)] flex flex-col">
             <div className="h-[48px] bg-[#fafbfd] border-b border-[#E5EAF1] flex items-center px-4 gap-4">
               <Skeleton className="h-4 w-32" />
               <div className="flex-1" />
@@ -47,7 +47,7 @@ export function PersonnelsPage() {
             <DataGrid
               rowData={data}
               columnDefs={columnDefs}
-              height="calc(100vh - 320px)"
+              height="calc(100vh - 190px)"
               rowHeight={55}
               defaultColDef={{ sortable: true, filter: true, resizable: true }}
             />

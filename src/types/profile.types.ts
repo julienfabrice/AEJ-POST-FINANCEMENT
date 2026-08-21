@@ -1,9 +1,4 @@
-/**
- * Écritures sur le compte de l'utilisateur CONNECTÉ.
- *
- * Les noms de champs reprennent exactement ceux du backend (`snake_case`) —
- * aucun mapper, conformément à CLAUDE.md.
- */
+
 
 /** Corps de `PUT /personnels/{id}` — identité modifiable par l'utilisateur. */
 export interface UPDATE_PROFILE_T {
@@ -15,14 +10,12 @@ export interface UPDATE_PROFILE_T {
 }
 
 /**
- * Changement de mot de passe authentifié (ancien → nouveau).
+ * Corps de `POST /password/change` — changement authentifié (ancien → nouveau).
  *
- * ⚠️ À NE PAS confondre avec `SET_PASSWORD_PAYLOAD_T` (parcours par lien email,
- * non authentifié). Endpoint et noms de champs restent à confirmer — cf.
- * leftover #14.
+ * Le backend n'attend PAS de confirmation : celle du formulaire ne sert qu'à la
+ * validation côté client et ne part jamais sur le réseau.
  */
 export interface CHANGE_PASSWORD_T {
-  mot_de_passe_actuel: string
-  mot_de_passe: string
-  mot_de_passe_confirmation: string
+  password_old: string
+  password_new: string
 }

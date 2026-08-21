@@ -1,5 +1,7 @@
 import { Plus, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { PermissionGate } from '@/components/PermissionGate'
+import { MODULES } from '@/constants/modules'
 
 export function ProjetsHeader() {
   return (
@@ -13,10 +15,13 @@ export function ProjetsHeader() {
           <Download className="w-4 h-4 mr-2" />
           Exporter
         </Button>
-        <Button size="sm">
-          <Plus className="w-4 h-4 mr-2" />
-          Nouveau dossier
-        </Button>
+        {/* Création : réservée au `full_access` sur le module. */}
+        <PermissionGate module={MODULES.PROJETS} action="c">
+          <Button size="sm">
+            <Plus className="w-4 h-4 mr-2" />
+            Nouveau dossier
+          </Button>
+        </PermissionGate>
       </div>
     </div>
   )

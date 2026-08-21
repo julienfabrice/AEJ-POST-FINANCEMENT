@@ -148,3 +148,7 @@
   from { width: 100%; }
   to { width: 0%; }
 }
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}

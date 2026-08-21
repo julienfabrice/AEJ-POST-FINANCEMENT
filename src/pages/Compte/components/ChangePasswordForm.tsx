@@ -1,5 +1,7 @@
+import axios from 'axios'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -10,17 +12,13 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { PasswordInput } from '@/components/ui/password-input'
+import { useChangePassword } from '@/hooks/profile.hooks'
 import { changePasswordSchema, type ChangePasswordFormValues } from '@/schema/profile.schema'
 
-/**
- * Changement de mot de passe authentifié (ancien → nouveau).
- *
- * ⚠️ FORMULAIRE NON CÂBLÉ : l'endpoint n'est pas confirmé (cf. leftover #14).
- * La validation et le contrôleur de robustesse sont opérationnels ; seul
- * l'appel manque. NE PAS réutiliser `/password/setup` ni `/password/reset` :
- * ceux-là relèvent du parcours par lien email, non authentifié.
- */
-export function ChangePasswordForm() {
+/** Changement de mot de passe authentifié (ancien → nouveau). */
+export function ChangePasswordForm({ onSuccess }: { onSuccess: () => void }) {
+  const { mutateAsync: changePassword } = useChangePassword()
+
   const form = useForm<ChangePasswordFormValues>({
     resolver: zodResolver(changePasswordSchema),
     defaultValues: {
@@ -30,16 +28,46 @@ export function ChangePasswordForm() {
     },
   })
 
+  const submit = async (values: ChangePasswordFormValues) => {
+    try {
+      // La confirmation reste côté client : le backend n'attend que l'ancien
+      // et le nouveau mot de passe.
+      await changePassword({
+        password_old: values.mot_de_passe_actuel,
+        password_new: values.mot_de_passe,
+      })
+      toast.success('Mot de passe modifié')
+      onSuccess()
+    } catch (error) {
+      const status = axios.isAxiosError(error) ? error.response?.status : undefined
+
+      // 401/422 sur cet appel = mot de passe actuel refusé. On place l'erreur
+      // sur le champ concerné plutôt qu'en bandeau : c'est là que l'utilisateur
+      // doit corriger.
+      if (status === 401 || status === 422) {
+        form.setError('mot_de_passe_actuel', {
+          message: 'Mot de passe actuel incorrect.',
+        })
+        return
+      }
+
+      form.setError('root', {
+        message: 'Impossible de modifier le mot de passe. Réessayez.',
+      })
+    }
+  }
+
   return (
     <Form {...form}>
-      <form className="space-y-6 text-left" onSubmit={(e) => e.preventDefault()}>
-        <div
-          role="status"
-          className="rounded-md border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-700 dark:text-amber-400"
-        >
-          Fonctionnalité en attente : l’endpoint de changement de mot de passe n’est pas
-          encore disponible.
-        </div>
+      <form onSubmit={form.handleSubmit(submit)} className="space-y-6 text-left">
+        {form.formState.errors.root && (
+          <div
+            role="alert"
+            className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive"
+          >
+            {form.formState.errors.root.message}
+          </div>
+        )}
 
         <FormField
           control={form.control}
@@ -83,8 +111,12 @@ export function ChangePasswordForm() {
           )}
         />
 
-        <Button type="submit" disabled className="w-full">
-          Enregistrer
+        <Button
+          type="submit"
+          disabled={form.formState.isSubmitting}
+          className="w-full cursor-pointer"
+        >
+          {form.formState.isSubmitting ? 'Enregistrement…' : 'Enregistrer'}
         </Button>
       </form>
     </Form>

@@ -192,3 +192,5 @@ export interface LIEU_HABITATION_T {
   nom: string
   ville_id: number | null
 }
+export * from './workflow.types';
+export * from './workflow.types';

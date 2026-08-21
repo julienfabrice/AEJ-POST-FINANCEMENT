@@ -3,6 +3,7 @@ import { Search } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DataGrid } from '@/components/ui/DataGrid'
 
@@ -64,6 +65,10 @@ export function LocalitesPage() {
               <span className="text-[12.5px] text-slate-500 whitespace-nowrap">
                 {isLoading ? 'Chargement...' : `${data.length} ${tab.label.toLowerCase()}`}
               </span>
+              <div className="flex-1" />
+              <Badge variant="outline" className="ml-auto bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 whitespace-nowrap">
+                Fourni par l'AEJ
+              </Badge>
             </div>
 
             <Card className="p-0 overflow-hidden border-slate-200 rounded-lg shadow-sm">

@@ -101,12 +101,13 @@ export function PersonnelFormModal({ open, onOpenChange, editData }: PersonnelFo
                           onChange={(phone: string) => field.onChange(phone)}
                           disableDialCodeAndPrefix={true}
                           showDisabledDialCodeAndPrefix={true}
-                          inputClassName="flex h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 !border-l-0 !rounded-l-none"
+                          className="flex items-center w-full h-10"
+                          inputClassName="flex h-10 w-full rounded-r-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 disabled:cursor-not-allowed disabled:opacity-50 !border-l-0 !m-0 !h-10 !box-border"
                           countrySelectorStyleProps={{
-                            buttonClassName: "flex h-10 items-center justify-center rounded-l-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            buttonClassName: "flex w-14 h-10 items-center justify-center rounded-l-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 disabled:cursor-not-allowed disabled:opacity-50 !m-0 !h-10 !box-border"
                           }}
                           dialCodePreviewStyleProps={{
-                            className: "flex h-10 items-center justify-center border border-l-0 border-slate-200 bg-slate-50 px-3 text-sm text-slate-500"
+                            className: "flex h-10 items-center justify-center border-y border-r border-slate-200 bg-slate-50 px-3 text-sm text-slate-500 !border-l-0 !m-0 !box-border !h-10"
                           }}
                         />
                       </div>

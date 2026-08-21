@@ -18,35 +18,48 @@ export function useLocalitesGrid(activeTab: LocaliteTab, searchQuery: string) {
   const villes = villesQuery.data ?? []
   const divisions = divisionsQuery.data ?? []
 
+  const villeCodeOrId = useMemo(() => {
+    const map = new Map(villes.map((v) => [v.id, v.id]))
+    return (id: number | null) => (id !== null ? (map.get(id) ?? '—') : '—')
+  }, [villes])
+
+  const divisionCodeOrId = useMemo(() => {
+    const map = new Map(divisions.map((d) => [d.id, d.code || d.id]))
+    return (id: number | null) => (id !== null ? (map.get(id) ?? '—') : '—')
+  }, [divisions])
+
   const villeLabel = useMemo(() => {
     const map = new Map(villes.map((v) => [v.id, v.nom]))
-    return (id: number | null) => (id !== null ? map.get(id) ?? '—' : '—')
+    return (id: number | null) => (id !== null ? (map.get(id) ?? '') : '')
   }, [villes])
 
   const divisionLabel = useMemo(() => {
     const map = new Map(divisions.map((d) => [d.id, d.nom]))
-    return (id: number | null) => (id !== null ? map.get(id) ?? '—' : '—')
+    return (id: number | null) => (id !== null ? (map.get(id) ?? '') : '')
   }, [divisions])
 
   const divisionsColumnDefs = useMemo<ColDef[]>(() => [
-    { field: 'code', headerName: 'Code', width: 130, cellRenderer: (p: any) => (p.value ? <BadgeCellRenderer {...p} /> : <span className="text-slate-400">—</span>) },
+    { field: 'code', headerName: 'Code', width: 130, valueGetter: (p) => p.data.code, cellRenderer: BadgeCellRenderer },
     { field: 'nom', headerName: 'Division régionale', flex: 1, minWidth: 260, cellRenderer: PrimaryTextCellRenderer },
   ], [])
 
   const villesColumnDefs = useMemo<ColDef[]>(() => [
+    { field: 'id', headerName: 'ID', width: 130, valueGetter: (p) => p.data.id, cellRenderer: BadgeCellRenderer },
     { field: 'nom', headerName: 'Ville', flex: 1, minWidth: 260, cellRenderer: PrimaryTextCellRenderer },
   ], [])
 
   const communesColumnDefs = useMemo<ColDef[]>(() => [
+    { field: 'divisionregionaleaej_id', headerName: 'Code Région', width: 150, valueGetter: (p) => divisionCodeOrId(p.data.divisionregionaleaej_id), tooltipValueGetter: (p) => divisionLabel(p.data.divisionregionaleaej_id), cellRenderer: BadgeCellRenderer },
+    { field: 'ville_id', headerName: 'ID Ville', width: 150, valueGetter: (p) => villeCodeOrId(p.data.ville_id), tooltipValueGetter: (p) => villeLabel(p.data.ville_id), cellRenderer: BadgeCellRenderer },
+    { field: 'id', headerName: 'ID', width: 130, valueGetter: (p) => p.data.id, cellRenderer: BadgeCellRenderer },
     { field: 'nom', headerName: 'Commune', flex: 1, minWidth: 220, cellRenderer: PrimaryTextCellRenderer },
-    { field: 'ville_id', headerName: 'Ville', width: 200, cellRenderer: (p: any) => <BadgeCellRenderer {...p} value={villeLabel(p.value)} /> },
-    { field: 'divisionregionaleaej_id', headerName: 'Division régionale', width: 220, cellRenderer: (p: any) => <BadgeCellRenderer {...p} value={divisionLabel(p.value)} /> },
-  ], [villeLabel, divisionLabel])
+  ], [villeCodeOrId, divisionCodeOrId, villeLabel, divisionLabel])
 
   const lieuxColumnDefs = useMemo<ColDef[]>(() => [
+    { field: 'ville_id', headerName: 'ID Ville', width: 150, valueGetter: (p) => villeCodeOrId(p.data.ville_id), tooltipValueGetter: (p) => villeLabel(p.data.ville_id), cellRenderer: BadgeCellRenderer },
+    { field: 'id', headerName: 'ID', width: 150, valueGetter: (p) => p.data.id, cellRenderer: BadgeCellRenderer },
     { field: 'nom', headerName: "Lieu d'habitation", flex: 1, minWidth: 260, cellRenderer: PrimaryTextCellRenderer },
-    { field: 'ville_id', headerName: 'Ville', width: 220, cellRenderer: (p: any) => <BadgeCellRenderer {...p} value={villeLabel(p.value)} /> },
-  ], [villeLabel])
+  ], [villeCodeOrId, villeLabel])
 
   const byTab = {
     divisions: { columnDefs: divisionsColumnDefs, data: divisions, isLoading: divisionsQuery.isLoading, isError: divisionsQuery.isError, error: divisionsQuery.error },

@@ -5,7 +5,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+import { PasswordInput } from '@/components/ui/password-input'
 import { Button } from '@/components/ui/button'
 import { useChangePassword } from '../hooks/useChangePassword'
 
@@ -34,7 +34,21 @@ export function ChangePasswordModal({ open, onOpenChange, userData }: ChangePass
                 <FormItem>
                   <FormLabel>Nouveau mot de passe pour <span className="font-bold">{userData?.nom} {userData?.prenom}</span></FormLabel>
                   <FormControl>
-                    <Input placeholder="Nouveau mot de passe..." type="text" {...field} />
+                    <PasswordInput placeholder="Nouveau mot de passe..." showChecker={true} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="confirm_mot_de_passe"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirmer le mot de passe</FormLabel>
+                  <FormControl>
+                    <PasswordInput placeholder="Confirmer le mot de passe..." showChecker={false} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

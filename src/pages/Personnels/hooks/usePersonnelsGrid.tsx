@@ -15,7 +15,7 @@ export function usePersonnelsGrid(filters: PersonnelsFilterState, onEdit: (data:
   const { mutate: deletePersonnel } = personnelsServices.useDelete()
 
   const columnDefs = useMemo<ColDef[]>(() => [
-    { field: 'nom', headerName: 'Nom & Prénom', flex: 1, minWidth: 200, valueGetter: p => `${p.data.nom} ${p.data.prenom}`, cellRenderer: PrimaryTextCellRenderer },
+    { field: 'nom', headerName: 'Nom & Prénom', flex: 1, minWidth: 200, pinned: 'left', valueGetter: p => `${p.data.nom} ${p.data.prenom}`, cellRenderer: PrimaryTextCellRenderer },
     { field: 'email', headerName: 'Email', flex: 1, minWidth: 200 },
     { field: 'telephone', headerName: 'Téléphone', width: 150 },
     { field: 'role.libelle', headerName: 'Rôle', width: 280, valueGetter: p => p.data.role?.libelle || '—', cellRenderer: BadgeCellRenderer },

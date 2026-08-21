@@ -7,16 +7,7 @@ import path from 'path'
 // https://vite.dev/config/
 export default defineConfig({
 
-  plugins: [
-    TanStackRouterVite(),
-    react(),
-    tailwindcss()
-  ],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
+ 
 
   server: {
     port: 3000,
@@ -27,17 +18,23 @@ export default defineConfig({
     // `target` includes the /public prefix so /api/* → /public/api/* upstream.
     proxy: {
       '/api': {
-        target: 'https://apis.aej-ci.net/public',
+        target: 'https://apis.aej-ci.net',
         changeOrigin: true,
-        secure: true,
-        cookieDomainRewrite: 'localhost',
-      },
-      '/sanctum': {
-        target: 'https://apis.aej-ci.net/public',
-        changeOrigin: true,
-        secure: true,
-        cookieDomainRewrite: 'localhost',
-      },
-    },
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '/public/api')
+      }
+    }
   },
+  plugins: [
+    TanStackRouterVite(),
+    react(),
+    tailwindcss()
+  ],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  }
+
+
 })

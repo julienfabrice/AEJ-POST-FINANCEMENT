@@ -83,9 +83,9 @@ export interface NavItem {
 
 export const AGENT_NAV_ITEMS: NavItem[] = [
   // PILOTAGE
-  { key: 'guichets_home', label: 'Guichets', path: ROUTES.HOME, icon: Building2, group: 'PILOTAGE', module: MODULES.GUICHETS },
+  { key: 'guichets_home', label: 'Guichets', path: ROUTES.HOME, icon: Building2, group: 'PILOTAGE' }, // module: MODULES.GUICHETS
   { key: 'dashboard', label: 'Tableau de bord', path: ROUTES.DASHBOARD, icon: LayoutDashboard, group: 'PILOTAGE' },
-  { key: 'dispositifs', label: 'Procédures', path: ROUTES.DISPOSITIFS, icon: GitBranch, group: 'PILOTAGE', module: MODULES.DISPOSITIFS },
+  { key: 'dispositifs', label: 'Procédures', path: ROUTES.DISPOSITIFS, icon: GitBranch, group: 'PILOTAGE' }, //, module: MODULES.DISPOSITIFS
   // CIRCUIT DE FINANCEMENT
   { key: 'transmission', label: 'Transmission par lot', path: ROUTES.TRANSMISSION, icon: ArrowUpFromLine, group: 'CIRCUIT DE FINANCEMENT', module: MODULES.TRANSMISSION },
   { key: 'pf_espace', label: 'Espace partenaire financier', path: ROUTES.PF_ESPACE, icon: Landmark, group: 'CIRCUIT DE FINANCEMENT', module: MODULES.PF_ESPACE },
@@ -93,8 +93,8 @@ export const AGENT_NAV_ITEMS: NavItem[] = [
   { key: 'plans_dec', label: 'Plans de décaissement', path: ROUTES.PLANS_DECAISSEMENT, icon: Wallet, group: 'CIRCUIT DE FINANCEMENT', module: MODULES.PLANS_DEC },
   { key: 'recouvrement', label: 'Recouvrement & garanties', path: ROUTES.RECOUVREMENT, icon: RefreshCcw, group: 'CIRCUIT DE FINANCEMENT', module: MODULES.RECOUVREMENT },
   // OPÉRATIONS
-  { key: 'jeunes', label: 'Promoteurs (porteurs)', path: ROUTES.JEUNES, icon: Users, group: 'OPÉRATIONS', module: MODULES.JEUNES },
-  { key: 'projets', label: 'Micro-projets', path: ROUTES.PROJETS, icon: FolderOpen, group: 'OPÉRATIONS', module: MODULES.PROJETS },
+  { key: 'jeunes', label: 'Promoteurs (porteurs)', path: ROUTES.JEUNES, icon: Users, group: 'OPÉRATIONS'}, //, module: MODULES.JEUNES 
+  { key: 'projets', label: 'Micro-projets', path: ROUTES.PROJETS, icon: FolderOpen, group: 'OPÉRATIONS'},//, module: MODULES.PROJETS 
   { key: 'financements', label: 'Financements', path: ROUTES.FINANCEMENTS, icon: Banknote, group: 'OPÉRATIONS', module: MODULES.FINANCEMENTS },
   { key: 'remboursements', label: 'Remboursements', path: ROUTES.REMBOURSEMENTS, icon: RefreshCcw, group: 'OPÉRATIONS', module: MODULES.REMBOURSEMENTS },
   { key: 'indicateurs', label: 'Indicateurs & suivi', path: ROUTES.INDICATEURS, icon: BarChart3, group: 'OPÉRATIONS', module: MODULES.INDICATEURS },

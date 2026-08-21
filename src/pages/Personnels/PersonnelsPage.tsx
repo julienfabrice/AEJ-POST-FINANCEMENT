@@ -3,20 +3,29 @@ import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { DataGrid } from '@/components/ui/DataGrid'
 import { usePersonnelsGrid } from './hooks/usePersonnelsGrid'
-import { PersonnelsFilters, type PersonnelsFilterState } from './components/PersonnelsFilters'
+import { usePersonnelsFilters } from './hooks/usePersonnelsFilters'
+import { PersonnelsFilters } from './components/PersonnelsFilters'
 import { PersonnelFormModal } from './components/PersonnelFormModal'
+import { ChangePasswordModal } from './components/ChangePasswordModal'
 
 export function PersonnelsPage() {
-  const [filters, setFilters] = useState<PersonnelsFilterState>({ search: '' })
   const [modalOpen, setModalOpen] = useState(false)
   const [editData, setEditData] = useState<any>(null)
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false)
+  const [passwordData, setPasswordData] = useState<any>(null)
   
   const handleEdit = (data: any) => {
     setEditData(data)
     setModalOpen(true)
   }
 
-  const { columnDefs, data, isLoading, isError, error, availableRoles, availableFonctions } = usePersonnelsGrid(filters, handleEdit)
+  const handlePasswordChange = (data: any) => {
+    setPasswordData(data)
+    setPasswordModalOpen(true)
+  }
+
+  const { columnDefs, fetchedData, isLoading, isError, error, availableRoles, availableFonctions } = usePersonnelsGrid(handleEdit, handlePasswordChange)
+  const { filters, setFilters, filteredData } = usePersonnelsFilters(fetchedData)
 
   return (
     <div className="space-y-4">
@@ -54,7 +63,7 @@ export function PersonnelsPage() {
         ) : (
           <div className="relative">
             <DataGrid
-              rowData={data}
+              rowData={filteredData}
               columnDefs={columnDefs}
               height="calc(100vh - 160px)"
               rowHeight={55}
@@ -70,6 +79,14 @@ export function PersonnelsPage() {
           if (!open) setEditData(null)
         }} 
         editData={editData} 
+      />
+      <ChangePasswordModal 
+        open={passwordModalOpen} 
+        onOpenChange={(open) => {
+          setPasswordModalOpen(open)
+          if (!open) setPasswordData(null)
+        }} 
+        userData={passwordData} 
       />
     </div>
   )

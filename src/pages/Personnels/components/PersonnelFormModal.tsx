@@ -86,50 +86,35 @@ export function PersonnelFormModal({ open, onOpenChange, editData }: PersonnelFo
               )}
             />
 
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="telephone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Téléphone</FormLabel>
-                    <FormControl>
-                      <div className="react-international-phone-shadcn">
-                        <PhoneInput
-                          defaultCountry="ci"
-                          value={field.value || ''}
-                          onChange={(phone: string) => field.onChange(phone)}
-                          disableDialCodeAndPrefix={true}
-                          showDisabledDialCodeAndPrefix={true}
-                          className="flex items-center w-full h-10"
-                          inputClassName="flex h-10 w-full rounded-r-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 disabled:cursor-not-allowed disabled:opacity-50 !border-l-0 !m-0 !h-10 !box-border"
-                          countrySelectorStyleProps={{
-                            buttonClassName: "flex w-14 h-10 items-center justify-center rounded-l-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 disabled:cursor-not-allowed disabled:opacity-50 !m-0 !h-10 !box-border"
-                          }}
-                          dialCodePreviewStyleProps={{
-                            className: "flex h-10 items-center justify-center border-y border-r border-slate-200 bg-slate-50 px-3 text-sm text-slate-500 !border-l-0 !m-0 !box-border !h-10"
-                          }}
-                        />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="mot_de_passe"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Mot de passe</FormLabel>
-                    <FormControl>
-                      <Input placeholder="M8r12p14j3@" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="telephone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Téléphone</FormLabel>
+                  <FormControl>
+                    <div className="react-international-phone-shadcn">
+                      <PhoneInput
+                        defaultCountry="ci"
+                        value={field.value || ''}
+                        onChange={(phone: string) => field.onChange(phone)}
+                        disableDialCodeAndPrefix={true}
+                        showDisabledDialCodeAndPrefix={true}
+                        className="flex items-center w-full h-10"
+                        inputClassName="flex h-10 w-full rounded-r-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-slate-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 disabled:cursor-not-allowed disabled:opacity-50 !border-l-0 !m-0 !h-10 !box-border"
+                        countrySelectorStyleProps={{
+                          buttonClassName: "flex w-14 h-10 items-center justify-center rounded-l-md border border-slate-200 bg-white px-3 py-2 text-sm ring-offset-white hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 disabled:cursor-not-allowed disabled:opacity-50 !m-0 !h-10 !box-border"
+                        }}
+                        dialCodePreviewStyleProps={{
+                          className: "flex h-10 items-center justify-center border-y border-r border-slate-200 bg-slate-50 px-3 text-sm text-slate-500 !border-l-0 !m-0 !box-border !h-10"
+                        }}
+                      />
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}

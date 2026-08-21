@@ -48,5 +48,13 @@ export const personnelsServices = {
         await queryClient.invalidateQueries({ queryKey: ['personnels'] })
       },
     })
+  },
+  useSetupPassword: () => {
+    return useMutation({
+      mutationFn: async (payload: { token: string | number; password: string }) => {
+        const response = await axiosInstance.post('/password/setup', payload)
+        return response.data
+      },
+    })
   }
 }

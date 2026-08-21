@@ -5,7 +5,6 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DataGrid } from '@/components/ui/DataGrid'
 
@@ -26,13 +25,6 @@ export function LocalitesPage() {
 
   return (
     <div className="space-y-2">
-      <div>
-        <h1 className="text-2xl font-extrabold text-[#131C29]">Localités</h1>
-        <p className="text-sm text-[#5A6B80] mt-1">
-          Découpage géographique national — synchronisé depuis le portail agenceemploijeunes.ci, en lecture seule.
-        </p>
-      </div>
-
       <Tabs
         value={activeTab}
         onValueChange={(val) => { setActiveTab(val as LocaliteTab); setSearchQuery('') }}
@@ -68,9 +60,6 @@ export function LocalitesPage() {
                 {isLoading ? 'Chargement...' : `${data.length} ${tab.label.toLowerCase()}`}
               </span>
               <div className="flex-1" />
-              <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100 whitespace-nowrap hidden sm:inline-flex">
-                Fourni par l'AEJ
-              </Badge>
               
               <TooltipProvider delayDuration={200}>
                 <Tooltip>

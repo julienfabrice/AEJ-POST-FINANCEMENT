@@ -13,7 +13,7 @@ import {
   type FilterDef,
   type FilterOption,
 } from '@/constants/promoteurs.filters'
-import { useReferentialOptions } from '@/hooks/referentials.hooks'
+import { referentialsServices } from '@/services/referentials.services'
 
 interface PromoteursFilterFieldProps {
   def: FilterDef
@@ -29,7 +29,9 @@ interface PromoteursFilterFieldProps {
  */
 export function PromoteursFilterField({ def, value, onChange, container }: PromoteursFilterFieldProps) {
  
-  const referential = useReferentialOptions(isReferentialFilter(def) ? def.ref : '')
+  const referential = referentialsServices.useGetReferentialOptions(
+    isReferentialFilter(def) ? def.ref : '',
+  )
 
   const isRef = isReferentialFilter(def)
   const options: FilterOption[] = isRef ? referential.options : (def.options ?? [])

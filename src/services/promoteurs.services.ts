@@ -1,6 +1,13 @@
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { axiosInstance } from '@/constants/axiosInstance'
 import type { PAGINATED_T } from '@/types'
 import type { PROMOTEUR_SEARCH_T, PROMOTEUR_T } from '@/types/promoteurs.types'
+
+/** Clés de cache du module — exportées pour l'invalidation depuis l'extérieur. */
+export const promoteursKeys = {
+  all: ['promoteurs'] as const,
+  list: (query: PROMOTEUR_SEARCH_T) => [...promoteursKeys.all, 'list', query] as const,
+}
 
 /**
  * Prépare les filtres : retire les clés vides, et convertit les clés étrangères
@@ -26,12 +33,6 @@ const toFilterParams = (filters: Record<string, unknown>) => {
 
 /**
  * Endpoint unique retenu. Les variantes `POST /promoteurs/filter` et
- * `POST /promoteurs/filter-with-projects` sont abandonnées.
- *
- * ⚠️ Deux points à surveiller avec ce choix (cf. leftover #18) :
- *  - la prise en compte des filtres par ce GET reste à confirmer ;
- *  - la relation `micro_projets` doit être renvoyée pour que la colonne
- *    « Projets » et la section « Projets » de la fiche aient du contenu.
  */
 const LIST_PATH = '/promoteurs'
 
@@ -63,4 +64,14 @@ export const promoteursServices = {
       lastPage: data.last_page,
     }
   },
+
+  /**
+   * Liste des promoteurs, filtrée et paginée par le serveur.
+   */
+  useGetPromoteurs: (query: PROMOTEUR_SEARCH_T) =>
+    useQuery({
+      queryKey: promoteursKeys.list(query),
+      queryFn: () => promoteursServices.list(query),
+      placeholderData: keepPreviousData,
+    }),
 }

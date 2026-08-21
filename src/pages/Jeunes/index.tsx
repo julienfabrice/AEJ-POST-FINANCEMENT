@@ -6,7 +6,7 @@ import { DataGrid } from '@/components/ui/DataGrid'
 import { DataPagination } from '@/components/generics/data-pagination'
 import { EmptyState } from '@/components/generics/emptyState'
 import { PER_PAGE_OPTIONS } from '@/constants/promoteurs.filters'
-import { usePromoteurs } from '@/hooks/promoteurs.hooks'
+import { promoteursServices } from '@/services/promoteurs.services'
 import { cn } from '@/lib/utils'
 
 import { JeunesHeader } from './UI/JeunesHeader'
@@ -39,7 +39,7 @@ export function JeunesPage() {
 
   // La clé de cache contient tout le `search` : filtrer ou changer de page
   // suffit à relancer la requête, sans effet ni état supplémentaire.
-  const { data, isLoading, isFetching, isError } = usePromoteurs(search)
+  const { data, isLoading, isFetching, isError } = promoteursServices.useGetPromoteurs(search)
 
   const rows = data?.rows ?? []
   const total = data?.total ?? 0

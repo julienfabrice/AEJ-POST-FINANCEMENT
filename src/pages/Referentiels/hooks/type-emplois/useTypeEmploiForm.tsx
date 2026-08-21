@@ -1,8 +1,7 @@
+import { typeEmploiServices } from '@/services/typeEmplois.services'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useCreateTypeEmploi } from '@/api/type-emplois/useCreateTypeEmploi'
-import { useUpdateTypeEmploi } from '@/api/type-emplois/useUpdateTypeEmploi'
 import { TypeEmploiSchema, type TypeEmploiFormValues } from '@/schema/type-emplois/TypeEmploiSchema'
 
 export function useTypeEmploiForm(initialData: any | null, controlledOpen?: boolean, onOpenChange?: (open: boolean) => void) {
@@ -15,8 +14,8 @@ export function useTypeEmploiForm(initialData: any | null, controlledOpen?: bool
     if (onOpenChange) onOpenChange(newOpen)
   }
 
-  const { mutate: createMutation, isPending: isCreating } = useCreateTypeEmploi()
-  const { mutate: updateMutation, isPending: isUpdating } = useUpdateTypeEmploi()
+  const { mutate: createMutation, isPending: isCreating } = typeEmploiServices.useCreate()
+  const { mutate: updateMutation, isPending: isUpdating } = typeEmploiServices.useUpdate()
   
   const isPending = isCreating || isUpdating
   const isEdit = !!initialData

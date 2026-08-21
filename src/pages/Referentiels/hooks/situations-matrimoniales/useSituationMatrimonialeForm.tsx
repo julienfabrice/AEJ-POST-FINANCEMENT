@@ -1,8 +1,7 @@
+import { situationMatrimonialeServices } from '@/services/situationsMatrimoniales.services'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useCreateSituationMatrimoniale } from '@/api/situations-matrimoniales/useCreateSituationMatrimoniale'
-import { useUpdateSituationMatrimoniale } from '@/api/situations-matrimoniales/useUpdateSituationMatrimoniale'
 import { SituationMatrimonialeSchema, type SituationMatrimonialeFormValues } from '@/schema/situations-matrimoniales/SituationMatrimonialeSchema'
 
 export function useSituationMatrimonialeForm(initialData: any | null, controlledOpen?: boolean, onOpenChange?: (open: boolean) => void) {
@@ -15,8 +14,8 @@ export function useSituationMatrimonialeForm(initialData: any | null, controlled
     if (onOpenChange) onOpenChange(newOpen)
   }
 
-  const { mutate: createMutation, isPending: isCreating } = useCreateSituationMatrimoniale()
-  const { mutate: updateMutation, isPending: isUpdating } = useUpdateSituationMatrimoniale()
+  const { mutate: createMutation, isPending: isCreating } = situationMatrimonialeServices.useCreate()
+  const { mutate: updateMutation, isPending: isUpdating } = situationMatrimonialeServices.useUpdate()
   
   const isPending = isCreating || isUpdating
   const isEdit = !!initialData

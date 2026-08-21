@@ -1,8 +1,7 @@
+import { typeEntrepriseServices } from '@/services/typeEntreprises.services'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useCreateTypeEntreprise } from '@/api/type-entreprises/useCreateTypeEntreprise'
-import { useUpdateTypeEntreprise } from '@/api/type-entreprises/useUpdateTypeEntreprise'
 import { typeEntrepriseSchema, type TypeEntrepriseFormValues } from '@/schema/type-entreprises/typeEntrepriseSchema'
 
 export function useTypeEntrepriseForm(initialData: any | null, controlledOpen?: boolean, onOpenChange?: (open: boolean) => void) {
@@ -15,8 +14,8 @@ export function useTypeEntrepriseForm(initialData: any | null, controlledOpen?: 
     if (onOpenChange) onOpenChange(newOpen)
   }
 
-  const { mutate: createMutation, isPending: isCreating } = useCreateTypeEntreprise()
-  const { mutate: updateMutation, isPending: isUpdating } = useUpdateTypeEntreprise()
+  const { mutate: createMutation, isPending: isCreating } = typeEntrepriseServices.useCreate()
+  const { mutate: updateMutation, isPending: isUpdating } = typeEntrepriseServices.useUpdate()
   
   const isPending = isCreating || isUpdating
   const isEdit = !!initialData

@@ -1,17 +1,16 @@
+import { typeEmploiServices } from '@/services/typeEmplois.services'
 import { useMemo, useState } from 'react'
 import type { ColDef } from 'ag-grid-community'
 import Fuse from 'fuse.js'
 import { ActionsCellRenderer } from '../../components/ActionsCellRenderer'
 import { PrimaryTextCellRenderer } from '../../components/PrimaryTextCellRenderer'
 import { BadgeCellRenderer } from '../../components/BadgeCellRenderer'
-import { useGetTypeEmplois } from '@/api/type-emplois/useGetTypeEmplois'
-import { useDeleteTypeEmploi } from '@/api/type-emplois/useDeleteTypeEmploi'
 import { TypeEmploiFormModal } from '../../components/TypeEmploiFormModal'
 import type { TYPE_EMPLOI_T } from '@/types'
 
 export function useTypeEmploisGrid(searchQuery: string) {
-  const { data: fetchedData = [], isLoading } = useGetTypeEmplois()
-  const { mutate: deleteMutation } = useDeleteTypeEmploi()
+  const { data: fetchedData = [], isLoading } = typeEmploiServices.useGetAll()
+  const { mutate: deleteMutation } = typeEmploiServices.useDelete()
   const [editingItem, setEditingItem] = useState<TYPE_EMPLOI_T | null>(null)
 
   const columnDefs = useMemo<ColDef[]>(() => {

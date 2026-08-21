@@ -1,4 +1,4 @@
-import { RotateCcw, Search } from 'lucide-react'
+import { RotateCcw, Search, Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -22,9 +22,10 @@ interface PersonnelsFiltersProps {
   setFilters: (f: PersonnelsFilterState) => void
   availableRoles: { id: number; libelle: string }[]
   availableFonctions: { id: number; nom: string }[]
+  onAddClick: () => void
 }
 
-export function PersonnelsFilters({ filters, setFilters, availableRoles, availableFonctions }: PersonnelsFiltersProps) {
+export function PersonnelsFilters({ filters, setFilters, availableRoles, availableFonctions, onAddClick }: PersonnelsFiltersProps) {
   const activeCount = [filters.is_active, filters.role_id, filters.fonction_id].filter(Boolean).length
   const hasAnyFilter = activeCount > 0 || Boolean(filters.search)
 
@@ -40,7 +41,7 @@ export function PersonnelsFilters({ filters, setFilters, availableRoles, availab
           value={filters.search}
           onChange={(e) => setFilters({ ...filters, search: e.target.value })}
           placeholder="Rechercher par nom, prénom, email..."
-          className="border-none bg-[#F3F5F8] pl-9"
+          className="border-none bg-[#F3F5F8] pl-9 h-10"
         />
       </div>
 
@@ -51,7 +52,7 @@ export function PersonnelsFilters({ filters, setFilters, availableRoles, availab
           value={filters.is_active || 'all'}
           onValueChange={(val) => setFilters({ ...filters, is_active: val === 'all' ? undefined : val })}
         >
-          <SelectTrigger className="w-[160px] bg-white">
+          <SelectTrigger className="w-[160px] bg-white h-10">
             <SelectValue placeholder="Statut" />
           </SelectTrigger>
           <SelectContent>
@@ -65,7 +66,7 @@ export function PersonnelsFilters({ filters, setFilters, availableRoles, availab
           value={filters.role_id || 'all'}
           onValueChange={(val) => setFilters({ ...filters, role_id: val === 'all' ? undefined : val })}
         >
-          <SelectTrigger className="w-[180px] bg-white">
+          <SelectTrigger className="w-[180px] bg-white h-10">
             <SelectValue placeholder="Rôle" />
           </SelectTrigger>
           <SelectContent>
@@ -80,7 +81,7 @@ export function PersonnelsFilters({ filters, setFilters, availableRoles, availab
           value={filters.fonction_id || 'all'}
           onValueChange={(val) => setFilters({ ...filters, fonction_id: val === 'all' ? undefined : val })}
         >
-          <SelectTrigger className="w-[220px] bg-white">
+          <SelectTrigger className="w-[220px] bg-white h-10">
             <SelectValue placeholder="Fonction" />
           </SelectTrigger>
           <SelectContent>
@@ -96,12 +97,19 @@ export function PersonnelsFilters({ filters, setFilters, availableRoles, availab
             variant="ghost"
             size="sm"
             onClick={clearAll}
-            className="cursor-pointer text-slate-600 px-2"
+            className="cursor-pointer text-slate-600 px-2 h-10"
             title="Réinitialiser"
           >
             <RotateCcw className="h-4 w-4" />
           </Button>
         )}
+        
+        <div className="w-[1px] h-6 bg-slate-200 mx-1" />
+
+        <Button onClick={onAddClick} className="bg-[#E7722B] hover:bg-[#C85E18] text-white h-10 px-4 cursor-pointer">
+          <Plus className="w-4 h-4 mr-2" />
+          Nouveau personnel
+        </Button>
       </div>
     </Card>
   )

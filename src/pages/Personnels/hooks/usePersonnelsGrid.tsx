@@ -7,8 +7,12 @@ import { BadgeCellRenderer } from '@/pages/Referentiels/components/BadgeCellRend
 import { StatutActifCellRenderer } from '@/pages/Unites/components/StatutActifCellRenderer'
 import type { PersonnelsFilterState } from '../components/PersonnelsFilters'
 
-export function usePersonnelsGrid(filters: PersonnelsFilterState) {
+import { ActionsCellRenderer } from '@/pages/Referentiels/components/ActionsCellRenderer'
+import { toast } from 'sonner'
+
+export function usePersonnelsGrid(filters: PersonnelsFilterState, onEdit: (data: any) => void) {
   const { data: fetchedData = [], isLoading, isError, error } = personnelsServices.useGetAll()
+  const { mutate: deletePersonnel } = personnelsServices.useDelete()
 
   const columnDefs = useMemo<ColDef[]>(() => [
     { field: 'nom', headerName: 'Nom & Prénom', flex: 1, minWidth: 200, valueGetter: p => `${p.data.nom} ${p.data.prenom}`, cellRenderer: PrimaryTextCellRenderer },
@@ -17,7 +21,25 @@ export function usePersonnelsGrid(filters: PersonnelsFilterState) {
     { field: 'role.libelle', headerName: 'Rôle', width: 280, valueGetter: p => p.data.role?.libelle || '—', cellRenderer: BadgeCellRenderer },
     { field: 'fonction.nom', headerName: 'Fonction', width: 220, valueGetter: p => p.data.fonction?.nom || '—', cellRenderer: BadgeCellRenderer },
     { field: 'is_active', headerName: 'Statut', width: 110, cellRenderer: StatutActifCellRenderer },
-  ], [])
+    {
+      headerName: 'Actions',
+      width: 120,
+      minWidth: 120,
+      sortable: false,
+      filter: false,
+      cellRenderer: ActionsCellRenderer,
+      cellRendererParams: {
+        onEdit: (data: any) => onEdit(data),
+        onDelete: (id: number) => deletePersonnel(id, {
+          onSuccess: () => toast.success("Personnel supprimé avec succès."),
+          onError: (err) => {
+            console.error(err)
+            toast.error("Erreur lors de la suppression du personnel.")
+          }
+        }),
+      },
+    },
+  ], [onEdit, deletePersonnel])
 
   const filteredData = useMemo(() => {
     let result = fetchedData

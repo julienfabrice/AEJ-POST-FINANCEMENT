@@ -4,11 +4,19 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { DataGrid } from '@/components/ui/DataGrid'
 import { usePersonnelsGrid } from './hooks/usePersonnelsGrid'
 import { PersonnelsFilters, type PersonnelsFilterState } from './components/PersonnelsFilters'
+import { PersonnelFormModal } from './components/PersonnelFormModal'
 
 export function PersonnelsPage() {
   const [filters, setFilters] = useState<PersonnelsFilterState>({ search: '' })
+  const [modalOpen, setModalOpen] = useState(false)
+  const [editData, setEditData] = useState<any>(null)
   
-  const { columnDefs, data, isLoading, isError, error, availableRoles, availableFonctions } = usePersonnelsGrid(filters)
+  const handleEdit = (data: any) => {
+    setEditData(data)
+    setModalOpen(true)
+  }
+
+  const { columnDefs, data, isLoading, isError, error, availableRoles, availableFonctions } = usePersonnelsGrid(filters, handleEdit)
 
   return (
     <div className="space-y-4">
@@ -17,11 +25,12 @@ export function PersonnelsPage() {
         setFilters={setFilters} 
         availableRoles={availableRoles} 
         availableFonctions={availableFonctions} 
+        onAddClick={() => setModalOpen(true)}
       />
 
       <Card className="p-0 overflow-hidden border-slate-200 rounded-lg shadow-sm">
         {isLoading ? (
-          <div className="w-full h-[calc(100vh-190px)] flex flex-col">
+          <div className="w-full h-[calc(100vh-160px)] flex flex-col">
             <div className="h-[48px] bg-[#fafbfd] border-b border-[#E5EAF1] flex items-center px-4 gap-4">
               <Skeleton className="h-4 w-32" />
               <div className="flex-1" />
@@ -47,13 +56,21 @@ export function PersonnelsPage() {
             <DataGrid
               rowData={data}
               columnDefs={columnDefs}
-              height="calc(100vh - 190px)"
+              height="calc(100vh - 160px)"
               rowHeight={55}
               defaultColDef={{ sortable: true, filter: true, resizable: true }}
             />
           </div>
         )}
       </Card>
+      <PersonnelFormModal 
+        open={modalOpen} 
+        onOpenChange={(open) => {
+          setModalOpen(open)
+          if (!open) setEditData(null)
+        }} 
+        editData={editData} 
+      />
     </div>
   )
 }

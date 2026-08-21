@@ -15,7 +15,7 @@ export interface API_RESPONSE_T<T> {
 export interface JEUNE_T {
   id: string
   matricule: string
-  prenoms: string
+  prenom: string
   nom: string
   telephone: string
   ville: string
@@ -41,9 +41,23 @@ export interface SECTEUR_T {
   libelle: string
 }
 
-export interface API_RESPONSE_T<T> {
-  message: string
-  data: T
+/**
+ * Paginateur Laravel, tel quel.
+ *
+ * ⚠️ Ici `data` porte les LIGNES — ce n'est pas l'enveloppe `{ message, data }`
+ * ci-dessus. Les deux ne se combinent pas systématiquement selon les endpoints.
+ */
+export interface PAGINATED_T<T> {
+  data: T[]
+  current_page: number
+  per_page: number
+  total: number
+  last_page: number
+  from: number | null
+  to: number | null
+  next_page_url: string | null
+  prev_page_url: string | null
+  path: string
 }
 
 export interface SOUS_SECTEUR_T {

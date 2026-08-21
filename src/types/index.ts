@@ -15,7 +15,7 @@ export interface API_RESPONSE_T<T> {
 export interface JEUNE_T {
   id: string
   matricule: string
-  prenoms: string
+  prenom: string
   nom: string
   telephone: string
   ville: string
@@ -41,9 +41,23 @@ export interface SECTEUR_T {
   libelle: string
 }
 
-export interface API_RESPONSE_T<T> {
-  message: string
-  data: T
+/**
+ * Paginateur Laravel, tel quel.
+ *
+ * ⚠️ Ici `data` porte les LIGNES — ce n'est pas l'enveloppe `{ message, data }`
+ * ci-dessus. Les deux ne se combinent pas systématiquement selon les endpoints.
+ */
+export interface PAGINATED_T<T> {
+  data: T[]
+  current_page: number
+  per_page: number
+  total: number
+  last_page: number
+  from: number | null
+  to: number | null
+  next_page_url: string | null
+  prev_page_url: string | null
+  path: string
 }
 
 export interface SOUS_SECTEUR_T {
@@ -89,3 +103,108 @@ export interface TYPE_EMPLOI_T {
   created_at?: string
   updated_at?: string
 }
+
+// --- Unités de gestion (schema.v2.sql) ---
+
+export interface DIRECTION_T {
+  id: number
+  code: string
+  nom: string
+  description?: string | null
+}
+
+export interface SERVICE_ORG_T {
+  id: number
+  code: string
+  nom: string
+  description?: string | null
+  direction_id: number
+}
+
+export interface FONCTION_T {
+  id: number
+  code: string
+  nom: string
+  description?: string | null
+  service_id: number
+}
+
+export interface GUICHET_T {
+  id: number
+  workflow_code?: string | null
+  code: string
+  libelle: string
+  description?: string | null
+  couleur?: string | null
+  montant_min: number
+  montant_max: number
+  is_active: boolean
+  is_form_active: boolean
+}
+
+// Référentiel en LECTURE SEULE : synchronisé depuis le portail national
+// agenceemploijeunes.ci (endpoint /list-agence-regionale). Pas de création
+// possible depuis ce module.
+export interface AGENCE_REGIONALE_T {
+  id: number
+  code: string
+  nom: string
+  latitude?: string | null
+  longitude?: string | null
+  contact?: string | null
+  localisation?: string | null
+  adresse?: string | null
+  telephone?: string | null
+  email?: string | null
+  chef_agence_id?: number | null
+}
+
+// --- Partenaires financiers (schema.v2.sql) ---
+
+export interface TYPE_ORGANISME_T {
+  id: number
+  code: string
+  libelle: string
+}
+
+export interface ORGANISME_FINANCEMENT_T {
+  id: number
+  nom: string
+  sigle: string
+  type: number // FK -> TYPE_ORGANISME_T.id
+  site_web?: string | null
+  description?: string | null
+  adresse?: string | null
+  telephone?: string | null
+  email?: string | null
+  region_id?: number | null
+}
+
+// --- Localités (référentiels géographiques /aej/*, lecture seule) ---
+
+export interface DIVISION_REGIONALE_T {
+  id: number
+  code: string | null
+  nom: string
+}
+
+export interface VILLE_T {
+  id: number
+  nom: string
+}
+
+export interface COMMUNE_T {
+  id: number
+  code: string | null
+  nom: string
+  ville_id: number | null
+  divisionregionaleaej_id: number | null
+}
+
+export interface LIEU_HABITATION_T {
+  id: number
+  nom: string
+  ville_id: number | null
+}
+export * from './workflow.types';
+export * from './workflow.types';

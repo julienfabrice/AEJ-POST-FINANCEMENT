@@ -6,11 +6,11 @@ import { Eye, MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
 
-interface UseTableDataProps {
-  onViewDetails: (projet: MICRO_PROJET_T) => void
-}
+import { useProjetsStore } from '@/store/useProjetsStore'
 
-export function useTableData({ onViewDetails }: UseTableDataProps) {
+export function useTableData() {
+  const { setSelectedProjet } = useProjetsStore()
+  
   const columnDefs = useMemo<ColDef<MICRO_PROJET_T>[]>(() => [
     {
       field: 'code',
@@ -100,7 +100,7 @@ export function useTableData({ onViewDetails }: UseTableDataProps) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem onClick={() => onViewDetails(params.data)} className="cursor-pointer">
+                <DropdownMenuItem onClick={() => setSelectedProjet(params.data)} className="cursor-pointer">
                   <Eye className="mr-2 h-4 w-4" />
                   <span>Détails</span>
                 </DropdownMenuItem>
@@ -118,7 +118,7 @@ export function useTableData({ onViewDetails }: UseTableDataProps) {
         )
       },
     }
-  ], [onViewDetails])
+  ], [setSelectedProjet])
 
   return { columnDefs }
 }

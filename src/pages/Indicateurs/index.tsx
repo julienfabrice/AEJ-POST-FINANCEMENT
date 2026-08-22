@@ -9,6 +9,7 @@ import { DataGrid } from '@/components/ui/DataGrid'
 import { useIndicateursGrid, type IndicateurTab } from './hooks/useIndicateursGrid'
 import { PlanificationTab } from './components/PlanificationTab'
 import { IndicateursKPIs } from './UI/IndicateursKPIs'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 const TABS_CONFIG = [
   { id: 'plan', label: 'Planification & taux', sing: 'planification' },
@@ -22,10 +23,12 @@ export function IndicateursPage() {
   const [activeTab, setActiveTab] = useState<IndicateurTab>('plan')
   const [searchQuery, setSearchQuery] = useState('')
 
-  const { columnDefs, data, isLoading } = useIndicateursGrid(activeTab, searchQuery)
+  const { columnDefs, data, isLoading, modalNode } = useIndicateursGrid(activeTab, searchQuery)
 
   return (
     <div className="space-y-6">
+      {modalNode}
+      
       <div>
         <h1 className="text-2xl font-extrabold text-[#131C29] mb-1">Indicateurs &amp; suivi</h1>
         <p className="text-[#5A6B80] text-sm">Indicateurs planifiés (valeur cible) alimentés par les fiches de suivi mensuelles des bénéficiaires.</p>
@@ -62,6 +65,24 @@ export function IndicateursPage() {
               )
             }
 
+            const disabledBtn = (
+              <TooltipProvider delayDuration={200}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="inline-block cursor-not-allowed">
+                      <Button className="h-9 opacity-50 pointer-events-none">
+                        <Plus className="w-4 h-4 mr-2" />
+                        {tab.id === 'fic' || tab.id === 'q' ? 'Nouvelle' : 'Nouveau'} {tab.sing}
+                      </Button>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    Fonctionnalité en cours de développement
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )
+
             return (
               <TabsContent key={tab.id} value={tab.id} className="mt-0 outline-none">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-3 my-4">
@@ -79,11 +100,7 @@ export function IndicateursPage() {
                   </span>
                   <div className="flex-1" />
                   
-                  {/* Bouton d'ajout selon le format Référentiels */}
-                  <Button className="h-9">
-                    <Plus className="w-4 h-4 mr-2" />
-                    {tab.id === 'fic' || tab.id === 'q' ? 'Nouvelle' : 'Nouveau'} {tab.sing}
-                  </Button>
+                  {disabledBtn}
                 </div>
 
                 <Card className="p-0 overflow-hidden border-slate-200 rounded-lg shadow-sm">

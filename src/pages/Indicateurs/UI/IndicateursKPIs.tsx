@@ -2,9 +2,9 @@ import { indicateurs, indicateurs_suivi } from '@/mock'
 import { ChartBar, TrendingUp, Target, ListTodo } from 'lucide-react'
 import { KPICard } from '@/components/ui/KPICard'
 
-const indicSuivi = (indId: string) => {
+const indicSuivi = (indId: string | number) => {
   return indicateurs_suivi
-    .filter((s) => s.indicateur_id === indId)
+    .filter((s) => s.indicateur_id.toString() === indId.toString())
     .reduce((a, s) => a + (parseFloat(s.valeur) || 0), 0)
 }
 

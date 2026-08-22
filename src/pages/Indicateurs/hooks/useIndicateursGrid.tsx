@@ -40,5 +40,5 @@ export function useIndicateursGrid(activeTab: IndicateurTab, searchQuery: string
                   : activeTab === 'q' ? qLoading 
                   : false
 
-  return { columnDefs, data, isLoading }
+  return { columnDefs, data, isLoading, modalNode: null }
 }

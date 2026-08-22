@@ -2,21 +2,21 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { indicateurs, indicateurs_suivi } from '@/mock'
 
-const indicSuivi = (indId: string) => {
-  return indicateurs_suivi
-    .filter((s) => s.indicateur_id === indId)
-    .reduce((a, s) => a + (parseFloat(s.valeur) || 0), 0)
-}
-
-const indicTaux = (ind: any) => {
-  if (!ind.valeur_cible) return 0
-  const t = Math.round((indicSuivi(ind.id) / ind.valeur_cible) * 100)
-  return Math.min(100, t)
-}
-
 const fmt = (num: number) => new Intl.NumberFormat('fr-FR').format(num)
 
 export function PlanificationTab() {
+  const indicSuivi = (indId: number | string) => {
+    return indicateurs_suivi
+      .filter((s) => s.indicateur_id.toString() === indId.toString())
+      .reduce((a, s) => a + (parseFloat(s.valeur) || 0), 0)
+  }
+
+  const indicTaux = (ind: any) => {
+    if (!ind.valeur_cible) return 0
+    const t = Math.round((indicSuivi(ind.id) / ind.valeur_cible) * 100)
+    return Math.min(100, t)
+  }
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between border-b pb-4">

@@ -1,4 +1,5 @@
 import axios, { isAxiosError, type InternalAxiosRequestConfig } from 'axios'
+import { AUTH_DISABLED } from '@/constants/devFlags'
 
 
 const baseURL = import.meta.env.VITE_API_URL || '/api'
@@ -84,6 +85,9 @@ export const setSessionLostHandler = (handler: SessionLostHandler) => {
 let sessionLost = false
 
 const dropSession = () => {
+  
+  if (AUTH_DISABLED) return
+
   if (sessionLost) return
   sessionLost = true
   onSessionLost()

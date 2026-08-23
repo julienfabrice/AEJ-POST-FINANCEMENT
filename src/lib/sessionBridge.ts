@@ -1,14 +1,10 @@
-import type { AnyRouter } from '@tanstack/react-router'
-import type { QueryClient } from '@tanstack/react-query'
 
 import { setSessionLostHandler } from '@/constants/axiosInstance'
-import { ROUTES } from '@/constants/routes'
-import { useAuthStore } from '@/store/useAuthStore'
 
 /**
  * Branchement de la couche HTTP sur l'application
  */
-export function wireSessionBridge(router: AnyRouter, queryClient: QueryClient) {
+export function wireSessionBridge() {
   setSessionLostHandler(() => {
     // DÉSACTIVATION AUTHENTIFICATION : on ne fait plus rien
     // useAuthStore.getState().clearSession()

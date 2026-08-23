@@ -1,8 +1,5 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { AppLayout } from '@/layouts/AppLayout'
-import { ROUTES } from '@/constants/routes'
-import { AUTH_ME_KEY } from '@/hooks/auth.hooks'
-import { authServices } from '@/services/auth.services'
 import { useAuthStore } from '@/store/useAuthStore'
 
 /**
@@ -17,7 +14,7 @@ import { useAuthStore } from '@/store/useAuthStore'
  * renvoie vers `/login`.
  */
 export const Route = createFileRoute('/_authenticated')({
-  beforeLoad: async ({ location, context }) => {
+  beforeLoad: async () => {
     // DÉSACTIVATION AUTHENTIFICATION
     // Si l'utilisateur n'est pas "connecté" ou s'il n'a pas de profil, on lui en injecte un faux.
     if (!useAuthStore.getState().user) {

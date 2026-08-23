@@ -19,9 +19,7 @@ export interface MICRO_PROJET_T {
   promoteur_id: number
 
   stade_projet: string
-
   type_projet: string
-
   statut: string
   localisation: string | null
   geolocalisation: string | null
@@ -29,6 +27,24 @@ export interface MICRO_PROJET_T {
   date_transmission_partenaire: string | null
   created_at: string
   updated_at: string
+
+  dispositif?: REF_ITEM_T | null
+  organisme?: REF_ITEM_T | null
+  guichet?: REF_ITEM_T | null
+  secteur?: REF_ITEM_T | null
+  commune?: REF_ITEM_T | null
+  agence?: REF_ITEM_T | null
+  promoteur?: PROMOTEUR_T
+  workflow_instance?: {
+    id: number
+    micro_projet_id: number
+    workflow_version: string
+    current_etape_code: string
+    statut: string
+    started_at: string
+    completed_at: string | null
+    next_etape_code: string | null
+  } | null
 }
 
 export interface PROMOTEUR_T {

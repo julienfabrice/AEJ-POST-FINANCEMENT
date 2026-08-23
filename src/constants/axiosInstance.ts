@@ -72,9 +72,10 @@ type SessionLostHandler = () => void
 
 let onSessionLost: SessionLostHandler = () => {
   // Repli si l'app n'a pas encore branché son handler (ex. erreur au boot).
-  if (!window.location.pathname.startsWith('/login')) {
-    window.location.href = '/login'
-  }
+  // DÉSACTIVATION AUTHENTIFICATION : on ne redirige plus
+  // if (!window.location.pathname.startsWith('/login')) {
+  //   window.location.href = '/login'
+  // }
 }
 
 export const setSessionLostHandler = (handler: SessionLostHandler) => {

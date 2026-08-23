@@ -18,17 +18,46 @@ import { useAuthStore } from '@/store/useAuthStore'
  */
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: async ({ location, context }) => {
-    if (!useAuthStore.getState().isAuthenticated) {
-      throw redirect({ to: ROUTES.LOGIN, search: { redirect: location.href } })
+    // DÉSACTIVATION AUTHENTIFICATION
+    // Si l'utilisateur n'est pas "connecté" ou s'il n'a pas de profil, on lui en injecte un faux.
+    if (!useAuthStore.getState().user) {
+      useAuthStore.getState().setSession({
+        id: 9999,
+        nom: 'Dev',
+        prenom: 'Local',
+        email: 'dev@local.aej',
+        telephone: '',
+        adresse: '',
+        role_id: 1,
+        fonction_id: null,
+        organisme_id: null,
+        agence_regionale_id: null,
+        is_active: 1,
+        mot_de_passe_change: 1,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        role: { id: 1, code: 'ADMIN-1', libelle: 'Admin', description: '', is_active: 1, created_at: '', updated_at: '' },
+        fonction: null,
+        agence: null,
+        organisme: null,
+        permissions: []
+      })
     }
+    
+    // On bypass l'appel /me du backend
+    return;
 
-    const me = await context.queryClient.ensureQueryData({
-      queryKey: AUTH_ME_KEY,
-      queryFn: authServices.me,
-    })
+    // if (!useAuthStore.getState().isAuthenticated) {
+    //   throw redirect({ to: ROUTES.LOGIN, search: { redirect: location.href } })
+    // }
 
-    // Le profil frais fait foi : on resynchronise le store au passage.
-    useAuthStore.getState().setSession(me)
+    // const me = await context.queryClient.ensureQueryData({
+    //   queryKey: AUTH_ME_KEY,
+    //   queryFn: authServices.me,
+    // })
+
+    // // Le profil frais fait foi : on resynchronise le store au passage.
+    // useAuthStore.getState().setSession(me)
   },
   component: AppLayout,
 })

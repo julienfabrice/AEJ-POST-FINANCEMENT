@@ -1,51 +1,124 @@
 import { useMemo } from 'react'
 import type { ColDef } from 'ag-grid-community'
-import type { PROJET_T } from '@/types'
+import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
+import dayjs from 'dayjs'
+import { Eye, MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Button } from '@/components/ui/button'
 
-import { ProjectTitleCellRenderer } from '../components/ProjectTitleCellRenderer'
-import { AmountCellRenderer } from '../components/AmountCellRenderer'
-import { StatusCellRenderer } from '../components/StatusCellRenderer'
-import { ActionsCellRenderer } from '../components/ActionsCellRenderer'
+import { useProjetsStore } from '@/store/useProjetsStore'
 
 export function useTableData() {
-  const columnDefs = useMemo<ColDef<PROJET_T>[]>(() => [
+  const { setSelectedProjet } = useProjetsStore()
+  
+  const columnDefs = useMemo<ColDef<MICRO_PROJET_T>[]>(() => [
     {
-      field: 'ref',
+      field: 'code',
       headerName: 'Référence',
       width: 130,
       cellRenderer: (p: any) => <span className="font-mono text-xs text-slate-500">{p.value}</span>
     },
     {
-      field: 'titre',
+      field: 'intitule',
       headerName: 'Titre du projet',
       flex: 1,
       minWidth: 200,
-      cellRenderer: ProjectTitleCellRenderer
+      cellRenderer: (params: any) => {
+        return (
+          <div className="py-2">
+            <div className="font-medium text-slate-900 leading-tight mb-0.5">{params.value}</div>
+            <div className="text-xs text-slate-500 truncate max-w-xs">{params.data.description?.substring(0, 60)}...</div>
+          </div>
+        )
+      }
     },
-    { field: 'promoteur', headerName: 'Promoteur', width: 180 },
-    { field: 'agence', headerName: 'Agence', width: 130 },
+    { 
+      field: 'promoteur_id', 
+      headerName: 'Promoteur', 
+      width: 180,
+      cellRenderer: (params: any) => {
+        const p = params.data.promoteur
+        return p ? (
+          <div className="flex items-center gap-2 h-full">
+            <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-600 shrink-0">
+              {p.nom.charAt(0)}
+            </div>
+            <span className="truncate">{p.prenom} {p.nom}</span>
+          </div>
+        ) : '-'
+      }
+    },
+    { 
+      field: 'agence_id', 
+      headerName: 'Agence', 
+      width: 130,
+      cellRenderer: (params: any) => params.data.agence?.libelle || '-'
+    },
     {
-      field: 'montant',
+      field: 'montant_total',
       headerName: 'Montant',
       width: 140,
-      cellRenderer: AmountCellRenderer,
+      cellRenderer: (params: any) => {
+        const val = parseFloat(params.value || '0')
+        return <span className="font-medium">{new Intl.NumberFormat('fr-FR').format(val)} F</span>
+      },
       headerClass: 'ag-right-aligned-header',
     },
     {
       field: 'statut',
       headerName: 'Statut',
-      width: 140,
-      cellRenderer: StatusCellRenderer
+      width: 150,
+      cellRenderer: (params: any) => {
+        return (
+          <div className="flex items-center h-full">
+            <span className="px-2.5 py-1 bg-slate-100 text-slate-700 text-[11px] font-medium rounded-full truncate">
+              {params.value ? params.value.replace(/_/g, ' ') : (params.data.stade_projet || '-')}
+            </span>
+          </div>
+        )
+      }
     },
-    { field: 'date', headerName: 'Date', width: 110 },
+    { 
+      field: 'created_at', 
+      headerName: 'Date', 
+      width: 110,
+      cellRenderer: (params: any) => params.value ? dayjs(params.value).format('DD/MM/YYYY') : '-'
+    },
     {
       headerName: 'Actions',
-      width: 80,
+      width: 70,
       sortable: false,
       filter: false,
-      cellRenderer: ActionsCellRenderer,
+      pinned: 'right',
+      cellRenderer: (params: any) => {
+        return (
+          <div className="flex items-center justify-center h-full">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <MoreHorizontal className="h-4 w-4 text-slate-500" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={() => setSelectedProjet(params.data)} className="cursor-pointer">
+                  <Eye className="mr-2 h-4 w-4" />
+                  <span>Détails</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  <Pencil className="mr-2 h-4 w-4" />
+                  <span>Modifier</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer text-red-600 focus:text-red-600">
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  <span>Supprimer</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        )
+      },
     }
-  ], [])
+  ], [setSelectedProjet])
 
   return { columnDefs }
 }

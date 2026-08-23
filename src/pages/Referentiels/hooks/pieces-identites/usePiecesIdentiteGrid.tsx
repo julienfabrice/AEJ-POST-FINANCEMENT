@@ -35,6 +35,10 @@ export function usePiecesIdentiteGrid(searchQuery: string) {
         sortable: false,
         filter: false,
         cellRenderer: ActionsCellRenderer,
+        cellRendererParams: {
+          readonly: true,
+          readonlyMessage: "Les données de cette table proviennent directement du système de l'AEJ."
+        },
       }
     ]
   }, [])

@@ -27,7 +27,7 @@ declare module '@tanstack/react-router' {
 // Branche la réaction à « session perdue » AVANT le premier rendu : le tout
 // premier `/auth/me` part depuis `beforeLoad`, donc avant qu'un composant
 // n'existe. 
-wireSessionBridge(router, queryClient)
+wireSessionBridge()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -36,7 +36,8 @@ createRoot(document.getElementById('root')!).render(
 
         <RouterProvider router={router} />
       </TooltipProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
+
+      {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   </StrictMode>,
 )

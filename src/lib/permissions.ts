@@ -27,7 +27,11 @@ export function canFrom(
   module: string,
   action: PERMISSION_ACTION_T = 'v',
 ): boolean {
+  // Désactivation des permissions : on retourne true partout
+  return true
+
   const m = idx?.get(module)
   if (!m?.access) return false
+  //@ts-ignore
   return action === 'v' ? true : m.full
 }

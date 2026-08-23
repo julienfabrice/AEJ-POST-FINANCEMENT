@@ -54,7 +54,7 @@ export const ROUTES = {
   RAPPORTS: '/rapports',
   // Administration
   ADMIN_PROFILS: '/admin/profils',
-  ADMIN_UTILISATEURS: '/admin/utilisateurs',
+  ADMIN_PERSONNELS: '/admin/personnels',
   ADMIN_LOCALITES: '/admin/localites',
   ADMIN_UNITES: '/admin/unites',
   ADMIN_PARTENAIRES: '/admin/partenaires',
@@ -103,7 +103,7 @@ export const AGENT_NAV_ITEMS: NavItem[] = [
   { key: 'rapports', label: 'Rapports', path: ROUTES.RAPPORTS, icon: FileText, group: 'SUIVI & ÉVALUATION', module: MODULES.RAPPORTS },
   // ADMINISTRATION
   { key: 'admin_profils', label: 'Profils & permissions', path: ROUTES.ADMIN_PROFILS, icon: Shield, group: 'ADMINISTRATION', module: MODULES.PROFILS },
-  { key: 'admin_utilisateurs', label: 'Utilisateurs', path: ROUTES.ADMIN_UTILISATEURS, icon: Users, group: 'ADMINISTRATION', module: MODULES.UTILISATEURS },
+  { key: 'admin_personnels', label: 'Personnels', path: ROUTES.ADMIN_PERSONNELS, icon: Users, group: 'ADMINISTRATION', module: MODULES.UTILISATEURS },
   { key: 'admin_localites', label: 'Localités', path: ROUTES.ADMIN_LOCALITES, icon: Globe, group: 'ADMINISTRATION', module: MODULES.LOCALITES },
   { key: 'admin_unites', label: 'Unités de gestion', path: ROUTES.ADMIN_UNITES, icon: Boxes, group: 'ADMINISTRATION', module: MODULES.UNITES },
   { key: 'admin_partenaires', label: 'Partenaires financiers', path: ROUTES.ADMIN_PARTENAIRES, icon: Landmark, group: 'ADMINISTRATION', module: MODULES.PARTENAIRES },
@@ -146,7 +146,7 @@ export const PAGE_TITLES: Partial<Record<AppRoute, string>> = {
   [ROUTES.SUIVI]: 'Suivi & exploitation',
   [ROUTES.RAPPORTS]: 'Rapports',
   [ROUTES.ADMIN_PROFILS]: 'Profils & permissions',
-  [ROUTES.ADMIN_UTILISATEURS]: 'Utilisateurs',
+  [ROUTES.ADMIN_PERSONNELS]: 'Personnels',
   [ROUTES.ADMIN_LOCALITES]: 'Localités',
   [ROUTES.ADMIN_UNITES]: 'Unités de gestion',
   [ROUTES.ADMIN_PARTENAIRES]: 'Partenaires financiers',

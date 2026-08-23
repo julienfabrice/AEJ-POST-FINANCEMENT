@@ -71,7 +71,16 @@ export const useAuthStore = create<AuthState>()(
       },
 
      
-      can: (module, action = 'v') => canFrom(get().permissions, module, action),
+      /**
+       * Bypass local, dev uniquement (`import.meta.env.DEV`) : à activer via
+       * `VITE_BYPASS_PERMISSIONS=true` dans le `.env` pour continuer à
+       * travailler pendant que le backend permissions n'est pas encore prêt.
+       * Ne s'active jamais en build de prod, même si la variable traîne.
+       */
+      can: (module, action = 'v') => {
+        if (import.meta.env.DEV && import.meta.env.VITE_BYPASS_PERMISSIONS === 'true') return true
+        return canFrom(get().permissions, module, action)
+      },
     }),
     {
       name: 'aej-auth',

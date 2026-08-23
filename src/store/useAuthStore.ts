@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { AUTH_DISABLED } from '@/constants/devFlags'
 import { canFrom, indexPermissions } from '@/lib/permissions'
 import type { PERMISSION_ACTION_T, USER_SPACE_T } from '@/types/auth.types'
 import type { PermissionIndex } from '@/types/permissions.types'
@@ -71,7 +72,12 @@ export const useAuthStore = create<AuthState>()(
       },
 
      
-      can: (module, action = 'v') => canFrom(get().permissions, module, action),
+      can: (module, action = 'v') => {
+ 
+        if (AUTH_DISABLED) return true
+
+        return canFrom(get().permissions, module, action)
+      },
     }),
     {
       name: 'aej-auth',

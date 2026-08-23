@@ -36,7 +36,8 @@ createRoot(document.getElementById('root')!).render(
 
         <RouterProvider router={router} />
       </TooltipProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
+
+      {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   </StrictMode>,
 )

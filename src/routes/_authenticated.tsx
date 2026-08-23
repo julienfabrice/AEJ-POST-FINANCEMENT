@@ -4,14 +4,6 @@ import { useAuthStore } from '@/store/useAuthStore'
 
 /**
  * Auth gate for every authenticated screen.
- *
- * Deux étages :
- *  1. le flag persisté ferme la porte immédiatement (synchrone, sans réseau) ;
- *  2. `ensureQueryData` valide réellement le cookie contre `/personnel/me` — ce
- *     qui fait office de vérification de session au chargement de l'app.
- *
- * Un cookie expiré remonte un 401 : l'intercepteur axios vide la session et
- * renvoie vers `/login`.
  */
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: async () => {

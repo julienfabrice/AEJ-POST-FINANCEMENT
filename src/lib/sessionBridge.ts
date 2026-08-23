@@ -10,12 +10,9 @@ import { useAuthStore } from '@/store/useAuthStore'
  */
 export function wireSessionBridge(router: AnyRouter, queryClient: QueryClient) {
   setSessionLostHandler(() => {
-    useAuthStore.getState().clearSession()
-
-    // Indispensable : sans ça, les données du compte précédent restent en cache
-    // et réapparaissent une fraction de seconde après le login suivant.
-    queryClient.clear()
-
-    void router.navigate({ to: ROUTES.LOGIN, replace: true })
+    // DÉSACTIVATION AUTHENTIFICATION : on ne fait plus rien
+    // useAuthStore.getState().clearSession()
+    // queryClient.clear()
+    // void router.navigate({ to: ROUTES.LOGIN, replace: true })
   })
 }

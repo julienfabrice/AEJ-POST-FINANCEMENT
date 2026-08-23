@@ -76,6 +76,7 @@ export const DataGrid = forwardRef<AgGridReact, DataGridProps>(({
         paginationPageSize={10}
         paginationPageSizeSelector={[10, 20, 50]}
         domLayout="normal"
+        enableBrowserTooltips={true}
         {...props}
       />
     </div>

@@ -82,9 +82,9 @@ export function useConfigurationForm() {
     }
   }, [configuration, form])
 
-  const onSubmit = (values: ConfigurationFormValues) => {
+  const onSubmit = (values: ConfigurationFormValues, onSaved?: () => void) => {
     if (!configuration) return
-    updateMutation({ id: configuration.id, data: values })
+    updateMutation({ id: configuration.id, data: values }, { onSuccess: onSaved })
   }
 
   return {

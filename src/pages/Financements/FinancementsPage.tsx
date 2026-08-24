@@ -13,6 +13,9 @@ import { useBudgetsGrid } from './hooks/useBudgetsGrid'
 import { PlanDecaissementFormModal } from './components/PlanDecaissementFormModal'
 import { usePlanDecaissementsGrid } from './hooks/usePlanDecaissementsGrid'
 
+import { DecaissementFormModal } from './components/DecaissementFormModal'
+import { useDecaissementsGrid } from './hooks/useDecaissementsGrid'
+
 import { EcheancierGenerator } from './components/EcheancierGenerator'
 import { usePlanRemboursementsGrid } from './hooks/usePlanRemboursementsGrid'
 import type { ColDef } from 'ag-grid-community'
@@ -101,7 +104,7 @@ function BudgetsTab() {
   )
 }
 
-function DecaissementsTab() {
+function PlanDecaissementSubTab() {
   const [searchQuery, setSearchQuery] = useState('')
   const { columnDefs, data, isLoading, modalNode } = usePlanDecaissementsGrid(searchQuery)
   return (
@@ -122,6 +125,52 @@ function DecaissementsTab() {
         }
       />
     </>
+  )
+}
+
+function DecaissementExecutionSubTab() {
+  const [searchQuery, setSearchQuery] = useState('')
+  const { columnDefs, data, isLoading, modalNode } = useDecaissementsGrid(searchQuery)
+  return (
+    <>
+      {modalNode}
+      <GridSection
+        columnDefs={columnDefs}
+        data={data}
+        isLoading={isLoading}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Rechercher un décaissement…"
+        countLabel={`${data.length} décaissement(s)`}
+        newButton={
+          <DecaissementFormModal>
+            <Button className="h-9"><Plus className="w-4 h-4 mr-2" />Nouveau décaissement</Button>
+          </DecaissementFormModal>
+        }
+      />
+    </>
+  )
+}
+
+function DecaissementsTab() {
+  const [subTab, setSubTab] = useState<'plan' | 'execution'>('plan')
+  return (
+    <Tabs value={subTab} onValueChange={(v) => setSubTab(v as 'plan' | 'execution')} className="w-full">
+      <TabsList className="bg-slate-100 p-1 h-auto rounded-md w-fit">
+        <TabsTrigger value="plan" className="text-[13px] px-3 py-1.5 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded">
+          Plan de décaissement
+        </TabsTrigger>
+        <TabsTrigger value="execution" className="text-[13px] px-3 py-1.5 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded">
+          Exécution
+        </TabsTrigger>
+      </TabsList>
+      <TabsContent value="plan" className="mt-2 outline-none">
+        <PlanDecaissementSubTab />
+      </TabsContent>
+      <TabsContent value="execution" className="mt-2 outline-none">
+        <DecaissementExecutionSubTab />
+      </TabsContent>
+    </Tabs>
   )
 }
 

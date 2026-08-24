@@ -286,6 +286,22 @@ export interface PLAN_DECAISSEMENT_T {
   updated_at?: string
 }
 
+export type DECAISSEMENT_STATUT_T = 'EN_ATTENTE' | 'VALIDE' | 'NON_VALIDE'
+
+export interface DECAISSEMENT_T {
+  id: number
+  plan_decaissement_id: number
+  ligne_decaissement_id?: number | null
+  agence_id?: number | null
+  montant_decaisse: number
+  date_decaissement?: string | null
+  reference_banque?: string | null
+  statut: DECAISSEMENT_STATUT_T
+  observations?: string | null
+  created_at?: string
+  updated_at?: string
+}
+
 // --- Remboursements (schema.v2.sql, section 15) ---
 
 export interface PLAN_REMBOURSEMENT_T {

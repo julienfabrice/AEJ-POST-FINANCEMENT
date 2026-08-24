@@ -61,7 +61,7 @@ export function ParametresPage() {
             Configuration globale de la plateforme : identité, sécurité et notifications.
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2">
+        <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white shadow-sm px-3 py-2">
           <Pencil className="h-4 w-4 text-slate-500" />
           <span className="text-sm font-medium text-[#131C29]">Mode édition</span>
           <Switch checked={isEditMode} onCheckedChange={handleToggleEditMode} disabled={isPending} />

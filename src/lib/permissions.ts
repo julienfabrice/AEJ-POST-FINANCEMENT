@@ -23,14 +23,11 @@ export function indexPermissions(rows: PERMISSION_T[]): PermissionIndex {
  *  - `c` | `e` | `d` → exige le `full_access`.
  */
 export function canFrom(
-  _idx: PermissionIndex | undefined,
-  _module: string,
-  _action: PERMISSION_ACTION_T = 'v',
+  idx: PermissionIndex | undefined,
+  module: string,
+  action: PERMISSION_ACTION_T = 'v',
 ): boolean {
-  // Désactivation des permissions : on retourne true partout
-  return true
-
-  // const m = idx?.get(module)
-  // if (!m?.access) return false
-  // return action === 'v' ? true : m.full
+  const m = idx?.get(module)
+  if (!m?.access) return false
+  return action === 'v' ? true : m.full
 }

@@ -192,3 +192,63 @@ export interface LIEU_HABITATION_T {
   nom: string
   ville_id: number | null
 }
+
+// --- Paramétrage des workflows (référentiels, schema.v2.sql) ---
+
+export interface WORKFLOW_T {
+  id: number
+  code: string
+  name: string
+  description?: string | null
+  is_active: boolean
+}
+
+export interface WORKFLOW_ROLE_T {
+  id: number
+  code: string
+  name: string
+  description?: string | null
+  is_active: boolean
+}
+
+export interface WORKFLOW_DECISION_OUTCOME_T {
+  id: number
+  code: string
+  label: string
+}
+
+export interface WORKFLOW_DELIVERABLE_T {
+  id: number
+  code: string
+  name: string
+  description?: string | null
+  is_active: boolean
+}
+
+// --- Financement / Budgets (schema.v2.sql, section 15) ---
+
+export type BUDGET_STATUT_T = 'EN_ATTENTE' | 'APPROUVE' | 'NON_APPROUVE'
+export type SIGNATURE_CONVENTION_T = 'SIGNEE' | 'NON_SIGNEE'
+export type DEBLOCAGE_T = 'OUI' | 'NON'
+export type RECEPTION_ACTE_CREDIT_T = 'OUI' | 'NON' | 'PARTIEL'
+
+export interface BUDGET_T {
+  id: number
+  micro_projet_id: number
+  intitule: string
+  montant_accorde: number
+  date_accord?: string | null
+  source?: string | null
+  statut: BUDGET_STATUT_T
+  devise: string
+  deblocage: DEBLOCAGE_T
+  date_deblocage?: string | null
+  signature_convention: SIGNATURE_CONVENTION_T
+  date_signature?: string | null
+  reception_acte_credit: RECEPTION_ACTE_CREDIT_T
+  date_reception?: string | null
+  observations?: string | null
+  valide_par?: number | null
+  created_at?: string
+  updated_at?: string
+}

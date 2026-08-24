@@ -10,7 +10,7 @@ export function AppLayout() {
       {/* Zone principale */}
       <div className="flex flex-col flex-1 h-full overflow-y-auto">
         <TopBar />
-        <main className="flex-1 px-[26px] py-6 pb-[60px] w-full overflow-x-auto">
+        <main className="flex-1 px-[26px] py-6 pb-[60px] w-full min-w-0">
           <Outlet />
         </main>
       </div>

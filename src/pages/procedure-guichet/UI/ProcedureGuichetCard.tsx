@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { Card, CardContent } from '@/components/ui/card'
 import { Workflow, Edit2, Trash2, ChevronRight, MoreHorizontal, Info } from 'lucide-react'
 import {
@@ -41,9 +42,11 @@ export function ProcedureGuichetCard({ guichet: g, onEdit, onDelete }: Procedure
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-[200px]">
-                <DropdownMenuItem className="cursor-pointer flex items-center gap-2">
-                  <Info className="w-4 h-4 text-[#5A6B80]" />
-                  <span>Information complète</span>
+                <DropdownMenuItem className="cursor-pointer" asChild>
+                  <Link to="/guichet-workflow/$guichetId" params={{ guichetId: g.id?.toString() || '1' }} className="flex items-center gap-2 w-full">
+                    <Info className="w-4 h-4 text-[#5A6B80]" />
+                    <span>Information complète</span>
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem className="cursor-pointer flex items-center gap-2" onClick={onEdit}>
                   <Edit2 className="w-4 h-4 text-[#5A6B80]" />
@@ -64,9 +67,13 @@ export function ProcedureGuichetCard({ guichet: g, onEdit, onDelete }: Procedure
         </div>
 
         <div className="mt-3.5">
-          <span className="inline-flex items-center gap-1.5 border border-[#E5EAF1] bg-white text-[#131C29] px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:border-[#cdd6e2] hover:bg-[#fbfcfe] transition-colors cursor-pointer">
+          <Link 
+            to="/guichet-workflow/$guichetId" 
+            params={{ guichetId: g.id?.toString() || '1' }}
+            className="inline-flex items-center gap-1.5 border border-[#E5EAF1] bg-white text-[#131C29] px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:border-[#cdd6e2] hover:bg-[#fbfcfe] transition-colors cursor-pointer"
+          >
             Voir le workflow <ChevronRight className="w-3.5 h-3.5" />
-          </span>
+          </Link>
         </div>
       </CardContent>
     </Card>

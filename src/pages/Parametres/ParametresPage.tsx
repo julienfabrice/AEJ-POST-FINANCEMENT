@@ -101,18 +101,18 @@ export function ParametresPage() {
             </div>
 
             {/* --- Identité (système + structure) --- */}
-            <TabsContent value="identite" className="mt-6 outline-none space-y-6">
+            <TabsContent value="identite" className="mt-6 outline-none space-y-6 bg-white border border-slate-200 rounded-lg shadow-sm p-6">
               <div>
                 <h2 className="text-sm font-bold text-[#131C29] mb-3">Système</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField control={form.control} name="sigle_systeme" render={({ field }) => (
-                    <FormItem><FormLabel>Sigle du système</FormLabel><FormControl><Input disabled={fieldsDisabled} placeholder="Ex. AEJ-PF" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Sigle du système</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} placeholder="Ex. AEJ-PF" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="intitule_systeme" render={({ field }) => (
-                    <FormItem><FormLabel>Intitulé du système</FormLabel><FormControl><Input disabled={fieldsDisabled} placeholder="Ex. Plateforme Post-Financement" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Intitulé du système</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} placeholder="Ex. Plateforme Post-Financement" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="logo_systeme" render={({ field }) => (
-                    <FormItem><FormLabel>Logo du système (URL)</FormLabel><FormControl><Input disabled={fieldsDisabled} placeholder="https://..." {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Logo du système (URL)</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} placeholder="https://..." {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                   )} />
                 </div>
               </div>
@@ -123,47 +123,47 @@ export function ParametresPage() {
                 <h2 className="text-sm font-bold text-[#131C29] mb-3">Structure</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField control={form.control} name="sigle_structure" render={({ field }) => (
-                    <FormItem><FormLabel>Sigle de la structure</FormLabel><FormControl><Input disabled={fieldsDisabled} placeholder="Ex. AEJ" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Sigle de la structure</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} placeholder="Ex. AEJ" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="intitule_structure" render={({ field }) => (
-                    <FormItem><FormLabel>Intitulé de la structure</FormLabel><FormControl><Input disabled={fieldsDisabled} placeholder="Ex. Agence Emploi Jeunes" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Intitulé de la structure</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} placeholder="Ex. Agence Emploi Jeunes" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="logo_structure" render={({ field }) => (
-                    <FormItem><FormLabel>Logo de la structure (URL)</FormLabel><FormControl><Input disabled={fieldsDisabled} placeholder="https://..." {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Logo de la structure (URL)</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} placeholder="https://..." {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="email_structure" render={({ field }) => (
-                    <FormItem><FormLabel>E-mail</FormLabel><FormControl><Input disabled={fieldsDisabled} type="email" placeholder="contact@aej-ci.net" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>E-mail</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} type="email" placeholder="contact@aej-ci.net" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="telephone_structure" render={({ field }) => (
-                    <FormItem><FormLabel>Téléphone</FormLabel><FormControl><Input disabled={fieldsDisabled} placeholder="+225 XX XX XX XX XX" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Téléphone</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} placeholder="+225 XX XX XX XX XX" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="whatsapp_structure" render={({ field }) => (
-                    <FormItem><FormLabel>WhatsApp</FormLabel><FormControl><Input disabled={fieldsDisabled} placeholder="+225 XX XX XX XX XX" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>WhatsApp</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} placeholder="+225 XX XX XX XX XX" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="adresse_sociale_structure" render={({ field }) => (
-                    <FormItem className="sm:col-span-2"><FormLabel>Adresse sociale</FormLabel><FormControl><Textarea disabled={fieldsDisabled} placeholder="Adresse complète du siège" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
+                    <FormItem className="sm:col-span-2"><FormLabel>Adresse sociale</FormLabel><FormControl><Textarea className="bg-white border-slate-300" disabled={fieldsDisabled} placeholder="Adresse complète du siège" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                   )} />
                 </div>
               </div>
             </TabsContent>
 
             {/* --- Devise --- */}
-            <TabsContent value="devise" className="mt-6 outline-none">
+            <TabsContent value="devise" className="mt-6 outline-none bg-white border border-slate-200 rounded-lg shadow-sm p-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField control={form.control} name="sigle_monnaie_pays" render={({ field }) => (
-                  <FormItem><FormLabel>Sigle monnaie du pays</FormLabel><FormControl><Input disabled={fieldsDisabled} placeholder="Ex. XOF" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Sigle monnaie du pays</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} placeholder="Ex. XOF" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="sigle_devise_principale" render={({ field }) => (
-                  <FormItem><FormLabel>Devise principale</FormLabel><FormControl><Input disabled={fieldsDisabled} placeholder="Ex. USD" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Devise principale</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} placeholder="Ex. USD" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="taux_devise_principale" render={({ field: { onChange, ...field } }) => (
-                  <FormItem><FormLabel>Taux de change</FormLabel><FormControl><Input disabled={fieldsDisabled} type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormDescription>Taux appliqué de la devise principale vers la monnaie du pays.</FormDescription><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Taux de change</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormDescription>Taux appliqué de la devise principale vers la monnaie du pays.</FormDescription><FormMessage /></FormItem>
                 )} />
               </div>
             </TabsContent>
 
             {/* --- Sécurité --- */}
-            <TabsContent value="securite" className="mt-6 outline-none space-y-6">
+            <TabsContent value="securite" className="mt-6 outline-none space-y-6 bg-white border border-slate-200 rounded-lg shadow-sm p-6">
               <FormField control={form.control} name="mise_en_maintenance" render={({ field }) => (
                 <FormItem className="flex items-center justify-between rounded-lg border border-slate-200 p-4">
                   <div>
@@ -178,36 +178,36 @@ export function ParametresPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField control={form.control} name="delai_inactivite_minutes" render={({ field: { onChange, ...field } }) => (
-                  <FormItem><FormLabel>Délai d'inactivité (minutes)</FormLabel><FormControl><Input disabled={fieldsDisabled} type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Délai d'inactivité (minutes)</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="nombre_session_possible" render={({ field: { onChange, ...field } }) => (
-                  <FormItem><FormLabel>Sessions simultanées max.</FormLabel><FormControl><Input disabled={fieldsDisabled} type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Sessions simultanées max.</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="nombre_tentatives_connexion" render={({ field: { onChange, ...field } }) => (
-                  <FormItem><FormLabel>Tentatives de connexion max.</FormLabel><FormControl><Input disabled={fieldsDisabled} type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Tentatives de connexion max.</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="delai_code_otp_minutes" render={({ field: { onChange, ...field } }) => (
-                  <FormItem><FormLabel>Validité code OTP (minutes)</FormLabel><FormControl><Input disabled={fieldsDisabled} type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Validité code OTP (minutes)</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="delai_changement_mdp_mois" render={({ field: { onChange, ...field } }) => (
-                  <FormItem><FormLabel>Renouvellement mot de passe (mois)</FormLabel><FormControl><Input disabled={fieldsDisabled} type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Renouvellement mot de passe (mois)</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="delai_suppression_secondes" render={({ field: { onChange, ...field } }) => (
-                  <FormItem><FormLabel>Délai avant suppression (secondes)</FormLabel><FormControl><Input disabled={fieldsDisabled} type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
+                  <FormItem><FormLabel>Délai avant suppression (secondes)</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
               </div>
             </TabsContent>
 
             {/* --- Notifications --- */}
-            <TabsContent value="notifications" className="mt-6 outline-none space-y-6">
+            <TabsContent value="notifications" className="mt-6 outline-none space-y-6 bg-white border border-slate-200 rounded-lg shadow-sm p-6">
               <div>
                 <h2 className="text-sm font-bold text-[#131C29] mb-3">WhatsApp</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField control={form.control} name="code_instance_whatsapp" render={({ field }) => (
-                    <FormItem><FormLabel>Code instance</FormLabel><FormControl><Input disabled={fieldsDisabled} {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Code instance</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="token_instance_whatsapp" render={({ field }) => (
-                    <FormItem><FormLabel>Token instance</FormLabel><FormControl><Input disabled={fieldsDisabled} type="password" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Token instance</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} type="password" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                   )} />
                 </div>
               </div>
@@ -218,19 +218,19 @@ export function ParametresPage() {
                 <h2 className="text-sm font-bold text-[#131C29] mb-3">E-mail (SMTP)</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField control={form.control} name="email_notifications" render={({ field }) => (
-                    <FormItem><FormLabel>E-mail expéditeur</FormLabel><FormControl><Input disabled={fieldsDisabled} type="email" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>E-mail expéditeur</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} type="email" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="mot_de_passe_email_notifications" render={({ field }) => (
-                    <FormItem><FormLabel>Mot de passe</FormLabel><FormControl><Input disabled={fieldsDisabled} type="password" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Mot de passe</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} type="password" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="smtp_email_notifications" render={({ field }) => (
-                    <FormItem><FormLabel>Compte SMTP</FormLabel><FormControl><Input disabled={fieldsDisabled} type="email" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Compte SMTP</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} type="email" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="smtp_host_notifications" render={({ field }) => (
-                    <FormItem><FormLabel>Hôte SMTP</FormLabel><FormControl><Input disabled={fieldsDisabled} placeholder="smtp.example.com" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Hôte SMTP</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} placeholder="smtp.example.com" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="smtp_port_notifications" render={({ field: { onChange, ...field } }) => (
-                    <FormItem><FormLabel>Port SMTP</FormLabel><FormControl><Input disabled={fieldsDisabled} type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Port SMTP</FormLabel><FormControl><Input className="bg-white border-slate-300" disabled={fieldsDisabled} type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
                   )} />
                   <FormField control={form.control} name="smtp_encrypt_notifications" render={({ field }) => (
                     <FormItem>

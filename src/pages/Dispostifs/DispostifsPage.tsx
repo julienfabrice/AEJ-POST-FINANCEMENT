@@ -1,9 +1,15 @@
-import { UnderConstruction } from '@/components/ui/UnderConstruction'
+import { DispositifsHeader } from './UI/DispositifsHeader'
+import { DispositifsList } from './components/DispositifsList'
+
 export function DispostifsPage() {
+  const handleAddDispositif = () => {
+    console.log('Nouveau guichet cliqué')
+  }
+
   return (
-    <div>
-      <h1 className="text-2xl font-extrabold text-[#131C29] mb-2">Procédures</h1>
-      <UnderConstruction />
+    <div className="flex flex-col gap-6">
+      <DispositifsHeader onAdd={handleAddDispositif} />
+      <DispositifsList />
     </div>
   )
 }

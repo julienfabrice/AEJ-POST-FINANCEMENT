@@ -1,6 +1,4 @@
 import { useRouterState } from '@tanstack/react-router'
-import { Search } from 'lucide-react'
-import { Input } from '@/components/ui/input'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -53,17 +51,6 @@ export function TopBar() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-
-      <div className="flex-1" />
-
-      {/* Recherche globale */}
-      <div className="relative w-[230px]">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5A6B80]" />
-        <Input
-          placeholder="Rechercher..."
-          className="pl-9 h-9 border-[#E5EAF1] bg-white text-sm"
-        />
-      </div>
     </header>
   )
 }

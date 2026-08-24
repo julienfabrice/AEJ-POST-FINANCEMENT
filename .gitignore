@@ -32,4 +32,5 @@ worktrees/
 *.sw?
 CLAUDE.md
 .env
+.env.production
 .claude*

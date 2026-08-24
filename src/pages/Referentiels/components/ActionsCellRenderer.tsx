@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { Pencil, Trash2 } from 'lucide-react'
+import { Pencil, Trash2, Key } from 'lucide-react'
 import type { ICellRendererParams } from 'ag-grid-community'
 import { toast } from 'sonner'
 import {
@@ -13,31 +13,45 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 export interface ActionsCellRendererParams extends ICellRendererParams {
   onDelete?: (id: number | string) => void;
   onEdit?: (row: any) => void;
+  onChangePassword?: (row: any) => void;
+  readonly?: boolean;
+  readonlyMessage?: string;
 }
 
 export const ActionsCellRenderer = (params: ActionsCellRendererParams) => {
   const [isAlertOpen, setIsAlertOpen] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  const isReadonly = params.readonly === true
+  const readonlyMessage = params.readonlyMessage || "Cette action n'est pas autorisée."
+
   const handleEdit = () => {
+    if (isReadonly) return
     if (params.onEdit && params.data) {
       params.onEdit(params.data)
+    }
+  }
+
+  const handleChangePassword = () => {
+    if (isReadonly) return
+    if (params.onChangePassword && params.data) {
+      params.onChangePassword(params.data)
     }
   }
 
   const confirmDelete = () => {
     setIsAlertOpen(false)
     
-    if (!params.onDelete || !params.data) return
+    if (isReadonly || !params.onDelete || !params.data) return
 
     const itemId = params.data.id
     const itemLabel = params.data.libelle || params.data.nom || `Élément #${itemId}`
 
-    // Toast with 5 seconds timer
     toast.error(`Suppression de "${itemLabel}" programmée`, {
       description: (
         <div className="flex flex-col gap-2 w-full mt-1">
@@ -57,7 +71,6 @@ export const ActionsCellRenderer = (params: ActionsCellRendererParams) => {
       },
     })
 
-    // Execute deletion after 5 seconds if not cancelled
     timerRef.current = setTimeout(() => {
       if (params.onDelete) {
         params.onDelete(itemId)
@@ -65,49 +78,105 @@ export const ActionsCellRenderer = (params: ActionsCellRendererParams) => {
     }, 5000)
   }
 
-  // Cleanup timeout on unmount to prevent memory leaks or executing if component is destroyed
-  // Wait, if we unmount the cell because of scrolling or grid re-render, we STILL want the delete to execute!
-  // AG Grid unmounts cell renderers frequently during scroll. 
-  // If we put the timeout in the cell renderer, scrolling away will cancel the delete!
-  // So the timeout MUST NOT be cleared on unmount.
-  
-  return (
-    <div className="flex items-center justify-end gap-1 h-full">
-      <button 
-        onClick={handleEdit}
-        className="flex items-center justify-center w-8 h-8 rounded text-slate-400 hover:text-[#131C29] hover:bg-slate-100 transition-colors"
-        title="Modifier"
-      >
-        <Pencil className="w-4 h-4" />
-      </button>
+  const EditButton = (
+    <button 
+      onClick={handleEdit}
+      disabled={isReadonly}
+      className={`flex items-center justify-center w-8 h-8 rounded transition-colors ${
+        isReadonly 
+          ? 'text-slate-300 cursor-not-allowed' 
+          : 'text-slate-400 hover:text-[#131C29] hover:bg-slate-100'
+      }`}
+    >
+      <Pencil className="w-4 h-4" />
+    </button>
+  )
 
-      <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
-        <AlertDialogTrigger asChild>
-          <button 
-            className="flex items-center justify-center w-8 h-8 rounded text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-            title="Supprimer"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Êtes-vous sûr de vouloir supprimer ?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Cette action supprimera cet élément de la base de données. Vous aurez 5 secondes pour annuler cette action avant qu'elle ne soit définitive.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={confirmDelete}
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              Continuer
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+  const DeleteButton = (
+    <button 
+      disabled={isReadonly}
+      className={`flex items-center justify-center w-8 h-8 rounded transition-colors ${
+        isReadonly
+          ? 'text-slate-300 cursor-not-allowed'
+          : 'text-slate-400 hover:text-red-600 hover:bg-red-50'
+      }`}
+    >
+      <Trash2 className="w-4 h-4" />
+    </button>
+  )
+
+  return (
+    <TooltipProvider delayDuration={200}>
+      <div className="flex items-center justify-end gap-1 h-full">
+        {params.onChangePassword && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="inline-block">
+                <button 
+                  onClick={handleChangePassword}
+                  disabled={isReadonly}
+                  className={`flex items-center justify-center w-8 h-8 rounded transition-colors ${
+                    isReadonly
+                      ? 'text-slate-300 cursor-not-allowed'
+                      : 'text-slate-400 hover:text-amber-600 hover:bg-amber-50'
+                  }`}
+                >
+                  <Key className="w-4 h-4" />
+                </button>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>{isReadonly ? readonlyMessage : "Modifier le mot de passe"}</TooltipContent>
+          </Tooltip>
+        )}
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="inline-block">
+              {EditButton}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>{isReadonly ? readonlyMessage : "Modifier"}</TooltipContent>
+        </Tooltip>
+
+        {isReadonly ? (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="inline-block">
+                {DeleteButton}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>{readonlyMessage}</TooltipContent>
+          </Tooltip>
+        ) : (
+          <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <AlertDialogTrigger asChild>
+                  {DeleteButton}
+                </AlertDialogTrigger>
+              </TooltipTrigger>
+              <TooltipContent>Supprimer</TooltipContent>
+            </Tooltip>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Êtes-vous sûr de vouloir supprimer ?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Cette action supprimera cet élément de la base de données. Vous aurez 5 secondes pour annuler cette action avant qu'elle ne soit définitive.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                <AlertDialogAction 
+                  onClick={confirmDelete}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                >
+                  Continuer
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
+      </div>
+    </TooltipProvider>
   )
 }

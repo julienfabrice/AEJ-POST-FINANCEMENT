@@ -25,7 +25,9 @@ export function useSituationsMatrimonialesGrid(searchQuery: string) {
         cellRenderer: ActionsCellRenderer,
         cellRendererParams: {
           onEdit: (row: SITUATION_MATRIMONIALE_T) => setEditingItem(row),
-          onDelete: (id: number) => deleteMutation(id)
+          onDelete: (id: number) => deleteMutation(id),
+          readonly: true,
+          readonlyMessage: "Les données de cette table proviennent directement du système de l'AEJ."
         },
       }
     ]

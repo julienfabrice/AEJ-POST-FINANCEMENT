@@ -3,13 +3,11 @@ import { Plus, Search } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DataGrid } from '@/components/ui/DataGrid'
 import { TypeEntrepriseFormModal } from './components/TypeEntrepriseFormModal'
-import { SecteurFormModal } from './components/SecteurFormModal'
-import { SousSecteurFormModal } from './components/SousSecteurFormModal'
-import { SituationMatrimonialeFormModal } from './components/SituationMatrimonialeFormModal'
 import { TypeEmploiFormModal } from './components/TypeEmploiFormModal'
 import { IndicateurFormModal } from './components/IndicateurFormModal'
 import { useReferentielsGrid, type ReferentielTab } from './hooks/useReferentielsGrid'
@@ -72,17 +70,37 @@ export function ReferentielsPage() {
               </span>
               <div className="flex-1" />
               {(() => {
+              const disabledBtn = (
+                <TooltipProvider delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="inline-block">
+                        <Button disabled className="h-9 cursor-not-allowed opacity-50">
+                          <Plus className="w-4 h-4 mr-2" />
+                          Nouveau {tab.sing}
+                        </Button>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent side="left" className="max-w-[250px] text-center">
+                      Les données de cette table proviennent directement du système de l'AEJ.
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )
+
               const btn = (
                 <Button className="h-9">
                   <Plus className="w-4 h-4 mr-2" />
                   Nouveau {tab.sing}
                 </Button>
               )
+
               switch (tab.id) {
                 case 'type_entreprises': return <TypeEntrepriseFormModal>{btn}</TypeEntrepriseFormModal>
-                case 'secteurs': return <SecteurFormModal>{btn}</SecteurFormModal>
-                case 'sous_secteurs': return <SousSecteurFormModal>{btn}</SousSecteurFormModal>
-                case 'situation_matrimoniale': return <SituationMatrimonialeFormModal>{btn}</SituationMatrimonialeFormModal>
+                case 'secteurs': return disabledBtn
+                case 'sous_secteurs': return disabledBtn
+                case 'pieces_identite': return disabledBtn
+                case 'situation_matrimoniale': return disabledBtn
                 case 'type_emplois': return <TypeEmploiFormModal>{btn}</TypeEmploiFormModal>
                 case 'indicateurs': return <IndicateurFormModal>{btn}</IndicateurFormModal>
                 default: return btn

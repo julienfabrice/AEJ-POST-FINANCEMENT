@@ -1,9 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { MODULES } from '@/constants/modules'
 import { requireModule } from '@/lib/guards'
-import { UtilisateursPage } from '@/pages/Utilisateurs/UtilisateursPage'
+import { PersonnelsPage } from '@/pages/Personnels/PersonnelsPage'
 
-export const Route = createFileRoute('/_authenticated/_agent/admin/utilisateurs')({
+export const Route = createFileRoute('/_authenticated/_agent/admin/personnels')({
   beforeLoad: requireModule(MODULES.UTILISATEURS),
-  component: UtilisateursPage,
+  component: PersonnelsPage,
 })

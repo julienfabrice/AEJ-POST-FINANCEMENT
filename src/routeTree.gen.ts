@@ -38,10 +38,10 @@ import { Route as AuthenticatedBenefMesRemboursementsRouteImport } from './route
 import { Route as AuthenticatedAgentAdminLocalitesRouteImport } from './routes/_authenticated/_agent/admin/localites'
 import { Route as AuthenticatedAgentAdminParametresRouteImport } from './routes/_authenticated/_agent/admin/parametres'
 import { Route as AuthenticatedAgentAdminPartenairesRouteImport } from './routes/_authenticated/_agent/admin/partenaires'
+import { Route as AuthenticatedAgentAdminPersonnelsRouteImport } from './routes/_authenticated/_agent/admin/personnels'
 import { Route as AuthenticatedAgentAdminProfilsRouteImport } from './routes/_authenticated/_agent/admin/profils'
 import { Route as AuthenticatedAgentAdminReferentielsRouteImport } from './routes/_authenticated/_agent/admin/referentiels'
 import { Route as AuthenticatedAgentAdminUnitesRouteImport } from './routes/_authenticated/_agent/admin/unites'
-import { Route as AuthenticatedAgentAdminUtilisateursRouteImport } from './routes/_authenticated/_agent/admin/utilisateurs'
 import { Route as AuthenticatedAgentAdminWorkflowsRouteImport } from './routes/_authenticated/_agent/admin/workflows'
 
 const R2faRoute = R2faRouteImport.update({
@@ -204,6 +204,12 @@ const AuthenticatedAgentAdminPartenairesRoute =
     path: '/admin/partenaires',
     getParentRoute: () => AuthenticatedAgentRoute,
   } as any)
+const AuthenticatedAgentAdminPersonnelsRoute =
+  AuthenticatedAgentAdminPersonnelsRouteImport.update({
+    id: '/admin/personnels',
+    path: '/admin/personnels',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
 const AuthenticatedAgentAdminProfilsRoute =
   AuthenticatedAgentAdminProfilsRouteImport.update({
     id: '/admin/profils',
@@ -220,12 +226,6 @@ const AuthenticatedAgentAdminUnitesRoute =
   AuthenticatedAgentAdminUnitesRouteImport.update({
     id: '/admin/unites',
     path: '/admin/unites',
-    getParentRoute: () => AuthenticatedAgentRoute,
-  } as any)
-const AuthenticatedAgentAdminUtilisateursRoute =
-  AuthenticatedAgentAdminUtilisateursRouteImport.update({
-    id: '/admin/utilisateurs',
-    path: '/admin/utilisateurs',
     getParentRoute: () => AuthenticatedAgentRoute,
   } as any)
 const AuthenticatedAgentAdminWorkflowsRoute =
@@ -262,10 +262,10 @@ export interface FileRoutesByFullPath {
   '/admin/localites': typeof AuthenticatedAgentAdminLocalitesRoute
   '/admin/parametres': typeof AuthenticatedAgentAdminParametresRoute
   '/admin/partenaires': typeof AuthenticatedAgentAdminPartenairesRoute
+  '/admin/personnels': typeof AuthenticatedAgentAdminPersonnelsRoute
   '/admin/profils': typeof AuthenticatedAgentAdminProfilsRoute
   '/admin/referentiels': typeof AuthenticatedAgentAdminReferentielsRoute
   '/admin/unites': typeof AuthenticatedAgentAdminUnitesRoute
-  '/admin/utilisateurs': typeof AuthenticatedAgentAdminUtilisateursRoute
   '/admin/workflows': typeof AuthenticatedAgentAdminWorkflowsRoute
 }
 export interface FileRoutesByTo {
@@ -295,10 +295,10 @@ export interface FileRoutesByTo {
   '/admin/localites': typeof AuthenticatedAgentAdminLocalitesRoute
   '/admin/parametres': typeof AuthenticatedAgentAdminParametresRoute
   '/admin/partenaires': typeof AuthenticatedAgentAdminPartenairesRoute
+  '/admin/personnels': typeof AuthenticatedAgentAdminPersonnelsRoute
   '/admin/profils': typeof AuthenticatedAgentAdminProfilsRoute
   '/admin/referentiels': typeof AuthenticatedAgentAdminReferentielsRoute
   '/admin/unites': typeof AuthenticatedAgentAdminUnitesRoute
-  '/admin/utilisateurs': typeof AuthenticatedAgentAdminUtilisateursRoute
   '/admin/workflows': typeof AuthenticatedAgentAdminWorkflowsRoute
 }
 export interface FileRoutesById {
@@ -332,10 +332,10 @@ export interface FileRoutesById {
   '/_authenticated/_agent/admin/localites': typeof AuthenticatedAgentAdminLocalitesRoute
   '/_authenticated/_agent/admin/parametres': typeof AuthenticatedAgentAdminParametresRoute
   '/_authenticated/_agent/admin/partenaires': typeof AuthenticatedAgentAdminPartenairesRoute
+  '/_authenticated/_agent/admin/personnels': typeof AuthenticatedAgentAdminPersonnelsRoute
   '/_authenticated/_agent/admin/profils': typeof AuthenticatedAgentAdminProfilsRoute
   '/_authenticated/_agent/admin/referentiels': typeof AuthenticatedAgentAdminReferentielsRoute
   '/_authenticated/_agent/admin/unites': typeof AuthenticatedAgentAdminUnitesRoute
-  '/_authenticated/_agent/admin/utilisateurs': typeof AuthenticatedAgentAdminUtilisateursRoute
   '/_authenticated/_agent/admin/workflows': typeof AuthenticatedAgentAdminWorkflowsRoute
 }
 export interface FileRouteTypes {
@@ -367,10 +367,10 @@ export interface FileRouteTypes {
     | '/admin/localites'
     | '/admin/parametres'
     | '/admin/partenaires'
+    | '/admin/personnels'
     | '/admin/profils'
     | '/admin/referentiels'
     | '/admin/unites'
-    | '/admin/utilisateurs'
     | '/admin/workflows'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -400,10 +400,10 @@ export interface FileRouteTypes {
     | '/admin/localites'
     | '/admin/parametres'
     | '/admin/partenaires'
+    | '/admin/personnels'
     | '/admin/profils'
     | '/admin/referentiels'
     | '/admin/unites'
-    | '/admin/utilisateurs'
     | '/admin/workflows'
   id:
     | '__root__'
@@ -436,10 +436,10 @@ export interface FileRouteTypes {
     | '/_authenticated/_agent/admin/localites'
     | '/_authenticated/_agent/admin/parametres'
     | '/_authenticated/_agent/admin/partenaires'
+    | '/_authenticated/_agent/admin/personnels'
     | '/_authenticated/_agent/admin/profils'
     | '/_authenticated/_agent/admin/referentiels'
     | '/_authenticated/_agent/admin/unites'
-    | '/_authenticated/_agent/admin/utilisateurs'
     | '/_authenticated/_agent/admin/workflows'
   fileRoutesById: FileRoutesById
 }
@@ -656,6 +656,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAgentAdminPartenairesRouteImport
       parentRoute: typeof AuthenticatedAgentRoute
     }
+    '/_authenticated/_agent/admin/personnels': {
+      id: '/_authenticated/_agent/admin/personnels'
+      path: '/admin/personnels'
+      fullPath: '/admin/personnels'
+      preLoaderRoute: typeof AuthenticatedAgentAdminPersonnelsRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
     '/_authenticated/_agent/admin/profils': {
       id: '/_authenticated/_agent/admin/profils'
       path: '/admin/profils'
@@ -675,13 +682,6 @@ declare module '@tanstack/react-router' {
       path: '/admin/unites'
       fullPath: '/admin/unites'
       preLoaderRoute: typeof AuthenticatedAgentAdminUnitesRouteImport
-      parentRoute: typeof AuthenticatedAgentRoute
-    }
-    '/_authenticated/_agent/admin/utilisateurs': {
-      id: '/_authenticated/_agent/admin/utilisateurs'
-      path: '/admin/utilisateurs'
-      fullPath: '/admin/utilisateurs'
-      preLoaderRoute: typeof AuthenticatedAgentAdminUtilisateursRouteImport
       parentRoute: typeof AuthenticatedAgentRoute
     }
     '/_authenticated/_agent/admin/workflows': {
@@ -711,10 +711,10 @@ interface AuthenticatedAgentRouteChildren {
   AuthenticatedAgentAdminLocalitesRoute: typeof AuthenticatedAgentAdminLocalitesRoute
   AuthenticatedAgentAdminParametresRoute: typeof AuthenticatedAgentAdminParametresRoute
   AuthenticatedAgentAdminPartenairesRoute: typeof AuthenticatedAgentAdminPartenairesRoute
+  AuthenticatedAgentAdminPersonnelsRoute: typeof AuthenticatedAgentAdminPersonnelsRoute
   AuthenticatedAgentAdminProfilsRoute: typeof AuthenticatedAgentAdminProfilsRoute
   AuthenticatedAgentAdminReferentielsRoute: typeof AuthenticatedAgentAdminReferentielsRoute
   AuthenticatedAgentAdminUnitesRoute: typeof AuthenticatedAgentAdminUnitesRoute
-  AuthenticatedAgentAdminUtilisateursRoute: typeof AuthenticatedAgentAdminUtilisateursRoute
   AuthenticatedAgentAdminWorkflowsRoute: typeof AuthenticatedAgentAdminWorkflowsRoute
 }
 
@@ -738,12 +738,12 @@ const AuthenticatedAgentRouteChildren: AuthenticatedAgentRouteChildren = {
     AuthenticatedAgentAdminParametresRoute,
   AuthenticatedAgentAdminPartenairesRoute:
     AuthenticatedAgentAdminPartenairesRoute,
+  AuthenticatedAgentAdminPersonnelsRoute:
+    AuthenticatedAgentAdminPersonnelsRoute,
   AuthenticatedAgentAdminProfilsRoute: AuthenticatedAgentAdminProfilsRoute,
   AuthenticatedAgentAdminReferentielsRoute:
     AuthenticatedAgentAdminReferentielsRoute,
   AuthenticatedAgentAdminUnitesRoute: AuthenticatedAgentAdminUnitesRoute,
-  AuthenticatedAgentAdminUtilisateursRoute:
-    AuthenticatedAgentAdminUtilisateursRoute,
   AuthenticatedAgentAdminWorkflowsRoute: AuthenticatedAgentAdminWorkflowsRoute,
 }
 

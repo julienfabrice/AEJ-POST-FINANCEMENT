@@ -1,8 +1,8 @@
 import type { ICellRendererParams } from 'ag-grid-community'
 import { Badge } from '@/components/ui/badge'
-import type { JEUNE_T } from '@/types'
+import type { PROMOTEUR_T } from '@/types/promoteurs.types'
 
-export const StatusCellRenderer = (params: ICellRendererParams<JEUNE_T>) => {
+export const StatusCellRenderer = (params: ICellRendererParams<PROMOTEUR_T>) => {
   const actif = params.value
   return (
     <div className="flex items-center h-full">

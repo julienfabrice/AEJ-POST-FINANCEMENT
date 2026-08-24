@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { AUTH_DISABLED } from '@/constants/devFlags'
 import { canFrom, indexPermissions } from '@/lib/permissions'
 import type { PERMISSION_ACTION_T, USER_SPACE_T } from '@/types/auth.types'
 import type { PermissionIndex } from '@/types/permissions.types'
@@ -71,14 +72,10 @@ export const useAuthStore = create<AuthState>()(
       },
 
      
-      /**
-       * Bypass local, dev uniquement (`import.meta.env.DEV`) : à activer via
-       * `VITE_BYPASS_PERMISSIONS=true` dans le `.env` pour continuer à
-       * travailler pendant que le backend permissions n'est pas encore prêt.
-       * Ne s'active jamais en build de prod, même si la variable traîne.
-       */
       can: (module, action = 'v') => {
-        if (import.meta.env.DEV && import.meta.env.VITE_BYPASS_PERMISSIONS === 'true') return true
+ 
+        if (AUTH_DISABLED) return true
+
         return canFrom(get().permissions, module, action)
       },
     }),

@@ -22,13 +22,18 @@ export const Route = createFileRoute('/_authenticated')({
       throw redirect({ to: ROUTES.LOGIN, search: { redirect: location.href } })
     }
 
-    const me = await context.queryClient.ensureQueryData({
-      queryKey: AUTH_ME_KEY,
-      queryFn: authServices.me,
-    })
-
-    // Le profil frais fait foi : on resynchronise le store au passage.
-    useAuthStore.getState().setSession(me)
+    try {
+      const me = await context.queryClient.ensureQueryData({
+        queryKey: AUTH_ME_KEY,
+        queryFn: authServices.me,
+      })
+      // Le profil frais fait foi : on resynchronise le store au passage.
+      useAuthStore.getState().setSession(me)
+    } catch (error) {
+      useAuthStore.getState().clearSession()
+      context.queryClient.clear()
+      throw redirect({ to: ROUTES.LOGIN, search: { redirect: location.href } })
+    }
   },
   component: AppLayout,
 })

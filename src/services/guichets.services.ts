@@ -20,8 +20,8 @@ export const guichetServices = {
         const response = await axiosInstance.post('/guichets', payload)
         return response.data
       },
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['guichets'] })
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({ queryKey: ['guichets'] })
         toast.success('Élément ajouté avec succès !')
       },
       onError: (error) => {
@@ -37,8 +37,8 @@ export const guichetServices = {
         const response = await axiosInstance.put(`/guichets/${id}`, data)
         return response.data
       },
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['guichets'] })
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({ queryKey: ['guichets'] })
         toast.success('Élément modifié avec succès !')
       },
       onError: (error) => {
@@ -53,8 +53,8 @@ export const guichetServices = {
       mutationFn: async (id: number) => {
         await axiosInstance.delete(`/guichets/${id}`)
       },
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['guichets'] })
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({ queryKey: ['guichets'] })
         toast.success('Élément supprimé avec succès !')
       },
       onError: (error) => {

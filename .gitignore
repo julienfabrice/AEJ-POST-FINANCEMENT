@@ -12,6 +12,14 @@ dist
 dist-ssr
 *.local
 
+# Cache du plugin TanStack Router : régénéré à chaque build/dev, jamais à versionner.
+.tanstack
+
+# Worktrees git créés À L'INTÉRIEUR du dépôt : leur contenu est déjà versionné
+# par la branche qu'ils portent. Sans cette règle, chaque worktree apparaîtrait
+# comme des milliers de fichiers non suivis dans le dépôt principal.
+worktrees/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -24,4 +32,5 @@ dist-ssr
 *.sw?
 CLAUDE.md
 .env
+.env.production
 .claude*

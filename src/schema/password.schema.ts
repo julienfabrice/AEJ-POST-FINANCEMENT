@@ -33,7 +33,7 @@ export const useSetPasswordSchema = () =>
               }
             })
           }),
-          confirm_new_password: z.string().min(1, 'La confirmation est requise.'),
+          confirm_new_password: z.string({error : (iss) => iss.input === undefined ? 'La confirmation du mot de passe est requise' : ''}).min(8, 'Minimum 8 caractères'),
         })
         .refine((values) => values.new_password === values.confirm_new_password, {
           message: 'Les mots de passe ne correspondent pas.',

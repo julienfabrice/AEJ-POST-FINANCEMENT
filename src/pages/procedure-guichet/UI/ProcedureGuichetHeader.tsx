@@ -1,11 +1,13 @@
 import { Button } from '@/components/ui/button'
 import { Plus, Workflow, Search } from 'lucide-react'
 
-interface DispositifsHeaderProps {
+interface ProcedureGuichetHeaderProps {
   onAdd: () => void
+  searchQuery?: string
+  onSearch?: (query: string) => void
 }
 
-export function DispositifsHeader({ onAdd }: DispositifsHeaderProps) {
+export function ProcedureGuichetHeader({ onAdd, searchQuery = '', onSearch }: ProcedureGuichetHeaderProps) {
   return (
     <div className="flex items-start justify-between">
       <div>
@@ -26,6 +28,8 @@ export function DispositifsHeader({ onAdd }: DispositifsHeaderProps) {
           <input 
             type="text" 
             placeholder="Rechercher…" 
+            value={searchQuery}
+            onChange={(e) => onSearch?.(e.target.value)}
             className="border-none outline-none bg-transparent font-inherit text-[13px] w-full placeholder:text-[#8595A8] text-[#131C29]"
           />
         </div>

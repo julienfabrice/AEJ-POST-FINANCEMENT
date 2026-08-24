@@ -5,9 +5,10 @@ export const guichetSchema = z.object({
   libelle: z.string().min(1, 'Le libellé est requis.'),
   description: z.string().optional(),
   couleur: z.string().optional(),
-  montant_min: z.number().min(0, 'Le montant minimum doit être positif.'),
-  montant_max: z.number().min(0, 'Le montant maximum doit être positif.'),
-  is_active: z.boolean(),
+  montant_min: z.coerce.number().int('Le montant doit être un entier sans virgule').min(0, 'Le montant minimum doit être positif.'),
+  montant_max: z.coerce.number().int('Le montant doit être un entier sans virgule').min(0, 'Le montant maximum doit être positif.'),
+  is_active: z.boolean().default(true),
+  is_form_active: z.boolean().default(true),
 }).refine((data) => data.montant_max >= data.montant_min, {
   message: 'Le montant maximum doit être supérieur ou égal au montant minimum.',
   path: ['montant_max'],

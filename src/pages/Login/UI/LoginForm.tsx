@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
-import { TimerReset } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import type { LOGIN_ALERT_TONE_T } from '@/lib/loginError'
 import { IMAGES } from '@/constants/images'
 import { ROUTES } from '@/constants/routes'
 import {
@@ -11,14 +12,31 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert"
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/ui/password-input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { useLoginForm } from '../hooks/useLoginForm'
 
+/**
+ * `Alert` n'a que deux variantes ; le ton « warning » se compose ici, au plus
+ * près du style. `lib/loginError` reste agnostique de la présentation.
+ */
+const TONE_CLASSES: Record<LOGIN_ALERT_TONE_T, string> = {
+  warning:
+    'border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-50',
+  destructive:
+    'border-destructive/30 bg-destructive/10 text-destructive dark:border-destructive/40',
+}
+
 export function LoginForm() {
-  const { form, onSubmit, isSubmitting, errorMessage, isLocked, lockRemainingLabel } =
-    useLoginForm()
+  const { form, onSubmit, isSubmitting, alert, isLocked, lockRemainingLabel } = useLoginForm()
+  const AlertIcon = alert?.icon
 
   return (
     <div className="flex items-center justify-center p-8 bg-card">
@@ -40,22 +58,14 @@ export function LoginForm() {
         <Form {...form}>
           <form onSubmit={onSubmit} className="space-y-6">
 
-            {errorMessage && (
-              <div
-                role="alert"
-                className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive"
-              >
-                {errorMessage}
-                {/* Compte à rebours vivant : sans lui, « réessayez plus tard »
-                    laisse l'utilisateur deviner combien de temps attendre. */}
-                {isLocked && (
-                  <span className="mt-1 flex items-center gap-1.5 font-normal">
-                    <TimerReset className="size-4 shrink-0" />
-                    Nouvelle tentative possible dans{' '}
-                    <span className="font-semibold">{lockRemainingLabel}</span>
-                  </span>
-                )}
-              </div>
+            {alert && AlertIcon && (
+              <Alert className={cn('max-w-md', TONE_CLASSES[alert.tone])}>
+                <AlertIcon />
+                <AlertTitle>{alert.title}</AlertTitle>
+                <AlertDescription className="text-current/90">
+                  {alert.description}
+                </AlertDescription>
+              </Alert>
             )}
 
             <FormField
@@ -140,3 +150,7 @@ export function LoginForm() {
     </div>
   )
 }
+
+
+
+

@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { BaseSyntheticEvent } from 'react'
 import { useForm } from 'react-hook-form'
 import type { UseFormReturn } from 'react-hook-form'
@@ -8,7 +9,12 @@ import { useLogin } from '@/hooks/auth.hooks'
 import { useCountdown } from '@/hooks/useCountdown'
 import { ROUTES } from '@/constants/routes'
 import { formatCountdown } from '@/constants/security'
-import { describeLoginFailure, parseLoginFailure } from '@/lib/loginError'
+import {
+  describeLoginFailure,
+  parseLoginFailure,
+  type LOGIN_ALERT_T,
+  type LOGIN_FAILURE_T,
+} from '@/lib/loginError'
 import { resolveHome } from '@/lib/resolveHome'
 import { useAuthStore } from '@/store/useAuthStore'
 
@@ -16,7 +22,8 @@ export function useLoginForm(): {
   form: UseFormReturn<LoginFormValues>
   onSubmit: (e?: BaseSyntheticEvent) => Promise<void>
   isSubmitting: boolean
-  errorMessage?: string
+  /** Alerte prête à afficher (titre, description, icône, ton) — sinon `undefined`. */
+  alert?: LOGIN_ALERT_T
   /** Compte bloqué : la soumission doit rester fermée jusqu'à expiration. */
   isLocked: boolean
   /** Temps restant avant déblocage, prêt à afficher (« 26:25 »). */
@@ -29,6 +36,13 @@ export function useLoginForm(): {
   // Le blocage vient du serveur (`retry_after`) ; ce compte à rebours n'est
   // qu'un miroir local, il n'autorise rien de lui-même.
   const lock = useCountdown()
+
+  /**
+   * L'échec est conservé STRUCTURÉ, pas aplati en chaîne : `setError('root')`
+   * ne transporte qu'un message, alors que l'alerte a besoin du titre, de
+   * l'icône et du ton — et doit se recomposer à chaque seconde du décompte.
+   */
+  const [failure, setFailure] = useState<LOGIN_FAILURE_T | null>(null)
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -50,6 +64,10 @@ export function useLoginForm(): {
     // consommer une tentative pour rien.
     if (lock.isRunning) return
 
+    // L'alerte n'est plus portée par `setError('root')` : à nous de la vider
+    // au début de chaque tentative.
+    setFailure(null)
+
     try {
       const result = await login({ email: values.email, mot_de_passe: values.password })
 
@@ -62,27 +80,30 @@ export function useLoginForm(): {
       const home = resolveHome(useAuthStore.getState().user)
       await navigate({ to: redirect ?? home, replace: true })
     } catch (error) {
-      const failure = parseLoginFailure(error)
+      const parsed = parseLoginFailure(error)
 
-      // 423 la soumission reste fermée jusqu'au
-      // bout. Sans `retry_after`, on affiche le message sans verrouiller —
-      // mieux vaut laisser réessayer que bloquer indéfiniment.
-      if (failure.kind === 'locked' && failure.retryAfterSeconds) {
-        lock.start(failure.retryAfterSeconds)
+      // 423 : la soumission reste fermée jusqu'au bout. Sans `retry_after`, on
+      // affiche le message sans verrouiller — mieux vaut laisser réessayer que
+      // bloquer indéfiniment.
+      if (parsed.kind === 'locked' && parsed.retryAfterSeconds) {
+        lock.start(parsed.retryAfterSeconds)
       }
 
-      // Erreur de formulaire et non de champ : `root` est vidé automatiquement
-      // à chaque nouvelle soumission.
-      form.setError('root', { message: describeLoginFailure(failure) })
+      setFailure(parsed)
     }
   }
+
+  const lockRemainingLabel = formatCountdown(lock.seconds)
 
   return {
     form,
     onSubmit: form.handleSubmit(submit),
     isSubmitting: form.formState.isSubmitting,
-    errorMessage: form.formState.errors.root?.message,
+    // Recomposée à chaque rendu : le décompte de blocage change chaque seconde.
+    alert: failure
+      ? describeLoginFailure(failure, lock.isRunning ? lockRemainingLabel : undefined)
+      : undefined,
     isLocked: lock.isRunning,
-    lockRemainingLabel: formatCountdown(lock.seconds),
+    lockRemainingLabel,
   }
 }

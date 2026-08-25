@@ -1,4 +1,6 @@
 import { isAxiosError } from 'axios'
+import { CircleAlert, Lock, TriangleAlert } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 
 /**
  * Corps d'erreur de `POST /auth/login`
@@ -68,16 +70,82 @@ export function parseLoginFailure(error: unknown): LOGIN_FAILURE_T {
   return { kind: 'unknown', message: GENERIC_MESSAGE }
 }
 
-/** Compose le message affiché sous le formulaire. */
-export function describeLoginFailure(failure: LOGIN_FAILURE_T): string {
+/** Ton de l'alerte — la traduction en classes reste à la charge de l'écran. */
+export type LOGIN_ALERT_TONE_T = 'warning' | 'destructive'
+
+export interface LOGIN_ALERT_T {
+  title: string
+  description: string
+  icon: LucideIcon
+  tone: LOGIN_ALERT_TONE_T
+}
+
+/**
+ * Traduit un échec de connexion en alerte prête à afficher.
+ *
+ * Le TITRE porte l'état (« Identifiants invalides », « Compte bloqué ») et la
+ * DESCRIPTION porte la conséquence et la marche à suivre. Séparer les deux
+ * évite la phrase fourre-tout où l'utilisateur doit deviner ce qu'on attend
+ * de lui.
+ *
+ * Le message du serveur est toujours privilégié quand il existe : c'est lui qui
+ * connaît la règle appliquée, et il varie déjà selon les cas
+ * (« Trop de tentatives… » / « Nombre maximum de tentatives atteint… »).
+ *
+ * @param lockRemainingLabel décompte vivant (« 26:25 ») injecté par l'écran, qui
+ *   seul possède le minuteur.
+ */
+export function describeLoginFailure(
+  failure: LOGIN_FAILURE_T,
+  lockRemainingLabel?: string,
+): LOGIN_ALERT_T {
   const { kind, message, attemptsRemaining } = failure
 
-  // Le décompte n'a de sens que s'il reste réellement des essais : à 0, c'est
-  // le message de blocage qui prend le relais.
-  if (kind === 'invalid_credentials' && attemptsRemaining !== undefined && attemptsRemaining > 0) {
-    const plural = attemptsRemaining > 1 ? 's' : ''
-    return `${message} — il vous reste ${attemptsRemaining} tentative${plural} avant blocage du compte.`
+  if (kind === 'locked') {
+    return {
+      title: message,
+      description: lockRemainingLabel
+        ? `Trop de tentatives infructueuses. Nouvelle tentative possible dans ${lockRemainingLabel}.`
+        : 'Trop de tentatives infructueuses. Réessayez plus tard ou contactez un administrateur.',
+      icon: Lock,
+      tone: 'destructive',
+    }
   }
 
-  return message
+  if (kind === 'invalid_credentials') {
+    // Dernière cartouche : on change le titre ET le ton. Un « il vous reste 1
+    // tentative » noyé dans le même jaune que les précédents passe inaperçu.
+    if (attemptsRemaining === 1) {
+      return {
+        title: 'Dernière tentative',
+        description: `${message}. Une erreur de plus et le compte sera temporairement bloqué.`,
+        icon: TriangleAlert,
+        tone: 'destructive',
+      }
+    }
+
+    if (attemptsRemaining !== undefined && attemptsRemaining > 1) {
+      return {
+        title: message,
+        description: `Il vous reste ${attemptsRemaining} tentatives avant le blocage temporaire du compte.`,
+        icon: TriangleAlert,
+        tone: 'warning',
+      }
+    }
+
+    // Le backend n'a pas renvoyé de décompte : on n'en invente pas.
+    return {
+      title: message,
+      description: 'Vérifiez votre adresse e-mail et votre mot de passe.',
+      icon: TriangleAlert,
+      tone: 'warning',
+    }
+  }
+
+  return {
+    title: 'Connexion impossible',
+    description: 'Le service est momentanément indisponible. Réessayez dans quelques instants.',
+    icon: CircleAlert,
+    tone: 'destructive',
+  }
 }

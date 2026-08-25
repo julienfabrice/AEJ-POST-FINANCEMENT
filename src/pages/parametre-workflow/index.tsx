@@ -6,7 +6,7 @@ import { WorkflowVersionsKanban } from './UI/WorkflowVersionsKanban'
 import { workflowServices } from '@/services/workflow'
 import type { WORKFLOW_VERSION_T } from '@/types'
 
-export function WorkflowsPage() {
+export function ParametreWorkflowPage() {
   const { data: versions, isLoading, isError } = workflowServices.useGetVersions()
 
   // Group versions by workflow.code

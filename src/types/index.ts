@@ -319,3 +319,20 @@ export interface PLAN_REMBOURSEMENT_T {
   created_at?: string
   updated_at?: string
 }
+
+export type REMBOURSEMENT_STATUT_T = 'EN_ATTENTE' | 'PAYE' | 'PARTIEL' | 'NON_PAYE'
+
+export interface REMBOURSEMENT_T {
+  id: number
+  promoteur_id: number
+  budget_id?: number | null
+  montant_echu: number
+  montant_paye: number
+  montant_impaye: number
+  penalites: number
+  date_paiement?: string | null
+  observations?: string | null
+  statut: REMBOURSEMENT_STATUT_T
+  created_at?: string
+  updated_at?: string
+}

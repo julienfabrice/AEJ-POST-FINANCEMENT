@@ -18,6 +18,10 @@ import { useDecaissementsGrid } from './hooks/useDecaissementsGrid'
 
 import { EcheancierGenerator } from './components/EcheancierGenerator'
 import { usePlanRemboursementsGrid } from './hooks/usePlanRemboursementsGrid'
+
+import { RemboursementFormModal } from './components/RemboursementFormModal'
+import { useRemboursementsGrid } from './hooks/useRemboursementsGrid'
+
 import type { ColDef } from 'ag-grid-community'
 
 const TAB_TRIGGER_CLASS = "!bg-transparent !shadow-none after:hidden px-4 py-2.5 text-[13.5px] font-semibold text-slate-500 border-t-0 border-l-0 border-r-0 border-b-[2.5px] border-transparent data-[state=active]:text-[#E7722B] data-[state=active]:!border-[#E7722B] hover:text-[#131C29] whitespace-nowrap -mb-[1px] transition-colors rounded-none"
@@ -174,7 +178,7 @@ function DecaissementsTab() {
   )
 }
 
-function RemboursementsTab() {
+function EcheancierSubTab() {
   const { columnDefs, data, isLoading } = usePlanRemboursementsGrid()
   return (
     <div className="space-y-8">
@@ -196,6 +200,52 @@ function RemboursementsTab() {
         </Card>
       </div>
     </div>
+  )
+}
+
+function RemboursementExecutionSubTab() {
+  const [searchQuery, setSearchQuery] = useState('')
+  const { columnDefs, data, isLoading, modalNode } = useRemboursementsGrid(searchQuery)
+  return (
+    <>
+      {modalNode}
+      <GridSection
+        columnDefs={columnDefs}
+        data={data}
+        isLoading={isLoading}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Rechercher un remboursement…"
+        countLabel={`${data.length} remboursement(s)`}
+        newButton={
+          <RemboursementFormModal>
+            <Button className="h-9"><Plus className="w-4 h-4 mr-2" />Nouveau remboursement</Button>
+          </RemboursementFormModal>
+        }
+      />
+    </>
+  )
+}
+
+function RemboursementsTab() {
+  const [subTab, setSubTab] = useState<'echeancier' | 'paiements'>('echeancier')
+  return (
+    <Tabs value={subTab} onValueChange={(v) => setSubTab(v as 'echeancier' | 'paiements')} className="w-full">
+      <TabsList className="bg-slate-100 p-1 h-auto rounded-md w-fit">
+        <TabsTrigger value="echeancier" className="text-[13px] px-3 py-1.5 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded">
+          Échéancier
+        </TabsTrigger>
+        <TabsTrigger value="paiements" className="text-[13px] px-3 py-1.5 data-[state=active]:bg-white data-[state=active]:shadow-sm rounded">
+          Paiements
+        </TabsTrigger>
+      </TabsList>
+      <TabsContent value="echeancier" className="mt-4 outline-none">
+        <EcheancierSubTab />
+      </TabsContent>
+      <TabsContent value="paiements" className="mt-2 outline-none">
+        <RemboursementExecutionSubTab />
+      </TabsContent>
+    </Tabs>
   )
 }
 

@@ -1,5 +1,6 @@
 import { Download, UserPlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { PermissionGate } from '@/components/PermissionGate'
 import { MODULES } from '@/constants/modules'
 
@@ -15,13 +16,22 @@ export function JeunesHeader() {
           <Download className="w-4 h-4 mr-2" />
           Exporter
         </Button>
-        {/* Création : réservée au `full_access` sur le module. */}
-        <PermissionGate module={MODULES.JEUNES} action="c">
-          <Button size="sm">
-            <UserPlus className="w-4 h-4 mr-2" />
-            Nouveau promoteur
-          </Button>
-        </PermissionGate>
+        {/* Création : désactivée car les données viennent de l'AEJ */}
+        <TooltipProvider delayDuration={200}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="inline-block">
+                <Button disabled size="sm" className="bg-[#E7722B]/50 text-white cursor-not-allowed">
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  Nouveau promoteur
+                </Button>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="left" className="max-w-[250px] text-center">
+              Les données de cette table proviennent directement du système de l'AEJ.
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
   )

@@ -266,5 +266,88 @@ export interface BUDGET_T {
   created_at?: string
   updated_at?: string
 }
-export * from './workflow.types';
-export * from './workflow.types';
+// --- Décaissements (schema.v2.sql, section 15) ---
+
+export type MODE_DECAISSE_T = 'CHEQUE' | 'VIREMENT'
+export type LIGNE_DECAISSEMENT_STATUT_T = 'VALIDE' | 'NON_VALIDE'
+
+export interface LIGNE_DECAISSEMENT_T {
+  id?: number
+  plan_decaissement_id?: number
+  numero_ligne: number
+  object_ligne?: string | null
+  montant_ligne: number
+  mode_decaisse: MODE_DECAISSE_T
+  date_prevue?: string | null
+  intitule_prestataire: string
+  numero_compte?: string | null
+  contact?: string | null
+  statut: LIGNE_DECAISSEMENT_STATUT_T
+  observations?: string | null
+}
+
+export interface PLAN_DECAISSEMENT_T {
+  id: number
+  micro_projet_id: number
+  budget_id?: number | null
+  compte_financement_id?: number | null
+  montant_planifie: number
+  date_prevue?: string | null
+  justificatif_path?: string | null
+  lignes?: LIGNE_DECAISSEMENT_T[]
+  created_at?: string
+  updated_at?: string
+}
+
+export type DECAISSEMENT_STATUT_T = 'EN_ATTENTE' | 'VALIDE' | 'NON_VALIDE'
+
+export interface DECAISSEMENT_T {
+  id: number
+  plan_decaissement_id: number
+  ligne_decaissement_id?: number | null
+  agence_id?: number | null
+  montant_decaisse: number
+  date_decaissement?: string | null
+  reference_banque?: string | null
+  statut: DECAISSEMENT_STATUT_T
+  observations?: string | null
+  created_at?: string
+  updated_at?: string
+}
+
+// --- Remboursements (schema.v2.sql, section 15) ---
+
+export interface PLAN_REMBOURSEMENT_T {
+  id: number
+  micro_projet_id: number
+  budget_id?: number | null
+  echeance_mensuelle?: string | null
+  montant_echeance: number
+  periode?: number | null
+  capital_rembourse: number
+  capital_restant: number
+  interets: number
+  amortissement_capital: number
+  justificatif_path?: string | null
+  created_at?: string
+  updated_at?: string
+}
+
+export type REMBOURSEMENT_STATUT_T = 'EN_ATTENTE' | 'PAYE' | 'PARTIEL' | 'NON_PAYE'
+
+export interface REMBOURSEMENT_T {
+  id: number
+  promoteur_id: number
+  budget_id?: number | null
+  montant_echu: number
+  montant_paye: number
+  montant_impaye: number
+  penalites: number
+  date_paiement?: string | null
+  observations?: string | null
+  statut: REMBOURSEMENT_STATUT_T
+  created_at?: string
+  updated_at?: string
+}
+
+export * from './workflow.types'

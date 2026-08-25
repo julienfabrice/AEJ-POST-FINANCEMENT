@@ -23,6 +23,11 @@ export const axiosInstance = axios.create({
 export const ensureCsrf = () =>
   axios.get(`${originURL}/sanctum/csrf-cookie`, { withCredentials: true })
 
+/**
+ * Battement d'activité, émis à chaque réponse API réussie.
+ */
+export const ACTIVITY_EVENT = 'app:activity'
+
 /* ------------------------------------------------------------------ *
  * 1. Classement des routes                                            *
  * ------------------------------------------------------------------ */
@@ -119,7 +124,11 @@ const refreshSession = () => {
 
 // Échec du renouvellement → session perdue.
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Toute réponse réussie compte comme une activité utilisateur 
+    if (typeof window !== 'undefined') window.dispatchEvent(new Event(ACTIVITY_EVENT))
+    return response
+  },
   async (error: unknown) => {
     if (!isAxiosError(error)) throw error
 

@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router'
+import { TimerReset } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { IMAGES } from '@/constants/images'
 import { ROUTES } from '@/constants/routes'
@@ -16,7 +17,8 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { useLoginForm } from '../hooks/useLoginForm'
 
 export function LoginForm() {
-  const { form, onSubmit, isSubmitting, errorMessage } = useLoginForm()
+  const { form, onSubmit, isSubmitting, errorMessage, isLocked, lockRemainingLabel } =
+    useLoginForm()
 
   return (
     <div className="flex items-center justify-center p-8 bg-card">
@@ -44,6 +46,15 @@ export function LoginForm() {
                 className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive"
               >
                 {errorMessage}
+                {/* Compte à rebours vivant : sans lui, « réessayez plus tard »
+                    laisse l'utilisateur deviner combien de temps attendre. */}
+                {isLocked && (
+                  <span className="mt-1 flex items-center gap-1.5 font-normal">
+                    <TimerReset className="size-4 shrink-0" />
+                    Nouvelle tentative possible dans{' '}
+                    <span className="font-semibold">{lockRemainingLabel}</span>
+                  </span>
+                )}
               </div>
             )}
 
@@ -108,10 +119,14 @@ export function LoginForm() {
 
             <Button
               type="submit"
-              disabled={isSubmitting}
-              className="w-full h-12 text-base font-semibold bg-[#E7722B] hover:bg-[#C85E18] text-white cursor-pointer"
+              disabled={isSubmitting || isLocked}
+              className="w-full h-12 text-base font-semibold bg-[#E7722B] hover:bg-[#C85E18] text-white cursor-pointer disabled:cursor-not-allowed"
             >
-              {isSubmitting ? 'Connexion…' : 'Se connecter'}
+              {isLocked
+                ? `Réessayez dans ${lockRemainingLabel}`
+                : isSubmitting
+                  ? 'Connexion…'
+                  : 'Se connecter'}
             </Button>
           </form>
         </Form>

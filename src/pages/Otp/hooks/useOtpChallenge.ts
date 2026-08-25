@@ -4,21 +4,15 @@ import { toast } from 'sonner'
 import { useSendOtp, useVerifyOtp } from '@/hooks/auth.hooks'
 import { ROUTES } from '@/constants/routes'
 import { OTP_CONFIG, formatCountdown } from '@/constants/security'
+import { useSecurityConfig } from '@/hooks/useSecurityConfig'
 import { useAuthFlowStore } from '@/store/useAuthFlowStore'
 import type { OTP_METHOD_T } from '@/types/auth.types'
-import { useCountdown } from './useCountdown'
+import { useCountdown } from '@/hooks/useCountdown'
 
 /**
  * Défi OTP en deux temps sur un seul écran :
  *  1. l'utilisateur choisit un canal — AUCUNE requête n'est envoyée ;
  *  2. il valide, et c'est seulement là que part `POST /send-otp`.
- *
- * Séparer le choix de l'envoi évite d'expédier un code (email/SMS, donc coûteux
- * et limité côté serveur) à chaque clic d'hésitation.
- *
- * Deux comptes à rebours indépendants tournent ensuite :
- *  - `resend`  → délai avant de pouvoir redemander un code ;
- *  - `expiry`  → validité du code, miroir de la durée appliquée côté serveur.
  */
 export function useOtpChallenge() {
   const navigate = useNavigate()
@@ -26,6 +20,10 @@ export function useOtpChallenge() {
   const send = useSendOtp()
   // `has_phone` vient de la réponse de login : sans numéro, pas de WhatsApp.
   const hasPhone = useAuthFlowStore((s) => s.pending?.hasPhone ?? false)
+
+  // Durée de validité pilotée par `configurations.delai_code_otp_minutes`,
+  // avec repli sur la constante si la config n'est pas encore chargée.
+  const { otpTtlSeconds, otpResendCooldownSeconds } = useSecurityConfig()
 
   const resend = useCountdown()
   const expiry = useCountdown()
@@ -44,8 +42,7 @@ export function useOtpChallenge() {
   const codeSent = !!sentTo
 
   // Fin de validité : on vide la saisie et on bascule l'écran en « expiré ».
-  // Le code reste refusé par le serveur de toute façon — l'affichage ne fait
-  // qu'éviter à l'utilisateur de saisir pour rien.
+  // Le code reste refusé par le serveur de toute façon 
   useEffect(() => {
     if (!codeSent || isExpired || expiry.seconds > 0) return
     setIsExpired(true)
@@ -78,13 +75,13 @@ export function useOtpChallenge() {
         setIsExpired(false)
         setCode('')
         submittedRef.current = ''
-        resend.start(OTP_CONFIG.resendCooldownSeconds)
-        expiry.start(OTP_CONFIG.ttlSeconds)
+        resend.start(otpResendCooldownSeconds)
+        expiry.start(otpTtlSeconds)
         toast.success(method === 'MAIL' ? 'Code envoyé par email' : 'Code envoyé par WhatsApp')
       },
       onError: () => toast.error("Impossible d'envoyer le code. Réessayez."),
     })
-  }, [method, send, resend, expiry, isExpired])
+  }, [method, send, resend, expiry, isExpired, otpResendCooldownSeconds, otpTtlSeconds])
 
   const submit = useCallback(
     (value: string) => {
@@ -139,6 +136,6 @@ export function useOtpChallenge() {
     isVerifying: verify.isPending,
     otpLength: OTP_CONFIG.length,
     /** Durée de validité annoncée avant le premier envoi (« 5:00 »). */
-    validityLabel: formatCountdown(OTP_CONFIG.ttlSeconds),
+    validityLabel: formatCountdown(otpTtlSeconds),
   }
 }

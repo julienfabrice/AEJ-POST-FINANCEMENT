@@ -1,7 +1,9 @@
 import { useState } from 'react'
-import { Search } from 'lucide-react'
+import { Search, Plus } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DataGrid } from '@/components/ui/DataGrid'
@@ -23,13 +25,6 @@ export function LocalitesPage() {
 
   return (
     <div className="space-y-2">
-      <div>
-        <h1 className="text-2xl font-extrabold text-[#131C29]">Localités</h1>
-        <p className="text-sm text-[#5A6B80] mt-1">
-          Découpage géographique national — synchronisé depuis le portail agenceemploijeunes.ci, en lecture seule.
-        </p>
-      </div>
-
       <Tabs
         value={activeTab}
         onValueChange={(val) => { setActiveTab(val as LocaliteTab); setSearchQuery('') }}
@@ -64,6 +59,23 @@ export function LocalitesPage() {
               <span className="text-[12.5px] text-slate-500 whitespace-nowrap">
                 {isLoading ? 'Chargement...' : `${data.length} ${tab.label.toLowerCase()}`}
               </span>
+              <div className="flex-1" />
+              
+              <TooltipProvider delayDuration={200}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="inline-block">
+                      <Button disabled className="bg-[#E7722B]/50 text-white h-9 px-4 cursor-not-allowed">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Nouveau
+                      </Button>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="left" className="max-w-[250px] text-center">
+                    Les données de cette table proviennent directement du système de l'AEJ.
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
 
             <Card className="p-0 overflow-hidden border-slate-200 rounded-lg shadow-sm">

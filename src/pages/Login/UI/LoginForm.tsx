@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
+import { IMAGES } from '@/constants/images'
 import { ROUTES } from '@/constants/routes'
 import {
   Form,
@@ -20,6 +21,15 @@ export function LoginForm() {
   return (
     <div className="flex items-center justify-center p-8 bg-card">
       <div className="w-full max-w-md">
+        {/* Logo de repli : `LoginBrand` */}
+        <div className="mb-8 flex justify-center md:hidden">
+          <img
+            src={IMAGES.logo}
+            alt="Agence Emploi Jeunes"
+            className="h-16 w-auto object-contain"
+          />
+        </div>
+
         <div className="mb-8">
           <h2 className="text-3xl font-extrabold">Connexion</h2>
           <p className="text-muted-foreground mt-2">Veuillez vous authentifier pour accéder à la plateforme.</p>

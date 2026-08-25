@@ -1,14 +1,14 @@
 import type { ICellRendererParams } from 'ag-grid-community'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { getRandomAvatarColor } from '@/helpers/getRandomAvatarColor'
-import type { JEUNE_T } from '@/types'
+import type { PROMOTEUR_T } from '@/types/promoteurs.types'
 
-export const ProfileCellRenderer = (params: ICellRendererParams<JEUNE_T>) => {
+export const ProfileCellRenderer = (params: ICellRendererParams<PROMOTEUR_T>) => {
   if (!params.data) return null
-  const { prenoms, nom } = params.data
+  const { prenom, nom } = params.data
   
   const color = getRandomAvatarColor()
-  const initials = `${prenoms.charAt(0)}${nom.charAt(0)}`.toUpperCase()
+  const initials = `${prenom.charAt(0)}${nom.charAt(0)}`.toUpperCase()
 
   return (
     <div className="flex items-center gap-3 h-full">
@@ -18,7 +18,7 @@ export const ProfileCellRenderer = (params: ICellRendererParams<JEUNE_T>) => {
         </AvatarFallback>
       </Avatar>
       <span className="font-semibold text-[#131C29]">
-        {prenoms} {nom}
+        {prenom} {nom}
       </span>
     </div>
   )

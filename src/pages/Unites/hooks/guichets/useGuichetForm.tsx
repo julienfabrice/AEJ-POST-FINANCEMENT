@@ -32,8 +32,8 @@ export function useGuichetForm(initialData: any | null, controlledOpen?: boolean
         libelle: initialData.libelle || '',
         description: initialData.description || '',
         couleur: initialData.couleur || '#E7722B',
-        montant_min: initialData.montant_min ?? 0,
-        montant_max: initialData.montant_max ?? 0,
+        montant_min: initialData.montant_min != null ? Number(initialData.montant_min) : 0,
+        montant_max: initialData.montant_max != null ? Number(initialData.montant_max) : 0,
         is_active: initialData.is_active ?? true,
       })
       else form.reset({ code: '', libelle: '', description: '', couleur: '#E7722B', montant_min: 0, montant_max: 0, is_active: true })

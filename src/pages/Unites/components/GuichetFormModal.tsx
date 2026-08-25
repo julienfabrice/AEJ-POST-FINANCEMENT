@@ -36,10 +36,10 @@ export function GuichetFormModal({ children, open: controlledOpen, onOpenChange,
             )} />
             <div className="grid grid-cols-2 gap-4">
               <FormField control={form.control} name="montant_min" render={({ field: { onChange, ...field } }) => (
-                <FormItem><FormLabel>Montant min (FCFA)</FormLabel><FormControl><Input type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Montant min (FCFA)</FormLabel><FormControl><Input type="number" step={5} onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
               )} />
               <FormField control={form.control} name="montant_max" render={({ field: { onChange, ...field } }) => (
-                <FormItem><FormLabel>Montant max (FCFA)</FormLabel><FormControl><Input type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Montant max (FCFA)</FormLabel><FormControl><Input type="number" step={5} onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
               )} />
             </div>
             <FormField control={form.control} name="description" render={({ field }) => (

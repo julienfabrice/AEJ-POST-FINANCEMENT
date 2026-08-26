@@ -16,8 +16,11 @@ export function DispositifListSkeleton() {
               <Skeleton className="w-8 h-8 rounded-lg shrink-0" />
             </div>
 
-            <div className="flex flex-wrap gap-x-4 gap-y-1 mb-3.5">
-              <Skeleton className="h-4 w-[220px] rounded-md" />
+            <div className="flex flex-wrap gap-x-3 gap-y-1.5 mb-3.5">
+              <Skeleton className="h-6 w-[200px] rounded" />
+              <Skeleton className="h-6 w-[70px] rounded" />
+              <Skeleton className="h-6 w-[90px] rounded" />
+              <Skeleton className="h-6 w-[120px] rounded" />
             </div>
 
             <div className="mt-3.5">

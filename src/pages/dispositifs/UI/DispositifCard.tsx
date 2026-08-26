@@ -15,9 +15,10 @@ interface DispositifCardProps {
   dispositif: DISPOSITIF_T
   onEdit?: () => void
   onDelete?: () => void
+  onView?: () => void
 }
 
-export function DispositifCard({ dispositif: g, onEdit, onDelete }: DispositifCardProps) {
+export function DispositifCard({ dispositif: g, onEdit, onDelete, onView }: DispositifCardProps) {
   return (
     <Card className="cursor-pointer hover:shadow-md transition-all border border-[#E5EAF1] rounded-[11px] bg-white">
       <CardContent >
@@ -42,11 +43,9 @@ export function DispositifCard({ dispositif: g, onEdit, onDelete }: DispositifCa
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-[200px]">
-                <DropdownMenuItem className="cursor-pointer" asChild>
-                  <Link to="/guichet-workflow/$workflowId" params={{ workflowId: g.workflow_version?.id?.toString() || '1' }} className="flex items-center gap-2 w-full">
-                    <Info className="w-4 h-4 text-[#5A6B80]" />
-                    <span>Information complète</span>
-                  </Link>
+                <DropdownMenuItem className="cursor-pointer flex items-center gap-2" onClick={onView}>
+                  <Info className="w-4 h-4 text-[#5A6B80]" />
+                  <span>Information complète</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem className="cursor-pointer flex items-center gap-2" onClick={onEdit}>
                   <Edit2 className="w-4 h-4 text-[#5A6B80]" />
@@ -62,8 +61,19 @@ export function DispositifCard({ dispositif: g, onEdit, onDelete }: DispositifCa
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[13px] text-[#5A6B80]">
-          <span className="flex items-center gap-1">Montant <b className="text-[#131C29] font-bold">{formatMontant(g.montant_min?.toString() || '0', 'F')?.replace(' FCFA', '')} → {formatMontant(g.montant_max?.toString() || '0', 'F')?.replace(' FCFA', '')}</b></span>
+        <div className="flex flex-wrap gap-x-3 gap-y-1.5 text-[13px] text-[#5A6B80]">
+          <span className="flex items-center gap-1 bg-[#F1F5F9] px-2 py-0.5 rounded text-[12px]">
+            Montant <b className="text-[#131C29]">{formatMontant(g.montant_min?.toString() || '0', 'F')?.replace(' FCFA', '')} → {formatMontant(g.montant_max?.toString() || '0', 'F')?.replace(' FCFA', '')}</b>
+          </span>
+          <span className="flex items-center gap-1 bg-[#F1F5F9] px-2 py-0.5 rounded text-[12px]">
+            Taux <b className="text-[#131C29]">{g.taux}%</b>
+          </span>
+          <span className="flex items-center gap-1 bg-[#F1F5F9] px-2 py-0.5 rounded text-[12px]">
+            Durée <b className="text-[#131C29]">{g.duree} mois</b>
+          </span>
+          <span className="flex items-center gap-1 bg-[#F1F5F9] px-2 py-0.5 rounded text-[12px]">
+            Dossiers prévus <b className="text-[#131C29]">{g.nbre_micro_projet_prevu}</b>
+          </span>
         </div>
 
         <div className="mt-3.5">

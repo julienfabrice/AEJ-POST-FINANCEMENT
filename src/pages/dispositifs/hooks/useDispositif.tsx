@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { DispositifModal } from '../components/DispositifModal'
+import { DispositifDetailsDrawer } from '../components/DispositifDetailsDrawer'
 import { dispositifServices } from '@/services/dispositifs.services'
 import type { DISPOSITIF_T } from '@/types'
 import { DeleteConfirmModal } from '@/components/DeleteConfirmModal'
@@ -10,6 +11,7 @@ export function useDispositif() {
   const [dispositifToEdit, setDispositifToEdit] = useState<DISPOSITIF_T | null>(null)
   
   const [dispositifToDelete, setDispositifToDelete] = useState<DISPOSITIF_T | null>(null)
+  const [dispositifToView, setDispositifToView] = useState<DISPOSITIF_T | null>(null)
 
   const { mutate: deleteDispositif } = dispositifServices.useDelete()
 
@@ -25,6 +27,10 @@ export function useDispositif() {
 
   const handleDeleteClick = (dispositif: DISPOSITIF_T) => {
     setDispositifToDelete(dispositif)
+  }
+  
+  const handleViewDetails = (dispositif: DISPOSITIF_T) => {
+    setDispositifToView(dispositif)
   }
 
   const confirmDelete = () => {
@@ -42,6 +48,10 @@ export function useDispositif() {
         onClose={() => setIsModalOpen(false)}
         dispositifToEdit={dispositifToEdit}
       />
+      <DispositifDetailsDrawer
+        dispositif={dispositifToView}
+        onClose={() => setDispositifToView(null)}
+      />
       <DeleteConfirmModal 
         open={!!dispositifToDelete}
         onOpenChange={(open) => !open && setDispositifToDelete(null)}
@@ -57,6 +67,7 @@ export function useDispositif() {
     handleAddDispositif,
     handleEditDispositif,
     handleDeleteClick,
+    handleViewDetails,
     modalNode,
   }
 }

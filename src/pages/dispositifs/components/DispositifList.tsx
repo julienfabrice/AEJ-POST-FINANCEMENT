@@ -7,9 +7,10 @@ interface DispositifListProps {
   searchQuery?: string
   onEdit?: (dispositif: DISPOSITIF_T) => void
   onDelete?: (dispositif: DISPOSITIF_T) => void
+  onView?: (dispositif: DISPOSITIF_T) => void
 }
 
-export function DispositifList({ searchQuery = '', onEdit, onDelete }: DispositifListProps) {
+export function DispositifList({ searchQuery = '', onEdit, onDelete, onView }: DispositifListProps) {
   const { data: dispositifs, isLoading } = dispositifServices.useGetAll()
 
   if (isLoading) {
@@ -33,6 +34,7 @@ export function DispositifList({ searchQuery = '', onEdit, onDelete }: Dispositi
           dispositif={g} 
           onEdit={() => onEdit?.(g)} 
           onDelete={() => onDelete?.(g)} 
+          onView={() => onView?.(g)}
         />
       ))}
     </div>

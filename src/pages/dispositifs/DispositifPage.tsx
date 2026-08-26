@@ -9,6 +9,7 @@ export function DispositifPage() {
     handleAddDispositif,
     handleEditDispositif,
     handleDeleteClick,
+    handleViewDetails,
     modalNode,
   } = useDispositif()
 
@@ -24,6 +25,7 @@ export function DispositifPage() {
         searchQuery={searchQuery} 
         onEdit={handleEditDispositif} 
         onDelete={handleDeleteClick}
+        onView={handleViewDetails}
       />
     </div>
   )

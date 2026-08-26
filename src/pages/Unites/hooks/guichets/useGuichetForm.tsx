@@ -21,7 +21,7 @@ export function useGuichetForm(initialData: any | null, controlledOpen?: boolean
   const isEdit = !!initialData
 
   const form = useForm<GuichetFormValues>({
-    resolver: zodResolver(guichetSchema) as any,
+    resolver: zodResolver(guichetSchema),
     defaultValues: { code: '', libelle: '', description: '', couleur: '#E7722B', montant_min: 0, montant_max: 0, is_active: true },
   })
 

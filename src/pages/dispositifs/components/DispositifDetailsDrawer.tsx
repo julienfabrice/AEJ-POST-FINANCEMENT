@@ -39,7 +39,7 @@ export function DispositifDetailsDrawer({ dispositif: g, onClose }: DispositifDe
           </div>
           <Link 
             to="/dispositif-workflow/$workflowId" 
-            params={{ workflowId: g.workflow_version?.id?.toString() || '1' }}
+            params={{ workflowId: g.workflow_version?.id?.toString() || '1' }} search={{ dispositifId: g.id }}
             className="w-full mt-4 flex items-center justify-center gap-2 bg-[#2D6BD4] text-white py-2 rounded-lg text-[13.5px] font-semibold hover:bg-[#2054A5] transition-colors"
           >
             Consulter le workflow

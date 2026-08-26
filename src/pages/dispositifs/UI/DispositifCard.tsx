@@ -79,7 +79,7 @@ export function DispositifCard({ dispositif: g, onEdit, onDelete, onView }: Disp
         <div className="mt-3.5">
           <Link 
             to="/dispositif-workflow/$workflowId" 
-            params={{ workflowId: g.workflow_version?.id?.toString() || '1' }}
+            params={{ workflowId: g.workflow_version?.id?.toString() || '1' }} search={{ dispositifId: g.id }}
             className="inline-flex items-center gap-1.5 border border-[#E5EAF1] bg-white text-[#131C29] px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:border-[#cdd6e2] hover:bg-[#fbfcfe] transition-colors cursor-pointer"
           >
             Voir le workflow <ChevronRight className="w-3.5 h-3.5" />

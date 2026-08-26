@@ -1,13 +1,34 @@
 import { useState } from 'react'
 import { useParams } from '@tanstack/react-router'
 import { versionServices } from '@/services/workflow/versions.services'
-import { MOCK_WORKFLOW, MOCK_PROJECTS } from '@/mock/guichet-workflow.mock'
+import { projetsServices } from '@/services/projets.services'
+import { MOCK_WORKFLOW } from '@/mock/guichet-workflow.mock'
+import { Route } from '@/routes/_authenticated/_agent/dispositif-workflow/$workflowId'
 
 export function useDispositifWorkflow() {
   const { workflowId } = useParams({ strict: false })
+  const search = Route.useSearch()
+  const dispositifId = search.dispositifId
   
   // Fetch from the real API using the workflow version ID
-  const { data: _realWorkflowVersion, isLoading: _isLoading } = versionServices.useGetOneVersion(workflowId as string)
+  const { data: _realWorkflowVersion, isLoading: isLoadingWf } = versionServices.useGetOneVersion(workflowId as string)
+
+  // Fetch projects using the dispositif ID from search params
+  const { data: projectsData, isLoading: isLoadingProj } = projetsServices.useGetAll(1, 100, { 
+    dispositif_id: dispositifId ? String(dispositifId) : undefined 
+  })
+
+  const rawProjects = projectsData?.data || []
+  
+  // Map API projects to UI expected format
+  const projects = rawProjects.map(p => ({
+    id: p.id,
+    code: p.code,
+    titre: p.intitule,
+    jeune: p.promoteur ? `${p.promoteur.prenom} ${p.promoteur.nom}` : 'N/A',
+    montant: Number(p.montant_total) || 0,
+    statut: 'bl', // default mapped color, could map p.statut dynamically
+  }))
 
   const wf = _realWorkflowVersion ? {
     id: _realWorkflowVersion.id,
@@ -37,7 +58,7 @@ export function useDispositifWorkflow() {
 
   const startN = 6 // Hardcoded start for AGR
 
-  const totalMontant = MOCK_PROJECTS.reduce((acc, p) => acc + p.montant, 0)
+  const totalMontant = projects.reduce((acc, p) => acc + p.montant, 0)
   
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -71,7 +92,7 @@ export function useDispositifWorkflow() {
     searchQuery,
     setSearchQuery,
     filteredCycles,
-    isLoading: _isLoading,
-    projects: MOCK_PROJECTS
+    isLoading: isLoadingWf || isLoadingProj,
+    projects
   }
 }

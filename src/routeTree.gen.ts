@@ -43,6 +43,7 @@ import { Route as AuthenticatedAgentAdminProfilsRouteImport } from './routes/_au
 import { Route as AuthenticatedAgentAdminReferentielsRouteImport } from './routes/_authenticated/_agent/admin/referentiels'
 import { Route as AuthenticatedAgentAdminUnitesRouteImport } from './routes/_authenticated/_agent/admin/unites'
 import { Route as AuthenticatedAgentAdminWorkflowsRouteImport } from './routes/_authenticated/_agent/admin/workflows'
+import { Route as AuthenticatedAgentDispositifWorkflowWorkflowIdRouteImport } from './routes/_authenticated/_agent/dispositif-workflow/$workflowId'
 
 const R2faRoute = R2faRouteImport.update({
   id: '/2fa',
@@ -234,6 +235,12 @@ const AuthenticatedAgentAdminWorkflowsRoute =
     path: '/admin/workflows',
     getParentRoute: () => AuthenticatedAgentRoute,
   } as any)
+const AuthenticatedAgentDispositifWorkflowWorkflowIdRoute =
+  AuthenticatedAgentDispositifWorkflowWorkflowIdRouteImport.update({
+    id: '/dispositif-workflow/$workflowId',
+    path: '/dispositif-workflow/$workflowId',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/2fa': typeof R2faRoute
@@ -267,6 +274,7 @@ export interface FileRoutesByFullPath {
   '/admin/referentiels': typeof AuthenticatedAgentAdminReferentielsRoute
   '/admin/unites': typeof AuthenticatedAgentAdminUnitesRoute
   '/admin/workflows': typeof AuthenticatedAgentAdminWorkflowsRoute
+  '/dispositif-workflow/$workflowId': typeof AuthenticatedAgentDispositifWorkflowWorkflowIdRoute
 }
 export interface FileRoutesByTo {
   '/2fa': typeof R2faRoute
@@ -300,6 +308,7 @@ export interface FileRoutesByTo {
   '/admin/referentiels': typeof AuthenticatedAgentAdminReferentielsRoute
   '/admin/unites': typeof AuthenticatedAgentAdminUnitesRoute
   '/admin/workflows': typeof AuthenticatedAgentAdminWorkflowsRoute
+  '/dispositif-workflow/$workflowId': typeof AuthenticatedAgentDispositifWorkflowWorkflowIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -337,6 +346,7 @@ export interface FileRoutesById {
   '/_authenticated/_agent/admin/referentiels': typeof AuthenticatedAgentAdminReferentielsRoute
   '/_authenticated/_agent/admin/unites': typeof AuthenticatedAgentAdminUnitesRoute
   '/_authenticated/_agent/admin/workflows': typeof AuthenticatedAgentAdminWorkflowsRoute
+  '/_authenticated/_agent/dispositif-workflow/$workflowId': typeof AuthenticatedAgentDispositifWorkflowWorkflowIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -372,6 +382,7 @@ export interface FileRouteTypes {
     | '/admin/referentiels'
     | '/admin/unites'
     | '/admin/workflows'
+    | '/dispositif-workflow/$workflowId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/2fa'
@@ -405,6 +416,7 @@ export interface FileRouteTypes {
     | '/admin/referentiels'
     | '/admin/unites'
     | '/admin/workflows'
+    | '/dispositif-workflow/$workflowId'
   id:
     | '__root__'
     | '/2fa'
@@ -441,6 +453,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_agent/admin/referentiels'
     | '/_authenticated/_agent/admin/unites'
     | '/_authenticated/_agent/admin/workflows'
+    | '/_authenticated/_agent/dispositif-workflow/$workflowId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -691,6 +704,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAgentAdminWorkflowsRouteImport
       parentRoute: typeof AuthenticatedAgentRoute
     }
+    '/_authenticated/_agent/dispositif-workflow/$workflowId': {
+      id: '/_authenticated/_agent/dispositif-workflow/$workflowId'
+      path: '/dispositif-workflow/$workflowId'
+      fullPath: '/dispositif-workflow/$workflowId'
+      preLoaderRoute: typeof AuthenticatedAgentDispositifWorkflowWorkflowIdRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
   }
 }
 
@@ -716,6 +736,7 @@ interface AuthenticatedAgentRouteChildren {
   AuthenticatedAgentAdminReferentielsRoute: typeof AuthenticatedAgentAdminReferentielsRoute
   AuthenticatedAgentAdminUnitesRoute: typeof AuthenticatedAgentAdminUnitesRoute
   AuthenticatedAgentAdminWorkflowsRoute: typeof AuthenticatedAgentAdminWorkflowsRoute
+  AuthenticatedAgentDispositifWorkflowWorkflowIdRoute: typeof AuthenticatedAgentDispositifWorkflowWorkflowIdRoute
 }
 
 const AuthenticatedAgentRouteChildren: AuthenticatedAgentRouteChildren = {
@@ -745,6 +766,8 @@ const AuthenticatedAgentRouteChildren: AuthenticatedAgentRouteChildren = {
     AuthenticatedAgentAdminReferentielsRoute,
   AuthenticatedAgentAdminUnitesRoute: AuthenticatedAgentAdminUnitesRoute,
   AuthenticatedAgentAdminWorkflowsRoute: AuthenticatedAgentAdminWorkflowsRoute,
+  AuthenticatedAgentDispositifWorkflowWorkflowIdRoute:
+    AuthenticatedAgentDispositifWorkflowWorkflowIdRoute,
 }
 
 const AuthenticatedAgentRouteWithChildren =

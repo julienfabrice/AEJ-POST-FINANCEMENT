@@ -18,6 +18,17 @@ export const versionServices = {
     })
   },
 
+  useGetOneVersion: (id: string | number) => {
+    return useQuery({
+      queryKey: ['workflow', 'versions', id],
+      queryFn: async () => {
+        const { data } = await axiosInstance.get<API_RESPONSE_T<WORKFLOW_VERSION_T>>(`/workflow/versions/${id}`)
+        return data.data
+      },
+      enabled: !!id,
+    })
+  },
+
   useCreateVersion: () => {
     const queryClient = useQueryClient()
     return useMutation({

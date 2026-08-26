@@ -2,14 +2,15 @@ import { useMemo } from 'react'
 import type { ColDef } from 'ag-grid-community'
 import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
 import dayjs from 'dayjs'
-import { Eye, MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Eye } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { configurationServices } from '@/services/configurations.services'
 
 import { useProjetsStore } from '@/store/useProjetsStore'
 
 export function useTableData() {
   const { setSelectedProjet } = useProjetsStore()
+  const { data: configuration } = configurationServices.useGet()
   
   const columnDefs = useMemo<ColDef<MICRO_PROJET_T>[]>(() => [
     {
@@ -60,7 +61,7 @@ export function useTableData() {
       width: 140,
       cellRenderer: (params: any) => {
         const val = parseFloat(params.value || '0')
-        return <span className="font-medium">{new Intl.NumberFormat('fr-FR').format(val)} F</span>
+        return <span className="font-medium">{new Intl.NumberFormat('fr-FR').format(val)} {configuration?.sigle_monnaie_pays || 'FCFA'}</span>
       },
       headerClass: 'ag-right-aligned-header',
     },
@@ -93,32 +94,14 @@ export function useTableData() {
       cellRenderer: (params: any) => {
         return (
           <div className="flex items-center justify-center h-full">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <MoreHorizontal className="h-4 w-4 text-slate-500" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem onClick={() => setSelectedProjet(params.data)} className="cursor-pointer">
-                  <Eye className="mr-2 h-4 w-4" />
-                  <span>Détails</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">
-                  <Pencil className="mr-2 h-4 w-4" />
-                  <span>Modifier</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer text-red-600 focus:text-red-600">
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  <span>Supprimer</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button variant="ghost" className="h-8 w-8 p-0 text-slate-500 hover:text-slate-900" onClick={() => setSelectedProjet(params.data)} title="Détails">
+              <Eye className="h-4 w-4" />
+            </Button>
           </div>
         )
       },
     }
-  ], [setSelectedProjet])
+  ], [setSelectedProjet, configuration])
 
   return { columnDefs }
 }

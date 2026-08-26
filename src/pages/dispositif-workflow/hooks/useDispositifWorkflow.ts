@@ -10,15 +10,20 @@ export function useDispositifWorkflow() {
   const search = Route.useSearch()
   const dispositifId = search.dispositifId
   
+  const [page, setPage] = useState(1)
+  const perPage = 10
+
   // Fetch from the real API using the workflow version ID
   const { data: _realWorkflowVersion, isLoading: isLoadingWf } = versionServices.useGetOneVersion(workflowId as string)
 
   // Fetch projects using the dispositif ID from search params
-  const { data: projectsData, isLoading: isLoadingProj } = projetsServices.useGetAll(1, 100, { 
+  const { data: projectsData, isLoading: isLoadingProj } = projetsServices.useGetAll(page, perPage, { 
     dispositif_id: dispositifId ? String(dispositifId) : undefined 
   })
 
   const rawProjects = projectsData?.data || []
+  const pagination = projectsData?.pagination
+  const totalProjects = pagination?.total || 0
   
   // Map API projects to UI expected format
   const projects = rawProjects.map(p => ({
@@ -93,6 +98,10 @@ export function useDispositifWorkflow() {
     setSearchQuery,
     filteredCycles,
     isLoading: isLoadingWf || isLoadingProj,
-    projects
+    projects,
+    totalProjects,
+    page,
+    setPage,
+    totalPages: pagination?.last_page || 1
   }
 }

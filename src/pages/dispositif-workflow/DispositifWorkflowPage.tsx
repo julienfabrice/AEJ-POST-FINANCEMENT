@@ -13,10 +13,14 @@ export function DispositifWorkflowPage() {
     setSearchQuery,
     filteredCycles,
     isLoading,
-    projects
+    projects,
+    totalProjects,
+    page,
+    setPage,
+    totalPages
   } = useDispositifWorkflow()
 
-  if (isLoading) {
+  if (isLoading && !projects.length) {
     return <DispositifWorkflowSkeleton />
   }
 
@@ -30,7 +34,7 @@ export function DispositifWorkflowPage() {
       />
 
       <div className="flex-1 min-w-0 lg:min-h-0">
-        <div className="lg:h-full grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-[22px] items-start">
+        <div className="lg:h-full grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-[22px]">
           
           {/* Main Workflow Timeline */}
           <WorkflowTimeline 
@@ -45,6 +49,11 @@ export function DispositifWorkflowPage() {
           <DispositifWorkflowSidebar 
             projects={projects}
             totalMontant={totalMontant}
+            totalProjects={totalProjects}
+            page={page}
+            setPage={setPage}
+            totalPages={totalPages}
+            isLoading={isLoading}
           />
 
         </div>

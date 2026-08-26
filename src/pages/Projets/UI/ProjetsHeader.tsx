@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { PermissionGate } from '@/components/PermissionGate'
 import { MODULES } from '@/constants/modules'
 import { ExportPdfButton } from '@/components/generics/ExportPdfButton'
@@ -40,10 +41,21 @@ export function ProjetsHeader() {
         />
         {/* Création : réservée au `full_access` sur le module. */}
         <PermissionGate module={MODULES.PROJETS} action="c">
-          <Button size="sm">
-            <Plus className="w-4 h-4 mr-2" />
-            Nouveau dossier
-          </Button>
+          <TooltipProvider delayDuration={200}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="inline-block">
+                  <Button disabled className="bg-[#E7722B]/50 text-white h-9 px-4 cursor-not-allowed">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Nouveau dossier
+                  </Button>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="left" className="max-w-[250px] text-center">
+                Les données de cette table proviennent directement du système de l'AEJ.
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </PermissionGate>
       </div>
     </div>

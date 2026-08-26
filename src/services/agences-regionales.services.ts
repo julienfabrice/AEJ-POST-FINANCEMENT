@@ -12,7 +12,7 @@ export const agenceRegionaleServices = {
     return useQuery({
       queryKey: ['agences-regionales'],
       queryFn: async () => {
-        const { data } = await axiosInstance.get<API_RESPONSE_T<AGENCE_REGIONALE_T[]>>('/agences-regionales')
+        const { data } = await axiosInstance.get<API_RESPONSE_T<AGENCE_REGIONALE_T[]>>('/aej/agences-regionales')
         return data.data
       },
     })

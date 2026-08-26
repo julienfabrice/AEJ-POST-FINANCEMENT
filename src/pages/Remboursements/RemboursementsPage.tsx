@@ -12,6 +12,8 @@ import { usePlanRemboursementsGrid } from './hooks/usePlanRemboursementsGrid'
 
 import { RemboursementFormModal } from './components/RemboursementFormModal'
 import { useRemboursementsGrid } from './hooks/useRemboursementsGrid'
+import { RemboursementsKpiCards } from './components/RemboursementsKpiCards'
+import { RemboursementsBuckets } from './components/RemboursementsBuckets'
 
 function EcheancierSubTab() {
   const { columnDefs, data, isLoading } = usePlanRemboursementsGrid()
@@ -42,8 +44,10 @@ function PaiementsSubTab() {
   const [searchQuery, setSearchQuery] = useState('')
   const { columnDefs, data, isLoading, modalNode } = useRemboursementsGrid(searchQuery)
   return (
-    <>
+    <div className="space-y-6">
       {modalNode}
+      <RemboursementsKpiCards />
+      <RemboursementsBuckets />
       <GridSection
         columnDefs={columnDefs}
         data={data}
@@ -58,7 +62,7 @@ function PaiementsSubTab() {
           </RemboursementFormModal>
         }
       />
-    </>
+    </div>
   )
 }
 

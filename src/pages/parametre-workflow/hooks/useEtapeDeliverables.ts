@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { workflowServices } from '@/services/workflow'
 import type { WORKFLOW_ETAPE_DELIVERABLE_T } from '@/types'
 
-export function useSlaDeliverables(etape_code: string) {
+export function useEtapeDeliverables(etape_code: string) {
   const { data: fetchedDeliverables, isLoading: isDeliverablesLoading } = workflowServices.useGetEtapeDeliverables(etape_code)
   const deleteDeliverableMutation = workflowServices.useDeleteEtapeDeliverable()
 

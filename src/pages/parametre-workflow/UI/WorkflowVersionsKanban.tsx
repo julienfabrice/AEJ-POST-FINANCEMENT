@@ -136,7 +136,9 @@ export function WorkflowVersionsKanban({ versions, activeWorkflowCode }: Workflo
         workflow_version: targetVersionCode,
         code: data.code,
         name: data.name,
-        order: data.order
+        order: data.order,
+        description: data.description,
+        parent_etape_code: data.parent_etape_code || null
       },
       {
         onSuccess: () => {
@@ -161,6 +163,18 @@ export function WorkflowVersionsKanban({ versions, activeWorkflowCode }: Workflo
     const statusClass = version.is_active 
       ? 'bg-orange-100 text-orange-700' 
       : 'bg-slate-200 text-slate-600'
+
+    const handleAddEtape = () => {
+      setTargetVersionCode(version.code)
+      etapeForm.reset({
+        code: '',
+        name: '',
+        description: '',
+        order: (version.etapes?.filter(e => !e.parent_etape_code)?.length || 0) + 1,
+        parent_etape_code: null
+      })
+      setIsEtapeModalOpen(true)
+    }
 
     return (
       <Card key={version.id} className="min-w-[550px] w-[550px] bg-slate-50 border-slate-200 rounded-xl flex flex-col h-[calc(100vh-280px)] p-0 gap-0 shadow-none overflow-hidden">
@@ -206,16 +220,7 @@ export function WorkflowVersionsKanban({ versions, activeWorkflowCode }: Workflo
               </DropdownMenuItem>
               <DropdownMenuItem 
                 className="bg-[#E7722B] text-white focus:bg-[#C85E18] focus:text-white cursor-pointer my-1"
-                onClick={() => {
-                  setTargetVersionCode(version.code)
-                  etapeForm.reset({
-                    code: '',
-                    name: '',
-                    description: '',
-                    order: (version.etapes?.length || 0) + 1
-                  })
-                  setIsEtapeModalOpen(true)
-                }}
+                onClick={handleAddEtape}
               >
                 <Plus className="mr-2 h-4 w-4" />
                 <span>Ajouter une étape</span>
@@ -238,8 +243,18 @@ export function WorkflowVersionsKanban({ versions, activeWorkflowCode }: Workflo
         </div>
 
         {/* Contenu de la colonne (Workflow Timeline) */}
-        <CardContent className="p-4 flex-1 overflow-y-auto custom-scrollbar">
+        <CardContent className="p-4 flex-1 overflow-y-auto custom-scrollbar flex flex-col relative">
           <WorkflowTimeline etapes={version.etapes || []} />
+          
+          <div className="mt-4 pt-4 border-t border-slate-100">
+             <Button 
+                className="w-full h-10 bg-[#E7722B] hover:bg-[#C85E18] text-white shadow-[0_4px_12px_rgba(231,114,43,0.28)]"
+                onClick={handleAddEtape}
+             >
+                <Plus className="w-4 h-4 mr-2" />
+                Ajouter une étape principale
+             </Button>
+          </div>
         </CardContent>
       </Card>
     )

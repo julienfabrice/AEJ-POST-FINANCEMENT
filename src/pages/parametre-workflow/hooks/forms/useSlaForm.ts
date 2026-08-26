@@ -18,7 +18,7 @@ export function useSlaForm(etapeCode: string, initialData?: WORKFLOW_ETAPE_SLA_T
       description: initialData?.description || '',
       duration_value: initialData?.duration_value || 1,
       duration_unit: initialData?.duration_unit || 'JOURS',
-      delay_type: initialData?.delay_type || 'MAX'
+      delay_type: initialData?.delay_type || 'MAXIMUM'
     }
   })
 
@@ -29,7 +29,7 @@ export function useSlaForm(etapeCode: string, initialData?: WORKFLOW_ETAPE_SLA_T
         description: initialData.description || '',
         duration_value: initialData.duration_value,
         duration_unit: initialData.duration_unit,
-        delay_type: initialData.delay_type || 'MAX'
+        delay_type: initialData.delay_type || 'MAXIMUM'
       })
     } else {
       form.reset({
@@ -37,7 +37,7 @@ export function useSlaForm(etapeCode: string, initialData?: WORKFLOW_ETAPE_SLA_T
         description: '',
         duration_value: 1,
         duration_unit: 'JOURS',
-        delay_type: 'MAX'
+        delay_type: 'MAXIMUM'
       })
     }
   }, [initialData, form, etapeCode])

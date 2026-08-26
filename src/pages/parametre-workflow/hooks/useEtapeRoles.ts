@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { workflowServices } from '@/services/workflow'
 import type { WORKFLOW_ETAPE_ROLE_T } from '@/types'
 
-export function useSlaRoles(etape_code: string) {
+export function useEtapeRoles(etape_code: string) {
   const { data: fetchedRoles, isLoading: isRolesLoading } = workflowServices.useGetEtapeRoles(etape_code)
   const deleteRoleMutation = workflowServices.useDeleteEtapeRole()
 

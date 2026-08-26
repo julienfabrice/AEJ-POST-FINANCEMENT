@@ -108,8 +108,9 @@ export function SlaForm({ etapeCode, initialData, onCancel, onSuccess }: SlaForm
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="MIN">Minimum</SelectItem>
-                    <SelectItem value="MAX">Maximum</SelectItem>
+                    <SelectItem value="MINIMUM">Minimum</SelectItem>
+                    <SelectItem value="MAXIMUM">Maximum</SelectItem>
+                    <SelectItem value="FIXE">Fixe / Exact</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />

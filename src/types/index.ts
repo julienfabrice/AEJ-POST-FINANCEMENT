@@ -352,3 +352,23 @@ export interface REMBOURSEMENT_T {
 }
 
 export * from './workflow.types'
+export interface DISPOSITIF_T {
+  id: number
+  code: string
+  projet_id?: number | null
+  guichet_id?: number | null
+  workflow_version?: any | null // we can refine this later
+  intitule: string
+  budget_alloue: string | number
+  montant_min: string | number
+  montant_max: string | number
+  taux: string | number
+  duree: number
+  nbre_emplois_prevu: number
+  nbre_beneficiaire_prevu: number
+  nbre_micro_projet_prevu: number
+  created_at?: string
+  updated_at?: string
+  projet?: any | null
+  guichet?: GUICHET_T | null
+}

@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { MicroProjetSelect } from '@/components/generics/MicroProjetSelect'
 import { useBudgetForm } from '../hooks/useBudgetForm'
 import type { BUDGET_T } from '@/types'
 
@@ -35,12 +36,13 @@ export function BudgetFormModal({ children, open: controlledOpen, onOpenChange, 
         <DialogHeader><DialogTitle>{isEdit ? 'Modifier le' : 'Nouveau'} budget</DialogTitle></DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-2">
-            <div className="grid grid-cols-2 gap-4">
-              <FormField control={form.control} name="micro_projet_id" render={({ field: { onChange, ...field } }) => (
+            <div className="grid grid-cols-1 gap-4">
+              <FormField control={form.control} name="micro_projet_id" render={({ field: { onChange, value } }) => (
                 <FormItem>
-                  <FormLabel>ID Micro-projet</FormLabel>
-                  <FormControl><Input type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl>
-                  <FormDescription>Saisie manuelle en attendant le sélecteur micro-projets.</FormDescription>
+                  <FormLabel>Micro-projet</FormLabel>
+                  <FormControl>
+                    <MicroProjetSelect value={value || undefined} onValueChange={(id) => onChange(id ?? 0)} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )} />

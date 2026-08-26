@@ -132,6 +132,7 @@ export interface FONCTION_T {
 export interface GUICHET_T {
   id: number
   workflow_code?: string | null
+  workflow?: WORKFLOW_T | null
   code: string
   libelle: string
   description?: string | null

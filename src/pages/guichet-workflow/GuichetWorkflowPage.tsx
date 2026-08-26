@@ -1,3 +1,5 @@
+import { versionServices } from '@/services/workflow/versions.services';
+
 import { useState } from 'react'
 import { Link, useParams } from '@tanstack/react-router'
 import { 
@@ -122,8 +124,14 @@ function WorkflowCycle({ cycle, projectsInCycle, startN, isDone, forceExpand }: 
   )
 }
 
+
 export function GuichetWorkflowPage() {
-  const { id } = useParams({ strict: false })
+  const { workflowId } = useParams({ strict: false })
+  
+  // Fetch from the real API using the workflow version ID
+  const { data: _realWorkflowVersion, isLoading: _isLoading } = versionServices.useGetOneVersion(workflowId as string)
+
+  // TODO: We continue using MOCK_WORKFLOW for the UI until the real API data is fully mapped
   const wf = MOCK_WORKFLOW
   const startN = 6 // Hardcoded start for AGR
 

@@ -3,7 +3,7 @@ import { useParams } from '@tanstack/react-router'
 import { versionServices } from '@/services/workflow/versions.services'
 import { MOCK_WORKFLOW, MOCK_PROJECTS } from '@/mock/guichet-workflow.mock'
 
-export function useGuichetWorkflow() {
+export function useDispositifWorkflow() {
   const { workflowId } = useParams({ strict: false })
   
   // Fetch from the real API using the workflow version ID

@@ -1,13 +1,13 @@
 import { Link } from '@tanstack/react-router'
 import { Search, ChevronLeft } from 'lucide-react'
 
-interface GuichetWorkflowHeaderProps {
+interface DispositifWorkflowHeaderProps {
   wf: any
   searchQuery: string
   setSearchQuery: (val: string) => void
 }
 
-export function GuichetWorkflowHeader({ wf, searchQuery, setSearchQuery }: GuichetWorkflowHeaderProps) {
+export function DispositifWorkflowHeader({ wf, searchQuery, setSearchQuery }: DispositifWorkflowHeaderProps) {
   return (
     <div className="flex-none flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6">
       

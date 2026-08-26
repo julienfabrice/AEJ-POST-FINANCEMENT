@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components/ui/skeleton'
 
-export function GuichetWorkflowSkeleton() {
+export function DispositifWorkflowSkeleton() {
   return (
     <div className="flex flex-col lg:h-[calc(100vh-195px)]">
       {/* Header Skeleton */}

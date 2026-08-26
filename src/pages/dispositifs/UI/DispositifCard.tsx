@@ -78,7 +78,7 @@ export function DispositifCard({ dispositif: g, onEdit, onDelete, onView }: Disp
 
         <div className="mt-3.5">
           <Link 
-            to="/guichet-workflow/$workflowId" 
+            to="/dispositif-workflow/$workflowId" 
             params={{ workflowId: g.workflow_version?.id?.toString() || '1' }}
             className="inline-flex items-center gap-1.5 border border-[#E5EAF1] bg-white text-[#131C29] px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:border-[#cdd6e2] hover:bg-[#fbfcfe] transition-colors cursor-pointer"
           >

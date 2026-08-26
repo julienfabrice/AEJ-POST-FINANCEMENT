@@ -1,4 +1,4 @@
-interface GuichetWorkflowSidebarProps {
+interface DispositifWorkflowSidebarProps {
   projects: any[]
   totalMontant: number
 }
@@ -7,7 +7,7 @@ const formatMoney = (amount: number) => {
   return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF', minimumFractionDigits: 0 }).format(amount)
 }
 
-export function GuichetWorkflowSidebar({ projects, totalMontant }: GuichetWorkflowSidebarProps) {
+export function DispositifWorkflowSidebar({ projects, totalMontant }: DispositifWorkflowSidebarProps) {
   return (
     <div className="lg:h-full flex flex-col pb-[60px] lg:pb-0">
       <div className="bg-white border border-[#E5EAF1] rounded-[11px] shadow-[0_1px_2px_rgba(18,28,41,.05),0_6px_20px_rgba(18,28,41,.06)] flex flex-col lg:max-h-full">

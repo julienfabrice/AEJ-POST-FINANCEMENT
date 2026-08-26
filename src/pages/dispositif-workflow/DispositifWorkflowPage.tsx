@@ -1,10 +1,10 @@
-import { useGuichetWorkflow } from './hooks/useGuichetWorkflow'
-import { GuichetWorkflowHeader } from './UI/GuichetWorkflowHeader'
-import { GuichetWorkflowSidebar } from './UI/GuichetWorkflowSidebar'
-import { GuichetWorkflowSkeleton } from './UI/GuichetWorkflowSkeleton'
+import { useDispositifWorkflow } from './hooks/useDispositifWorkflow'
+import { DispositifWorkflowHeader } from './UI/DispositifWorkflowHeader'
+import { DispositifWorkflowSidebar } from './UI/DispositifWorkflowSidebar'
+import { DispositifWorkflowSkeleton } from './UI/DispositifWorkflowSkeleton'
 import { WorkflowTimeline } from './components/WorkflowTimeline'
 
-export function GuichetWorkflowPage() {
+export function DispositifWorkflowPage() {
   const {
     wf,
     startN,
@@ -14,16 +14,16 @@ export function GuichetWorkflowPage() {
     filteredCycles,
     isLoading,
     projects
-  } = useGuichetWorkflow()
+  } = useDispositifWorkflow()
 
   if (isLoading) {
-    return <GuichetWorkflowSkeleton />
+    return <DispositifWorkflowSkeleton />
   }
 
   return (
     <div className="flex flex-col lg:h-[calc(100vh-195px)]">
       {/* Header */}
-      <GuichetWorkflowHeader 
+      <DispositifWorkflowHeader 
         wf={wf} 
         searchQuery={searchQuery} 
         setSearchQuery={setSearchQuery} 
@@ -42,7 +42,7 @@ export function GuichetWorkflowPage() {
           />
 
           {/* Right Sidebar - Micro-projects */}
-          <GuichetWorkflowSidebar 
+          <DispositifWorkflowSidebar 
             projects={projects}
             totalMontant={totalMontant}
           />

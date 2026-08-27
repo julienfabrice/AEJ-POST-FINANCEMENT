@@ -29,12 +29,10 @@ import { Route as AuthenticatedAgentPlansDecaissementRouteImport } from './route
 import { Route as AuthenticatedAgentProjetsRouteImport } from './routes/_authenticated/_agent/projets'
 import { Route as AuthenticatedAgentRapportsRouteImport } from './routes/_authenticated/_agent/rapports'
 import { Route as AuthenticatedAgentRecouvrementRouteImport } from './routes/_authenticated/_agent/recouvrement'
-import { Route as AuthenticatedAgentRemboursementsRouteImport } from './routes/_authenticated/_agent/remboursements'
 import { Route as AuthenticatedAgentSuiviRouteImport } from './routes/_authenticated/_agent/suivi'
 import { Route as AuthenticatedAgentTransmissionRouteImport } from './routes/_authenticated/_agent/transmission'
 import { Route as AuthenticatedBenefMesPiecesRouteImport } from './routes/_authenticated/_benef/mes-pieces'
 import { Route as AuthenticatedBenefMesProjetsRouteImport } from './routes/_authenticated/_benef/mes-projets'
-import { Route as AuthenticatedBenefMesRemboursementsRouteImport } from './routes/_authenticated/_benef/mes-remboursements'
 import { Route as AuthenticatedAgentAdminLocalitesRouteImport } from './routes/_authenticated/_agent/admin/localites'
 import { Route as AuthenticatedAgentAdminParametresRouteImport } from './routes/_authenticated/_agent/admin/parametres'
 import { Route as AuthenticatedAgentAdminPartenairesRouteImport } from './routes/_authenticated/_agent/admin/partenaires'
@@ -152,12 +150,6 @@ const AuthenticatedAgentRecouvrementRoute =
     path: '/recouvrement',
     getParentRoute: () => AuthenticatedAgentRoute,
   } as any)
-const AuthenticatedAgentRemboursementsRoute =
-  AuthenticatedAgentRemboursementsRouteImport.update({
-    id: '/remboursements',
-    path: '/remboursements',
-    getParentRoute: () => AuthenticatedAgentRoute,
-  } as any)
 const AuthenticatedAgentSuiviRoute = AuthenticatedAgentSuiviRouteImport.update({
   id: '/suivi',
   path: '/suivi',
@@ -179,12 +171,6 @@ const AuthenticatedBenefMesProjetsRoute =
   AuthenticatedBenefMesProjetsRouteImport.update({
     id: '/mes-projets',
     path: '/mes-projets',
-    getParentRoute: () => AuthenticatedBenefRoute,
-  } as any)
-const AuthenticatedBenefMesRemboursementsRoute =
-  AuthenticatedBenefMesRemboursementsRouteImport.update({
-    id: '/mes-remboursements',
-    path: '/mes-remboursements',
     getParentRoute: () => AuthenticatedBenefRoute,
   } as any)
 const AuthenticatedAgentAdminLocalitesRoute =
@@ -260,12 +246,10 @@ export interface FileRoutesByFullPath {
   '/projets': typeof AuthenticatedAgentProjetsRoute
   '/rapports': typeof AuthenticatedAgentRapportsRoute
   '/recouvrement': typeof AuthenticatedAgentRecouvrementRoute
-  '/remboursements': typeof AuthenticatedAgentRemboursementsRoute
   '/suivi': typeof AuthenticatedAgentSuiviRoute
   '/transmission': typeof AuthenticatedAgentTransmissionRoute
   '/mes-pieces': typeof AuthenticatedBenefMesPiecesRoute
   '/mes-projets': typeof AuthenticatedBenefMesProjetsRoute
-  '/mes-remboursements': typeof AuthenticatedBenefMesRemboursementsRoute
   '/admin/localites': typeof AuthenticatedAgentAdminLocalitesRoute
   '/admin/parametres': typeof AuthenticatedAgentAdminParametresRoute
   '/admin/partenaires': typeof AuthenticatedAgentAdminPartenairesRoute
@@ -294,12 +278,10 @@ export interface FileRoutesByTo {
   '/projets': typeof AuthenticatedAgentProjetsRoute
   '/rapports': typeof AuthenticatedAgentRapportsRoute
   '/recouvrement': typeof AuthenticatedAgentRecouvrementRoute
-  '/remboursements': typeof AuthenticatedAgentRemboursementsRoute
   '/suivi': typeof AuthenticatedAgentSuiviRoute
   '/transmission': typeof AuthenticatedAgentTransmissionRoute
   '/mes-pieces': typeof AuthenticatedBenefMesPiecesRoute
   '/mes-projets': typeof AuthenticatedBenefMesProjetsRoute
-  '/mes-remboursements': typeof AuthenticatedBenefMesRemboursementsRoute
   '/admin/localites': typeof AuthenticatedAgentAdminLocalitesRoute
   '/admin/parametres': typeof AuthenticatedAgentAdminParametresRoute
   '/admin/partenaires': typeof AuthenticatedAgentAdminPartenairesRoute
@@ -332,12 +314,10 @@ export interface FileRoutesById {
   '/_authenticated/_agent/projets': typeof AuthenticatedAgentProjetsRoute
   '/_authenticated/_agent/rapports': typeof AuthenticatedAgentRapportsRoute
   '/_authenticated/_agent/recouvrement': typeof AuthenticatedAgentRecouvrementRoute
-  '/_authenticated/_agent/remboursements': typeof AuthenticatedAgentRemboursementsRoute
   '/_authenticated/_agent/suivi': typeof AuthenticatedAgentSuiviRoute
   '/_authenticated/_agent/transmission': typeof AuthenticatedAgentTransmissionRoute
   '/_authenticated/_benef/mes-pieces': typeof AuthenticatedBenefMesPiecesRoute
   '/_authenticated/_benef/mes-projets': typeof AuthenticatedBenefMesProjetsRoute
-  '/_authenticated/_benef/mes-remboursements': typeof AuthenticatedBenefMesRemboursementsRoute
   '/_authenticated/_agent/admin/localites': typeof AuthenticatedAgentAdminLocalitesRoute
   '/_authenticated/_agent/admin/parametres': typeof AuthenticatedAgentAdminParametresRoute
   '/_authenticated/_agent/admin/partenaires': typeof AuthenticatedAgentAdminPartenairesRoute
@@ -368,12 +348,10 @@ export interface FileRouteTypes {
     | '/projets'
     | '/rapports'
     | '/recouvrement'
-    | '/remboursements'
     | '/suivi'
     | '/transmission'
     | '/mes-pieces'
     | '/mes-projets'
-    | '/mes-remboursements'
     | '/admin/localites'
     | '/admin/parametres'
     | '/admin/partenaires'
@@ -402,12 +380,10 @@ export interface FileRouteTypes {
     | '/projets'
     | '/rapports'
     | '/recouvrement'
-    | '/remboursements'
     | '/suivi'
     | '/transmission'
     | '/mes-pieces'
     | '/mes-projets'
-    | '/mes-remboursements'
     | '/admin/localites'
     | '/admin/parametres'
     | '/admin/partenaires'
@@ -439,12 +415,10 @@ export interface FileRouteTypes {
     | '/_authenticated/_agent/projets'
     | '/_authenticated/_agent/rapports'
     | '/_authenticated/_agent/recouvrement'
-    | '/_authenticated/_agent/remboursements'
     | '/_authenticated/_agent/suivi'
     | '/_authenticated/_agent/transmission'
     | '/_authenticated/_benef/mes-pieces'
     | '/_authenticated/_benef/mes-projets'
-    | '/_authenticated/_benef/mes-remboursements'
     | '/_authenticated/_agent/admin/localites'
     | '/_authenticated/_agent/admin/parametres'
     | '/_authenticated/_agent/admin/partenaires'
@@ -606,13 +580,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAgentRecouvrementRouteImport
       parentRoute: typeof AuthenticatedAgentRoute
     }
-    '/_authenticated/_agent/remboursements': {
-      id: '/_authenticated/_agent/remboursements'
-      path: '/remboursements'
-      fullPath: '/remboursements'
-      preLoaderRoute: typeof AuthenticatedAgentRemboursementsRouteImport
-      parentRoute: typeof AuthenticatedAgentRoute
-    }
     '/_authenticated/_agent/suivi': {
       id: '/_authenticated/_agent/suivi'
       path: '/suivi'
@@ -639,13 +606,6 @@ declare module '@tanstack/react-router' {
       path: '/mes-projets'
       fullPath: '/mes-projets'
       preLoaderRoute: typeof AuthenticatedBenefMesProjetsRouteImport
-      parentRoute: typeof AuthenticatedBenefRoute
-    }
-    '/_authenticated/_benef/mes-remboursements': {
-      id: '/_authenticated/_benef/mes-remboursements'
-      path: '/mes-remboursements'
-      fullPath: '/mes-remboursements'
-      preLoaderRoute: typeof AuthenticatedBenefMesRemboursementsRouteImport
       parentRoute: typeof AuthenticatedBenefRoute
     }
     '/_authenticated/_agent/admin/localites': {
@@ -725,7 +685,6 @@ interface AuthenticatedAgentRouteChildren {
   AuthenticatedAgentProjetsRoute: typeof AuthenticatedAgentProjetsRoute
   AuthenticatedAgentRapportsRoute: typeof AuthenticatedAgentRapportsRoute
   AuthenticatedAgentRecouvrementRoute: typeof AuthenticatedAgentRecouvrementRoute
-  AuthenticatedAgentRemboursementsRoute: typeof AuthenticatedAgentRemboursementsRoute
   AuthenticatedAgentSuiviRoute: typeof AuthenticatedAgentSuiviRoute
   AuthenticatedAgentTransmissionRoute: typeof AuthenticatedAgentTransmissionRoute
   AuthenticatedAgentAdminLocalitesRoute: typeof AuthenticatedAgentAdminLocalitesRoute
@@ -751,7 +710,6 @@ const AuthenticatedAgentRouteChildren: AuthenticatedAgentRouteChildren = {
   AuthenticatedAgentProjetsRoute: AuthenticatedAgentProjetsRoute,
   AuthenticatedAgentRapportsRoute: AuthenticatedAgentRapportsRoute,
   AuthenticatedAgentRecouvrementRoute: AuthenticatedAgentRecouvrementRoute,
-  AuthenticatedAgentRemboursementsRoute: AuthenticatedAgentRemboursementsRoute,
   AuthenticatedAgentSuiviRoute: AuthenticatedAgentSuiviRoute,
   AuthenticatedAgentTransmissionRoute: AuthenticatedAgentTransmissionRoute,
   AuthenticatedAgentAdminLocalitesRoute: AuthenticatedAgentAdminLocalitesRoute,
@@ -776,14 +734,11 @@ const AuthenticatedAgentRouteWithChildren =
 interface AuthenticatedBenefRouteChildren {
   AuthenticatedBenefMesPiecesRoute: typeof AuthenticatedBenefMesPiecesRoute
   AuthenticatedBenefMesProjetsRoute: typeof AuthenticatedBenefMesProjetsRoute
-  AuthenticatedBenefMesRemboursementsRoute: typeof AuthenticatedBenefMesRemboursementsRoute
 }
 
 const AuthenticatedBenefRouteChildren: AuthenticatedBenefRouteChildren = {
   AuthenticatedBenefMesPiecesRoute: AuthenticatedBenefMesPiecesRoute,
   AuthenticatedBenefMesProjetsRoute: AuthenticatedBenefMesProjetsRoute,
-  AuthenticatedBenefMesRemboursementsRoute:
-    AuthenticatedBenefMesRemboursementsRoute,
 }
 
 const AuthenticatedBenefRouteWithChildren =

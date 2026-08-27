@@ -38,6 +38,7 @@ export const ROUTES = {
   DASHBOARD: '/dashboard',
   DISPOSITIFS: '/dispositifs',
   // Circuit de financement
+  FINANCEMENTS: '/financements',
   TRANSMISSION: '/transmission',
   PF_ESPACE: '/pf-espace',
   IMPUTATION: '/imputation',
@@ -94,6 +95,7 @@ export const AGENT_NAV_ITEMS: NavItem[] = [
   // OPÉRATIONS
   { key: 'jeunes', label: 'Promoteurs (porteurs)', path: ROUTES.JEUNES, icon: Users, group: 'OPÉRATIONS'}, //, module: MODULES.JEUNES 
   { key: 'projets', label: 'Micro-projets', path: ROUTES.PROJETS, icon: FolderOpen, group: 'OPÉRATIONS'},//, module: MODULES.PROJETS 
+  { key: 'financements', label: 'Financements', path: ROUTES.FINANCEMENTS, icon: Banknote, group: 'OPÉRATIONS' },
   { key: 'remboursements', label: 'Remboursements', path: ROUTES.REMBOURSEMENTS, icon: RefreshCcw, group: 'OPÉRATIONS', module: MODULES.REMBOURSEMENTS },
   { key: 'indicateurs', label: 'Indicateurs & suivi', path: ROUTES.INDICATEURS, icon: BarChart3, group: 'OPÉRATIONS', module: MODULES.INDICATEURS },
   // SUIVI & ÉVALUATION
@@ -131,6 +133,7 @@ export const PAGE_TITLES: Partial<Record<AppRoute, string>> = {
   [ROUTES.COMPTE]: 'Mon compte',
   [ROUTES.DASHBOARD]: 'Tableau de bord',
   [ROUTES.DISPOSITIFS]: 'Procédures',
+  [ROUTES.FINANCEMENTS]: 'Financements',
   [ROUTES.TRANSMISSION]: 'Transmission par lot',
   [ROUTES.PF_ESPACE]: 'Espace partenaire financier',
   [ROUTES.IMPUTATION]: 'Imputation aux agences',

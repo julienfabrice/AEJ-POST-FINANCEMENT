@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Banknote, CheckCircle2, XCircle, Clock, Layers, CreditCard, TrendingDown, Shield } from 'lucide-react'
+import { Banknote, CheckCircle2, XCircle, Layers, CreditCard } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { KpiCard } from './components/KpiCard'
@@ -17,7 +17,7 @@ import {
   MOCK_REMBOURSEMENTS,
   MOCK_GARANTIES,
   MOCK_PLANS,
-} from '@/mock/financement.mock'
+} from '@/mock/espacePartenaireFinancier.mock'
 
 // ---------- Compteurs dynamiques ------------------------------------------
 
@@ -47,21 +47,11 @@ const TABS: TabConfig[] = [
 
 // ---------- Page principale -----------------------------------------------
 
-export function FinancementPage() {
+export function EspacePartenaireFinancierPage() {
   const [activeTab, setActiveTab] = useState<TabKey>('lots')
 
   return (
     <div className="space-y-5">
-      {/* ---- En-tête ---- */}
-      <div>
-        <h1 className="text-[24px] font-extrabold text-[#131C29] font-['Archivo'] tracking-tight">
-          Circuit de financement
-        </h1>
-        <p className="text-[13px] text-[#5A6B80] mt-1">
-          Lots transmis, traitement des dossiers, plans de décaissement, remboursements et garanties.
-        </p>
-      </div>
-
       {/* ---- KPIs ---- */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <KpiCard

@@ -8,7 +8,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
-import { MOCK_PLANS, type MockPlan, type MockLignePlan } from '@/mock/financement.mock'
+import { MOCK_PLANS, type MockPlan, type MockLignePlan } from '@/mock/espacePartenaireFinancier.mock'
 import { StatusBadge, planStatutBadge, ligneStatutBadge } from '../components/StatusBadge'
 import { money } from '../utils/money'
 

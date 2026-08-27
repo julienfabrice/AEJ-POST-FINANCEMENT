@@ -1,6 +1,6 @@
 import { Shield, Flag } from 'lucide-react'
 import { Card } from '@/components/ui/card'
-import { MOCK_GARANTIES } from '@/mock/financement.mock'
+import { MOCK_GARANTIES } from '@/mock/espacePartenaireFinancier.mock'
 import { StatusBadge } from '../components/StatusBadge'
 import { money } from '../utils/money'
 

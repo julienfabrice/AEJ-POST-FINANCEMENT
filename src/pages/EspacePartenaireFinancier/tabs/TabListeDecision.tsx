@@ -1,6 +1,6 @@
 import { FileText } from 'lucide-react'
 import { Card } from '@/components/ui/card'
-import { MOCK_DOSSIERS_APPROUVES, MOCK_DOSSIERS_REJETES } from '@/mock/financement.mock'
+import { MOCK_DOSSIERS_APPROUVES, MOCK_DOSSIERS_REJETES } from '@/mock/espacePartenaireFinancier.mock'
 import { StatusBadge, approbationBadge } from '../components/StatusBadge'
 import { money } from '../utils/money'
 

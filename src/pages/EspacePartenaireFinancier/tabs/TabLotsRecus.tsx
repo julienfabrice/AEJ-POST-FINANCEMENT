@@ -6,7 +6,7 @@ import {
   MOCK_LOTS,
   type MockLot,
   type MockDossier,
-} from '@/mock/financement.mock'
+} from '@/mock/espacePartenaireFinancier.mock'
 import { StatusBadge, lotStatutBadge, approbationBadge } from '../components/StatusBadge'
 import { money } from '../utils/money'
 

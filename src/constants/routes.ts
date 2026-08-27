@@ -46,7 +46,6 @@ export const ROUTES = {
   // Opérations
   JEUNES: '/jeunes',
   PROJETS: '/projets',
-  FINANCEMENTS: '/financements',
   REMBOURSEMENTS: '/remboursements',
   INDICATEURS: '/indicateurs',
   // Suivi & Évaluation
@@ -95,7 +94,6 @@ export const AGENT_NAV_ITEMS: NavItem[] = [
   // OPÉRATIONS
   { key: 'jeunes', label: 'Promoteurs (porteurs)', path: ROUTES.JEUNES, icon: Users, group: 'OPÉRATIONS'}, //, module: MODULES.JEUNES 
   { key: 'projets', label: 'Micro-projets', path: ROUTES.PROJETS, icon: FolderOpen, group: 'OPÉRATIONS'},//, module: MODULES.PROJETS 
-  { key: 'financements', label: 'Financements', path: ROUTES.FINANCEMENTS, icon: Banknote, group: 'OPÉRATIONS', module: MODULES.FINANCEMENTS },
   { key: 'remboursements', label: 'Remboursements', path: ROUTES.REMBOURSEMENTS, icon: RefreshCcw, group: 'OPÉRATIONS', module: MODULES.REMBOURSEMENTS },
   { key: 'indicateurs', label: 'Indicateurs & suivi', path: ROUTES.INDICATEURS, icon: BarChart3, group: 'OPÉRATIONS', module: MODULES.INDICATEURS },
   // SUIVI & ÉVALUATION
@@ -140,7 +138,6 @@ export const PAGE_TITLES: Partial<Record<AppRoute, string>> = {
   [ROUTES.RECOUVREMENT]: 'Recouvrement & garanties',
   [ROUTES.JEUNES]: 'Promoteurs (porteurs)',
   [ROUTES.PROJETS]: 'Micro-projets',
-  [ROUTES.FINANCEMENTS]: 'Financements',
   [ROUTES.REMBOURSEMENTS]: 'Remboursements',
   [ROUTES.INDICATEURS]: 'Indicateurs & suivi',
   [ROUTES.SUIVI]: 'Suivi & exploitation',

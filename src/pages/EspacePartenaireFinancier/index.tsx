@@ -3,12 +3,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useEspacePartenaire, type TabKey } from './hooks/useEspacePartenaire'
 import { KPIs } from './components/KPIs'
 
-import { TabLotsRecus } from './tabs/TabLotsRecus'
-import { TabListeDecision } from './tabs/TabListeDecision'
-import { TabPlansDecaissement } from './tabs/TabPlansDecaissement'
-import { TabRemboursements } from './tabs/TabRemboursements'
-import { TabGaranties } from './tabs/TabGaranties'
-import { TabDecaissements } from './tabs/TabDecaissements'
+import { TabLotsRecus } from './UI/TabLotsRecus'
+import { TabListeDecision } from './UI/TabListeDecision'
+import { TabPlansDecaissement } from './UI/TabPlansDecaissement'
+import { TabRemboursements } from './UI/TabRemboursements'
+import { TabGaranties } from './UI/TabGaranties'
+import { TabDecaissements } from './UI/TabDecaissements'
 
 export function EspacePartenaireFinancierPage() {
   const { activeTab, setActiveTab, kpis, tabsConfig } = useEspacePartenaire()

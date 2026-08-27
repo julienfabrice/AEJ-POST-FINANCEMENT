@@ -1,7 +1,7 @@
 import { useRemboursements } from './hooks/useRemboursements'
 import { KPIs } from './components/KPIs'
-import { GroupsGrid } from './components/GroupsGrid'
-import { RemboursementsTable } from './components/RemboursementsTable'
+import { GroupsGrid } from './UI/GroupsGrid'
+import { RemboursementsTable } from './UI/RemboursementsTable'
 
 export function RemboursementsPage() {
   const { kpis, dossiersGroups } = useRemboursements()

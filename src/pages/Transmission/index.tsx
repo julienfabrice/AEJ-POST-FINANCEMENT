@@ -1,9 +1,9 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { MOCK_TRANSMISSION_LOTS } from '@/mock/transmission.mock'
 import { useTransmission } from './hooks/useTransmission'
-import { TransmissionHeader } from './components/TransmissionHeader'
-import { ComposerLotTab } from './tabs/ComposerLotTab'
-import { LotsTransmisTab } from './tabs/LotsTransmisTab'
+import { TransmissionHeader } from './UI/TransmissionHeader'
+import { ComposerLotTab } from './UI/ComposerLotTab'
+import { LotsTransmisTab } from './UI/LotsTransmisTab'
 
 export function TransmissionPage() {
   const {

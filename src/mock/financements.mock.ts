@@ -4,6 +4,8 @@ export interface MockBudget {
   projet_code: string
   projet_titre: string
   promoteur: string
+  dispositif_code: string
+  organisme_label: string
   reference_courrier: string
   titre_courrier: string
   date_transmission: string
@@ -39,6 +41,8 @@ export const MOCK_BUDGETS: MockBudget[] = [
     projet_code: 'MP-2024-1100',
     projet_titre: 'Élevage de volailles',
     promoteur: 'Kouassi Jean',
+    dispositif_code: 'AGR',
+    organisme_label: 'UNACOOPEC',
     reference_courrier: 'CRT-2024-0112',
     titre_courrier: 'Transmission lot AGR — Novembre 2024',
     date_transmission: '2024-11-08',
@@ -60,6 +64,8 @@ export const MOCK_BUDGETS: MockBudget[] = [
     projet_code: 'MP-2024-1101',
     projet_titre: 'Boutique de cosmétiques',
     promoteur: 'Kouadio Amoin',
+    dispositif_code: 'AGR',
+    organisme_label: 'UNACOOPEC',
     reference_courrier: 'CRT-2024-0108',
     titre_courrier: 'Transmission lot AGR — Novembre 2024',
     date_transmission: '2024-11-05',
@@ -81,6 +87,8 @@ export const MOCK_BUDGETS: MockBudget[] = [
     projet_code: 'MP-2024-1231',
     projet_titre: 'Atelier de menuiserie',
     promoteur: 'Kone Moussa',
+    dispositif_code: 'MPE',
+    organisme_label: 'ADVANS',
     reference_courrier: 'CRT-2024-0131',
     titre_courrier: 'Transmission lot MPE — Décembre 2024',
     date_transmission: '2024-12-10',

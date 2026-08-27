@@ -20,6 +20,7 @@ import { Route as AuthenticatedBenefRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedCompteRouteImport } from './routes/_authenticated/compte'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAgentDispositifsRouteImport } from './routes/_authenticated/_agent/dispositifs'
+import { Route as AuthenticatedAgentFinancementRouteImport } from './routes/_authenticated/_agent/financement'
 import { Route as AuthenticatedAgentImputationRouteImport } from './routes/_authenticated/_agent/imputation'
 import { Route as AuthenticatedAgentIndicateursRouteImport } from './routes/_authenticated/_agent/indicateurs'
 import { Route as AuthenticatedAgentJeunesRouteImport } from './routes/_authenticated/_agent/jeunes'
@@ -95,6 +96,12 @@ const AuthenticatedAgentDispositifsRoute =
   AuthenticatedAgentDispositifsRouteImport.update({
     id: '/dispositifs',
     path: '/dispositifs',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
+const AuthenticatedAgentFinancementRoute =
+  AuthenticatedAgentFinancementRouteImport.update({
+    id: '/financement',
+    path: '/financement',
     getParentRoute: () => AuthenticatedAgentRoute,
   } as any)
 const AuthenticatedAgentImputationRoute =
@@ -244,6 +251,7 @@ export interface FileRoutesByFullPath {
   '/compte': typeof AuthenticatedCompteRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/dispositifs': typeof AuthenticatedAgentDispositifsRoute
+  '/financement': typeof AuthenticatedAgentFinancementRoute
   '/imputation': typeof AuthenticatedAgentImputationRoute
   '/indicateurs': typeof AuthenticatedAgentIndicateursRoute
   '/jeunes': typeof AuthenticatedAgentJeunesRoute
@@ -277,6 +285,7 @@ export interface FileRoutesByTo {
   '/compte': typeof AuthenticatedCompteRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/dispositifs': typeof AuthenticatedAgentDispositifsRoute
+  '/financement': typeof AuthenticatedAgentFinancementRoute
   '/imputation': typeof AuthenticatedAgentImputationRoute
   '/indicateurs': typeof AuthenticatedAgentIndicateursRoute
   '/jeunes': typeof AuthenticatedAgentJeunesRoute
@@ -314,6 +323,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/_agent/dispositifs': typeof AuthenticatedAgentDispositifsRoute
+  '/_authenticated/_agent/financement': typeof AuthenticatedAgentFinancementRoute
   '/_authenticated/_agent/imputation': typeof AuthenticatedAgentImputationRoute
   '/_authenticated/_agent/indicateurs': typeof AuthenticatedAgentIndicateursRoute
   '/_authenticated/_agent/jeunes': typeof AuthenticatedAgentJeunesRoute
@@ -349,6 +359,7 @@ export interface FileRouteTypes {
     | '/compte'
     | '/dashboard'
     | '/dispositifs'
+    | '/financement'
     | '/imputation'
     | '/indicateurs'
     | '/jeunes'
@@ -382,6 +393,7 @@ export interface FileRouteTypes {
     | '/compte'
     | '/dashboard'
     | '/dispositifs'
+    | '/financement'
     | '/imputation'
     | '/indicateurs'
     | '/jeunes'
@@ -418,6 +430,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/'
     | '/_authenticated/_agent/dispositifs'
+    | '/_authenticated/_agent/financement'
     | '/_authenticated/_agent/imputation'
     | '/_authenticated/_agent/indicateurs'
     | '/_authenticated/_agent/jeunes'
@@ -528,6 +541,13 @@ declare module '@tanstack/react-router' {
       path: '/dispositifs'
       fullPath: '/dispositifs'
       preLoaderRoute: typeof AuthenticatedAgentDispositifsRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
+    '/_authenticated/_agent/financement': {
+      id: '/_authenticated/_agent/financement'
+      path: '/financement'
+      fullPath: '/financement'
+      preLoaderRoute: typeof AuthenticatedAgentFinancementRouteImport
       parentRoute: typeof AuthenticatedAgentRoute
     }
     '/_authenticated/_agent/imputation': {
@@ -696,6 +716,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAgentRouteChildren {
   AuthenticatedAgentDispositifsRoute: typeof AuthenticatedAgentDispositifsRoute
+  AuthenticatedAgentFinancementRoute: typeof AuthenticatedAgentFinancementRoute
   AuthenticatedAgentImputationRoute: typeof AuthenticatedAgentImputationRoute
   AuthenticatedAgentIndicateursRoute: typeof AuthenticatedAgentIndicateursRoute
   AuthenticatedAgentJeunesRoute: typeof AuthenticatedAgentJeunesRoute
@@ -720,6 +741,7 @@ interface AuthenticatedAgentRouteChildren {
 
 const AuthenticatedAgentRouteChildren: AuthenticatedAgentRouteChildren = {
   AuthenticatedAgentDispositifsRoute: AuthenticatedAgentDispositifsRoute,
+  AuthenticatedAgentFinancementRoute: AuthenticatedAgentFinancementRoute,
   AuthenticatedAgentImputationRoute: AuthenticatedAgentImputationRoute,
   AuthenticatedAgentIndicateursRoute: AuthenticatedAgentIndicateursRoute,
   AuthenticatedAgentJeunesRoute: AuthenticatedAgentJeunesRoute,

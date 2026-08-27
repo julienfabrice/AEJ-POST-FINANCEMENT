@@ -34,7 +34,6 @@ import { Route as AuthenticatedAgentSuiviRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAgentTransmissionRouteImport } from './routes/_authenticated/_agent/transmission'
 import { Route as AuthenticatedBenefMesPiecesRouteImport } from './routes/_authenticated/_benef/mes-pieces'
 import { Route as AuthenticatedBenefMesProjetsRouteImport } from './routes/_authenticated/_benef/mes-projets'
-import { Route as AuthenticatedBenefMesRemboursementsRouteImport } from './routes/_authenticated/_benef/mes-remboursements'
 import { Route as AuthenticatedAgentAdminLocalitesRouteImport } from './routes/_authenticated/_agent/admin/localites'
 import { Route as AuthenticatedAgentAdminParametresRouteImport } from './routes/_authenticated/_agent/admin/parametres'
 import { Route as AuthenticatedAgentAdminPartenairesRouteImport } from './routes/_authenticated/_agent/admin/partenaires'
@@ -181,12 +180,6 @@ const AuthenticatedBenefMesProjetsRoute =
     path: '/mes-projets',
     getParentRoute: () => AuthenticatedBenefRoute,
   } as any)
-const AuthenticatedBenefMesRemboursementsRoute =
-  AuthenticatedBenefMesRemboursementsRouteImport.update({
-    id: '/mes-remboursements',
-    path: '/mes-remboursements',
-    getParentRoute: () => AuthenticatedBenefRoute,
-  } as any)
 const AuthenticatedAgentAdminLocalitesRoute =
   AuthenticatedAgentAdminLocalitesRouteImport.update({
     id: '/admin/localites',
@@ -265,7 +258,6 @@ export interface FileRoutesByFullPath {
   '/transmission': typeof AuthenticatedAgentTransmissionRoute
   '/mes-pieces': typeof AuthenticatedBenefMesPiecesRoute
   '/mes-projets': typeof AuthenticatedBenefMesProjetsRoute
-  '/mes-remboursements': typeof AuthenticatedBenefMesRemboursementsRoute
   '/admin/localites': typeof AuthenticatedAgentAdminLocalitesRoute
   '/admin/parametres': typeof AuthenticatedAgentAdminParametresRoute
   '/admin/partenaires': typeof AuthenticatedAgentAdminPartenairesRoute
@@ -299,7 +291,6 @@ export interface FileRoutesByTo {
   '/transmission': typeof AuthenticatedAgentTransmissionRoute
   '/mes-pieces': typeof AuthenticatedBenefMesPiecesRoute
   '/mes-projets': typeof AuthenticatedBenefMesProjetsRoute
-  '/mes-remboursements': typeof AuthenticatedBenefMesRemboursementsRoute
   '/admin/localites': typeof AuthenticatedAgentAdminLocalitesRoute
   '/admin/parametres': typeof AuthenticatedAgentAdminParametresRoute
   '/admin/partenaires': typeof AuthenticatedAgentAdminPartenairesRoute
@@ -337,7 +328,6 @@ export interface FileRoutesById {
   '/_authenticated/_agent/transmission': typeof AuthenticatedAgentTransmissionRoute
   '/_authenticated/_benef/mes-pieces': typeof AuthenticatedBenefMesPiecesRoute
   '/_authenticated/_benef/mes-projets': typeof AuthenticatedBenefMesProjetsRoute
-  '/_authenticated/_benef/mes-remboursements': typeof AuthenticatedBenefMesRemboursementsRoute
   '/_authenticated/_agent/admin/localites': typeof AuthenticatedAgentAdminLocalitesRoute
   '/_authenticated/_agent/admin/parametres': typeof AuthenticatedAgentAdminParametresRoute
   '/_authenticated/_agent/admin/partenaires': typeof AuthenticatedAgentAdminPartenairesRoute
@@ -373,7 +363,6 @@ export interface FileRouteTypes {
     | '/transmission'
     | '/mes-pieces'
     | '/mes-projets'
-    | '/mes-remboursements'
     | '/admin/localites'
     | '/admin/parametres'
     | '/admin/partenaires'
@@ -407,7 +396,6 @@ export interface FileRouteTypes {
     | '/transmission'
     | '/mes-pieces'
     | '/mes-projets'
-    | '/mes-remboursements'
     | '/admin/localites'
     | '/admin/parametres'
     | '/admin/partenaires'
@@ -444,7 +432,6 @@ export interface FileRouteTypes {
     | '/_authenticated/_agent/transmission'
     | '/_authenticated/_benef/mes-pieces'
     | '/_authenticated/_benef/mes-projets'
-    | '/_authenticated/_benef/mes-remboursements'
     | '/_authenticated/_agent/admin/localites'
     | '/_authenticated/_agent/admin/parametres'
     | '/_authenticated/_agent/admin/partenaires'
@@ -641,13 +628,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedBenefMesProjetsRouteImport
       parentRoute: typeof AuthenticatedBenefRoute
     }
-    '/_authenticated/_benef/mes-remboursements': {
-      id: '/_authenticated/_benef/mes-remboursements'
-      path: '/mes-remboursements'
-      fullPath: '/mes-remboursements'
-      preLoaderRoute: typeof AuthenticatedBenefMesRemboursementsRouteImport
-      parentRoute: typeof AuthenticatedBenefRoute
-    }
     '/_authenticated/_agent/admin/localites': {
       id: '/_authenticated/_agent/admin/localites'
       path: '/admin/localites'
@@ -776,14 +756,11 @@ const AuthenticatedAgentRouteWithChildren =
 interface AuthenticatedBenefRouteChildren {
   AuthenticatedBenefMesPiecesRoute: typeof AuthenticatedBenefMesPiecesRoute
   AuthenticatedBenefMesProjetsRoute: typeof AuthenticatedBenefMesProjetsRoute
-  AuthenticatedBenefMesRemboursementsRoute: typeof AuthenticatedBenefMesRemboursementsRoute
 }
 
 const AuthenticatedBenefRouteChildren: AuthenticatedBenefRouteChildren = {
   AuthenticatedBenefMesPiecesRoute: AuthenticatedBenefMesPiecesRoute,
   AuthenticatedBenefMesProjetsRoute: AuthenticatedBenefMesProjetsRoute,
-  AuthenticatedBenefMesRemboursementsRoute:
-    AuthenticatedBenefMesRemboursementsRoute,
 }
 
 const AuthenticatedBenefRouteWithChildren =

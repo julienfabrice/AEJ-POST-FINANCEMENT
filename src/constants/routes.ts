@@ -38,6 +38,8 @@ export const ROUTES = {
   DASHBOARD: '/dashboard',
   DISPOSITIFS: '/dispositifs',
   // Circuit de financement
+  FINANCEMENTS: '/financements',
+  REMBOURSEMENTS: '/remboursements',
   TRANSMISSION: '/transmission',
   PF_ESPACE: '/pf-espace',
   IMPUTATION: '/imputation',
@@ -46,8 +48,6 @@ export const ROUTES = {
   // Opérations
   JEUNES: '/jeunes',
   PROJETS: '/projets',
-  FINANCEMENTS: '/financements',
-  REMBOURSEMENTS: '/remboursements',
   INDICATEURS: '/indicateurs',
   // Suivi & Évaluation
   SUIVI: '/suivi',
@@ -65,7 +65,6 @@ export const ROUTES = {
   // Bénéficiaire
   BENEF_DASHBOARD: '/dashboard',
   BENEF_PROJETS: '/mes-projets',
-  BENEF_REMBOURSEMENTS: '/mes-remboursements',
   BENEF_PIECES: '/mes-pieces',
 } as const
 
@@ -95,8 +94,8 @@ export const AGENT_NAV_ITEMS: NavItem[] = [
   // OPÉRATIONS
   { key: 'jeunes', label: 'Promoteurs (porteurs)', path: ROUTES.JEUNES, icon: Users, group: 'OPÉRATIONS'}, //, module: MODULES.JEUNES 
   { key: 'projets', label: 'Micro-projets', path: ROUTES.PROJETS, icon: FolderOpen, group: 'OPÉRATIONS'},//, module: MODULES.PROJETS 
-  { key: 'financements', label: 'Financements', path: ROUTES.FINANCEMENTS, icon: Banknote, group: 'OPÉRATIONS', module: MODULES.FINANCEMENTS },
-  { key: 'remboursements', label: 'Remboursements', path: ROUTES.REMBOURSEMENTS, icon: RefreshCcw, group: 'OPÉRATIONS', module: MODULES.REMBOURSEMENTS },
+  { key: 'financements', label: 'Financements', path: ROUTES.FINANCEMENTS, icon: Banknote, group: 'OPÉRATIONS' },
+  { key: 'remboursements', label: 'Remboursements', path: ROUTES.REMBOURSEMENTS, icon: RefreshCcw, group: 'OPÉRATIONS' },
   { key: 'indicateurs', label: 'Indicateurs & suivi', path: ROUTES.INDICATEURS, icon: BarChart3, group: 'OPÉRATIONS', module: MODULES.INDICATEURS },
   // SUIVI & ÉVALUATION
   { key: 'suivi', label: 'Suivi & exploitation', path: ROUTES.SUIVI, icon: Eye, group: 'SUIVI & ÉVALUATION', module: MODULES.SUIVI },
@@ -115,7 +114,6 @@ export const AGENT_NAV_ITEMS: NavItem[] = [
 export const BENEF_NAV_ITEMS: NavItem[] = [
   { key: 'benef_dashboard', label: 'Mon tableau de bord', path: ROUTES.BENEF_DASHBOARD, icon: LayoutDashboard, group: 'BENEF' },
   { key: 'mes_projets', label: 'Mes projets', path: ROUTES.BENEF_PROJETS, icon: FolderOpen, group: 'BENEF' },
-  { key: 'mes_remboursements', label: 'Mes remboursements', path: ROUTES.BENEF_REMBOURSEMENTS, icon: RefreshCcw, group: 'BENEF' },
   { key: 'mes_pieces', label: 'Mes pièces', path: ROUTES.BENEF_PIECES, icon: FileText, group: 'BENEF' },
 ]
 
@@ -133,6 +131,8 @@ export const PAGE_TITLES: Partial<Record<AppRoute, string>> = {
   [ROUTES.COMPTE]: 'Mon compte',
   [ROUTES.DASHBOARD]: 'Tableau de bord',
   [ROUTES.DISPOSITIFS]: 'Procédures',
+  [ROUTES.FINANCEMENTS]: 'Financements',
+  [ROUTES.REMBOURSEMENTS]: 'Remboursements',
   [ROUTES.TRANSMISSION]: 'Transmission par lot',
   [ROUTES.PF_ESPACE]: 'Espace partenaire financier',
   [ROUTES.IMPUTATION]: 'Imputation aux agences',
@@ -140,8 +140,6 @@ export const PAGE_TITLES: Partial<Record<AppRoute, string>> = {
   [ROUTES.RECOUVREMENT]: 'Recouvrement & garanties',
   [ROUTES.JEUNES]: 'Promoteurs (porteurs)',
   [ROUTES.PROJETS]: 'Micro-projets',
-  [ROUTES.FINANCEMENTS]: 'Financements',
-  [ROUTES.REMBOURSEMENTS]: 'Remboursements',
   [ROUTES.INDICATEURS]: 'Indicateurs & suivi',
   [ROUTES.SUIVI]: 'Suivi & exploitation',
   [ROUTES.RAPPORTS]: 'Rapports',
@@ -155,6 +153,5 @@ export const PAGE_TITLES: Partial<Record<AppRoute, string>> = {
   [ROUTES.ADMIN_PARAMETRES]: 'Paramètres système',
   
   [ROUTES.BENEF_PROJETS]: 'Mes projets',
-  [ROUTES.BENEF_REMBOURSEMENTS]: 'Mes remboursements',
   [ROUTES.BENEF_PIECES]: 'Mes pièces',
 }

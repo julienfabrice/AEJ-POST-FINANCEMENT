@@ -20,7 +20,6 @@ export const MODULES = {
   // Opérations
   JEUNES: 'jeunes',
   PROJETS: 'projets',
-  FINANCEMENTS: 'financements',
   REMBOURSEMENTS: 'remboursements',
   INDICATEURS: 'indicateurs',
   ORGANISMES: 'organismes',

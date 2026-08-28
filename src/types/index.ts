@@ -270,6 +270,32 @@ export interface BUDGET_T {
   /** Relation embarquée par GET /budgets — pas besoin d'un fetch séparé vers /projets. */
   micro_projet?: import('./promoteurs.types').MICRO_PROJET_T
 }
+// --- Lots de transmission (/lots-transmission) ---
+
+export type LOT_TRANSMISSION_STATUT_T = 'BROUILLON' | 'TRANSMIS' | 'TRAITE' | 'REJETE'
+
+export interface LOT_TRANSMISSION_T {
+  id: number
+  organisme_id: number
+  guichet_id: number
+  code: string
+  titre: string
+  fichier_repartition?: string | null
+  fichier_courrier?: string | null
+  reference_courrier?: string | null
+  reference_convention?: string | null
+  date_transmission?: string | null
+  taux_recouvrement?: number | string | null
+  duree_differee?: number | null
+  duree_remboursement?: number | null
+  statut: LOT_TRANSMISSION_STATUT_T
+  created_at?: string
+  updated_at?: string
+  organisme?: ORGANISME_FINANCEMENT_T | null
+  guichet?: GUICHET_T | null
+  dossiers?: import('./promoteurs.types').MICRO_PROJET_T[]
+}
+
 // --- Décaissements (schema.v2.sql, section 15) ---
 
 export type MODE_DECAISSE_T = 'CHEQUE' | 'VIREMENT'
@@ -292,13 +318,17 @@ export interface LIGNE_DECAISSEMENT_T {
 
 export interface PLAN_DECAISSEMENT_T {
   id: number
-  micro_projet_id: number
+  micro_projet_id?: number
   budget_id?: number | null
+  code?: string | null
+  intitule?: string | null
   compte_financement_id?: number | null
   montant_planifie: number
   date_prevue?: string | null
   justificatif_path?: string | null
   lignes?: LIGNE_DECAISSEMENT_T[]
+  budget?: BUDGET_T | null
+  micro_projet?: import('./promoteurs.types').MICRO_PROJET_T | null
   created_at?: string
   updated_at?: string
 }
@@ -309,12 +339,21 @@ export interface DECAISSEMENT_T {
   id: number
   plan_decaissement_id: number
   ligne_decaissement_id?: number | null
+  numero_ligne?: number | null
+  object_ligne?: string | null
+  montant_ligne?: number | null
+  mode_decaisse?: MODE_DECAISSE_T | null
+  date_prevue?: string | null
+  intitule_prestataire?: string | null
+  numero_compte?: string | null
+  contact?: string | null
   agence_id?: number | null
-  montant_decaisse: number
+  montant_decaisse?: number
   date_decaissement?: string | null
   reference_banque?: string | null
   statut: DECAISSEMENT_STATUT_T
   observations?: string | null
+  plan_decaissement?: PLAN_DECAISSEMENT_T | null
   created_at?: string
   updated_at?: string
 }
@@ -351,6 +390,8 @@ export interface REMBOURSEMENT_T {
   date_paiement?: string | null
   observations?: string | null
   statut: REMBOURSEMENT_STATUT_T
+  promoteur?: import('./promoteurs.types').PROMOTEUR_T | null
+  budget?: BUDGET_T | null
   created_at?: string
   updated_at?: string
 }

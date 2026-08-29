@@ -4,7 +4,6 @@ import { StatusBadge } from '../../EspacePartenaireFinancier/components/StatusBa
 import { money } from '../../EspacePartenaireFinancier/utils/money'
 import { budgetServices } from '@/services/budgets.services'
 import { refLabel } from '@/types/referentials.types'
-import { useProjetsLookup } from '../hooks/useProjetsLookup'
 import { BudgetEditModal } from '../components/BudgetEditModal'
 import { DeleteConfirmModal } from '@/components/DeleteConfirmModal'
 import type { BUDGET_T } from '@/types'
@@ -12,7 +11,6 @@ import type { BUDGET_T } from '@/types'
 export function TabBudgetsAccordes() {
   const { data: budgets = [], isLoading } = budgetServices.useGetAll()
   const { mutate: deleteBudget } = budgetServices.useDelete()
-  const { projetById } = useProjetsLookup()
 
   const [budgetToEdit, setBudgetToEdit] = useState<BUDGET_T | null>(null)
   const [budgetToDelete, setBudgetToDelete] = useState<BUDGET_T | null>(null)
@@ -65,7 +63,7 @@ export function TabBudgetsAccordes() {
               <tr><td colSpan={13} className="px-[14px] py-6 text-center text-[13px] text-[#8595A8]">Aucun budget accordé.</td></tr>
             )}
             {budgets.map((b) => {
-              const projet = projetById.get(b.micro_projet_id)
+              const projet = b.micro_projet
               return (
                 <tr key={b.id} className="hover:bg-[#fafbfe] transition-colors">
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px]">
@@ -85,7 +83,7 @@ export function TabBudgetsAccordes() {
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">—</td>
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">—</td>
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] font-mono font-semibold text-[#131C29]">
-                    {money(b.montant_accorde)}
+                    {money(Number(b.montant_accorde))}
                   </td>
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7]">
                     <StatusBadge
@@ -104,8 +102,8 @@ export function TabBudgetsAccordes() {
                   </td>
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7]">
                     <StatusBadge
-                      label={b.deblocage === 'OUI' ? 'DEBLOQUE' : 'NON'}
-                      variant={b.deblocage === 'OUI' ? 'gr' : 'gy'}
+                      label={b.deblocage ? 'DEBLOQUE' : 'NON'}
+                      variant={b.deblocage ? 'gr' : 'gy'}
                     />
                   </td>
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7]">

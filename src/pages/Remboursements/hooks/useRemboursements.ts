@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import { remboursementServices } from '@/services/remboursements.services'
 import { budgetServices } from '@/services/budgets.services'
-import { useProjetsLookup } from '../../Financements/hooks/useProjetsLookup'
 import { refLabel } from '@/types/referentials.types'
 
 interface GroupItem {
@@ -15,7 +14,6 @@ interface GroupItem {
 export function useRemboursements() {
   const { data: remboursements = [], isLoading } = remboursementServices.useGetAll()
   const { data: budgets = [] } = budgetServices.useGetAll()
-  const { projetById } = useProjetsLookup()
 
   return useMemo(() => {
     const budgetById = new Map(budgets.map((b) => [b.id, b]))
@@ -29,8 +27,8 @@ export function useRemboursements() {
     const byBudget: Record<number, typeof remboursements> = {}
 
     remboursements.forEach((r) => {
-      duTotal += r.montant_echu
-      payeTotal += r.montant_paye
+      duTotal += Number(r.montant_echu)
+      payeTotal += Number(r.montant_paye)
       if (r.statut === 'NON_PAYE') impayesCount++
 
       const key = r.budget_id ?? -r.promoteur_id // repli sur promoteur_id si pas de budget lié
@@ -47,7 +45,7 @@ export function useRemboursements() {
     Object.entries(byBudget).forEach(([key, rows]) => {
       const budgetId = Number(key)
       const budget = budgetId > 0 ? budgetById.get(budgetId) : undefined
-      const projet = budget ? projetById.get(budget.micro_projet_id) : undefined
+      const projet = budget?.micro_projet
       const nbImp = rows.filter((r) => r.statut === 'NON_PAYE').length
 
       const item: GroupItem = {
@@ -74,5 +72,5 @@ export function useRemboursements() {
       },
       dossiersGroups: cats,
     }
-  }, [remboursements, budgets, projetById, isLoading])
+  }, [remboursements, budgets, isLoading])
 }

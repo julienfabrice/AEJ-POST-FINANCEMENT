@@ -244,19 +244,20 @@ export interface WORKFLOW_DELIVERABLE_T {
 
 export type BUDGET_STATUT_T = 'EN_ATTENTE' | 'APPROUVE' | 'NON_APPROUVE'
 export type SIGNATURE_CONVENTION_T = 'SIGNEE' | 'NON_SIGNEE'
-export type DEBLOCAGE_T = 'OUI' | 'NON'
 export type RECEPTION_ACTE_CREDIT_T = 'OUI' | 'NON' | 'PARTIEL'
 
 export interface BUDGET_T {
   id: number
   micro_projet_id: number
   intitule: string
-  montant_accorde: number
+  /** Laravel sérialise les colonnes DECIMAL en string dans le JSON. */
+  montant_accorde: number | string
   date_accord?: string | null
   source?: string | null
   statut: BUDGET_STATUT_T
   devise: string
-  deblocage: DEBLOCAGE_T
+  /** Confirmé côté API : booléen (`true`/`false`), pas une chaîne "OUI"/"NON". */
+  deblocage: boolean
   date_deblocage?: string | null
   signature_convention: SIGNATURE_CONVENTION_T
   date_signature?: string | null
@@ -266,6 +267,8 @@ export interface BUDGET_T {
   valide_par?: number | null
   created_at?: string
   updated_at?: string
+  /** Relation embarquée par GET /budgets — pas besoin d'un fetch séparé vers /projets. */
+  micro_projet?: import('./promoteurs.types').MICRO_PROJET_T
 }
 // --- Décaissements (schema.v2.sql, section 15) ---
 
@@ -340,10 +343,11 @@ export interface REMBOURSEMENT_T {
   id: number
   promoteur_id: number
   budget_id?: number | null
-  montant_echu: number
-  montant_paye: number
-  montant_impaye: number
-  penalites: number
+  /** Laravel sérialise les colonnes DECIMAL en string dans le JSON. */
+  montant_echu: number | string
+  montant_paye: number | string
+  montant_impaye: number | string
+  penalites: number | string
   date_paiement?: string | null
   observations?: string | null
   statut: REMBOURSEMENT_STATUT_T

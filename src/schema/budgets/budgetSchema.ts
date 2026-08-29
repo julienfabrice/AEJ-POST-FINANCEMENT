@@ -8,7 +8,7 @@ export const budgetSchema = z.object({
   source: z.string().optional(),
   statut: z.enum(['EN_ATTENTE', 'APPROUVE', 'NON_APPROUVE']),
   devise: z.string().min(1, 'La devise est requise.'),
-  deblocage: z.enum(['OUI', 'NON']),
+  deblocage: z.boolean(),
   date_deblocage: z.string().optional(),
   signature_convention: z.enum(['SIGNEE', 'NON_SIGNEE']),
   date_signature: z.string().optional(),

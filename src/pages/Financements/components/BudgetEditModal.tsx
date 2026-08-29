@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { Switch } from '@/components/ui/switch'
 import { Button } from '@/components/ui/button'
 import {
   Select,
@@ -35,7 +36,7 @@ export function BudgetEditModal({ budget, onClose }: Props) {
       source: '',
       statut: 'EN_ATTENTE',
       devise: 'FCFA',
-      deblocage: 'NON',
+      deblocage: false,
       signature_convention: 'NON_SIGNEE',
       reception_acte_credit: 'NON',
       observations: '',
@@ -47,7 +48,7 @@ export function BudgetEditModal({ budget, onClose }: Props) {
       form.reset({
         micro_projet_id: budget.micro_projet_id,
         intitule: budget.intitule,
-        montant_accorde: budget.montant_accorde,
+        montant_accorde: Number(budget.montant_accorde),
         date_accord: budget.date_accord ?? '',
         source: budget.source ?? '',
         statut: budget.statut,
@@ -112,15 +113,9 @@ export function BudgetEditModal({ budget, onClose }: Props) {
                 </FormItem>
               )} />
               <FormField control={form.control} name="deblocage" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Déblocage</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl><SelectTrigger className="w-full"><SelectValue /></SelectTrigger></FormControl>
-                    <SelectContent>
-                      <SelectItem value="OUI">Oui</SelectItem>
-                      <SelectItem value="NON">Non</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <FormItem className="flex items-center justify-between rounded-lg border p-3 col-span-2">
+                  <FormLabel className="mb-0">Déblocage</FormLabel>
+                  <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
                   <FormMessage />
                 </FormItem>
               )} />

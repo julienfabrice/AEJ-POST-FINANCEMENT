@@ -4,7 +4,6 @@ import { StatusBadge } from '../../EspacePartenaireFinancier/components/StatusBa
 import { money } from '../../EspacePartenaireFinancier/utils/money'
 import { remboursementServices } from '@/services/remboursements.services'
 import { budgetServices } from '@/services/budgets.services'
-import { useProjetsLookup } from '../../Financements/hooks/useProjetsLookup'
 import { RemboursementEditModal } from '../components/RemboursementEditModal'
 import { DeleteConfirmModal } from '@/components/DeleteConfirmModal'
 import type { REMBOURSEMENT_T } from '@/types'
@@ -26,12 +25,11 @@ export function RemboursementsTable() {
   const { data: remboursements = [], isLoading } = remboursementServices.useGetAll()
   const { mutate: deleteRemboursement } = remboursementServices.useDelete()
   const { data: budgets = [] } = budgetServices.useGetAll()
-  const { projetById } = useProjetsLookup()
 
   const [toEdit, setToEdit] = useState<REMBOURSEMENT_T | null>(null)
   const [toDelete, setToDelete] = useState<REMBOURSEMENT_T | null>(null)
 
-  // remboursement.budget_id → budget.micro_projet_id → projet (jointure à deux sauts)
+  // remboursement.budget_id → budget (avec micro_projet déjà embarqué par l'API)
   const budgetById = useMemo(() => {
     const map = new Map<number, (typeof budgets)[number]>()
     budgets.forEach((b) => map.set(b.id, b))
@@ -84,8 +82,8 @@ export function RemboursementsTable() {
             )}
             {remboursements.map((r) => {
               const budget = r.budget_id ? budgetById.get(r.budget_id) : undefined
-              const projet = budget ? projetById.get(budget.micro_projet_id) : undefined
-              const reste = r.montant_echu - r.montant_paye
+              const projet = budget?.micro_projet
+              const reste = Number(r.montant_echu) - Number(r.montant_paye)
               return (
                 <tr key={r.id} className="hover:bg-[#fafbfe] transition-colors">
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px]">
@@ -97,10 +95,10 @@ export function RemboursementsTable() {
                     {r.date_paiement ?? '—'}
                   </td>
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] font-mono font-semibold text-[#131C29]">
-                    {money(r.montant_echu)}
+                    {money(Number(r.montant_echu))}
                   </td>
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] font-mono font-semibold text-[#0FA958]">
-                    {money(r.montant_paye)}
+                    {money(Number(r.montant_paye))}
                   </td>
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] font-mono font-semibold">
                     <span className={reste > 0 ? 'text-[#D6453B]' : 'text-[#8595A8]'}>{money(reste)}</span>

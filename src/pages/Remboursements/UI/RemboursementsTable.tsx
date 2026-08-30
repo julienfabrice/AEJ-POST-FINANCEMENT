@@ -1,6 +1,6 @@
 import { Card } from '@/components/ui/card'
 import { StatusBadge } from '../../EspacePartenaireFinancier/components/StatusBadge'
-import { money } from '../../EspacePartenaireFinancier/utils/money'
+import { money } from "@/helpers/money"
 import { MOCK_OP_REMBOURSEMENTS } from '@/mock/remboursements.mock'
 
 export function RemboursementsTable() {

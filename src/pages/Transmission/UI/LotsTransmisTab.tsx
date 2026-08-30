@@ -1,6 +1,6 @@
 import { Card } from '@/components/ui/card'
 import { StatusBadge } from '../../EspacePartenaireFinancier/components/StatusBadge'
-import { money } from '../../EspacePartenaireFinancier/utils/money'
+import { money } from "@/helpers/money"
 import { MOCK_TRANSMISSION_LOTS } from '@/mock/transmission.mock'
 
 export function LotsTransmisTab() {

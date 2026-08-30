@@ -20,36 +20,24 @@ export interface TabConfig {
 export function useEspacePartenaire() {
   const [activeTab, setActiveTab] = useState<TabKey>('lots')
 
-  const kpis = useMemo(() => {
+  const tabsConfig = useMemo<TabConfig[]>(() => {
     const lotsEnCoursCount = MOCK_LOTS.filter((l) => l.statut !== 'RETOURNE').length
     const plansEnValidation = MOCK_PLANS.filter((p) => p.statut === 'EN_VALIDATION').length
-    const impayes = MOCK_REMBOURSEMENTS.filter((r) => r.statut !== 'A_JOUR').length
-    
-    return {
-      lotsEnCoursCount,
-      lotsTotal: MOCK_LOTS.length,
-      dossiersApprouvesCount: MOCK_DOSSIERS_APPROUVES.length,
-      dossiersTotal: MOCK_LOTS.flatMap((l) => l.dossiers).length,
-      plansEnValidation,
-      plansTotal: MOCK_PLANS.length,
-      impayes,
-    }
-  }, [])
 
-  const tabsConfig = useMemo<TabConfig[]>(() => [
-    { id: 'lots', label: 'Lots reçus', count: kpis.lotsEnCoursCount },
-    { id: 'approuves', label: 'Dossiers approuvés', count: MOCK_DOSSIERS_APPROUVES.length },
-    { id: 'rejetes', label: 'Dossiers rejetés', count: MOCK_DOSSIERS_REJETES.length },
-    { id: 'plans', label: 'Plans de décaissement', count: kpis.plansEnValidation },
-    { id: 'decaissements', label: 'Décaissements', count: MOCK_DECAISSEMENTS.length },
-    { id: 'remboursements', label: 'Remboursements' },
-    { id: 'garanties', label: 'Rappels de garantie', count: MOCK_GARANTIES.length },
-  ], [kpis])
+    return [
+      { id: 'lots', label: 'Lots reçus', count: lotsEnCoursCount },
+      { id: 'approuves', label: 'Dossiers approuvés', count: MOCK_DOSSIERS_APPROUVES.length },
+      { id: 'rejetes', label: 'Dossiers rejetés', count: MOCK_DOSSIERS_REJETES.length },
+      { id: 'plans', label: 'Plans de décaissement', count: plansEnValidation },
+      { id: 'decaissements', label: 'Décaissements', count: MOCK_DECAISSEMENTS.length },
+      { id: 'remboursements', label: 'Remboursements' },
+      { id: 'garanties', label: 'Rappels de garantie', count: MOCK_GARANTIES.length },
+    ]
+  }, [])
 
   return {
     activeTab,
     setActiveTab,
-    kpis,
     tabsConfig,
   }
 }

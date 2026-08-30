@@ -2,7 +2,7 @@ import { Shield, Flag } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { MOCK_GARANTIES } from '@/mock/espacePartenaireFinancier.mock'
 import { StatusBadge } from '../components/StatusBadge'
-import { money } from '../utils/money'
+import { money } from "@/helpers/money"
 
 export function TabGaranties() {
   return (

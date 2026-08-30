@@ -1,7 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { useEspacePartenaire, type TabKey } from './hooks/useEspacePartenaire'
-import { KPIs } from './components/KPIs'
 
 import { TabLotsRecus } from './UI/TabLotsRecus'
 import { TabListeDecision } from './UI/TabListeDecision'
@@ -11,12 +10,10 @@ import { TabGaranties } from './UI/TabGaranties'
 import { TabDecaissements } from './UI/TabDecaissements'
 
 export function EspacePartenaireFinancierPage() {
-  const { activeTab, setActiveTab, kpis, tabsConfig } = useEspacePartenaire()
+  const { activeTab, setActiveTab, tabsConfig } = useEspacePartenaire()
 
   return (
     <div className="space-y-5">
-      <KPIs kpis={kpis} />
-
       <Tabs
         value={activeTab}
         onValueChange={(v) => setActiveTab(v as TabKey)}

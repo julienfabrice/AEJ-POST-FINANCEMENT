@@ -3,6 +3,16 @@ import { axiosInstance } from '@/constants/axiosInstance'
 import { toast } from 'sonner'
 import type { BUDGET_T, BUDGET_STATUT_T, API_RESPONSE_T } from '@/types'
 
+/**
+ * L'API renvoie `deblocage` en booléen (GET /budgets), mais la validation
+ * côté POST/PUT rejette ce booléen JSON ("The selected deblocage is
+ * invalid.") — elle attend la chaîne "OUI"/"NON" documentée pour la
+ * création. On convertit donc systématiquement à l'envoi.
+ */
+function toApiPayload<T extends { deblocage: boolean }>(payload: T) {
+  return { ...payload, deblocage: payload.deblocage ? 'OUI' : 'NON' }
+}
+
 export const budgetServices = {
   useGetAll: () => {
     return useQuery({
@@ -27,7 +37,7 @@ export const budgetServices = {
     const queryClient = useQueryClient()
     return useMutation({
       mutationFn: async (payload: Omit<BUDGET_T, 'id'>) => {
-        const response = await axiosInstance.post('/budgets', payload)
+        const response = await axiosInstance.post('/budgets', toApiPayload(payload))
         return response.data
       },
       onSuccess: () => {
@@ -44,7 +54,7 @@ export const budgetServices = {
     const queryClient = useQueryClient()
     return useMutation({
       mutationFn: async ({ id, data }: { id: number; data: Omit<BUDGET_T, 'id'> }) => {
-        const response = await axiosInstance.put(`/budgets/${id}`, data)
+        const response = await axiosInstance.put(`/budgets/${id}`, toApiPayload(data))
         return response.data
       },
       onSuccess: () => {

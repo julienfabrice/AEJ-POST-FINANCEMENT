@@ -3,10 +3,8 @@ import {
   MOCK_LOTS,
   MOCK_DOSSIERS_APPROUVES,
   MOCK_DOSSIERS_REJETES,
-  MOCK_DECAISSEMENTS,
-  MOCK_REMBOURSEMENTS,
-  MOCK_GARANTIES,
-  MOCK_PLANS,
+  MOCK_DECAISSEMENTS, MOCK_GARANTIES,
+  MOCK_PLANS
 } from '@/mock/espacePartenaireFinancier.mock'
 
 export type TabKey = 'lots' | 'approuves' | 'rejetes' | 'plans' | 'decaissements' | 'remboursements' | 'garanties'

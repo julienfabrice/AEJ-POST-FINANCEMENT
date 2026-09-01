@@ -16,10 +16,10 @@ export function useTableData() {
     { field: 'dispositif', headerName: 'Dispositif', width: 150, cellClass: 'text-sm text-[#5A6B80]' },
     { 
       field: 'montant', 
-      headerName: 'Montant (FCFA)', 
+      headerName: 'Montant', 
       width: 160,
       cellRenderer: AmountCellRenderer,
-      headerClass: 'ag-right-aligned-header',
+      type: 'numericColumn',
     },
     { 
       field: 'statut', 

@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import {
   MOCK_PROJETS_RECOUVREMENT,
   MOCK_ACTIONS_RECOUVREMENT,
-  MOCK_GARANTIES,
+  MOCK_RECOUVREMENT_GARANTIES,
   type RecouvrementTab
 } from '@/mock/recouvrement.mock'
 
@@ -40,7 +40,7 @@ export function useRecouvrement() {
     lourd,
     contentieux,
     actions: MOCK_ACTIONS_RECOUVREMENT,
-    garanties: MOCK_GARANTIES,
+    garanties: MOCK_RECOUVREMENT_GARANTIES,
     handleActionAmiable,
     handleSortirPortefeuille
   }

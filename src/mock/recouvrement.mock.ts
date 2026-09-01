@@ -100,7 +100,7 @@ export const MOCK_ACTIONS_RECOUVREMENT: ActionRecouvrement[] = [
   { id: 'rc3', projetId: 'p16', type: 'CONTENTIEUX', date: '2025-01-10', resultat: 'Dossier sorti du portefeuille — transmis à l\'avocat de l\'AEJ pour recours en justice.', agent: 'Koffi, CSFM' }
 ]
 
-export const MOCK_GARANTIES: Garantie[] = [
+export const MOCK_RECOUVREMENT_GARANTIES: Garantie[] = [
   { id: 'gr1', projetId: 'p16', montantAppele: 120000, dateRappel: '2025-01-20', saisiPar: 'UNACOOPEC-CI — Agence Plateau' },
   { id: 'gr2', projetId: 'p10', montantAppele: 3120000, dateRappel: '2026-02-10', saisiPar: 'Orange Bank Africa' }
 ]

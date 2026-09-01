@@ -2,21 +2,28 @@
 import { useAuthStore } from '@/store/useAuthStore'
 import { AgentDashboard } from './AgentDashboard'
 import { BenefDashboard } from './BenefDashboard'
+import { PartnerDashboard } from './PartnerDashboard'
+import { AdminDashboard } from './AdminDashboard'
 
 
 export function DashboardController() {
   const space = useAuthStore((s) => s.space())
-  // Droit, pas rôle : le tableau de bord guichets s'affiche pour quiconque a
-  // accès au module, quel que soit son profil.
-  // const canSeeGuichets = useAuthStore((s) => s.can(MODULES.GUICHETS))
+  const agencyScope = useAuthStore((s) => s.agencyScope())
 
   if (space === 'entreprise') {
     return <BenefDashboard />
   }
 
-  // if (canSeeGuichets) {
-  //   return <GuichetsDashboard />
-  // }
+  if (space === 'organisme') {
+    return <PartnerDashboard />
+  }
 
-  return <AgentDashboard />
+  // Espace 'agence' : même dashboard, scope différent selon le rôle
+  // Cloisonnés à une agence (CIP, CAR, AC)
+  if (agencyScope) {
+    return <AgentDashboard agencyId={agencyScope} />
+  }
+  
+  // Vue nationale (ADMIN, DPF, DAICG…)
+  return <AdminDashboard />
 }

@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { axiosInstance } from '@/constants/axiosInstance'
-import type { PAGINATED_T } from '@/types'
+import type {API_RESPONSE_T, PAGINATED_T} from '@/types'
 import type { PROMOTEUR_SEARCH_T, PROMOTEUR_T } from '@/types/promoteurs.types'
 
 /** Clés de cache du module — exportées pour l'invalidation depuis l'extérieur. */
@@ -74,4 +74,15 @@ export const promoteursServices = {
       queryFn: () => promoteursServices.list(query),
       placeholderData: keepPreviousData,
     }),
+
+    useGetAll: () => {
+        return useQuery({
+            queryKey: ['promoteurs'],
+            queryFn: async () => {
+                const { data } = await axiosInstance.get<API_RESPONSE_T<PROMOTEUR_T[]>>(LIST_PATH)
+                return data.data
+            },
+        })
+    },
+
 }

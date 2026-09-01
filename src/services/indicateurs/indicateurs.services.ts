@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { axiosInstance } from '@/constants/axiosInstance'
+import { axiosInstance } from '@/constants/axiosInstance.ts'
 import { toast } from 'sonner'
 import type { INDICATEUR_T, API_RESPONSE_T } from '@/types'
 

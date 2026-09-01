@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 import type { ColDef } from 'ag-grid-community'
 import Fuse from 'fuse.js'
-import { indicateurs } from '@/mock'
 import { Badge } from '@/components/ui/badge'
 import { ActionsCellRenderer } from '@/pages/Referentiels/components/ActionsCellRenderer'
+import {indicateurServices} from "@/services/indicateurs/indicateurs.services.ts";
 
 const fmt = (num: number) => new Intl.NumberFormat('fr-FR').format(num)
 
@@ -27,21 +27,23 @@ export function useIndicateurTabGrid(searchQuery: string) {
       { field: 'nom', headerName: 'Nom', flex: 2, cellRenderer: (params: any) => <span className="font-semibold">{params.data.nom}</span> },
       { field: 'unite', headerName: 'Unité', flex: 1 },
       { field: 'type_valeur', headerName: 'Type de valeur', flex: 1 },
-      { field: 'valeur_cible', headerName: 'Cible', flex: 1, cellRenderer: (params: any) => fmt(params.data.valeur_cible) },
+      { field: 'valeur_cible', headerName: 'Cible', flex: 1, cellRenderer: (params: any) => fmt(params.data.valeur_cible?params.data.valeur_cible: 0) },
       actionsCol
     ]
   }, [])
 
-  const filteredData = useMemo(() => {
-    if (!searchQuery.trim()) return indicateurs
+    const { data=[], isLoading } = indicateurServices.useGetAll()
 
-    const fuse = new Fuse(indicateurs, {
-      keys: ['code', 'nom'],
-      threshold: 0.3,
-      ignoreLocation: true
+
+    const filteredData = useMemo(() => {
+    if (!searchQuery.trim()) return data
+    const fuse = new Fuse(data, {
+        keys: ['code', 'nom'],
+        threshold: 0.3,
+        ignoreLocation: true
     })
     return fuse.search(searchQuery).map(res => res.item)
-  }, [searchQuery])
+  }, [searchQuery, data])
 
-  return { columnDefs, data: filteredData, isLoading: false }
+  return { columnDefs, data: filteredData, isLoading: isLoading }
 }

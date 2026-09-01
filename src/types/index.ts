@@ -88,6 +88,24 @@ export interface INDICATEUR_T {
   updated_at?: string
 }
 
+export interface INDICATEUR_SUIVI_T {
+    id: number
+    indicateur_id: number
+    valeur: string
+    created_at?: string
+    updated_at?: string
+}
+
+export interface FORMULAIRE_T {
+    id: number
+    code: string
+    libelle: string
+    public_cible: string
+    actif: boolean
+    created_at?: string
+    updated_at?: string
+}
+
 export interface TYPE_ENTREPRISE_T {
   id: number
   code: string

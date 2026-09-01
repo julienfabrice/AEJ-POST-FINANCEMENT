@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 import type { ColDef } from 'ag-grid-community'
 import Fuse from 'fuse.js'
-import { formulaires } from '@/mock'
 import { Badge } from '@/components/ui/badge'
 import { ActionsCellRenderer } from '@/pages/Referentiels/components/ActionsCellRenderer'
+import {formulairesServices} from "@/services/indicateurs/formulaires.services.ts";
 
 const actionsCol: ColDef = {
   headerName: 'Actions',
@@ -33,16 +33,17 @@ export function useFichesGrid(searchQuery: string) {
     ]
   }, [])
 
+  const { data=[], isLoading } = formulairesServices.useGetAll()
   const filteredData = useMemo(() => {
-    if (!searchQuery.trim()) return formulaires
+    if (!searchQuery.trim()) return data
 
-    const fuse = new Fuse(formulaires, {
+    const fuse = new Fuse(data, {
       keys: ['code', 'libelle', 'public_cible'],
       threshold: 0.3,
       ignoreLocation: true
     })
     return fuse.search(searchQuery).map(res => res.item)
-  }, [searchQuery])
+  }, [searchQuery, data])
 
-  return { columnDefs, data: filteredData, isLoading: false }
+  return { columnDefs, data: filteredData, isLoading: isLoading }
 }

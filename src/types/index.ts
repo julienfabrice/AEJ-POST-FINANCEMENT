@@ -376,3 +376,5 @@ export interface DISPOSITIF_T {
   projet?: any | null
   guichet?: GUICHET_T | null
 }
+
+export * from './dashboard.types'

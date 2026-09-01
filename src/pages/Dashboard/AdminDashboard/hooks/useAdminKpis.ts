@@ -1,30 +1,40 @@
-import { promoteursServices } from '@/services/promoteurs.services'
-import { projetsServices } from '@/services/projets.services'
-import { decaissementServices } from '@/services/decaissements.services'
-import { remboursementServices } from '@/services/remboursements.services'
+import { dashboardAgencesServices, dashboardPartenairesServices, dashboardEntreprisesServices } from '@/services/dashboard.services'
 
+function fmt(v: string | number | null | undefined): string {
+  if (v == null) return '0'
+  const n = typeof v === 'string' ? parseFloat(v) : v
+  if (isNaN(n)) return String(v)
+  return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n)
+}
+
+/**
+ * KPIs Admin = combinaison des 3 endpoints Dashboard:
+ *  - /dashboard/agences/kpis       → projets, promoteurs, montant financé
+ *  - /dashboard/partenaires/kpis   → taux recouvrement, montant décaissé
+ *  - /dashboard/entreprises/kpis   → emplois créés
+ */
 export function useAdminKpis() {
-  const { data: promoteursData, isLoading: loadingPromoteurs } = promoteursServices.useGetPromoteurs({ page: 1, perPage: 1 })
-  const { data: projetsData, isLoading: loadingProjets } = projetsServices.useGetAll(1, 1)
-  const { data: decaissementsData, isLoading: loadingDecaissements } = decaissementServices.useGetAll()
-  const { data: remboursementsData, isLoading: loadingRemboursements } = remboursementServices.useGetAll()
-
-  const nbPromoteurs = promoteursData?.total || 0
-  const nbProjets = projetsData?.pagination?.total || 0
-
-  const valides = decaissementsData?.filter(d => d.statut === 'VALIDE') || []
-  const montantDecaisse = valides.reduce((sum, d) => sum + Number(d.montant_decaisse || 0), 0)
-
-  const montantEchu = remboursementsData?.reduce((sum, r) => sum + Number(r.montant_echu || 0), 0) || 0
-  const montantPaye = remboursementsData?.reduce((sum, r) => sum + Number(r.montant_paye || 0), 0) || 0
-  const tauxRemboursement = montantEchu > 0 ? Math.round((montantPaye / montantEchu) * 100) : 0
+  const { data: agenceData, isLoading: l1 } = dashboardAgencesServices.useKpis()
+  const { data: partenaireData, isLoading: l2 } = dashboardPartenairesServices.useKpis()
+  const { data: entrepriseData, isLoading: l3 } = dashboardEntreprisesServices.useKpis()
 
   return {
-    nbPromoteurs,
-    nbProjets,
-    montantDecaisse,
-    nbDecaissements: valides.length,
-    tauxRemboursement,
-    isLoading: loadingPromoteurs || loadingProjets || loadingDecaissements || loadingRemboursements
+    isLoading: l1 || l2 || l3,
+
+    // Agences
+    nbPromoteurs: agenceData?.nombre_promoteurs ?? 0,
+    nbProjets: agenceData?.nombre_projets ?? 0,
+    nbAgences: agenceData?.nombre_agences ?? 0,
+    montantFinance: fmt(agenceData?.montant_financé),
+    montantDecaisse: partenaireData?.montant_decaisse ?? 0,
+
+    // Partenaires
+    tauxRemboursement: partenaireData?.taux_recouvrement ?? 0,
+    projetsFinances: partenaireData?.projets_finances ?? 0,
+    montantAccorde: fmt(partenaireData?.montant_accorde),
+
+    // Entreprises
+    emploisCreés: entrepriseData?.emplois_crees ?? 0,
+    nbEntreprises: entrepriseData?.nombre_entreprises ?? 0,
   }
 }

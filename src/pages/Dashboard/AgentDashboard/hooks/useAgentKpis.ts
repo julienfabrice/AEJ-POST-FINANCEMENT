@@ -1,40 +1,25 @@
-import { promoteursServices } from '@/services/promoteurs.services'
-import { projetsServices } from '@/services/projets.services'
-import { decaissementServices } from '@/services/decaissements.services'
-import { remboursementServices } from '@/services/remboursements.services'
+import { dashboardAgencesServices } from '@/services/dashboard.services'
 
-export function useAgentKpis(agencyId?: string | null) {
-  const { data: promoteursData, isLoading: loadingPromoteurs } = promoteursServices.useGetPromoteurs({
-    page: 1,
-    perPage: 1,
-    agenceregionale_id: agencyId || undefined
-  })
+function fmt(v: string | number | null | undefined): string {
+  if (v == null) return '0'
+  const n = typeof v === 'string' ? parseFloat(v) : v
+  return isNaN(n) ? String(v) : new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n)
+}
 
-  const { data: projetsData, isLoading: loadingProjets } = projetsServices.useGetAll(1, 1, {
-    agence_id: agencyId || undefined
-  })
-
-  const { data: decaissementsData, isLoading: loadingDecaissements } = decaissementServices.useGetAll()
-  const { data: remboursementsData, isLoading: loadingRemboursements } = remboursementServices.useGetAll()
-
-  const nbPromoteurs = promoteursData?.total || 0
-  const nbProjets = projetsData?.pagination?.total || 0
-
-  const agencyDecaissements = decaissementsData?.filter(d => 
-    (!agencyId || d.agence_id === Number(agencyId)) && d.statut === 'VALIDE'
-  ) || []
-  const montantDecaisse = agencyDecaissements.reduce((sum, d) => sum + Number(d.montant_decaisse || 0), 0)
-
-  const montantEchu = remboursementsData?.reduce((sum, r) => sum + Number(r.montant_echu || 0), 0) || 0
-  const montantPaye = remboursementsData?.reduce((sum, r) => sum + Number(r.montant_paye || 0), 0) || 0
-  const tauxRemboursement = montantEchu > 0 ? Math.round((montantPaye / montantEchu) * 100) : 0
+/**
+ * KPIs Agent : filtrés automatiquement par le back-end via JWT (agence de l'agent)
+ */
+export function useAgentKpis(_agencyId?: string | null) {
+  const { data, isLoading } = dashboardAgencesServices.useKpis()
 
   return {
-    nbPromoteurs,
-    nbProjets,
-    montantDecaisse,
-    nbDecaissements: agencyDecaissements.length,
-    tauxRemboursement,
-    isLoading: loadingPromoteurs || loadingProjets || loadingDecaissements || loadingRemboursements
+    isLoading,
+    nbPromoteurs: data?.nombre_promoteurs ?? 0,
+    nbProjets: data?.nombre_projets ?? 0,
+    montantDecaisse: data?.montant_décaissé ?? 0,
+    montantFinance: fmt(data?.montant_financé),
+    nbDecaissements: 0, // non fourni par cet endpoint
+    tauxRemboursement: 0, // non fourni par cet endpoint
+    emploisCreés: data?.emplois_créés ?? 0,
   }
 }

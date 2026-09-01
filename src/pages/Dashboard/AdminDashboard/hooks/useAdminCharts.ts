@@ -1,41 +1,46 @@
-import { projetsServices } from '@/services/projets.services'
+import { dashboardAgencesServices } from '@/services/dashboard.services'
 import { PROJECT_STATUSES } from '@/constants/PROJECT_STATUSES'
-import { MOCK_REGIONS_HBARS, MOCK_AGENCES_HBARS, MOCK_SUIVI_TERRAIN } from '@/mock'
+import { MOCK_REGIONS_HBARS, MOCK_SUIVI_TERRAIN } from '@/mock'
 
 export function useAdminCharts() {
-  // Optionnel: On pourrait filtrer ici si on voulait. Pour l'instant on compte tout.
-  // L'idéal est que le backend renvoie les métriques, mais pour l'instant on compte côté client si on n'a pas de pagination, 
-  // ou on fait au mieux avec les 500 premiers (limite max si pagination).
-  // Attention: useGetAll(1, 1000) récupère un grand nombre de dossiers pour faire les stats client.
-  const { data, isLoading } = projetsServices.useGetAll(1, 1000)
-  
-  const projects = data?.data || []
+  const { data: statutData, isLoading: l1 } = dashboardAgencesServices.useProjetsStatut()
+  const { data: agenceData, isLoading: l2 } = dashboardAgencesServices.useProjetsAgence()
+  const { data: financementData, isLoading: l3 } = dashboardAgencesServices.useFinancementAgence()
 
-  // Calcul dynamique des étapes
-  const etapeCounts = projects.reduce((acc, p) => {
-    const status = p.statut || 'BROUILLON'
-    acc[status] = (acc[status] || 0) + 1
+  // Statuts → BarChart : on respecte l'ordre de PROJECT_STATUSES
+  const statutMap = (statutData || []).reduce((acc, s) => {
+    acc[s.statut] = s.count
     return acc
   }, {} as Record<string, number>)
 
-  // On veut n'afficher que les étapes principales (ou toutes celles qui ont au moins 1)
-  // Utilisons l'ordre de PROJECT_STATUSES pour rester cohérent
   const etapeItems = PROJECT_STATUSES
-    .filter(s => etapeCounts[s.key] > 0 || ['EN_SOUMISSION', 'EN_ANALYSE', 'EN_FINANCEMENT'].includes(s.key))
+    .filter(s => (statutMap[s.key] ?? 0) > 0)
     .map(s => ({
-      label: s.label.toUpperCase(),
-      value: etapeCounts[s.key] || 0,
+      label: s.label,
+      value: statutMap[s.key] ?? 0,
       highlighted: ['EN_SUIVI', 'EN_REMBOURSEMENT', 'TERMINE'].includes(s.key),
     }))
 
-  // Les régions, agences et suivi terrain sont toujours mockées car on n'a pas les points d'API complets pour ça
-  const regionItems = MOCK_REGIONS_HBARS.map(s => ({
-    label: s.label,
-    value: s.nb,
-    meta: `${s.nb} · ${s.montant}`,
+  // Agences → HBarChart
+  const agenceItems = (agenceData || []).map(a => ({
+    label: a.agence || 'Inconnue',
+    value: typeof a.count === 'number' ? a.count : Number(a.count) || 0,
+    meta: `${a.count} · ${typeof a.montant === 'number'
+      ? new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(a.montant) + 'F'
+      : a.montant ?? '–'}`,
   }))
 
-  const agenceItems = MOCK_AGENCES_HBARS.map(s => ({
+  // Financement → tableau
+  const financementRows = (financementData || []).map(f => ({
+    annee: f.annee ?? '–',
+    region: f.region ?? f.agence ?? '–',
+    montant: typeof f.montant === 'number'
+      ? new Intl.NumberFormat('fr-FR').format(f.montant) + ' F'
+      : String(f.montant),
+  }))
+
+  // Régions → encore mockées (pas d'API région dans la doc)
+  const regionItems = MOCK_REGIONS_HBARS.map(s => ({
     label: s.label,
     value: s.nb,
     meta: `${s.nb} · ${s.montant}`,
@@ -47,5 +52,12 @@ export function useAdminCharts() {
     { label: "Non visités", value: MOCK_SUIVI_TERRAIN.nonVisites, color: '#5A6B80' },
   ]
 
-  return { etapeItems, regionItems, agenceItems, suiviStats, isLoading }
+  return {
+    etapeItems,
+    agenceItems,
+    regionItems,
+    financementRows,
+    suiviStats,
+    isLoading: l1 || l2 || l3,
+  }
 }

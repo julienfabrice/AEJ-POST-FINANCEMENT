@@ -2,18 +2,17 @@ import * as Icons from 'lucide-react'
 import { DashboardKpiCard } from '../../shared/components/DashboardKpiCard'
 import { useAdminKpis } from '../hooks/useAdminKpis'
 
-function formatAmount(value: number) {
-  return new Intl.NumberFormat('fr-FR').format(value)
-}
-
 export function AdminDashboardKpis() {
-  const { nbPromoteurs, nbProjets, montantDecaisse, nbDecaissements, tauxRemboursement } = useAdminKpis()
+  const {
+    nbPromoteurs, nbProjets, tauxRemboursement,
+    projetsFinances, emploisCreés, nbEntreprises, montantFinance,
+  } = useAdminKpis()
 
   const kpis = [
-    { id: 'enroles', label: "Promoteurs enrôlés", value: nbPromoteurs, desc: "Sur l'ensemble du territoire", icon: "Users", color: "#E7722B", bg: "#fef1e8" },
-    { id: 'actifs', label: "Micro-projets", value: nbProjets, desc: "Tous statuts confondus", icon: "FolderOpen", color: "#2D6BD4", bg: "#eff6ff" },
-    { id: 'decaisse', label: "Montant décaissé", value: formatAmount(montantDecaisse), suffix: "F", desc: `${nbDecaissements} décaissements`, icon: "Banknote", color: "#20A83A", bg: "#ebf8ee" },
-    { id: 'rembourse', label: "Taux de remboursement", value: `${tauxRemboursement}%`, desc: "Recouvrement national", icon: "TrendingUp", color: "#8a6503", bg: "#fef3c7" },
+    { id: 'promoteurs', label: "Promoteurs enrôlés", value: nbPromoteurs, desc: "Total inscrits", icon: "Users", color: "#E7722B", bg: "#fef1e8" },
+    { id: 'projets', label: "Micro-projets", value: nbProjets, desc: `${projetsFinances} financés`, icon: "FolderOpen", color: "#2D6BD4", bg: "#eff6ff" },
+    { id: 'finance', label: "Montant financé", value: montantFinance, suffix: "F", desc: `${nbEntreprises} entreprises`, icon: "Banknote", color: "#20A83A", bg: "#ebf8ee" },
+    { id: 'rembourse', label: "Taux de recouvrement", value: `${tauxRemboursement}%`, desc: `${emploisCreés} emplois créés`, icon: "TrendingUp", color: "#8a6503", bg: "#fef3c7" },
   ]
 
   return (

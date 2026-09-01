@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/sheet'
 import { MOCK_PLANS, type MockPlan, type MockLignePlan } from '@/mock/espacePartenaireFinancier.mock'
 import { StatusBadge, planStatutBadge, ligneStatutBadge } from '../components/StatusBadge'
-import { money } from '../utils/money'
+import { money } from "@/helpers/money"
 
 // ---------- Chaîne de validation ------------------------------------------
 

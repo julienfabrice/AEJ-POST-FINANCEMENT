@@ -1,4 +1,141 @@
 /**
+ * AGRÉGATS DE TABLEAU DE BORD — `/dashboard/*`
+ * ============================================
+ * ⚠️ CE FICHIER PORTE DEUX JEUX DE TYPES, issus de la fusion de `amadou` dans
+ * `younouss` (PR #37). Les deux ont été écrits en parallèle sur les mêmes
+ * endpoints, avec des conventions de nommage différentes, et les deux sont
+ * UTILISÉS — aucun n'est mort, aucun n'est redondant :
+ *
+ *  • `Dashboard*` (PascalCase) — consommés par les écrans de tableau de bord
+ *    (`pages/Dashboard/{Admin,Agent,Partner}Dashboard/hooks/*`).
+ *  • `*_T` (UPPER_SNAKE) — consommés par le moteur de rapports
+ *    (`pages/Rapports/hooks/useRapportData.ts`).
+ *
+ * Aucune collision de noms entre les deux (vérifié à la fusion), d'où leur
+ * coexistence sans arbitrage. Une unification ultérieure est possible mais
+ * n'a pas été faite ici : elle toucherait les deux familles d'écrans à la
+ * fois, ce qui n'a pas sa place dans une résolution de conflit.
+ */
+
+// ─── Dashboard — Agences ──────────────────────────────────────────────────────
+
+export interface DashboardAgencesKpis {
+  nombre_agences: number
+  nombre_projets: number
+  nombre_promoteurs: number
+  montant_financé: string
+  montant_décaissé: number
+  emplois_créés: number
+}
+
+export interface DashboardProjetStatut {
+  statut: string
+  count: number
+}
+
+export interface DashboardProjetAgence {
+  agence: string
+  count: number
+  montant: string | number
+}
+
+export interface DashboardFinancementAgence {
+  agence: string
+  annee?: string | number
+  region?: string
+  montant: string | number
+}
+
+// ─── Dashboard — Commun ───────────────────────────────────────────────────────
+
+export interface DashboardClassementItem {
+  rang: number
+  label: string
+  value: number | string
+}
+
+export interface DashboardAlerte {
+  id: string | number
+  type: string
+  message: string
+  niveau?: string
+  created_at?: string
+}
+
+// ─── Dashboard — Partenaires ──────────────────────────────────────────────────
+
+export interface DashboardPartenairesKpis {
+  nombre_partenaires: number
+  projets_finances: number
+  montant_accorde: string
+  montant_decaisse: number
+  encours: number
+  taux_recouvrement: number
+}
+
+export interface DashboardPortefeuilleItem {
+  partenaire?: string
+  dispositif?: string
+  statut?: string
+  montant?: string | number
+  count?: number
+}
+
+export interface DashboardEtatFinancement {
+  statut: string
+  count: number
+  montant?: string | number
+}
+
+export interface DashboardEvolutionRemboursement {
+  periode: string
+  montant_du: number | string
+  montant_paye: number | string
+  taux?: number
+}
+
+// ─── Dashboard — Entreprises ──────────────────────────────────────────────────
+
+export interface DashboardEntreprisesKpis {
+  nombre_entreprises: number
+  emplois_crees: number
+  emplois_femmes?: number
+  emplois_jeunes?: number
+}
+
+export interface DashboardEmploisSecteur {
+  secteur: string | null
+  nombre_emplois: number
+}
+
+export interface DashboardTypeEmploi {
+  type_emploi: string | null
+  nombre: number
+}
+
+export interface DashboardTopRecruteuse {
+  id: number
+  raison_sociale: string | null
+  sigle: string | null
+  nombre_emplois: number
+}
+
+export interface DashboardEntrepriseRegion {
+  region: string | null
+  nombre_entreprises: number
+}
+
+export interface DashboardSecteur {
+  secteur: string
+  count: number
+  montant?: string | number
+}
+
+/* ================================================================== *
+ * Types du moteur de RAPPORTS (branche amadou)                       *
+ * ================================================================== */
+
+/**
  * TYPES DES ENDPOINTS D'AGRÉGATION `/dashboard/*`
  * ================================================
  * Calqués sur les réponses LIVE relevées le 30/08/2026 sur

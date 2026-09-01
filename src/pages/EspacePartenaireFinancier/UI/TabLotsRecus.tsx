@@ -8,7 +8,7 @@ import {
   type MockDossier,
 } from '@/mock/espacePartenaireFinancier.mock'
 import { StatusBadge, lotStatutBadge, approbationBadge } from '../components/StatusBadge'
-import { money } from '../utils/money'
+import { money } from "@/helpers/money"
 
 // ---------- Ligne dossier --------------------------------------------------
 

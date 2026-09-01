@@ -1,6 +1,23 @@
 import { useQuery } from '@tanstack/react-query'
 import { axiosInstance } from '@/constants/axiosInstance'
 import type {
+  DashboardAgencesKpis,
+  DashboardProjetStatut,
+  DashboardProjetAgence,
+  DashboardFinancementAgence,
+  DashboardClassementItem,
+  DashboardAlerte,
+  DashboardPartenairesKpis,
+  DashboardPortefeuilleItem,
+  DashboardEtatFinancement,
+  DashboardEvolutionRemboursement,
+  DashboardEntreprisesKpis,
+  DashboardEmploisSecteur,
+  DashboardTypeEmploi,
+  DashboardTopRecruteuse,
+  DashboardSecteur,
+} from '@/types'
+import type {
   CLASSEMENT_AGENCE_T,
   CLASSEMENT_ENTREPRISE_T,
   DASHBOARD_AGENCES_ALERTES_T,
@@ -20,6 +37,226 @@ import type {
   TOP_RECRUTEUSE_T,
   TYPES_EMPLOIS_T,
 } from '@/types/dashboard.types'
+
+/**
+ * SERVICES D'AGRÉGATION `/dashboard/*`
+ * ====================================
+ * ⚠️ CE FICHIER PORTE DEUX JEUX DE SERVICES, issus de la fusion de `amadou`
+ * dans `younouss` (PR #37). Les deux interrogent les mêmes endpoints mais
+ * servent des écrans différents, et les DEUX sont utilisés :
+ *
+ *  • `dashboardAgencesServices` / `dashboardPartenairesServices` /
+ *    `dashboardEntreprisesServices` — consommés par les tableaux de bord
+ *    (`pages/Dashboard/{Admin,Agent,Partner}Dashboard/hooks/*`).
+ *  • `dashboardServices` (+ `dashboardKeys`) — consommé par le moteur de
+ *    rapports (`pages/Rapports/hooks/useRapportData.ts`). Il se distingue par
+ *    un `staleTime` explicite, des clés de cache paramétrables et le passage
+ *    des seuls filtres réellement honorés par l'API.
+ *
+ * Aucune collision de noms entre les deux (vérifié à la fusion). Les unifier
+ * demanderait de réécrire les six hooks de tableau de bord ET le moteur de
+ * rapports : hors périmètre d'une résolution de conflit.
+ */
+
+
+export const dashboardAgencesServices = {
+  useKpis: () =>
+    useQuery({
+      queryKey: ['dashboard', 'agences', 'kpis'],
+      queryFn: async () => {
+        const { data } = await axiosInstance.get<{ data: DashboardAgencesKpis }>('/dashboard/agences/kpis')
+        return data.data
+      },
+    }),
+
+  useProjetsStatut: () =>
+    useQuery({
+      queryKey: ['dashboard', 'agences', 'projets-statut'],
+      queryFn: async () => {
+        const { data } = await axiosInstance.get<{ data: DashboardProjetStatut[] }>('/dashboard/agences/projets-statut')
+        return data.data
+      },
+    }),
+
+  useProjetsAgence: () =>
+    useQuery({
+      queryKey: ['dashboard', 'agences', 'projets-agence'],
+      queryFn: async () => {
+        const { data } = await axiosInstance.get<{ data: DashboardProjetAgence[] }>('/dashboard/agences/projets-agence')
+        return data.data
+      },
+    }),
+
+  useFinancementAgence: () =>
+    useQuery({
+      queryKey: ['dashboard', 'agences', 'financement-agence'],
+      queryFn: async () => {
+        const { data } = await axiosInstance.get<{ data: DashboardFinancementAgence[] }>('/dashboard/agences/financement-agence')
+        return data.data
+      },
+    }),
+
+  useClassement: () =>
+    useQuery({
+      queryKey: ['dashboard', 'agences', 'classement'],
+      queryFn: async () => {
+        const { data } = await axiosInstance.get<{ data: DashboardClassementItem[] }>('/dashboard/agences/classement')
+        return data.data
+      },
+    }),
+
+  useAlertes: () =>
+    useQuery({
+      queryKey: ['dashboard', 'agences', 'alertes'],
+      queryFn: async () => {
+        const { data } = await axiosInstance.get<{ data: DashboardAlerte[] }>('/dashboard/agences/alertes')
+        return data.data
+      },
+    }),
+}
+
+export const dashboardPartenairesServices = {
+  useKpis: () =>
+    useQuery({
+      queryKey: ['dashboard', 'partenaires', 'kpis'],
+      queryFn: async () => {
+        const { data } = await axiosInstance.get<{ data: DashboardPartenairesKpis }>('/dashboard/partenaires/kpis')
+        return data.data
+      },
+    }),
+
+  usePortefeuille: () =>
+    useQuery({
+      queryKey: ['dashboard', 'partenaires', 'portefeuille'],
+      queryFn: async () => {
+        const { data } = await axiosInstance.get<{ data: DashboardPortefeuilleItem[] }>('/dashboard/partenaires/portefeuille-partenaire')
+        return data.data
+      },
+    }),
+
+  useAccordeVsDecaisse: () =>
+    useQuery({
+      queryKey: ['dashboard', 'partenaires', 'accorde-vs-decaisse'],
+      queryFn: async () => {
+        const { data } = await axiosInstance.get<{ data: unknown }>('/dashboard/partenaires/accorde-vs-decaisse')
+        return data.data
+      },
+    }),
+
+  useEtatFinancements: () =>
+    useQuery({
+      queryKey: ['dashboard', 'partenaires', 'etat-financements'],
+      queryFn: async () => {
+        const { data } = await axiosInstance.get<{ data: DashboardEtatFinancement[] }>('/dashboard/partenaires/etat-financements')
+        return data.data
+      },
+    }),
+
+  useEvolutionRemboursements: () =>
+    useQuery({
+      queryKey: ['dashboard', 'partenaires', 'evolution-remboursements'],
+      queryFn: async () => {
+        const { data } = await axiosInstance.get<{ data: DashboardEvolutionRemboursement[] }>('/dashboard/partenaires/evolution-remboursements')
+        return data.data
+      },
+    }),
+
+  useClassement: () =>
+    useQuery({
+      queryKey: ['dashboard', 'partenaires', 'classement'],
+      queryFn: async () => {
+        const { data } = await axiosInstance.get<{ data: DashboardClassementItem[] }>('/dashboard/partenaires/classement')
+        return data.data
+      },
+    }),
+
+  useAlertes: () =>
+    useQuery({
+      queryKey: ['dashboard', 'partenaires', 'alertes'],
+      queryFn: async () => {
+        const { data } = await axiosInstance.get<{ data: DashboardAlerte[] }>('/dashboard/partenaires/alertes')
+        return data.data
+      },
+    }),
+}
+
+export const dashboardEntreprisesServices = {
+  useKpis: () =>
+    useQuery({
+      queryKey: ['dashboard', 'entreprises', 'kpis'],
+      queryFn: async () => {
+        const { data } = await axiosInstance.get<{ data: DashboardEntreprisesKpis }>('/dashboard/entreprises/kpis')
+        return data.data
+      },
+    }),
+
+  useRegion: () =>
+    useQuery({
+      queryKey: ['dashboard', 'entreprises', 'region'],
+      queryFn: async () => {
+        const { data } = await axiosInstance.get<{ data: { region: string | null; nombre_entreprises: number }[] }>('/dashboard/entreprises/region')
+        return data.data
+      },
+    }),
+
+  useEmploisSecteur: () =>
+    useQuery({
+      queryKey: ['dashboard', 'entreprises', 'emplois-secteur'],
+      queryFn: async () => {
+        const { data } = await axiosInstance.get<{ data: DashboardEmploisSecteur[] }>('/dashboard/entreprises/emplois-secteur')
+        return data.data
+      },
+    }),
+
+  useTypesEmplois: () =>
+    useQuery({
+      queryKey: ['dashboard', 'entreprises', 'types-emplois'],
+      queryFn: async () => {
+        const { data } = await axiosInstance.get<{ data: DashboardTypeEmploi[] }>('/dashboard/entreprises/types-emplois')
+        return data.data
+      },
+    }),
+
+  useTopRecruteuses: () =>
+    useQuery({
+      queryKey: ['dashboard', 'entreprises', 'top-recruteuses'],
+      queryFn: async () => {
+        const { data } = await axiosInstance.get<{ data: DashboardTopRecruteuse[] }>('/dashboard/entreprises/top-recruteuses')
+        return data.data
+      },
+    }),
+
+  useSecteur: () =>
+    useQuery({
+      queryKey: ['dashboard', 'entreprises', 'secteur'],
+      queryFn: async () => {
+        const { data } = await axiosInstance.get<{ data: DashboardSecteur[] }>('/dashboard/entreprises/secteur')
+        return data.data
+      },
+    }),
+
+  useClassement: () =>
+    useQuery({
+      queryKey: ['dashboard', 'entreprises', 'classement'],
+      queryFn: async () => {
+        const { data } = await axiosInstance.get<{ data: DashboardClassementItem[] }>('/dashboard/entreprises/classement')
+        return data.data
+      },
+    }),
+
+  useAlertes: () =>
+    useQuery({
+      queryKey: ['dashboard', 'entreprises', 'alertes'],
+      queryFn: async () => {
+        const { data } = await axiosInstance.get<{ data: DashboardAlerte[] }>('/dashboard/entreprises/alertes')
+        return data.data
+      },
+    }),
+}
+
+/* ================================================================== *
+ * Services du moteur de RAPPORTS (branche amadou)                    *
+ * ================================================================== */
 
 /**
  * SERVICES D'AGRÉGATION `/dashboard/*`

@@ -4,6 +4,19 @@ import type { PERSONNEL_T } from '@/types/personnels.types'
 /** Espace applicatif : sélectionne l'arbre de routes (`_agent` vs `_benef`). */
 export type USER_SPACE_T = 'agence' | 'organisme' | 'entreprise'
 
+/** Codes de rôle alignés sur la maquette */
+export type ROLE_CODE_T =
+  | 'ADMIN-1'    // admin national
+  | 'CIP'        // conseiller insertion pro (cloisonné agence)
+  | 'CAR'        // chef agence régionale (cloisonné agence)
+  | 'DPF'        | 'DIC'  | 'DESSE'
+  | 'SDRF'       | 'CSFM' | 'CSRGC'
+  | 'AGENT_DIR'  | 'SDEF' | 'SDPF'
+  | 'DAICG'      | 'AF'   | 'COMITE'
+  | 'PF'         // partenaire financier (cloisonné organisme)
+  | 'BENEF'      // bénéficiaire
+
+
 /** voir · créer · éditer · supprimer */
 export type PERMISSION_ACTION_T = 'v' | 'c' | 'e' | 'd'
 

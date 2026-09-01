@@ -8,16 +8,20 @@
  * comme un écart de chiffre.
  *
  * ── Réutilisation, pas réinvention ──
- * Le dépôt possède déjà deux formateurs officiels, on les branche ici :
- *   • `formatNumber` (src/helpers/numbers.ts) — groupage des milliers fr-FR ;
- *   • `money`        (src/pages/EspacePartenaireFinancier/utils/money.ts) —
- *     `Intl.NumberFormat('fr-FR') + ' F'`, c'est-à-dire EXACTEMENT le
- *     `money = n => fmt(Math.round(n)) + ' F'` de la maquette (l. 4606).
- * L'import inter-feature est assumé : dupliquer une fonction de trois lignes
- * ferait diverger deux écrans qui doivent afficher le même montant.
+ * Le groupage des milliers fr-FR vient de `formatNumber` (src/helpers/numbers.ts),
+ * formateur officiel du dépôt.
+ *
+ * ⚠️ Le suffixe monétaire, lui, était emprunté à
+ * `EspacePartenaireFinancier/utils/money.ts`. Ce fichier a été SUPPRIMÉ sur la
+ * branche `younouss` (commit « centralize number formatting »), et l'import
+ * inter-feature est tombé à la fusion (PR #37). Les trois lignes sont donc
+ * reprises ici, sur `formatNumber` plutôt que sur `Intl.NumberFormat` : c'est
+ * le même rendu fr-FR, mais aligné sur la centralisation voulue par cette
+ * refonte plutôt que sur un second chemin de formatage parallèle.
+ * Le résultat reste `money = n => fmt(Math.round(n)) + ' F'` de la maquette
+ * (aej-demo.html l. 4606).
  */
 import { formatNumber } from '@/helpers/numbers'
-import { money } from '@/pages/EspacePartenaireFinancier/utils/money'
 
 /**
  * Dénombrement affichable.
@@ -43,7 +47,7 @@ export const formatEntier = (valeur: number): string => formatNumber(Math.round(
  * si l'arité diffère à l'appel. L'enveloppe LOCALE porte donc un nom propre ;
  * le helper partagé, lui, n'est pas touché : d'autres écrans en dépendent.
  */
-export const montantF = (valeur: number): string => money(Math.round(valeur))
+export const montantF = (valeur: number): string => `${formatNumber(Math.round(valeur))} F`
 
 /**
  * Format « X.XXM » de la maquette : deux décimales, point décimal anglo-saxon,

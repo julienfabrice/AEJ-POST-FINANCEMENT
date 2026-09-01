@@ -2,7 +2,7 @@ import { TrendingDown, Flag } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { MOCK_REMBOURSEMENTS } from '@/mock/espacePartenaireFinancier.mock'
 import { StatusBadge, rembStatutBadge } from '../components/StatusBadge'
-import { money } from '../utils/money'
+import { money } from "@/helpers/money"
 
 export function TabRemboursements() {
   return (

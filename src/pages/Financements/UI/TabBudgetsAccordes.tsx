@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { StatusBadge } from '../../EspacePartenaireFinancier/components/StatusBadge'
-import { money } from '../../EspacePartenaireFinancier/utils/money'
+import { money } from "@/helpers/money"
 import { budgetServices } from '@/services/budgets.services'
 import { refLabel } from '@/types/referentials.types'
 import { BudgetEditModal } from '../components/BudgetEditModal'

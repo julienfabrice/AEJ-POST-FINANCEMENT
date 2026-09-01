@@ -458,7 +458,7 @@ export const MOCK_REMBOURSEMENTS: MockRemboursement[] = [
 
 // ---------- Garanties appelées -------------------------------------------
 
-export const MOCK_GARANTIES: MockGarantie[] = [
+export const MOCK_PF_GARANTIES: MockGarantie[] = [
   {
     id: 'gar-001',
     code: 'PRJ-2025-0041',

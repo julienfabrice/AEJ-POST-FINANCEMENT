@@ -12,7 +12,18 @@ const STATUS_MAP: Record<string, { label: string; variant: 'default' | 'secondar
 
 export const StatusCellRenderer = (params: ICellRendererParams) => {
   if (!params.value) return null
-  const s = STATUS_MAP[params.value] || STATUS_MAP.SOUMISSION
+  const s = STATUS_MAP[params.value]
+  
+  if (!s) {
+    return (
+      <div className="flex items-center h-full">
+        <Badge variant="outline" className="text-xs font-medium">
+          {params.value}
+        </Badge>
+      </div>
+    )
+  }
+
   return (
     <div className="flex items-center h-full">
       <Badge variant={s.variant} className="text-xs">

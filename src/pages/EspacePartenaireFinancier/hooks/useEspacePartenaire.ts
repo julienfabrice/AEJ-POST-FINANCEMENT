@@ -3,7 +3,7 @@ import {
   MOCK_LOTS,
   MOCK_DOSSIERS_APPROUVES,
   MOCK_DOSSIERS_REJETES,
-  MOCK_DECAISSEMENTS, MOCK_GARANTIES,
+  MOCK_DECAISSEMENTS, MOCK_PF_GARANTIES,
   MOCK_PLANS
 } from '@/mock/espacePartenaireFinancier.mock'
 
@@ -29,7 +29,7 @@ export function useEspacePartenaire() {
       { id: 'plans', label: 'Plans de décaissement', count: plansEnValidation },
       { id: 'decaissements', label: 'Décaissements', count: MOCK_DECAISSEMENTS.length },
       { id: 'remboursements', label: 'Remboursements' },
-      { id: 'garanties', label: 'Rappels de garantie', count: MOCK_GARANTIES.length },
+      { id: 'garanties', label: 'Rappels de garantie', count: MOCK_PF_GARANTIES.length },
     ]
   }, [])
 

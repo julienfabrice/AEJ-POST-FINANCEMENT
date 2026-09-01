@@ -1,6 +1,6 @@
 import { Shield, Flag } from 'lucide-react'
 import { Card } from '@/components/ui/card'
-import { MOCK_GARANTIES } from '@/mock/espacePartenaireFinancier.mock'
+import { MOCK_PF_GARANTIES } from '@/mock/espacePartenaireFinancier.mock'
 import { StatusBadge } from '../components/StatusBadge'
 import { money } from "@/helpers/money"
 
@@ -11,11 +11,11 @@ export function TabGaranties() {
       <div className="flex items-center gap-3 px-[18px] py-[15px] border-b border-[#EEF2F7]">
         <h3 className="text-[14.5px] font-bold text-[#131C29]">Rappels de garantie</h3>
         <div className="flex-1" />
-        <StatusBadge label={String(MOCK_GARANTIES.length)} variant="rd" />
+        <StatusBadge label={String(MOCK_PF_GARANTIES.length)} variant="rd" />
       </div>
 
       <div className="px-[18px] py-[16px]">
-        {MOCK_GARANTIES.length === 0 ? (
+        {MOCK_PF_GARANTIES.length === 0 ? (
           <div className="text-center py-10 text-[#5A6B80]">
             <Shield size={40} className="mx-auto mb-3 opacity-30" />
             <b className="block text-[#131C29] text-[15px] mb-1 font-['Archivo']">
@@ -23,7 +23,7 @@ export function TabGaranties() {
             </b>
           </div>
         ) : (
-          MOCK_GARANTIES.map((g) => (
+          MOCK_PF_GARANTIES.map((g) => (
             <div
               key={g.id}
               className="flex items-start gap-3 border border-[#FBE7E5] rounded-[8px] px-[14px] py-3 bg-[#FBE7E5]/30 mb-2"

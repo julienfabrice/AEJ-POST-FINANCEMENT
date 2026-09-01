@@ -29,14 +29,14 @@ export function EspacePartenaireFinancierPage() {
                   !bg-transparent !shadow-none after:hidden
                   px-4 py-2.5 text-[13.5px] font-semibold text-slate-500
                   border-t-0 border-l-0 border-r-0 border-b-[2.5px] border-transparent
-                  data-[state=active]:text-[#E7722B] data-[state=active]:!border-[#E7722B]
+                  data-[state=active]:text-[#C85E18] data-[state=active]:!border-[#E7722B]
                   hover:text-[#131C29] whitespace-nowrap -mb-[1px] transition-colors rounded-none
-                  flex items-center gap-2
+                  flex items-center gap-2 group
                 "
               >
                 {tab.label}
                 {tab.count !== undefined && tab.count > 0 && (
-                  <span className="bg-[rgba(255,255,255,.1)] text-[#5A6B80] data-[state=active]:bg-[#FBEADE] data-[state=active]:text-[#C85E18] text-[11px] font-bold px-1.5 py-0.5 rounded-full bg-slate-100 min-w-[20px] text-center">
+                  <span className="text-[#5A6B80] group-data-[state=active]:bg-[#FBEADE] group-data-[state=active]:text-[#C85E18] text-[11px] font-bold px-1.5 py-0.5 rounded-full bg-[#E5EAF1] min-w-[20px] text-center ml-[5px]">
                     {tab.count}
                   </span>
                 )}

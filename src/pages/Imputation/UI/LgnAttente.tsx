@@ -1,13 +1,4 @@
-import { useState } from 'react'
 import { Folder } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { money } from "@/helpers/money"
 import { refLabel } from '@/types/referentials.types'
 import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
@@ -16,14 +7,9 @@ import type { AGENCE_REGIONALE_T } from '@/types'
 interface LgnAttenteProps {
   d: MICRO_PROJET_T
   agences: AGENCE_REGIONALE_T[]
-  onImputer: (id: number, agId: number) => void
-  onDirection: (id: number) => void
-  isImputing?: boolean
 }
 
-export function LgnAttente({ d, agences, onImputer, onDirection, isImputing }: LgnAttenteProps) {
-  const [agId, setAgId] = useState<string>(agences.length > 0 ? String(agences[0].id) : '')
-
+export function LgnAttente({ d }: LgnAttenteProps) {
   const promoteurName = d.promoteur ? `${d.promoteur.nom} ${d.promoteur.prenom}` : '—'
   const communeLabel = d.commune ? refLabel(d.commune) : null
   const montant = d.montant_total ? Number(d.montant_total) : 0
@@ -46,40 +32,6 @@ export function LgnAttente({ d, agences, onImputer, onDirection, isImputing }: L
             {d.dispositif && ` · ${refLabel(d.dispositif)}`}
           </span>
         </div>
-      </div>
-
-      <div className="flex flex-wrap items-center gap-2">
-        <Select value={agId} onValueChange={setAgId}>
-          <SelectTrigger className="w-[210px] h-8 text-[12.5px] border-[#E5EAF1] bg-slate-50">
-            <SelectValue placeholder="Choisir une agence" />
-          </SelectTrigger>
-          <SelectContent>
-            {agences.map((a) => (
-              <SelectItem key={a.id} value={String(a.id)} className="text-[12.5px]">
-                {a.nom}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Button
-          size="sm"
-          className="h-8 text-[12px] bg-[#E7722B] hover:bg-[#C85E18] text-white"
-          disabled={!agId || isImputing}
-          onClick={() => onImputer(d.id, Number(agId))}
-        >
-          Imputer
-        </Button>
-
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-8 text-[12px] border-[#E5EAF1] text-[#131C29]"
-          disabled={isImputing}
-          onClick={() => onDirection(d.id)}
-        >
-          Conserver à la Direction
-        </Button>
       </div>
     </div>
   )

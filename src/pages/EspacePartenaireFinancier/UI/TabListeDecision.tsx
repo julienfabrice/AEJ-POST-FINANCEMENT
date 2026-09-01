@@ -169,8 +169,10 @@ export function TabListeDecision({ type }: Props) {
                 </span>
               )}
 
+
+              <StatusBadge label={d.stade_projet} variant={badge.variant} />
               {/* badge */}
-              <StatusBadge label={d.statut} variant={badge.variant} />
+              <StatusBadge label={d.type_projet} variant={badge.variant} />
             </div>
           )
         })}

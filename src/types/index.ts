@@ -348,6 +348,7 @@ export interface DECAISSEMENT_T {
   numero_compte?: string | null
   contact?: string | null
   agence_id?: number | null
+  agence?: AGENCE_REGIONALE_T | null
   montant_decaisse?: number
   date_decaissement?: string | null
   reference_banque?: string | null

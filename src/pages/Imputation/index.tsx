@@ -6,7 +6,7 @@ import { LgnFait } from './UI/LgnFait'
 import { useImputation } from './hooks/useImputation'
 
 export function ImputationPage() {
-  const { attente, faits, agences, isLoading, isImputing, handleImputer, handleDirection } = useImputation()
+  const { attente, faits, agences, isLoading } = useImputation()
 
   if (isLoading) {
     return (
@@ -38,9 +38,6 @@ export function ImputationPage() {
                 key={d.id}
                 d={d}
                 agences={agences}
-                onImputer={handleImputer}
-                onDirection={handleDirection}
-                isImputing={isImputing}
               />
             ))
           )}

@@ -45,11 +45,7 @@ export function TabDecaissements() {
           <thead>
             <tr>
               {[
-                'N° Ligne',
-                'Objet / Libellé',
-                'Prestataire / Bénéficiaire',
-                'Mode',
-                'Compte / Contact',
+                'AGENCE',
                 'Montant',
                 'Date',
                 'Statut',
@@ -71,36 +67,11 @@ export function TabDecaissements() {
 
               return (
                 <tr key={d.id} className="hover:bg-[#fafbfe] transition-colors">
-                  {/* Numéro de ligne */}
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7]">
-                    <span className="w-[26px] h-[26px] rounded-[8px] bg-[#131C29] text-white grid place-items-center text-[12px] font-bold inline-grid">
-                      {d.numero_ligne || d.id}
-                    </span>
-                  </td>
-
                   {/* Objet de la ligne */}
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] font-semibold text-[#131C29]">
-                    {d.object_ligne || (d.plan_decaissement ? `Plan #${d.plan_decaissement_id}` : `Décaissement #${d.id}`)}
+                    {d.agence?.nom || '—'}
                   </td>
 
-                  {/* Prestataire */}
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">
-                    {d.intitule_prestataire || '—'}
-                  </td>
-
-                  {/* Mode de décaissement */}
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[12px]">
-                    <span className="bg-[#EEF2F7] text-[#5A6B80] px-2 py-0.5 rounded font-mono font-medium">
-                      {d.mode_decaisse || '—'}
-                    </span>
-                  </td>
-
-                  {/* Numéro de compte / contact */}
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[12px] text-[#5A6B80]">
-                    {d.numero_compte && <span className="block font-mono text-[#131C29]">{d.numero_compte}</span>}
-                    {d.contact && <span>{d.contact}</span>}
-                    {!d.numero_compte && !d.contact && '—'}
-                  </td>
 
                   {/* Montant */}
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] font-mono font-semibold text-[#131C29] whitespace-nowrap">

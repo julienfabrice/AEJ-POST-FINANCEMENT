@@ -7,15 +7,7 @@ export const MOCK_SITUATION_GLOBALE = {
   tauxCouverture: 38
 }
 
-export const MOCK_ETAPES_BARS = [
-  { label: "SOUMISSION", value: 3 },
-  { label: "ANALYSE", value: 4 },
-  { label: "CERTIFICATION", value: 4 },
-  { label: "FINANCEMENT", value: 2 },
-  { label: "DECAISSEMENT", value: 4 },
-  { label: "SUIVI", value: 3 },
-  { label: "REMBOURSEMENT", value: 5 }
-]
+
 
 export const MOCK_REGIONS_HBARS = [
   { label: "Abidjan", nb: 8, montant: "25.5M" },
@@ -55,15 +47,7 @@ export const MOCK_AGENT_SITUATION_GLOBALE = {
   tauxCouverture: 60
 }
 
-export const MOCK_AGENT_ETAPES_BARS = [
-  { label: "SOUMISSION", value: 1 },
-  { label: "ANALYSE", value: 2 },
-  { label: "CERTIFICATION", value: 1 },
-  { label: "FINANCEMENT", value: 1 },
-  { label: "DECAISSEMENT", value: 1 },
-  { label: "SUIVI", value: 1 },
-  { label: "REMBOURSEMENT", value: 1 }
-]
+
 
 export const MOCK_AGENT_SUIVI_TERRAIN = {
   bonneVoie: 3,
@@ -107,11 +91,7 @@ export const MOCK_PF_LOTS_RECENTS = [
   { ref: "LOT-2025-001", dispositif: "AGR", date: "2025-01-10", statut: "VALIDE", montant: "12 500 000 F", dossiers: 8 },
 ]
 
-export const MOCK_PF_ETAPES = [
-  { label: "DECAISSEMENT", value: 3 },
-  { label: "SUIVI", value: 5 },
-  { label: "REMBOURSEMENT", value: 7 }
-]
+
 
 
 

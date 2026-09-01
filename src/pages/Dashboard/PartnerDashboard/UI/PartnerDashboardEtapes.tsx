@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { DashboardBarChart } from '../../shared/components/DashboardBarChart'
-import { MOCK_PF_ETAPES } from '@/mock'
+import { usePartnerEtapes } from '../hooks/usePartnerEtapes'
 
 export function PartnerDashboardEtapes() {
-  const items = MOCK_PF_ETAPES.map(s => ({ label: s.label, value: s.value }))
+  const { etapeItems, isLoading } = usePartnerEtapes()
 
   return (
     <Card>
@@ -11,7 +11,11 @@ export function PartnerDashboardEtapes() {
         <CardTitle className="text-sm">Projets par étape</CardTitle>
       </CardHeader>
       <CardContent>
-        <DashboardBarChart items={items} height="180px" />
+        {isLoading ? (
+          <div className="h-[180px] flex items-center justify-center text-sm text-gray-500">Chargement...</div>
+        ) : (
+          <DashboardBarChart items={etapeItems} height="180px" />
+        )}
       </CardContent>
     </Card>
   )

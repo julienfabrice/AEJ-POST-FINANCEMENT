@@ -36,6 +36,7 @@ export const ROUTES = {
   // Pilotage (Agent)
   HOME: '/dashboard',
   DASHBOARD: '/dashboard',
+  GUICHETS_HOME: '/guichets',
   DISPOSITIFS: '/dispositifs',
   // Circuit de financement
   FINANCEMENTS: '/financements',
@@ -82,7 +83,7 @@ export interface NavItem {
 
 export const AGENT_NAV_ITEMS: NavItem[] = [
   // PILOTAGE
-  { key: 'guichets_home', label: 'Guichets', path: ROUTES.HOME, icon: Building2, group: 'PILOTAGE' }, // module: MODULES.GUICHETS
+  { key: 'guichets_home', label: 'Guichets', path: ROUTES.GUICHETS_HOME, icon: Building2, group: 'PILOTAGE' }, // module: MODULES.GUICHETS
   { key: 'dashboard', label: 'Tableau de bord', path: ROUTES.DASHBOARD, icon: LayoutDashboard, group: 'PILOTAGE' },
   { key: 'dispositifs', label: 'Procédures', path: ROUTES.DISPOSITIFS, icon: GitBranch, group: 'PILOTAGE' }, //, module: MODULES.DISPOSITIFS
   // CIRCUIT DE FINANCEMENT
@@ -130,6 +131,7 @@ export const PAGE_TITLES: Partial<Record<AppRoute, string>> = {
   [ROUTES.LOGIN]: 'Connexion',
   [ROUTES.COMPTE]: 'Mon compte',
   [ROUTES.DASHBOARD]: 'Tableau de bord',
+  [ROUTES.GUICHETS_HOME]: 'Guichets',
   [ROUTES.DISPOSITIFS]: 'Procédures',
   [ROUTES.FINANCEMENTS]: 'Financements',
   [ROUTES.REMBOURSEMENTS]: 'Remboursements',

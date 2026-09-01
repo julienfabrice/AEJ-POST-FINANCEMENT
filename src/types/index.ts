@@ -144,7 +144,7 @@ export interface GUICHET_T {
 }
 
 // Référentiel en LECTURE SEULE : synchronisé depuis le portail national
-// agenceemploijeunes.ci (endpoint /list-agence-regionale). Pas de création
+// agenceemploijeunes.ci, exposées côté AEJ via /aej/agences-regionales. Pas de création
 // possible depuis ce module.
 export interface AGENCE_REGIONALE_T {
   id: number

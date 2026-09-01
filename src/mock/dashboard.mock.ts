@@ -1,9 +1,3 @@
-export const MOCK_ADMIN_KPIS = [
-  { id: 'enroles', label: "Promoteurs enrôlés", value: "25", desc: "+2 ce mois", up: true, icon: "Users", color: "#E7722B", bg: "#fef1e8" },
-  { id: 'actifs', label: "Micro-projets actifs", value: "25", desc: "10 en instruction", up: true, icon: "FolderOpen", color: "#2D6BD4", bg: "#eff6ff" },
-  { id: 'decaisse', label: "Montant décaissé", value: "48 500 000", suffix: "F", desc: "4 décaissements", up: true, icon: "Banknote", color: "#20A83A", bg: "#ebf8ee" },
-  { id: 'rembourse', label: "Taux de remboursement", value: "85%", desc: "1 impayé(s)", up: true, icon: "TrendingUp", color: "#8a6503", bg: "#fef3c7" }
-]
 
 export const MOCK_SITUATION_GLOBALE = {
   sollicite: "125 000 000",
@@ -51,12 +45,7 @@ export const MOCK_ANNEE_REGION = [
   { annee: "2024", region: "Bouaké", montant: "5 000 000 F" },
   { annee: "2024", region: "San-Pedro", montant: "4 000 000 F" }
 ]
-export const MOCK_AGENT_KPIS = [
-  { id: 'enroles', label: "Promoteurs enrôlés", value: "12", desc: "+1 ce mois", up: true, icon: "Users", color: "#E7722B", bg: "#fef1e8" },
-  { id: 'actifs', label: "Micro-projets actifs", value: "8", desc: "3 en instruction", up: true, icon: "FolderOpen", color: "#2D6BD4", bg: "#eff6ff" },
-  { id: 'decaisse', label: "Montant décaissé", value: "15 000 000", suffix: "F", desc: "2 décaissements", up: true, icon: "Banknote", color: "#20A83A", bg: "#ebf8ee" },
-  { id: 'rembourse', label: "Taux de remboursement", value: "90%", desc: "0 impayé(s)", up: true, icon: "TrendingUp", color: "#8a6503", bg: "#fef3c7" }
-]
+
 
 export const MOCK_AGENT_SITUATION_GLOBALE = {
   sollicite: "25 000 000",
@@ -110,12 +99,7 @@ export const MOCK_BENEF_TASKS = [
   { id: 'chart', titre: "Remplir votre fiche de suivi mensuel", desc: "Renseignez votre chiffre d'affaires et vos emplois", icon: 'chart', color: 'blue', route: 'benef_suivi' },
   { id: 'repay', titre: "Régler vos échéances impayées", desc: "1 échéance(s) en attente", icon: 'repay', color: 'red', route: 'benef_remb' },
 ]
-export const MOCK_PF_KPIS = [
-  { id: 'lots', label: "Lots transmis", value: "3", desc: "1 en cours", up: true, icon: "FolderOpen", color: "#E7722B", bg: "#fef1e8" },
-  { id: 'approuves', label: "Dossiers approuvés", value: "15", desc: "+5 ce mois", up: true, icon: "CheckCircle", color: "#2D6BD4", bg: "#eff6ff" },
-  { id: 'engage', label: "Montant engagé", value: "22 500 000", suffix: "F", desc: "Pour 15 dossiers", up: true, icon: "Banknote", color: "#20A83A", bg: "#ebf8ee" },
-  { id: 'rembourse', label: "Taux du portefeuille", value: "92%", desc: "1 impayé", up: true, icon: "TrendingUp", color: "#8a6503", bg: "#fef3c7" }
-]
+
 
 export const MOCK_PF_LOTS_RECENTS = [
   { ref: "LOT-2025-003", dispositif: "AGR", date: "2025-03-10", statut: "EN_COURS", montant: "10 000 000 F", dossiers: 5 },
@@ -129,21 +113,5 @@ export const MOCK_PF_ETAPES = [
   { label: "REMBOURSEMENT", value: 7 }
 ]
 
-export const MOCK_RECENT_PROJECTS = [
-  { ref: 'PRJ-2025-0041', promoteur: 'Kouamé Yao Brice', dispositif: 'AGR Classique', montant: '1 500 000', statut: 'FINANCEMENT', date: '14/01/2025' },
-  { ref: 'PRJ-2025-0038', promoteur: 'Diabaté Fatoumata', dispositif: 'MEPS', montant: '2 000 000', statut: 'ANALYSE', date: '13/01/2025' },
-  { ref: 'PRJ-2025-0035', promoteur: 'Koné Ibrahim', dispositif: 'AGR Classique', montant: '800 000', statut: 'DECAISSEMENT', date: '12/01/2025' },
-  { ref: 'PRJ-2025-0031', promoteur: 'Bamba Aminata', dispositif: 'MPE', montant: '3 500 000', statut: 'SOUMISSION', date: '10/01/2025' },
-  { ref: 'PRJ-2025-0028', promoteur: 'Ouattara Seydou', dispositif: 'MEPS', montant: '1 200 000', statut: 'CERTIFICATION', date: '09/01/2025' },
-  { ref: 'PRJ-2025-0025', promoteur: 'Touré Awa', dispositif: 'MPE', montant: '4 500 000', statut: 'SUIVI', date: '08/01/2025' },
-  { ref: 'PRJ-2025-0021', promoteur: 'Koffi Jean-Luc', dispositif: 'AGR Classique', montant: '950 000', statut: 'REMBOURSEMENT', date: '05/01/2025' },
-  { ref: 'PRJ-2025-0018', promoteur: 'Cissé Mariam', dispositif: 'MEPS', montant: '1 800 000', statut: 'ANALYSE', date: '04/01/2025' }
-]
-import { FolderOpen, Users, Banknote, TrendingUp } from 'lucide-react'
 
-export const MOCK_DASHBOARD_STATS = [
-  { label: 'Promoteurs enregistrés', value: '2 841', change: '+12%', icon: Users, color: '#E7722B' },
-  { label: 'Micro-projets actifs', value: '1 256', change: '+8%', icon: FolderOpen, color: '#20A83A' },
-  { label: 'Financements accordés', value: '874', change: '+5%', icon: Banknote, color: '#2D6BD4' },
-  { label: 'Taux de remboursement', value: '78,4 %', change: '+2,1 pts', icon: TrendingUp, color: '#E0A106' },
-]
+

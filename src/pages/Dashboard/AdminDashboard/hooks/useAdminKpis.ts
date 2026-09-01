@@ -1,11 +1,5 @@
 import { dashboardAgencesServices, dashboardPartenairesServices, dashboardEntreprisesServices } from '@/services/dashboard.services'
-
-function fmt(v: string | number | null | undefined): string {
-  if (v == null) return '0'
-  const n = typeof v === 'string' ? parseFloat(v) : v
-  if (isNaN(n)) return String(v)
-  return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n)
-}
+import { formatNumber } from '@/helpers/numbers'
 
 /**
  * KPIs Admin = combinaison des 3 endpoints Dashboard:
@@ -25,13 +19,13 @@ export function useAdminKpis() {
     nbPromoteurs: agenceData?.nombre_promoteurs ?? 0,
     nbProjets: agenceData?.nombre_projets ?? 0,
     nbAgences: agenceData?.nombre_agences ?? 0,
-    montantFinance: fmt(agenceData?.montant_financé),
+    montantFinance: formatNumber(agenceData?.montant_financé) || '0',
     montantDecaisse: partenaireData?.montant_decaisse ?? 0,
 
     // Partenaires
     tauxRemboursement: partenaireData?.taux_recouvrement ?? 0,
     projetsFinances: partenaireData?.projets_finances ?? 0,
-    montantAccorde: fmt(partenaireData?.montant_accorde),
+    montantAccorde: formatNumber(partenaireData?.montant_accorde) || '0',
 
     // Entreprises
     emploisCreés: entrepriseData?.emplois_crees ?? 0,

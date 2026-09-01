@@ -1,6 +1,7 @@
 import { dashboardAgencesServices } from '@/services/dashboard.services'
 import { PROJECT_STATUSES } from '@/constants/PROJECT_STATUSES'
 import { MOCK_REGIONS_HBARS, MOCK_SUIVI_TERRAIN } from '@/mock'
+import { formatNumber } from '@/helpers/numbers'
 
 export function useAdminCharts() {
   const { data: statutData, isLoading: l1 } = dashboardAgencesServices.useProjetsStatut()
@@ -25,18 +26,14 @@ export function useAdminCharts() {
   const agenceItems = (agenceData || []).map(a => ({
     label: a.agence || 'Inconnue',
     value: typeof a.count === 'number' ? a.count : Number(a.count) || 0,
-    meta: `${a.count} · ${typeof a.montant === 'number'
-      ? new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(a.montant) + 'F'
-      : a.montant ?? '–'}`,
+    meta: `${a.count} · ${formatNumber(a.montant) || '–'}${a.montant ? 'F' : ''}`,
   }))
 
   // Financement → tableau
   const financementRows = (financementData || []).map(f => ({
     annee: f.annee ?? '–',
     region: f.region ?? f.agence ?? '–',
-    montant: typeof f.montant === 'number'
-      ? new Intl.NumberFormat('fr-FR').format(f.montant) + ' F'
-      : String(f.montant),
+    montant: (f.montant != null && f.montant !== '') ? formatNumber(f.montant) + ' F' : '–',
   }))
 
   // Régions → encore mockées (pas d'API région dans la doc)

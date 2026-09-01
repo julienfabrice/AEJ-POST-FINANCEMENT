@@ -14,8 +14,7 @@ import type {
   DashboardEntreprisesKpis,
   DashboardEmploisSecteur,
   DashboardTypeEmploi,
-  DashboardTopRecruteuse,
-  DashboardSecteur,
+  DashboardTopRecruteuse, DashboardSecteur
 } from '@/types'
 
 export const dashboardAgencesServices = {
@@ -153,7 +152,7 @@ export const dashboardEntreprisesServices = {
     useQuery({
       queryKey: ['dashboard', 'entreprises', 'region'],
       queryFn: async () => {
-        const { data } = await axiosInstance.get<{ data: { region: string; count: number }[] }>('/dashboard/entreprises/region')
+        const { data } = await axiosInstance.get<{ data: { region: string | null; nombre_entreprises: number }[] }>('/dashboard/entreprises/region')
         return data.data
       },
     }),

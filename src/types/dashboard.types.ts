@@ -101,6 +101,11 @@ export interface DashboardTopRecruteuse {
   nombre_emplois: number
 }
 
+export interface DashboardEntrepriseRegion {
+  region: string | null
+  nombre_entreprises: number
+}
+
 export interface DashboardSecteur {
   secteur: string
   count: number

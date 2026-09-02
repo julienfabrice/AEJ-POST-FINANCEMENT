@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import dayjs from 'dayjs'
 import { Card } from '@/components/ui/card'
 import { StatusBadge } from '../../EspacePartenaireFinancier/components/StatusBadge'
 import { money } from '../../EspacePartenaireFinancier/utils/money'
@@ -92,7 +93,7 @@ export function RemboursementsTable() {
                   </td>
                   {/* Pas de date d'échéance distincte dans le payload confirmé (seulement date_paiement) */}
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#131C29]">
-                    {r.date_paiement ?? '—'}
+                    {r.date_paiement ? dayjs(r.date_paiement).format('DD/MM/YYYY') : '—'}
                   </td>
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] font-mono font-semibold text-[#131C29]">
                     {money(Number(r.montant_echu))}

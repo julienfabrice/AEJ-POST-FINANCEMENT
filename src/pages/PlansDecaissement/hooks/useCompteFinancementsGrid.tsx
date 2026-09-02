@@ -1,10 +1,14 @@
 import { useMemo, useState } from 'react'
-import type { ColDef } from 'ag-grid-community'
+import dayjs from 'dayjs'
+import type { ColDef, ValueFormatterParams } from 'ag-grid-community'
 import Fuse from 'fuse.js'
 import { ActionsCellRenderer } from '@/pages/Referentiels/components/ActionsCellRenderer'
 import { compteFinancementServices } from '@/services/compteFinancements.services'
 import { CompteFinancementFormModal } from '../components/CompteFinancementFormModal'
 import type { COMPTE_FINANCEMENT_T } from '@/types'
+
+const formatDate = (params: ValueFormatterParams) =>
+  params.value ? dayjs(params.value).format('DD/MM/YYYY') : '—'
 
 export function useCompteFinancementsGrid(searchQuery: string) {
   const { data: comptes = [], isLoading } = compteFinancementServices.useGetAll()
@@ -16,7 +20,7 @@ export function useCompteFinancementsGrid(searchQuery: string) {
     { field: 'organisme_id', headerName: 'Partenaire', width: 120 },
     { field: 'etat_ouverture', headerName: "État d'ouverture", width: 150 },
     { field: 'localite_ouverture', headerName: 'Localité', width: 140 },
-    { field: 'date_ouverture', headerName: "Date d'ouverture", width: 140 },
+    { field: 'date_ouverture', headerName: "Date d'ouverture", width: 140, valueFormatter: formatDate },
     { field: 'avis_partenaire', headerName: 'Avis partenaire', width: 140 },
     {
       headerName: 'Actions', width: 100, minWidth: 100, sortable: false, filter: false,

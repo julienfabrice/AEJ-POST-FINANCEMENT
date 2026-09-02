@@ -7,15 +7,23 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
-import { PAGE_TITLES, AGENT_NAV_ITEMS, BENEF_NAV_ITEMS } from '@/constants/routes'
+import { PAGE_TITLES, AGENT_NAV_ITEMS, BENEF_NAV_ITEMS, ROUTES } from '@/constants/routes'
 
 export function TopBar() {
   const router = useRouterState()
   const pathname = router.location.pathname
 
   const allItems = [...AGENT_NAV_ITEMS, ...BENEF_NAV_ITEMS]
-  const currentItem = allItems.find((item) => item.path === pathname)
-  const pageTitle = PAGE_TITLES[pathname as keyof typeof PAGE_TITLES] ?? 'AEJ'
+  let currentItem = allItems.find((item) => item.path === pathname)
+  let pageTitle = PAGE_TITLES[pathname as keyof typeof PAGE_TITLES]
+
+  // Gestion de la route dynamique guichet-workflow
+  if (pathname.startsWith('/guichet-workflow/')) {
+    currentItem = allItems.find((item) => item.path === ROUTES.DISPOSITIFS)
+    pageTitle = 'Détails du workflow'
+  }
+  
+  if (!pageTitle) pageTitle = 'AEJ'
 
   return (
     <header

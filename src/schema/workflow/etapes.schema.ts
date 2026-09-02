@@ -4,7 +4,8 @@ export const etapeSchema = z.object({
   code: z.string().min(1, 'Le code est requis.'),
   name: z.string().min(1, 'Le nom est requis.'),
   order: z.number().min(1, "L'ordre est requis."),
-  description: z.string().optional()
+  description: z.string().optional(),
+  parent_etape_code: z.string().nullable().optional()
 })
 
 export type EtapeFormValues = z.infer<typeof etapeSchema>

@@ -75,7 +75,7 @@ export function JeunesPage() {
 
   return (
     <div className="space-y-6">
-      <JeunesHeader />
+      <JeunesHeader rows={rows} />
 
       <PromoteursFilters />
 

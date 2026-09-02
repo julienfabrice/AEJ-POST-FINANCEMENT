@@ -52,15 +52,15 @@ export const ActionsCellRenderer = (
           {hasWriteActions && <DropdownMenuSeparator />}
 
           <PermissionGate module={MODULES.JEUNES} action="e">
-            <DropdownMenuItem>
-              <Pencil className="mr-2 h-4 w-4 text-slate-500" />
+            <DropdownMenuItem disabled title="Les données de cette table proviennent directement du système de l'AEJ.">
+              <Pencil className="mr-2 h-4 w-4 text-slate-400" />
               Modifier
             </DropdownMenuItem>
           </PermissionGate>
 
           <PermissionGate module={MODULES.JEUNES} action="d">
-            <DropdownMenuItem className="text-red-600 focus:text-red-600">
-              <Trash2 className="mr-2 h-4 w-4" />
+            <DropdownMenuItem disabled title="Les données de cette table proviennent directement du système de l'AEJ.">
+              <Trash2 className="mr-2 h-4 w-4 text-slate-400" />
               Supprimer
             </DropdownMenuItem>
           </PermissionGate>

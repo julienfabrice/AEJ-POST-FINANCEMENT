@@ -20,6 +20,7 @@ import {
   Tags,
   Workflow,
   Settings,
+  PieChart,
   type LucideIcon,
 } from 'lucide-react'
 import { MODULES, type ModuleKey } from '@/constants/modules'
@@ -54,6 +55,7 @@ export const ROUTES = {
   SUIVI: '/suivi',
   CADRE_RESULTAT: '/cadre-resultat',
   RAPPORTS: '/rapports',
+  TABLEAU_BORD_SUIVI: '/tableau-bord-suivi',
   // Administration
   ADMIN_PROFILS: '/admin/profils',
   ADMIN_PERSONNELS: '/admin/personnels',
@@ -109,6 +111,7 @@ export const AGENT_NAV_ITEMS: NavItem[] = [
   // `MODULES.CADRE_RESULTAT` ici et dans la route du même nom.
   { key: 'cadre_resultat', label: 'Cadre de résultat', path: ROUTES.CADRE_RESULTAT, icon: ListTree, group: 'SUIVI & ÉVALUATION', module: MODULES.SUIVI },
   { key: 'rapports', label: 'Rapports', path: ROUTES.RAPPORTS, icon: FileText, group: 'SUIVI & ÉVALUATION', module: MODULES.RAPPORTS },
+  { key: 'tableau_bord_suivi', label: 'Tableau de bord', path: ROUTES.TABLEAU_BORD_SUIVI, icon: PieChart, group: 'SUIVI & ÉVALUATION', module: MODULES.SUIVI },
   // ADMINISTRATION
   { key: 'admin_profils', label: 'Profils & permissions', path: ROUTES.ADMIN_PROFILS, icon: Shield, group: 'ADMINISTRATION', module: MODULES.PROFILS },
   { key: 'admin_personnels', label: 'Personnels', path: ROUTES.ADMIN_PERSONNELS, icon: Users, group: 'ADMINISTRATION', module: MODULES.UTILISATEURS },
@@ -153,6 +156,7 @@ export const PAGE_TITLES: Partial<Record<AppRoute, string>> = {
   [ROUTES.SUIVI]: 'Suivi & exploitation',
   [ROUTES.CADRE_RESULTAT]: 'Cadre de résultat',
   [ROUTES.RAPPORTS]: 'Rapports',
+  [ROUTES.TABLEAU_BORD_SUIVI]: 'Tableau de bord',
   [ROUTES.ADMIN_PROFILS]: 'Profils & permissions',
   [ROUTES.ADMIN_PERSONNELS]: 'Personnels',
   [ROUTES.ADMIN_LOCALITES]: 'Localités',

@@ -356,6 +356,41 @@ export interface REMBOURSEMENT_T {
 }
 
 export * from './workflow.types'
+
+/**
+ * --- Suivi & exploitation (rapports de visite terrain + emplois créés) ---
+ *
+ * Ré-exporté comme `workflow.types` ci-dessus : les écrans importent depuis
+ * `@/types` sans avoir à connaître le découpage des fichiers. Le détail des
+ * arbitrages maquette/API est documenté dans `suivi.types.ts`.
+ */
+export * from './suivi.types'
+
+/**
+ * --- Agrégats de tableau de bord (`/dashboard/*`) ---
+ *
+ * Ré-exporté ici pour que les écrans importent depuis `@/types`. Ces endpoints
+ * répondent `{ data }` SANS `message` : ils n'utilisent donc PAS
+ * `API_RESPONSE_T` mais `DASHBOARD_RESPONSE_T`. Détail des relevés live et des
+ * arbitrages (clés accentuées, montants en chaîne) dans `dashboard.types.ts`.
+ */
+export * from './dashboard.types'
+
+/**
+ * --- Cadre de résultat (module « Suivi & évaluation », API NON BRANCHÉE) ---
+ *
+ * Ré-exporté comme `suivi.types` et `dashboard.types` ci-dessus : les écrans,
+ * services et schémas importent depuis `@/types` sans connaître le découpage
+ * des fichiers.
+ *
+ * ⚠️ Ces types sont calqués sur un SCHÉMA SQL, pas sur une réponse d'API —
+ * l'API n'existe pas encore. Coquilles du schéma reprises telles quelles
+ * (`abgrege_cs`, `intutile_cs`, `valeur_cible_indcateur_istr`, `Date_suivi`),
+ * incohérences signalées champ par champ : tout le détail est dans
+ * `cadreResultat.types.ts`, à relire au moment du branchement.
+ */
+export * from './cadreResultat.types'
+
 export interface DISPOSITIF_T {
   id: number
   code: string
@@ -376,5 +411,3 @@ export interface DISPOSITIF_T {
   projet?: any | null
   guichet?: GUICHET_T | null
 }
-
-export * from './dashboard.types'

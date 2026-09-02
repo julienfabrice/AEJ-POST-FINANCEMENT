@@ -32,6 +32,7 @@ import { Route as AuthenticatedAgentRapportsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAgentRecouvrementRouteImport } from './routes/_authenticated/_agent/recouvrement'
 import { Route as AuthenticatedAgentRemboursementsRouteImport } from './routes/_authenticated/_agent/remboursements'
 import { Route as AuthenticatedAgentSuiviRouteImport } from './routes/_authenticated/_agent/suivi'
+import { Route as AuthenticatedAgentTableauBordSuiviRouteImport } from './routes/_authenticated/_agent/tableau-bord-suivi'
 import { Route as AuthenticatedAgentTransmissionRouteImport } from './routes/_authenticated/_agent/transmission'
 import { Route as AuthenticatedBenefMesPiecesRouteImport } from './routes/_authenticated/_benef/mes-pieces'
 import { Route as AuthenticatedBenefMesProjetsRouteImport } from './routes/_authenticated/_benef/mes-projets'
@@ -169,6 +170,12 @@ const AuthenticatedAgentSuiviRoute = AuthenticatedAgentSuiviRouteImport.update({
   path: '/suivi',
   getParentRoute: () => AuthenticatedAgentRoute,
 } as any)
+const AuthenticatedAgentTableauBordSuiviRoute =
+  AuthenticatedAgentTableauBordSuiviRouteImport.update({
+    id: '/tableau-bord-suivi',
+    path: '/tableau-bord-suivi',
+    getParentRoute: () => AuthenticatedAgentRoute,
+  } as any)
 const AuthenticatedAgentTransmissionRoute =
   AuthenticatedAgentTransmissionRouteImport.update({
     id: '/transmission',
@@ -263,6 +270,7 @@ export interface FileRoutesByFullPath {
   '/recouvrement': typeof AuthenticatedAgentRecouvrementRoute
   '/remboursements': typeof AuthenticatedAgentRemboursementsRoute
   '/suivi': typeof AuthenticatedAgentSuiviRoute
+  '/tableau-bord-suivi': typeof AuthenticatedAgentTableauBordSuiviRoute
   '/transmission': typeof AuthenticatedAgentTransmissionRoute
   '/mes-pieces': typeof AuthenticatedBenefMesPiecesRoute
   '/mes-projets': typeof AuthenticatedBenefMesProjetsRoute
@@ -297,6 +305,7 @@ export interface FileRoutesByTo {
   '/recouvrement': typeof AuthenticatedAgentRecouvrementRoute
   '/remboursements': typeof AuthenticatedAgentRemboursementsRoute
   '/suivi': typeof AuthenticatedAgentSuiviRoute
+  '/tableau-bord-suivi': typeof AuthenticatedAgentTableauBordSuiviRoute
   '/transmission': typeof AuthenticatedAgentTransmissionRoute
   '/mes-pieces': typeof AuthenticatedBenefMesPiecesRoute
   '/mes-projets': typeof AuthenticatedBenefMesProjetsRoute
@@ -335,6 +344,7 @@ export interface FileRoutesById {
   '/_authenticated/_agent/recouvrement': typeof AuthenticatedAgentRecouvrementRoute
   '/_authenticated/_agent/remboursements': typeof AuthenticatedAgentRemboursementsRoute
   '/_authenticated/_agent/suivi': typeof AuthenticatedAgentSuiviRoute
+  '/_authenticated/_agent/tableau-bord-suivi': typeof AuthenticatedAgentTableauBordSuiviRoute
   '/_authenticated/_agent/transmission': typeof AuthenticatedAgentTransmissionRoute
   '/_authenticated/_benef/mes-pieces': typeof AuthenticatedBenefMesPiecesRoute
   '/_authenticated/_benef/mes-projets': typeof AuthenticatedBenefMesProjetsRoute
@@ -371,6 +381,7 @@ export interface FileRouteTypes {
     | '/recouvrement'
     | '/remboursements'
     | '/suivi'
+    | '/tableau-bord-suivi'
     | '/transmission'
     | '/mes-pieces'
     | '/mes-projets'
@@ -405,6 +416,7 @@ export interface FileRouteTypes {
     | '/recouvrement'
     | '/remboursements'
     | '/suivi'
+    | '/tableau-bord-suivi'
     | '/transmission'
     | '/mes-pieces'
     | '/mes-projets'
@@ -442,6 +454,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_agent/recouvrement'
     | '/_authenticated/_agent/remboursements'
     | '/_authenticated/_agent/suivi'
+    | '/_authenticated/_agent/tableau-bord-suivi'
     | '/_authenticated/_agent/transmission'
     | '/_authenticated/_benef/mes-pieces'
     | '/_authenticated/_benef/mes-projets'
@@ -627,6 +640,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAgentSuiviRouteImport
       parentRoute: typeof AuthenticatedAgentRoute
     }
+    '/_authenticated/_agent/tableau-bord-suivi': {
+      id: '/_authenticated/_agent/tableau-bord-suivi'
+      path: '/tableau-bord-suivi'
+      fullPath: '/tableau-bord-suivi'
+      preLoaderRoute: typeof AuthenticatedAgentTableauBordSuiviRouteImport
+      parentRoute: typeof AuthenticatedAgentRoute
+    }
     '/_authenticated/_agent/transmission': {
       id: '/_authenticated/_agent/transmission'
       path: '/transmission'
@@ -728,6 +748,7 @@ interface AuthenticatedAgentRouteChildren {
   AuthenticatedAgentRecouvrementRoute: typeof AuthenticatedAgentRecouvrementRoute
   AuthenticatedAgentRemboursementsRoute: typeof AuthenticatedAgentRemboursementsRoute
   AuthenticatedAgentSuiviRoute: typeof AuthenticatedAgentSuiviRoute
+  AuthenticatedAgentTableauBordSuiviRoute: typeof AuthenticatedAgentTableauBordSuiviRoute
   AuthenticatedAgentTransmissionRoute: typeof AuthenticatedAgentTransmissionRoute
   AuthenticatedAgentAdminLocalitesRoute: typeof AuthenticatedAgentAdminLocalitesRoute
   AuthenticatedAgentAdminParametresRoute: typeof AuthenticatedAgentAdminParametresRoute
@@ -755,6 +776,8 @@ const AuthenticatedAgentRouteChildren: AuthenticatedAgentRouteChildren = {
   AuthenticatedAgentRecouvrementRoute: AuthenticatedAgentRecouvrementRoute,
   AuthenticatedAgentRemboursementsRoute: AuthenticatedAgentRemboursementsRoute,
   AuthenticatedAgentSuiviRoute: AuthenticatedAgentSuiviRoute,
+  AuthenticatedAgentTableauBordSuiviRoute:
+    AuthenticatedAgentTableauBordSuiviRoute,
   AuthenticatedAgentTransmissionRoute: AuthenticatedAgentTransmissionRoute,
   AuthenticatedAgentAdminLocalitesRoute: AuthenticatedAgentAdminLocalitesRoute,
   AuthenticatedAgentAdminParametresRoute:

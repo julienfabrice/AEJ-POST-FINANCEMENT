@@ -17,10 +17,10 @@ export function TopBar() {
   let currentItem = allItems.find((item) => item.path === pathname)
   let pageTitle = PAGE_TITLES[pathname as keyof typeof PAGE_TITLES]
 
-  // Gestion de la route dynamique guichet-workflow
-  if (pathname.startsWith('/guichet-workflow/')) {
+  // Gestion de la route dynamique dispositif-workflow
+  if (pathname.startsWith('/dispositif-workflow/')) {
     currentItem = allItems.find((item) => item.path === ROUTES.DISPOSITIFS)
-    pageTitle = 'Détails du workflow'
+    pageTitle = 'Détails de la procédure'
   }
   
   if (!pageTitle) pageTitle = 'AEJ'

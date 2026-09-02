@@ -355,6 +355,25 @@ export interface REMBOURSEMENT_T {
   updated_at?: string
 }
 
+// --- Comptes de financement (schema.v2.sql) ---
+
+export type ETAT_OUVERTURE_T = 'NON_OUVERT' | 'OUVERT'
+export type AVIS_PARTENAIRE_T = 'ACCORDE' | 'REFUSE' | 'EN_ATTENTE'
+
+export interface COMPTE_FINANCEMENT_T {
+  id: number
+  organisme_id: number
+  micro_projet_id: number
+  etat_ouverture: ETAT_OUVERTURE_T
+  localite_ouverture?: string | null
+  date_ouverture?: string | null
+  avis_partenaire: AVIS_PARTENAIRE_T
+  observations?: string | null
+  created_at?: string
+  updated_at?: string
+  micro_projet?: import('./promoteurs.types').MICRO_PROJET_T
+}
+
 export * from './workflow.types'
 export interface DISPOSITIF_T {
   id: number

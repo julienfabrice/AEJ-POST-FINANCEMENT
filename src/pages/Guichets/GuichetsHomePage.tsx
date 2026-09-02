@@ -2,19 +2,41 @@ import { useState, useMemo } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'
-import { GuichetCard } from './UI/GuichetCard'
-import { dispositifServices } from '@/services/dispositifs.services'
+import { GuichetCard, type GuichetCardData } from './UI/GuichetCard'
+import { guichetServices } from '@/services/guichets.services'
 import { ROUTES } from '@/constants/routes'
+import type { GUICHET_T } from '@/types'
+
+const PALETTE = ['#E7722B', '#5B5FEF', '#20A83A', '#D46A1F', '#2D6BD4', '#C0392B']
+
+function toGuichetCardData(g: GUICHET_T, index: number): GuichetCardData {
+  return {
+    id: g.id,
+    libelle: g.libelle,
+    code: g.code,
+    montant_min: Number(g.montant_min),
+    montant_max: Number(g.montant_max),
+    taux: 0,
+    cycles: 0,
+    dossiers: 0,
+    color: g.couleur || PALETTE[index % PALETTE.length],
+  }
+}
 
 export function GuichetsHomePage() {
-  const { data: guichets, isLoading } = dispositifServices.useGetAll()
+  const { data: guichetsRaw, isLoading, isError } = guichetServices.useGetAll()
   const [search, setSearch] = useState('')
   const navigate = useNavigate()
 
+  const guichets = useMemo(
+    () => (guichetsRaw ?? []).map((g, i) => toGuichetCardData(g, i)),
+    [guichetsRaw],
+  )
+
   const filtered = useMemo(() => {
-    if (!search.trim() || !guichets) return guichets || []
+    if (!search.trim()) return guichets
     const q = search.toLowerCase()
-    return guichets.filter((g: any) => g.intitule.toLowerCase().includes(q) || g.code.toLowerCase().includes(q))
+    return guichets.filter((g) => g.libelle.toLowerCase().includes(q) || g.code.toLowerCase().includes(q))
   }, [guichets, search])
 
   return (
@@ -37,9 +59,13 @@ export function GuichetsHomePage() {
 
       {isLoading ? (
         <p className="text-sm text-slate-500">Chargement...</p>
+      ) : isError ? (
+        <p className="text-sm text-red-500">Impossible de charger les guichets.</p>
+      ) : filtered.length === 0 ? (
+        <p className="text-sm text-slate-400">Aucun guichet disponible.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[18px]">
-          {filtered.map((g: any) => (
+          {filtered.map((g) => (
             <GuichetCard
               key={g.id}
               guichet={g}

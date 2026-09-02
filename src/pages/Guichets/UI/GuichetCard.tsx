@@ -19,8 +19,10 @@ interface GuichetCardProps {
 }
 
 /** Estimation d'exposition financière pour l'affichage, en l'absence de
- *  données réelles agrégées côté API (mock/démo uniquement). */
+ *  données réelles agrégées côté API (dossiers = repli sur le nombre de
+ *  micro-projets prévus, faute d'un vrai compteur de dossiers en cours). */
 function estimateMontant(g: GuichetCardData): string {
+  if (!g.dossiers) return '—'
   const moyenne = (g.montant_min + g.montant_max) / 2
   const total = moyenne * g.dossiers
   if (total >= 1_000_000) return `${(total / 1_000_000).toFixed(1)} M`
@@ -41,12 +43,12 @@ export function GuichetCard({ guichet: g, onClick }: GuichetCardProps) {
       </div>
       <h3 className="text-[17px] font-bold text-[#131C29] leading-tight">{g.libelle}</h3>
       <div className="text-xs text-[#8595A8] mt-1 mb-4">
-        {g.code} · {g.cycles} étapes · {formatMontant(String(g.montant_min), 'F')?.replace(' F', '')} → {formatMontant(String(g.montant_max), 'F')?.replace(' F', '')}
+        {g.code} · {g.cycles ? `${g.cycles} mois · ` : ''}{formatMontant(String(g.montant_min), 'F')?.replace(' F', '')} → {formatMontant(String(g.montant_max), 'F')?.replace(' F', '')}
       </div>
       <div className="flex items-center gap-6 pt-3 border-t border-[#F1F4F8]">
         <div>
           <span className="block text-xs text-[#8595A8]">Dossiers</span>
-          <b className="text-[15px] text-[#131C29]">{g.dossiers}</b>
+          <b className="text-[15px] text-[#131C29]">{g.dossiers || '—'}</b>
         </div>
         <div>
           <span className="block text-xs text-[#8595A8]">Montant</span>

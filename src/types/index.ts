@@ -106,6 +106,19 @@ export interface FORMULAIRE_T {
     updated_at?: string
 }
 
+export interface QUESTION_T {
+    id: number,
+    code: string,
+    libelle: string,
+    type_question: string,
+    options: string[],
+    ordre: number,
+    affichage: boolean,
+    obligatoire: boolean,
+    created_at?: string
+    updated_at?: string
+}
+
 export interface TYPE_ENTREPRISE_T {
   id: number
   code: string

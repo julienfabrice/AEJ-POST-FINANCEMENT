@@ -7,28 +7,31 @@ import { Badge } from '@/components/ui/badge'
 import { ActionsCellRenderer } from '@/pages/Referentiels/components/ActionsCellRenderer'
 import {indicateursSuivisServices} from "@/services/indicateurs/indicateurs-suivis.services.ts";
 import {indicateurServices} from "@/services/indicateurs/indicateurs.services.ts";
-import {promoteursServices} from "@/services/promoteurs.services.ts";
 
 dayjs.locale('fr')
 
-const actionsCol: ColDef = {
-  headerName: 'Actions',
-  width: 120,
-  minWidth: 120,
-  sortable: false,
-  filter: false,
-  cellRenderer: ActionsCellRenderer,
-  cellRendererParams: {
-    onEdit: () => console.log('Edit action clicked'),
-    onDelete: () => console.log('Delete action clicked')
-  },
-}
 
-export function useRelevesGrid(searchQuery: string) {
+
+export function useRelevesGrid(searchQuery: string, onEdit: (data: any) => void) {
     const { data: indicateurs = [] } = indicateurServices.useGetAll()
     const { data: indicateurs_suivis = [], isLoading } = indicateursSuivisServices.useGetAll()
-    // const {data: jeunes = []} = promoteursServices.useGetPromoteurs()
-  const columnDefs = useMemo<ColDef[]>(() => {
+
+
+
+    const columnDefs = useMemo<ColDef[]>(() => {
+    const actionsCol: ColDef = {
+        headerName: 'Actions',
+        width: 120,
+        minWidth: 120,
+        sortable: false,
+        filter: false,
+        cellRenderer: ActionsCellRenderer,
+        cellRendererParams: {
+            onEdit:  (data: any) => onEdit(data),
+            onDelete: () => console.log('Delete action clicked')
+        },
+    }
+
     return [
       { 
         field: 'periode', 
@@ -42,7 +45,7 @@ export function useRelevesGrid(searchQuery: string) {
       },
       { field: 'indicateur', headerName: 'Indicateur', flex: 2, cellRenderer: (params: any) => {
           const ind = indicateurs.find(i => i.id === params.data.indicateur_id)
-          return ind ? <span className="font-semibold"> {!ind.code}? {ind.nom} :  {ind.code} - {ind.nom}</span> : params.data.indicateur_id
+          return ind ? <span className="font-semibold"> {ind.code} - {ind.nom}</span> : params.data.indicateur_id
       } },
       { field: 'jeune_id', headerName: 'Bénéficiaire', flex: 1, cellRenderer: (params: any) => <Badge variant="secondary"> {params.data.jeune_id}</Badge> },
       { field: 'valeur', headerName: 'Valeur', flex: 1, cellRenderer: (params: any) => <span className="font-bold text-[#E7722B]">{params.data.valeur}</span> },
@@ -51,13 +54,13 @@ export function useRelevesGrid(searchQuery: string) {
         headerName: 'Date', 
         flex: 1,
         cellRenderer: (params: any) => {
-          if (!params.data.created) return null
-          return <span>{dayjs(params.data.created).format('DD/MM/YYYY')}</span>
+          if (!params.data.created_at) return null
+          return <span>{dayjs(params.data.created_at).format('DD/MM/YYYY')}</span>
         }
       },
       actionsCol
     ]
-  }, [])
+  }, [onEdit])
 
   const filteredData = useMemo(() => {
     if (!searchQuery.trim()) return indicateurs_suivis

@@ -1,11 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { indicateurs, indicateurs_suivi } from '@/mock'
+import {indicateurServices} from "@/services/indicateurs/indicateurs.services.ts";
+import {indicateursSuivisServices} from "@/services/indicateurs/indicateurs-suivis.services.ts";
 
 const fmt = (num: number) => new Intl.NumberFormat('fr-FR').format(num)
 
 export function PlanificationTab() {
-  const indicSuivi = (indId: number | string) => {
+    const { data: indicateurs = [] } = indicateurServices.useGetAll()
+    const { data: indicateurs_suivi = []} = indicateursSuivisServices.useGetAll()
+    const indicSuivi = (indId: number | string) => {
     return indicateurs_suivi
       .filter((s) => s.indicateur_id.toString() === indId.toString())
       .reduce((a, s) => a + (parseFloat(s.valeur) || 0), 0)

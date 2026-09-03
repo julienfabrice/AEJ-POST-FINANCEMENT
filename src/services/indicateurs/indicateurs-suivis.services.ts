@@ -18,7 +18,7 @@ export const indicateursSuivisServices = {
         const queryClient = useQueryClient()
         return useMutation({
             mutationFn: async (payload: Omit<INDICATEUR_SUIVI_T, 'id' | 'created_at' | 'updated_at'>) => {
-                const response = await axiosInstance.post('/indicateurs', payload)
+                const response = await axiosInstance.post('/indicateur-suivis', payload)
                 return response.data
             },
             onSuccess: () => {

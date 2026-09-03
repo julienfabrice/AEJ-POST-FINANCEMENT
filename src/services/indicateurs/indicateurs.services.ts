@@ -36,7 +36,9 @@ export const indicateurServices = {
     const queryClient = useQueryClient()
     return useMutation({
       mutationFn: async ({ id, data }: { id: number; data: Omit<INDICATEUR_T, 'id' | 'created_at' | 'updated_at'> }) => {
-        const response = await axiosInstance.put(`/indicateurs/${id}`, data)
+          console.log(`/indicateurs/${id}`)
+          const response = await axiosInstance.put(`/indicateurs/${id}`, data)
+
         return response.data
       },
       onSuccess: () => {
@@ -44,7 +46,7 @@ export const indicateurServices = {
         toast.success("Élément modifié avec succès !")
       },
       onError: (error) => {
-        toast.error("Erreur lors de la modification.")
+        toast.error("Erreur lors de la modification.  ser")
         console.error(error)
       }
     })

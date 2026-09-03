@@ -8,9 +8,10 @@ import { useQuestionsGrid } from './questions/useQuestionsGrid'
 
 export type IndicateurTab = 'plan' | 'ind' | 'rel' | 'fic' | 'q'
 
-export function useIndicateursGrid(activeTab: IndicateurTab, searchQuery: string = '') {
-  const { columnDefs: indDefs, data: indData, isLoading: indLoading } = useIndicateurTabGrid(searchQuery)
-  const { columnDefs: relDefs, data: relData, isLoading: relLoading } = useRelevesGrid(searchQuery)
+export function useIndicateursGrid(activeTab: IndicateurTab, searchQuery: string = '', onEdit: (data: any) => void) {
+
+  const { columnDefs: indDefs, data: indData, isLoading: indLoading } = useIndicateurTabGrid(searchQuery, onEdit)
+  const { columnDefs: relDefs, data: relData, isLoading: relLoading } = useRelevesGrid(searchQuery, onEdit)
   const { columnDefs: ficDefs, data: ficData, isLoading: ficLoading } = useFichesGrid(searchQuery)
   const { columnDefs: qDefs, data: qData, isLoading: qLoading } = useQuestionsGrid(searchQuery)
 

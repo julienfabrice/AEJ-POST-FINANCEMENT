@@ -375,6 +375,31 @@ export interface COMPTE_FINANCEMENT_T {
 }
 
 export * from './workflow.types'
+
+// --- Transactions (dépenses/recettes) ---
+
+export type TRANSACTION_TYPE_T = 'DEPENSE' | 'RECETTE'
+export type TRANSACTION_STATUT_T = 'BROUILLON' | 'SOUMIS' | 'VALIDE' | 'REJETE' | 'ANNULE'
+
+export interface TRANSACTION_T {
+  id: number
+  micro_projet_id: number
+  promoteur_id?: number | null
+  categorie_id?: number | null
+  libelle: string
+  type: TRANSACTION_TYPE_T
+  montant: number | string
+  statut: TRANSACTION_STATUT_T
+  mode_paiement?: string | null
+  reference?: string | null
+  justificatif_path?: string | null
+  observations?: string | null
+  date?: string | null
+  saisi_par?: number | null
+  created_at?: string
+  updated_at?: string
+  micro_projet?: import('./promoteurs.types').MICRO_PROJET_T
+}
 export interface DISPOSITIF_T {
   id: number
   code: string

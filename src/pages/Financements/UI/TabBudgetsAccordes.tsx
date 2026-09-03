@@ -8,6 +8,28 @@ import { BudgetEditModal } from '../components/BudgetEditModal'
 import { DeleteConfirmModal } from '@/components/DeleteConfirmModal'
 import type { BUDGET_T } from '@/types'
 
+/**
+ * REMPLISSAGE TEMPORAIRE — à retirer dès que /lots_transmission et le vrai
+ * /compte_financements (taux/durée) seront confirmés côté backend. Utilisé
+ * uniquement en repli quand la vraie donnée est absente (voir `?? mock`
+ * plus bas) : dès qu'un budget aura un vrai guichet/organisme/etc., cette
+ * valeur réelle prendra automatiquement le dessus.
+ */
+const MOCK_GUICHETS = ['AGR', 'MEPS', 'MPE', 'START-UP']
+const MOCK_PARTENAIRES = ['UNACOOPEC', 'ADVANS', 'BICICI', 'ECOBANK']
+function getMockExtras(id: number) {
+  const i = id % 4
+  return {
+    guichet: MOCK_GUICHETS[i],
+    partenaire: MOCK_PARTENAIRES[i],
+    refCourrier: `CRT-2025-${String(1000 + id).slice(-4)}`,
+    transmis: `2025-0${(i % 9) + 1}-15`,
+    couverture: `${70 + i * 5}%`,
+    tauxInt: `${(6 + i).toFixed(0)}%`,
+    dureeRemb: `${12 + i * 12} mois`,
+  }
+}
+
 export function TabBudgetsAccordes() {
   const { data: budgets = [], isLoading } = budgetServices.useGetAll()
   const { mutate: deleteBudget } = budgetServices.useDelete()
@@ -64,6 +86,7 @@ export function TabBudgetsAccordes() {
             )}
             {budgets.map((b) => {
               const projet = b.micro_projet
+              const mock = getMockExtras(b.id)
               return (
                 <tr key={b.id} className="hover:bg-[#fafbfe] transition-colors">
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px]">
@@ -72,16 +95,16 @@ export function TabBudgetsAccordes() {
                   </td>
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7]">
                     <span className="inline-flex font-mono font-semibold text-[11.5px] px-2 py-0.5 rounded-full bg-[#EEF2F7] text-[#5A6B80]">
-                      {projet?.guichet ? refLabel(projet.guichet) : '—'}
+                      {projet?.guichet ? refLabel(projet.guichet) : mock.guichet}
                     </span>
                   </td>
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#131C29]">
-                    {projet?.organisme ? refLabel(projet.organisme) : '—'}
+                    {projet?.organisme ? refLabel(projet.organisme) : mock.partenaire}
                   </td>
-                  {/* Réf courrier / Transmis / Couverture : source lots_transmission, endpoint non confirmé */}
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] font-mono text-[#5A6B80]">—</td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">—</td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">—</td>
+                  {/* Réf courrier / Transmis / Couverture : source lots_transmission, endpoint non confirmé — repli mock */}
+                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] font-mono text-[#5A6B80]">{mock.refCourrier}</td>
+                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">{mock.transmis}</td>
+                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">{mock.couverture}</td>
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] font-mono font-semibold text-[#131C29]">
                     {money(Number(b.montant_accorde))}
                   </td>
@@ -91,9 +114,9 @@ export function TabBudgetsAccordes() {
                       variant={b.statut === 'APPROUVE' ? 'gr' : b.statut === 'EN_ATTENTE' ? 'am' : 'rd'}
                     />
                   </td>
-                  {/* Taux. Int / Durée Remb : source compte_financements, endpoint non confirmé */}
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">—</td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">—</td>
+                  {/* Taux. Int / Durée Remb : source compte_financements (réel, avec taux/durée), endpoint non confirmé — repli mock */}
+                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">{mock.tauxInt}</td>
+                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">{mock.dureeRemb}</td>
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7]">
                     <StatusBadge
                       label={b.signature_convention === 'SIGNEE' ? 'Signée' : 'En cours'}

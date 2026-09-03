@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import dayjs from 'dayjs'
 import { Card } from '@/components/ui/card'
 import { StatusBadge } from '../../EspacePartenaireFinancier/components/StatusBadge'
 import { money } from '../../EspacePartenaireFinancier/utils/money'
@@ -79,7 +80,7 @@ export function TabDepenses() {
                     {money(Number(d.montant))}
                   </td>
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">
-                    {d.date ?? '—'}
+                    {d.date ? dayjs(d.date).format('DD/MM/YYYY') : '—'}
                   </td>
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7]">
                     <StatusBadge label={d.statut} variant={STATUT_VARIANTS[d.statut]} />

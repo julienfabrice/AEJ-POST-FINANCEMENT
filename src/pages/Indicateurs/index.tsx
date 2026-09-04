@@ -9,72 +9,24 @@ import { DataGrid } from '@/components/ui/DataGrid'
 import { useIndicateursGrid, type IndicateurTab } from './hooks/useIndicateursGrid'
 import { PlanificationTab } from './components/PlanificationTab'
 import { IndicateursKPIs } from './UI/IndicateursKPIs'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import {IndicateurFormModal} from "@/pages/Indicateurs/components/IndicateurFormModal.tsx";
 import {IndicateurSuiviFormModal} from "@/pages/Indicateurs/components/IndicateurSuiviFormModal.tsx";
-
+import {FormulaireFormModal} from "@/pages/Indicateurs/components/FormulaireFormModal.tsx";
+import {QuestionFormModal} from "@/pages/Indicateurs/components/QuestionFormModal.tsx";
 const TABS_CONFIG = [
-  { id: 'plan', label: 'Planification & taux', sing: 'planification' },
-  { id: 'ind', label: 'Indicateurs', sing: 'indicateur' },
-  { id: 'rel', label: 'Relevés de suivi', sing: 'relevé' },
-  { id: 'fic', label: 'Fiches de suivi', sing: 'fiche' },
-  { id: 'q', label: 'Questions', sing: 'question' }
+  { id: 'plan', label: 'Planification & taux', sing: 'planification', readOnly: true },
+  { id: 'indicateurs', label: 'Indicateurs', sing: 'indicateur', readOnly: false },
+  { id: 'releves', label: 'Relevés de suivi', sing: 'relevé', readOnly: false },
+  { id: 'fiches', label: 'Fiches de suivi', sing: 'fiche', readOnly: false },
+  { id: 'questions', label: 'Questions', sing: 'question', readOnly: false }
 ] as const
 
 export function IndicateursPage() {
   const [activeTab, setActiveTab] = useState<IndicateurTab>('plan')
   const [searchQuery, setSearchQuery] = useState('')
-  const [modalIndOpen, setModalIndOpen] = useState(false)
-  const [modalRelOpen, setModalRelOpen] = useState(false)
-  const [modalFicOpen, setModalFicOpen] = useState(false)
-  const [modalQueOpen, setModalQueOpen] = useState(false)
-  const [editIndData, setEditIndData] = useState<any>(null)
-  const [editRelData, setEditRelData] = useState<any>(null)
-  const [editFicData, setEditFicData] = useState<any>(null)
-  const [editQueData, setEditQueData] = useState<any>(null)
 
 
-  const activationForm = ()=> {
-        switch (activeTab) {
-            case 'ind': setModalIndOpen(true)
-                break;
-            case 'rel': setModalRelOpen(true)
-                break;
-            case 'fic': setModalFicOpen(true)
-                break
-            case 'q': setModalQueOpen(true)
-                break
-            default:
-        }
-    }
-
-    const handleEdit =
-        (data: any) => {
-
-      switch (activeTab) {
-          case "ind":
-              setEditIndData(data)
-              setModalIndOpen(true)
-              break
-          case "rel":
-              setEditRelData(data)
-              setModalRelOpen(true)
-              break
-          case "fic":
-              setEditFicData(data)
-              setModalFicOpen(true)
-              break
-          case "q":
-              setEditQueData(data)
-              setModalFicOpen(true)
-              break
-          default:
-      }
-
-  }
-
-
-const { columnDefs, data, isLoading, modalNode } = useIndicateursGrid(activeTab, searchQuery, handleEdit)
+const { columnDefs, data, isLoading, modalNode } = useIndicateursGrid(activeTab, searchQuery)
 
 
   return (
@@ -94,6 +46,7 @@ const { columnDefs, data, isLoading, modalNode } = useIndicateursGrid(activeTab,
           onValueChange={(val) => { setActiveTab(val as IndicateurTab); setSearchQuery(''); } }
           className="w-full"
         >
+
           <div className="overflow-x-auto w-full no-scrollbar">
             <TabsList className="flex items-center gap-1 border-b border-slate-200 w-max min-w-full bg-transparent p-0 h-auto rounded-none justify-start mb-4">
               {TABS_CONFIG.map(tab => (
@@ -151,15 +104,29 @@ const { columnDefs, data, isLoading, modalNode } = useIndicateursGrid(activeTab,
                     {isLoading ? 'Chargement...' : `${data.length} ${tab.label.toLowerCase()}`}
                   </span>
                   <div className="flex-1" />
+                    {!tab.readOnly && (() => {
+                            const  btn = (
+                                <Button className="bg-[#E7722B] hover:bg-[#C85E18] text-white h-10 px-4 cursor-pointer">
+                                    <Plus className="w-4 h-4 mr-2" />
+                                    {tab.id === 'fiches' || tab.id === 'questions' ? 'Nouvelle' : 'Nouveau'} {tab.sing}
+                                </Button>
+                            )
 
+                            switch (tab.id) {
+                                case "indicateurs": return <IndicateurFormModal>{btn}</IndicateurFormModal>
+                                case "releves": return <IndicateurSuiviFormModal>{btn}</IndicateurSuiviFormModal>
+                                case "fiches": return <FormulaireFormModal>{btn}</FormulaireFormModal>
+                                case "questions": return <QuestionFormModal>{btn}</QuestionFormModal>
+                                default: return btn
+                            }
 
-                 <Button onClick={activationForm} className="bg-[#E7722B] hover:bg-[#C85E18] text-white h-10 px-4 cursor-pointer">
-                    <Plus className="w-4 h-4 mr-2" />
-                     {tab.id === 'fic' || tab.id === 'q' ? 'Nouvelle' : 'Nouveau'} {tab.sing}
-                 </Button>
+                        })()}
+
                 </div>
 
-                <Card className="p-0 overflow-hidden border-slate-200 rounded-lg shadow-sm">
+
+
+                  <Card className="p-0 overflow-hidden border-slate-200 rounded-lg shadow-sm">
                   <DataGrid
                     rowData={data}
                     columnDefs={columnDefs}
@@ -173,29 +140,6 @@ const { columnDefs, data, isLoading, modalNode } = useIndicateursGrid(activeTab,
                     }}
                   />
                 </Card>
-
-                <IndicateurFormModal
-                  open={modalIndOpen}
-                  onOpenChange={
-                      (open) => {
-                          setModalIndOpen(open)
-                          if (!open) setEditIndData(null)
-                      }
-                }
-                  editData={editIndData}
-               />
-
-                <IndicateurSuiviFormModal
-                    open={modalRelOpen}
-                    onOpenChange={
-                        (open) => {
-                            setModalRelOpen(open)
-                            if (!open) setEditRelData(null)
-                        }
-                    }
-
-                    editData={editRelData}
-                />
 
               </TabsContent>
             )

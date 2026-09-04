@@ -22,7 +22,7 @@ export const indicateursSuivisServices = {
                 return response.data
             },
             onSuccess: () => {
-                queryClient.invalidateQueries({ queryKey: ['indicateur-suivis'] })
+                queryClient.invalidateQueries({ queryKey: ['indicateurs-suivis'] })
                 toast.success("Élément ajouté avec succès !")
             },
             onError: (error) => {
@@ -40,7 +40,7 @@ export const indicateursSuivisServices = {
                 return response.data
             },
             onSuccess: () => {
-                queryClient.invalidateQueries({ queryKey: ['indicateur-suivis'] })
+                queryClient.invalidateQueries({ queryKey: ['indicateurs-suivis'] })
                 toast.success("Élément modifié avec succès !")
             },
             onError: (error) => {
@@ -57,7 +57,7 @@ export const indicateursSuivisServices = {
                 await axiosInstance.delete(`/indicateur-suivis/${id}`)
             },
             onSuccess: () => {
-                queryClient.invalidateQueries({ queryKey: ['indicateur-suivis'] })
+                queryClient.invalidateQueries({ queryKey: ['indicateurs-suivis'] })
                 toast.success("Élément supprimé avec succès !")
             },
             onError: (error) => {

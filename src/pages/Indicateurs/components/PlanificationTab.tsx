@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { indicateurs, indicateurs_suivi } from '@/mock'
 import {indicateurServices} from "@/services/indicateurs/indicateurs.services.ts";
 import {indicateursSuivisServices} from "@/services/indicateurs/indicateurs-suivis.services.ts";
 

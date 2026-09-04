@@ -1,28 +1,32 @@
-import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
+import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog.tsx";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {useReleveForm} from "@/pages/Indicateurs/hooks/releves/useReleveForm.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 import {Button} from "@/components/ui/button.tsx";
+import * as React from "react";
 
-interface IndicateurSuiviModalProps {
-    open: boolean
-    onOpenChange: (open: boolean) => void
-    editData?: any
+interface Props {
+    children?: React.ReactNode
+    open?: boolean
+    onOpenChange?: (open: boolean) => void
+    editData?: any | null
 }
 
-export function IndicateurSuiviFormModal({open, onOpenChange, editData}: IndicateurSuiviModalProps){
+export function IndicateurSuiviFormModal({children, open: controlledOpen, onOpenChange, editData} : Props){
     const {
         form,
         onSubmit,
         isPending,
         isEdit,
-        indicateurs
-    } = useReleveForm(open, onOpenChange, editData)
-    // console.log("edit data", editData)
+        indicateurs,
+        open,
+        setOpen
+    } = useReleveForm(editData, controlledOpen, onOpenChange)
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog open={open} onOpenChange={setOpen}>
+            {children && <DialogTrigger asChild>{children}</DialogTrigger>}
             <DialogContent className="sm:max-w-xl">
                 <DialogHeader>
                     <DialogTitle>
@@ -39,7 +43,6 @@ export function IndicateurSuiviFormModal({open, onOpenChange, editData}: Indicat
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Indicateur <span className="text-red-500">*</span></FormLabel>
-                                        {/*<Select onValueChange={field.onChange} value={field.value}>*/}
                                         <Select onValueChange={(v) => field.onChange(Number(v))} value={field.value ? String(field.value) : ''}>
                                             <FormControl>
                                                 <SelectTrigger className="w-full">
@@ -72,7 +75,7 @@ export function IndicateurSuiviFormModal({open, onOpenChange, editData}: Indicat
                         </div>
 
                         <div className="flex justify-end gap-3 pt-4 border-t mt-6">
-                            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
                                 Annuler
                             </Button>
                             <Button type="submit" disabled={isPending} className="bg-[#E7722B] hover:bg-[#C85E18] text-white">

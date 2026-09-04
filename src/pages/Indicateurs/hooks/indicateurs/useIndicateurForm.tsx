@@ -2,14 +2,27 @@ import {useForm} from "react-hook-form";
 import {type IndicateurFormValues, indicateurSchema} from "@/schema/indicateurs/indicateurSchema.ts";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {indicateurServices} from "@/services/indicateurs/indicateurs.services.ts";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {toast} from "sonner";
 
 export function useIndicateurForm(
-    open: boolean,
-    onOpenChange: (open: boolean) => void,
-    editData?: any
+    initialData: any | null, controlledOpen?: boolean, onOpenChange?: (open: boolean) => void
 ){
+    const [internalOpen, setInternalOpen] = useState(false)
+    const isControlled = controlledOpen !== undefined
+    const open = isControlled ? controlledOpen : internalOpen
+
+    const setOpen = (newOpen: boolean) => {
+        if (!isControlled) setInternalOpen(newOpen)
+        if (onOpenChange) onOpenChange(newOpen)
+    }
+
+    const { mutate: createIndicateur, isPending: isCreating } = indicateurServices.useCreate()
+    const { mutate: updateIndicateur, isPending: isUpdating } = indicateurServices.useUpdate()
+
+    const isPending = isCreating || isUpdating
+    const isEdit = !!initialData
+
     const form = useForm<IndicateurFormValues>({
         resolver: zodResolver(indicateurSchema),
         defaultValues: {
@@ -21,20 +34,16 @@ export function useIndicateurForm(
         }
     })
 
-    const { mutate: createIndicateur, isPending: isCreating } = indicateurServices.useCreate()
-    const { mutate: updateIndicateur, isPending: isUpdating } = indicateurServices.useUpdate()
-
-    const isPending = isCreating || isUpdating
 
     useEffect(() => {
         if (open){
-            if (editData){
+            if (initialData){
                 form.reset({
-                    nom: editData.nom || '',
-                    description: editData.description || '',
-                    type_valeur: editData.type_valeur || '',
-                    unite: editData.unite || '',
-                    statut: editData.statut || true
+                    nom: initialData.nom || '',
+                    description: initialData.description || '',
+                    type_valeur: initialData.type_valeur || '',
+                    unite: initialData.unite || '',
+                    statut: initialData.statut || true
                 })
             } else {
                 form.reset({
@@ -46,29 +55,17 @@ export function useIndicateurForm(
                 })
             }
         }
-    }, [open, form, editData]);
+    }, [open, initialData, form]);
 
-    const onSubmit = (data: IndicateurFormValues) => {
-        const payload = {
-            nom: data.nom,
-            description: data.description,
-            type_valeur: data.type_valeur,
-            unite: data.unite,
-            statut: data.statut
-        }
-
-        console.log(" after ", editData)
-
-        if (editData){
+    const onSubmit = (values: IndicateurFormValues) => {
+        if (isEdit && initialData){
             updateIndicateur({
-                id: editData.id,
-                data: {
-                    ...payload
-                }
+                id: initialData.id,
+                data: values
             }, {
                 onSuccess: () => {
+                    setOpen(false)
                     toast.success('Indicateur modifié avec succès !')
-                    onOpenChange(false)
                 },
                 onError: (err: any) => {
                     toast.error("Erreur lors de la modification")
@@ -76,12 +73,10 @@ export function useIndicateurForm(
                 }
             } )
         } else {
-            createIndicateur({
-                ...payload
-            }, {
+            createIndicateur(values, {
                 onSuccess: () => {
+                    setOpen(false)
                     toast.success('Indicateur ajouté avec succès !')
-                    onOpenChange(false)
                 },
                 onError: (err: any)=> {
                     toast.error("Erreur lors de l'ajout")
@@ -94,6 +89,8 @@ export function useIndicateurForm(
         form,
         onSubmit,
         isPending,
-        isEdit: !!editData
+        isEdit,
+        open,
+        setOpen
     }
 }

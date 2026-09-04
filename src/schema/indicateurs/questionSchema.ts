@@ -2,10 +2,10 @@ import { z } from 'zod'
 
 export const questionSchema = z.object(
     {
+        formulaire_id: z.number(),
         code: z.string(),
         libelle: z.string(),
         type_question: z.string(),
-        options: z.string().array(),
         ordre: z.number(),
         affichage: z.boolean(),
         obligatoire: z.boolean()

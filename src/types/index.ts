@@ -108,10 +108,10 @@ export interface FORMULAIRE_T {
 
 export interface QUESTION_T {
     id: number,
+    formulaire_id: number
     code: string,
     libelle: string,
     type_question: string,
-    options: string[],
     ordre: number,
     affichage: boolean,
     obligatoire: boolean,

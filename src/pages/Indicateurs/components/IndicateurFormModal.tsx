@@ -1,31 +1,36 @@
-import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
+import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog.tsx";
 import {useIndicateurForm} from "@/pages/Indicateurs/hooks/indicateurs/useIndicateurForm.tsx";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {Textarea} from "@/components/ui/textarea.tsx";
-import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
+import * as React from "react";
+import {Switch} from "@/components/ui/switch.tsx";
 
-interface IndicateurModalProps {
-    open: boolean
-    onOpenChange: (open: boolean) => void
-    editData?: any
+interface Props {
+    children?: React.ReactNode
+    open?: boolean
+    onOpenChange?: (open: boolean) => void
+    editData?: any | null
 }
 
-export function IndicateurFormModal({open, onOpenChange, editData} : IndicateurModalProps){
+export function IndicateurFormModal({children, open: controlledOpen, onOpenChange, editData} : Props){
     const {
         form,
         onSubmit,
         isPending,
-        isEdit
-    } = useIndicateurForm(open, onOpenChange, editData)
-
+        isEdit,
+        open,
+        setOpen
+    } = useIndicateurForm(editData, controlledOpen, onOpenChange)
 
     const types = ["numérique", "texte", "pourcentage", "booleen"];
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+
+        <Dialog open={open} onOpenChange={setOpen}>
+            {children && <DialogTrigger asChild>{children}</DialogTrigger>}
             <DialogContent className="sm:max-w-xl">
                 <DialogHeader>
                     <DialogTitle>
@@ -97,7 +102,7 @@ export function IndicateurFormModal({open, onOpenChange, editData} : IndicateurM
                                     <FormItem>
                                         <FormLabel>Unite <span className="text-red-500">*</span></FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Unite" {...field} />
+                                            <Input placeholder="Ex. %, FCFA" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -110,10 +115,7 @@ export function IndicateurFormModal({open, onOpenChange, editData} : IndicateurM
                                     <FormItem>
                                         <FormLabel>Statut <span className="text-red-500">*</span></FormLabel>
                                         <FormControl>
-                                            <Checkbox
-                                                checked={field.value}
-                                                onCheckedChange={field.onChange}
-                                            />
+                                            <Switch checked={field.value} onCheckedChange={field.onChange} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -122,7 +124,7 @@ export function IndicateurFormModal({open, onOpenChange, editData} : IndicateurM
                         </div>
 
                         <div className="flex justify-end gap-3 pt-4 border-t mt-6">
-                            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                            <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
                                 Annuler
                             </Button>
                             <Button type="submit" disabled={isPending} className="bg-[#E7722B] hover:bg-[#C85E18] text-white">

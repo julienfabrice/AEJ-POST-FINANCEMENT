@@ -34,7 +34,6 @@ export const ActionsCellRenderer = (params: ActionsCellRendererParams) => {
     if (isReadonly) return
     if (params.onEdit && params.data) {
       params.onEdit(params.data)
-        console.log(params.onEdit)
     }
   }
 

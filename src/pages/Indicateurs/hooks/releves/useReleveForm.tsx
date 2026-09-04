@@ -1,16 +1,33 @@
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {toast} from "sonner";
 import {indicateurSuiviSchema, type IndicateurSuiviValues} from "@/schema/indicateurs/indicateurSuiviSchema.ts";
 import {indicateursSuivisServices} from "@/services/indicateurs/indicateurs-suivis.services.ts";
 import {indicateurServices} from "@/services/indicateurs/indicateurs.services.ts";
 
 export function useReleveForm(
-    open: boolean,
-    onOpenChange: (open: boolean) => void,
-    editData?: any
+    editData: any|null,
+    controlledOpen?: boolean,
+    onOpenChange?: (open: boolean) => void
 ){
+
+    const [internalOpen, setInternalOpen] = useState(false)
+    const isControlled = controlledOpen !== undefined
+    const open = isControlled ? controlledOpen : internalOpen
+
+    const setOpen = (newOpen: boolean)=> {
+        if(!isControlled) setInternalOpen(newOpen)
+        if(onOpenChange) onOpenChange(newOpen)
+    }
+
+    const { mutate: createIndicateurSuivi, isPending: isCreating } = indicateursSuivisServices.useCreate()
+    const { mutate: updateIndicateurSuivi, isPending: isUpdating } = indicateursSuivisServices.useUpdate()
+    const { data: indicateurs = [] } = indicateurServices.useGetAll()
+
+    const isPending = isCreating || isUpdating
+    const isEdit = !!editData
+
     const form = useForm<IndicateurSuiviValues>({
         resolver: zodResolver(indicateurSuiviSchema),
         defaultValues: {
@@ -19,11 +36,6 @@ export function useReleveForm(
         }
     })
 
-    const { mutate: createIndicateurSuivi, isPending: isCreating } = indicateursSuivisServices.useCreate()
-    const { mutate: updateIndicateurSuivi, isPending: isUpdating } = indicateursSuivisServices.useUpdate()
-    const { data: indicateurs = [] } = indicateurServices.useGetAll()
-
-    const isPending = isCreating || isUpdating
 
     useEffect(() => {
         if (open){
@@ -41,22 +53,15 @@ export function useReleveForm(
         }
     }, [open, form, editData]);
 
-    const onSubmit = (data: IndicateurSuiviValues) => {
-        const payload = {
-            indicateur_id: data.indicateur_id,
-            valeur: data.valeur
-        }
-
+    const onSubmit = (values: IndicateurSuiviValues) => {
         if (editData){
             updateIndicateurSuivi({
                 id: editData.id,
-                data: {
-                    ...payload
-                }
+                data: values
             }, {
                 onSuccess: () => {
                     toast.success('Indicateur suivi modifié avec succès !')
-                    onOpenChange(false)
+                    setOpen(false)
                 },
                 onError: (err: any) => {
                     toast.error("Erreur lors de la modification")
@@ -64,12 +69,10 @@ export function useReleveForm(
                 }
             } )
         } else {
-            createIndicateurSuivi({
-                ...payload
-            }, {
+            createIndicateurSuivi(values, {
                 onSuccess: () => {
                     toast.success('Indicateur suivi ajouté avec succès !')
-                    onOpenChange(false)
+                    setOpen(false)
                 },
                 onError: (err: any)=> {
                     toast.error("Erreur lors de l'ajout")
@@ -82,7 +85,9 @@ export function useReleveForm(
         form,
         onSubmit,
         isPending,
-        isEdit: !!editData,
-        indicateurs
+        isEdit,
+        indicateurs,
+        open,
+        setOpen
     }
 }

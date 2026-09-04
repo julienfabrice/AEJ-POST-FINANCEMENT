@@ -1,44 +1,56 @@
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {toast} from "sonner";
 import {questionServices} from "@/services/indicateurs/questions.services.ts";
 import {type QuestionFormValues, questionSchema} from "@/schema/indicateurs/questionSchema.ts";
+import {formulairesServices} from "@/services/indicateurs/formulaires.services.ts";
 
 export function useQuestionForm(
-    open: boolean,
-    onOpenChange: (open: boolean) => void,
-    editData?: any
+    initialData: any | null, controlledOpen?: boolean, onOpenChange?: (open: boolean) => void
 ){
+    const [internalOpen, setInternalOpen] = useState(false)
+    const isControlled = controlledOpen !== undefined
+    const open = isControlled ? controlledOpen : internalOpen
+
+    const setOpen = (newOpen: boolean) => {
+        if (!isControlled) setInternalOpen(newOpen)
+        if (onOpenChange) onOpenChange(newOpen)
+    }
+
+    const { mutate: createQuestion, isPending: isCreating } = questionServices.useCreate()
+    const { mutate: updateQuestion, isPending: isUpdating } = questionServices.useUpdate()
+    const { data: fiches = [] } = formulairesServices.useGetAll()
+
+    const isPending = isCreating || isUpdating
+    const isEdit = !!initialData
+
     const form = useForm<QuestionFormValues>({
         resolver: zodResolver(questionSchema),
         defaultValues: {
+            formulaire_id:0,
             code: '',
             libelle: '',
             type_question: '',
-            options: ["interessant"],
             ordre: 0,
             affichage: true,
             obligatoire: true
         }
     })
 
-    const { mutate: createQuestion, isPending: isCreating } = questionServices.useCreate()
-    const { mutate: updateQuestion, isPending: isUpdating } = questionServices.useUpdate()
 
-    const isPending = isCreating || isUpdating
 
     useEffect(() => {
         if (open){
-            if (editData){
+            if (initialData){
                 form.reset({
-                    code: editData.code || '',
-                    libelle: editData.libelle || '',
-                    type_question : editData.type_question || '',
-                    options: editData.options || ["interessant"],
-                    ordre: editData.ordre || 0,
-                    affichage: editData.affichage || true,
-                    obligatoire: editData.obligatoire || true,
+                    formulaire_id: initialData.formulaire_id || 0,
+                    code: initialData.code || '',
+                    libelle: initialData.libelle || '',
+                    type_question : initialData.type_question || '',
+                    ordre: initialData.ordre || 0,
+                    affichage: initialData.affichage || true,
+                    obligatoire: initialData.obligatoire || true,
                 })
             } else {
                 form.reset({
@@ -49,30 +61,18 @@ export function useQuestionForm(
                 })
             }
         }
-    }, [open, form, editData]);
+    }, [open, form, initialData]);
 
-    const onSubmit = ( data: QuestionFormValues) => {
-        const payload = {
-            code: data.code,
-            libelle: data.libelle,
-            type_question: data.type_question,
-            options: data.options,
-            ordre: data.ordre,
-            affichage: data.affichage,
-            obligatoire: data.obligatoire,
+    const onSubmit = ( values: QuestionFormValues) => {
 
-        }
-
-        if (editData){
+        if (initialData){
             updateQuestion({
-                id: editData.id,
-                data: {
-                    ...payload
-                }
+                id: initialData.id,
+                data: values
             }, {
                 onSuccess: () => {
+                    setOpen(false)
                     toast.success('Question modifiée avec succès !')
-                    onOpenChange(false)
                 },
                 onError: (err: any) => {
                     toast.error("Erreur lors de la modification")
@@ -80,12 +80,10 @@ export function useQuestionForm(
                 }
             } )
         } else {
-            createQuestion({
-                ...payload
-            }, {
+            createQuestion(values, {
                 onSuccess: () => {
+                    setOpen(false)
                     toast.success('Question ajoutée avec succès !')
-                    onOpenChange(false)
                 },
                 onError: (err: any)=> {
                     toast.error("Erreur lors de l'ajout")
@@ -98,6 +96,9 @@ export function useQuestionForm(
         form,
         onSubmit,
         isPending,
-        isEdit: !!editData
+        isEdit,
+        open,
+        setOpen,
+        fiches
     }
 }

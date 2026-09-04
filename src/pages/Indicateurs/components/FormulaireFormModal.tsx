@@ -1,31 +1,37 @@
-import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
+import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@/components/ui/dialog.tsx";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {useFicheForm} from "@/pages/Indicateurs/hooks/fiches/useFicheForm.tsx";
+import * as React from "react";
+import {Switch} from "@/components/ui/switch.tsx";
 
-interface FormulaireModalProps {
-    open: boolean
-    onOpenChange: (open: boolean) => void
-    editData?: any
+interface Props {
+    children?: React.ReactNode
+    open?: boolean
+    onOpenChange?: (open: boolean) => void
+    editData?: any | null
 }
 
-export function FormulaireFormModal({open, onOpenChange, editData}: FormulaireModalProps){
+export function FormulaireFormModal({children, open: controlledOpen, onOpenChange, editData} : Props){
     const {
         form,
         onSubmit,
         isPending,
-        isEdit
-    } = useFicheForm(open, onOpenChange, editData)
-    // console.log("edit data", editData)
+        isEdit,
+        open,
+        setOpen
+    } = useFicheForm(editData, controlledOpen, onOpenChange)
+    const cibles = [ 'Bénéficiare', 'Partenaire', 'Agent']
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog open={open} onOpenChange={setOpen}>
+            {children && <DialogTrigger asChild>{children}</DialogTrigger>}
             <DialogContent className="sm:max-w-xl">
                 <DialogHeader>
                     <DialogTitle>
-                        {isEdit ? 'Modifier relevé' : 'Ajouter un relevé'}
+                        {isEdit ? 'Modifier formulaire' : 'Ajouter un formulaire'}
                     </DialogTitle>
                 </DialogHeader>
 
@@ -37,7 +43,7 @@ export function FormulaireFormModal({open, onOpenChange, editData}: FormulaireMo
                                 name="code"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Code <span className="text-red-500">*</span></FormLabel>
+                                        <FormLabel>Code</FormLabel>
                                         <FormControl>
                                             <Input placeholder="Code" {...field} />
                                         </FormControl>
@@ -63,33 +69,37 @@ export function FormulaireFormModal({open, onOpenChange, editData}: FormulaireMo
                                 name="public_cible"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Public cible <span className="text-red-500">*</span></FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Public cible" {...field} />
-                                        </FormControl>
+                                        <FormLabel>Public cible </FormLabel>
+
+                                        <Select
+                                            onValueChange={
+                                                (v) => field.onChange(v)
+                                            }
+                                            value={field.value ? String(field.value) : ''}
+
+                                        >
+                                            <FormControl>
+                                                <SelectTrigger className="w-full"><SelectValue placeholder="Sélectionner un type" /></SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {cibles.map((t) => (
+                                                    <SelectItem key={t} value={String(t)}>{t}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
                             <FormField
                                 control={form.control}
-                                name="indicateur_id"
+                                name="actif"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Indicateur <span className="text-red-500">*</span></FormLabel>
-                                        {/*<Select onValueChange={field.onChange} value={field.value}>*/}
-                                        <Select onValueChange={(v) => field.onChange(Number(v))} value={field.value ? String(field.value) : ''}>
-                                            <FormControl>
-                                                <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder="Sélectionner un rôle" />
-                                                </SelectTrigger>
-                                            </FormControl>
-                                            <SelectContent>
-                                                {indicateurs.map(ind => (
-                                                    <SelectItem key={ind.id} value={String(ind.id)}>{ind.nom }</SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
+                                        <FormLabel>Active </FormLabel>
+                                        <FormControl>
+                                            <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                        </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -98,7 +108,7 @@ export function FormulaireFormModal({open, onOpenChange, editData}: FormulaireMo
                         </div>
 
                         <div className="flex justify-end gap-3 pt-4 border-t mt-6">
-                            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
                                 Annuler
                             </Button>
                             <Button type="submit" disabled={isPending} className="bg-[#E7722B] hover:bg-[#C85E18] text-white">

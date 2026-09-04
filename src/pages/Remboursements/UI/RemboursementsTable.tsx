@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import dayjs from 'dayjs'
 import { Card } from '@/components/ui/card'
 import { StatusBadge } from '../../EspacePartenaireFinancier/components/StatusBadge'
-import { money } from '../../EspacePartenaireFinancier/utils/money'
+import { money } from "@/helpers/money"
 import { remboursementServices } from '@/services/remboursements.services'
 import { budgetServices } from '@/services/budgets.services'
 import { RemboursementEditModal } from '../components/RemboursementEditModal'

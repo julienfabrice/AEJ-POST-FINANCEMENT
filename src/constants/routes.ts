@@ -12,6 +12,7 @@ import {
   Banknote,
   BarChart3,
   Eye,
+  ListTree,
   FileText,
   Shield,
   Globe,
@@ -19,6 +20,7 @@ import {
   Tags,
   Workflow,
   Settings,
+  PieChart,
   type LucideIcon,
 } from 'lucide-react'
 import { MODULES, type ModuleKey } from '@/constants/modules'
@@ -60,9 +62,9 @@ export const ROUTES = {
 
   // Suivi & Évaluation
   SUIVI: '/suivi',
+  CADRE_RESULTAT: '/cadre-resultat',
   RAPPORTS: '/rapports',
-
-  // Administration
+  TABLEAU_BORD_SUIVI: '/tableau-bord-suivi',
   ADMIN_PROFILS: '/admin/profils',
   ADMIN_PERSONNELS: '/admin/personnels',
   ADMIN_LOCALITES: '/admin/localites',
@@ -204,24 +206,16 @@ export const AGENT_NAV_ITEMS: NavItem[] = [
   },
 
   // SUIVI & ÉVALUATION
-  {
-    key: 'suivi',
-    label: 'Suivi & exploitation',
-    path: ROUTES.SUIVI,
-    icon: Eye,
-    group: 'SUIVI & ÉVALUATION',
-    module: MODULES.SUIVI,
-  },
-
-  {
-    key: 'rapports',
-    label: 'Rapports',
-    path: ROUTES.RAPPORTS,
-    icon: FileText,
-    group: 'SUIVI & ÉVALUATION',
-    module: MODULES.RAPPORTS,
-  },
-
+  { key: 'suivi', label: 'Suivi & exploitation', path: ROUTES.SUIVI, icon: Eye, group: 'SUIVI & ÉVALUATION', module: MODULES.SUIVI },
+  // ⚠️ Gardée par MODULES.SUIVI, et NON par MODULES.CADRE_RESULTAT — qui existe
+  // pourtant (`src/constants/modules.ts`). `can()` ne connaît que les modules
+  // renvoyés par `GET /auth/me` : tant que le backend n'expose pas
+  // `cadre_resultat`, ce module rendrait l'entrée invisible pour tout le monde
+  // et la route inaccessible. Bascule = remplacer `MODULES.SUIVI` par
+  // `MODULES.CADRE_RESULTAT` ici et dans la route du même nom.
+  { key: 'cadre_resultat', label: 'Cadre de résultat', path: ROUTES.CADRE_RESULTAT, icon: ListTree, group: 'SUIVI & ÉVALUATION', module: MODULES.SUIVI },
+  { key: 'rapports', label: 'Rapports', path: ROUTES.RAPPORTS, icon: FileText, group: 'SUIVI & ÉVALUATION', module: MODULES.RAPPORTS },
+  { key: 'tableau_bord_suivi', label: 'Tableau de bord', path: ROUTES.TABLEAU_BORD_SUIVI, icon: PieChart, group: 'SUIVI & ÉVALUATION', module: MODULES.SUIVI },
   // ADMINISTRATION
   {
     key: 'admin_profils',
@@ -348,7 +342,9 @@ export const PAGE_TITLES: Partial<Record<AppRoute, string>> = {
   [ROUTES.PROJETS]: 'Micro-projets',
   [ROUTES.INDICATEURS]: 'Indicateurs & suivi',
   [ROUTES.SUIVI]: 'Suivi & exploitation',
+  [ROUTES.CADRE_RESULTAT]: 'Cadre de résultat',
   [ROUTES.RAPPORTS]: 'Rapports',
+  [ROUTES.TABLEAU_BORD_SUIVI]: 'Tableau de bord',
   [ROUTES.ADMIN_PROFILS]: 'Profils & permissions',
   [ROUTES.ADMIN_PERSONNELS]: 'Personnels',
   [ROUTES.ADMIN_LOCALITES]: 'Localités',

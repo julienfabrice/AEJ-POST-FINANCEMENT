@@ -25,6 +25,12 @@ interface AuthState {
    * Unique point de vérification des droits. Lit exclusivement les permissions
    */
   can: (module: string, action?: PERMISSION_ACTION_T) => boolean
+
+  /** Retourne l'agence_regionale_id si l'utilisateur est cloisonné à une agence (CIP, CAR). */
+  agencyScope: () => string | null
+
+  /** Retourne l'organisme_id si l'utilisateur est un PF. */
+  organismeScope: () => string | null
 }
 
 
@@ -77,6 +83,25 @@ export const useAuthStore = create<AuthState>()(
         if (AUTH_DISABLED) return true
 
         return canFrom(get().permissions, module, action)
+      },
+
+      agencyScope: () => {
+        const user = get().user
+        if (!user || user.role?.code === 'BENEF') return null
+        // CIP et CAR sont cloisonnés par agence
+        if (['CIP', 'CAR', 'AC'].includes(user.role?.code || '') && user.agence?.id) {
+          return String(user.agence.id)
+        }
+        return null
+      },
+
+      organismeScope: () => {
+        const user = get().user
+        if (!user || user.role?.code === 'BENEF') return null
+        if (user.role?.code === 'PF' && user.organisme?.id) {
+          return String(user.organisme.id)
+        }
+        return null
       },
     }),
     {

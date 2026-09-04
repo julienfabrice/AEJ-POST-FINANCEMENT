@@ -270,6 +270,32 @@ export interface BUDGET_T {
   /** Relation embarquée par GET /budgets — pas besoin d'un fetch séparé vers /projets. */
   micro_projet?: import('./promoteurs.types').MICRO_PROJET_T
 }
+// --- Lots de transmission (/lots-transmission) ---
+
+export type LOT_TRANSMISSION_STATUT_T = 'BROUILLON' | 'TRANSMIS' | 'TRAITE' | 'REJETE'
+
+export interface LOT_TRANSMISSION_T {
+  id: number
+  organisme_id: number
+  guichet_id: number
+  code: string
+  titre: string
+  fichier_repartition?: string | null
+  fichier_courrier?: string | null
+  reference_courrier?: string | null
+  reference_convention?: string | null
+  date_transmission?: string | null
+  taux_recouvrement?: number | string | null
+  duree_differee?: number | null
+  duree_remboursement?: number | null
+  statut: LOT_TRANSMISSION_STATUT_T
+  created_at?: string
+  updated_at?: string
+  organisme?: ORGANISME_FINANCEMENT_T | null
+  guichet?: GUICHET_T | null
+  dossiers?: import('./promoteurs.types').MICRO_PROJET_T[]
+}
+
 // --- Décaissements (schema.v2.sql, section 15) ---
 
 export type MODE_DECAISSE_T = 'CHEQUE' | 'VIREMENT'
@@ -292,13 +318,17 @@ export interface LIGNE_DECAISSEMENT_T {
 
 export interface PLAN_DECAISSEMENT_T {
   id: number
-  micro_projet_id: number
+  micro_projet_id?: number
   budget_id?: number | null
+  code?: string | null
+  intitule?: string | null
   compte_financement_id?: number | null
   montant_planifie: number
   date_prevue?: string | null
   justificatif_path?: string | null
   lignes?: LIGNE_DECAISSEMENT_T[]
+  budget?: BUDGET_T | null
+  micro_projet?: import('./promoteurs.types').MICRO_PROJET_T | null
   created_at?: string
   updated_at?: string
 }
@@ -309,12 +339,22 @@ export interface DECAISSEMENT_T {
   id: number
   plan_decaissement_id: number
   ligne_decaissement_id?: number | null
+  numero_ligne?: number | null
+  object_ligne?: string | null
+  montant_ligne?: number | null
+  mode_decaisse?: MODE_DECAISSE_T | null
+  date_prevue?: string | null
+  intitule_prestataire?: string | null
+  numero_compte?: string | null
+  contact?: string | null
   agence_id?: number | null
-  montant_decaisse: number
+  agence?: AGENCE_REGIONALE_T | null
+  montant_decaisse?: number
   date_decaissement?: string | null
   reference_banque?: string | null
   statut: DECAISSEMENT_STATUT_T
   observations?: string | null
+  plan_decaissement?: PLAN_DECAISSEMENT_T | null
   created_at?: string
   updated_at?: string
 }
@@ -351,6 +391,8 @@ export interface REMBOURSEMENT_T {
   date_paiement?: string | null
   observations?: string | null
   statut: REMBOURSEMENT_STATUT_T
+  promoteur?: import('./promoteurs.types').PROMOTEUR_T | null
+  budget?: BUDGET_T | null
   created_at?: string
   updated_at?: string
 }
@@ -378,6 +420,8 @@ export * from './workflow.types'
 
 // --- Transactions (dépenses/recettes) ---
 
+// --- Transactions (dépenses/recettes) ---
+
 export type TRANSACTION_TYPE_T = 'DEPENSE' | 'RECETTE'
 export type TRANSACTION_STATUT_T = 'BROUILLON' | 'SOUMIS' | 'VALIDE' | 'REJETE' | 'ANNULE'
 
@@ -400,6 +444,40 @@ export interface TRANSACTION_T {
   updated_at?: string
   micro_projet?: import('./promoteurs.types').MICRO_PROJET_T
 }
+
+/**
+ * --- Suivi & exploitation (rapports de visite terrain + emplois créés) ---
+ *
+ * Ré-exporté comme `workflow.types` ci-dessus : les écrans importent depuis
+ * `@/types` sans avoir à connaître le découpage des fichiers. Le détail des
+ * arbitrages maquette/API est documenté dans `suivi.types.ts`.
+ */
+export * from './suivi.types'
+
+/**
+ * --- Agrégats de tableau de bord (`/dashboard/*`) ---
+ *
+ * Ré-exporté ici pour que les écrans importent depuis `@/types`. Ces endpoints
+ * répondent `{ data }` SANS `message` : ils n'utilisent donc PAS
+ * `API_RESPONSE_T` mais `DASHBOARD_RESPONSE_T`. Détail des relevés live et des
+ * arbitrages (clés accentuées, montants en chaîne) dans `dashboard.types.ts`.
+ */
+export * from './dashboard.types'
+
+/**
+ * --- Cadre de résultat (module « Suivi & évaluation », API NON BRANCHÉE) ---
+ *
+ * Ré-exporté comme `suivi.types` et `dashboard.types` ci-dessus : les écrans,
+ * services et schémas importent depuis `@/types` sans connaître le découpage
+ * des fichiers.
+ *
+ * ⚠️ Ces types sont calqués sur un SCHÉMA SQL, pas sur une réponse d'API —
+ * l'API n'existe pas encore. Coquilles du schéma reprises telles quelles
+ * (`abgrege_cs`, `intutile_cs`, `valeur_cible_indcateur_istr`, `Date_suivi`),
+ * incohérences signalées champ par champ : tout le détail est dans
+ * `cadreResultat.types.ts`, à relire au moment du branchement.
+ */
+export * from './cadreResultat.types'
 export interface DISPOSITIF_T {
   id: number
   code: string

@@ -1,5 +1,5 @@
 import { Card } from '@/components/ui/card'
-import { money } from '../../EspacePartenaireFinancier/utils/money'
+import { money } from "@/helpers/money"
 
 interface KPIsProps {
   kpis: {

@@ -9,9 +9,11 @@ const BADGE_CLASSES: Record<string, string> = {
   gy: 'bg-[#eef1f6] text-[#5A6B80]',
 }
 
+export type StatusBadgeVariant = 'gr' | 'or' | 'bl' | 'rd' | 'am' | 'gy'
+
 interface StatusBadgeProps {
   label: string
-  variant?: 'gr' | 'or' | 'bl' | 'rd' | 'am' | 'gy'
+  variant?: StatusBadgeVariant
   dot?: boolean
   className?: string
 }
@@ -22,7 +24,7 @@ export function StatusBadge({
   dot,
   className,
 }: StatusBadgeProps) {
-  const dotColor: Record<string, string> = {
+  const dotColor: Record<StatusBadgeVariant, string> = {
     gr: 'bg-[#20A83A]',
     or: 'bg-[#E7722B]',
     bl: 'bg-[#2D6BD4]',
@@ -50,48 +52,79 @@ export function StatusBadge({
 }
 
 // Mapping helpers
-export function lotStatutBadge(statut: string) {
-  const map: Record<string, { label: string; variant: StatusBadgeProps['variant'] }> = {
+export function lotStatutBadge(statut?: string): { label: string; variant: StatusBadgeVariant } {
+  const map: Record<string, { label: string; variant: StatusBadgeVariant }> = {
+    BROUILLON: { label: 'Brouillon', variant: 'gy' },
+    TRANSMIS: { label: 'Transmis', variant: 'bl' },
+    TRAITE: { label: 'Traité', variant: 'gr' },
+    REJETE: { label: 'Rejeté', variant: 'rd' },
     ENVOYE: { label: 'Envoyé', variant: 'bl' },
     EN_COURS: { label: 'En cours', variant: 'am' },
     RETOURNE: { label: 'Retourné', variant: 'gr' },
   }
+  if (!statut) return { label: '—', variant: 'gy' }
   return map[statut] ?? { label: statut, variant: 'gy' }
 }
 
-export function approbationBadge(dec: string) {
-  const map: Record<string, { label: string; variant: StatusBadgeProps['variant'] }> = {
+export function approbationBadge(dec?: string): { label: string; variant: StatusBadgeVariant } {
+  const map: Record<string, { label: string; variant: StatusBadgeVariant }> = {
     APPROUVE: { label: 'Approuvé', variant: 'gr' },
+    NON_APPROUVE: { label: 'Non approuvé', variant: 'rd' },
     REJETE: { label: 'Rejeté', variant: 'rd' },
-    EN_ATTENTE: { label: 'À traiter', variant: 'am' },
+    EN_ATTENTE: { label: 'En attente', variant: 'am' },
+    EN_COURS: { label: 'En cours', variant: 'bl' },
+    EN_SOUMISSION: { label: 'En soumission', variant: 'gy' },
+    EN_ANALYSE: { label: 'En analyse', variant: 'am' },
+    ANNULE: { label: 'Annulé', variant: 'rd' },
+    EN_FORMATION: { label: 'En formation', variant: 'bl' },
+    EN_FINANCEMENT: { label: 'En financement', variant: 'or' },
+    EN_DECAISSEMENT: { label: 'En décaissement', variant: 'or' },
+    EN_SUIVI: { label: 'En suivi', variant: 'bl' },
+    EN_REMBOURSEMENT: { label: 'En remboursement', variant: 'am' },
+    TERMINE: { label: 'Terminé', variant: 'gr' },
+    BROUILLON: { label: 'Brouillon', variant: 'gy' },
   }
+  if (!dec) return { label: '—', variant: 'gy' }
   return map[dec] ?? { label: dec, variant: 'gy' }
 }
 
-export function planStatutBadge(statut: string) {
-  const map: Record<string, { label: string; variant: StatusBadgeProps['variant'] }> = {
+export function planStatutBadge(statut?: string): { label: string; variant: StatusBadgeVariant } {
+  const map: Record<string, { label: string; variant: StatusBadgeVariant }> = {
     BROUILLON: { label: 'Brouillon', variant: 'gy' },
     EN_VALIDATION: { label: 'En validation', variant: 'am' },
     TRANSMIS_PF: { label: 'Transmis PF', variant: 'bl' },
     AJOURNE: { label: 'Ajourné', variant: 'rd' },
+    VALIDE: { label: 'Validé', variant: 'gr' },
+    NON_VALIDE: { label: 'Non validé', variant: 'rd' },
   }
+  if (!statut) return { label: '—', variant: 'gy' }
   return map[statut] ?? { label: statut, variant: 'gy' }
 }
 
-export function ligneStatutBadge(statut: string) {
-  const map: Record<string, { label: string; variant: StatusBadgeProps['variant'] }> = {
+export function ligneStatutBadge(statut?: string): { label: string; variant: StatusBadgeVariant } {
+  const map: Record<string, { label: string; variant: StatusBadgeVariant }> = {
+    VALIDE: { label: 'Validé', variant: 'gr' },
+    NON_VALIDE: { label: 'Non validé', variant: 'rd' },
     PREVU: { label: 'Prévu', variant: 'gy' },
     AUTORISE: { label: 'Autorisé', variant: 'am' },
     EXECUTE: { label: 'Exécuté', variant: 'gr' },
+    EN_ATTENTE: { label: 'En attente', variant: 'am' },
   }
+  if (!statut) return { label: '—', variant: 'gy' }
   return map[statut] ?? { label: statut, variant: 'gy' }
 }
 
-export function rembStatutBadge(statut: string) {
-  const map: Record<string, { label: string; variant: StatusBadgeProps['variant'] }> = {
+export function rembStatutBadge(statut?: string): { label: string; variant: StatusBadgeVariant } {
+  const map: Record<string, { label: string; variant: StatusBadgeVariant }> = {
+    EN_ATTENTE: { label: 'En attente', variant: 'am' },
+    PAYE: { label: 'Payé', variant: 'gr' },
+    PARTIEL: { label: 'Partiel', variant: 'or' },
+    NON_PAYE: { label: 'Non payé', variant: 'rd' },
     A_JOUR: { label: 'À jour', variant: 'gr' },
-    IMPAYE: { label: 'Impayé', variant: 'am' },
+    IMPAYE: { label: 'Impayé', variant: 'rd' },
     CONTENTIEUX: { label: 'Contentieux', variant: 'rd' },
   }
+  if (!statut) return { label: '—', variant: 'gy' }
   return map[statut] ?? { label: statut, variant: 'gy' }
 }
+

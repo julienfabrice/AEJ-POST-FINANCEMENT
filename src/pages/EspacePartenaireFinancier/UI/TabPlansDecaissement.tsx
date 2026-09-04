@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ChevronDown, ChevronUp, CreditCard, CheckCircle2 } from 'lucide-react'
+import { ChevronDown, ChevronUp, CreditCard, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import {
@@ -8,87 +8,28 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
-import { MOCK_PLANS, type MockPlan, type MockLignePlan } from '@/mock/espacePartenaireFinancier.mock'
-import { StatusBadge, planStatutBadge, ligneStatutBadge } from '../components/StatusBadge'
+import { planDecaissementServices } from '@/services/planDecaissements.services'
+import { StatusBadge, ligneStatutBadge } from '../components/StatusBadge'
 import { money } from "@/helpers/money"
-
-// ---------- Chaîne de validation ------------------------------------------
-
-function ChaineValidation({ statut }: { statut: MockPlan['statut'] }) {
-  const steps = [
-    { label: 'CIP', title: 'Conseiller en Insertion Professionnelle' },
-    { label: 'CAR', title: 'Chef d\'Agence Régionale' },
-    { label: 'SDRF', title: 'Chef Service Dév. Ressources Financement' },
-    { label: 'SDEF', title: 'Sous-Dir. Évaluation Financière' },
-    { label: 'SDPF', title: 'Sous-Dir. Partenariat et Financement' },
-    { label: 'DPF', title: 'Directeur du Partenariat et du Financement' },
-    { label: 'PF', title: 'Partenaire Financier' },
-  ]
-
-  const doneCount =
-    statut === 'TRANSMIS_PF'
-      ? steps.length
-      : statut === 'EN_VALIDATION'
-        ? 2
-        : statut === 'BROUILLON'
-          ? 0
-          : 0
-
-  return (
-    <div className="flex flex-wrap gap-0 my-3 items-stretch">
-      {steps.map((s, i) => {
-        const isDone = i < doneCount
-        const isCur = i === doneCount && statut === 'EN_VALIDATION'
-        const isKo = statut === 'AJOURNE' && i === doneCount
-
-        let cls =
-          'border border-[#E5EAF1] bg-white text-[#5A6B80] text-[12px] px-3 py-2 flex items-center gap-2 flex-none first:rounded-l-[8px] last:rounded-r-[8px] border-r-0 last:border-r'
-        if (isDone) cls = cls.replace('bg-white text-[#5A6B80]', 'bg-[#E3F6E7] border-[#c7ebd0] text-[#178A2E]')
-        if (isCur) cls = cls.replace('bg-white text-[#5A6B80]', 'bg-[#FBEADE] border-[#f3cfb3] text-[#C85E18]')
-        if (isKo) cls = cls.replace('bg-white text-[#5A6B80]', 'bg-[#FBE7E5] border-[#f2c9c5] text-[#D6453B]')
-
-        return (
-          <div key={s.label} className={cls} title={s.title}>
-            <span
-              className={`w-5 h-5 rounded-full grid place-items-center text-[10.5px] font-bold flex-none ${
-                isDone
-                  ? 'bg-[#20A83A] text-white'
-                  : isCur
-                    ? 'bg-[#E7722B] text-white'
-                    : isKo
-                      ? 'bg-[#D6453B] text-white'
-                      : 'bg-[#EEF2F7] text-[#5A6B80]'
-              }`}
-            >
-              {i + 1}
-            </span>
-            <b className="font-semibold">{s.label}</b>
-          </div>
-        )
-      })}
-    </div>
-  )
-}
+import { formatDate } from "@/helpers/date"
+import { refLabel } from '@/types/referentials.types'
+import type { PLAN_DECAISSEMENT_T, LIGNE_DECAISSEMENT_T } from '@/types'
 
 // ---------- Ligne de décaissement ------------------------------------------
 
-function LigneRow({ ligne }: { ligne: MockLignePlan }) {
+function LigneRow({ ligne }: { ligne: LIGNE_DECAISSEMENT_T }) {
   const badge = ligneStatutBadge(ligne.statut)
   const numCls =
-    ligne.statut === 'EXECUTE'
+    ligne.statut === 'VALIDE'
       ? 'bg-[#20A83A]'
-      : ligne.statut === 'AUTORISE'
-        ? 'bg-[#E0A106]'
-        : 'bg-[#131C29]'
+      : 'bg-[#131C29]'
 
   return (
     <div
       className={`border rounded-[8px] mb-2 overflow-hidden ${
-        ligne.statut === 'EXECUTE'
+        ligne.statut === 'VALIDE'
           ? 'border-[#c7ebd0]'
-          : ligne.statut === 'AUTORISE'
-            ? 'border-[#f3cfb3]'
-            : 'border-[#E5EAF1]'
+          : 'border-[#E5EAF1]'
       }`}
     >
       {/* En-tête numéro */}
@@ -96,33 +37,31 @@ function LigneRow({ ligne }: { ligne: MockLignePlan }) {
         <div
           className={`w-[26px] h-[26px] rounded-[8px] ${numCls} text-white grid place-items-center text-[12px] font-bold font-['Archivo'] flex-none`}
         >
-          {ligne.num}
+          {ligne.numero_ligne}
         </div>
         <div className="flex-1 min-w-0">
-          <b className="block text-[13.5px] text-[#131C29]">{ligne.libelle}</b>
+          <b className="block text-[13.5px] text-[#131C29]">{ligne.object_ligne || `Ligne #${ligne.numero_ligne}`}</b>
           <span className="text-[11.5px] text-[#5A6B80]">
             {[
-              ligne.ordre && `Prestataire : ${ligne.ordre}`,
-              ligne.date_prevue && `prévu le ${ligne.date_prevue}`,
-              ligne.date_autorisation && `autorisé le ${ligne.date_autorisation}`,
-              ligne.date_execution && `exécuté le ${ligne.date_execution}`,
+              ligne.intitule_prestataire && `Prestataire : ${ligne.intitule_prestataire}`,
+              ligne.mode_decaisse && `Mode : ${ligne.mode_decaisse}`,
+              ligne.date_prevue && `Prévu le : ${formatDate(ligne.date_prevue)}`,
+              ligne.numero_compte && `Compte : ${ligne.numero_compte}`,
+              ligne.contact && `Contact : ${ligne.contact}`,
             ]
               .filter(Boolean)
               .join(' · ')}
           </span>
+          {ligne.observations && (
+            <span className="block text-[11px] text-[#8595A8] mt-0.5 italic">
+              Note : {ligne.observations}
+            </span>
+          )}
         </div>
         <span className="font-mono font-semibold text-[13px] text-[#131C29] whitespace-nowrap">
-          {money(ligne.montant)}
+          {money(Number(ligne.montant_ligne))}
         </span>
         <StatusBadge label={badge.label} variant={badge.variant} />
-        {ligne.statut === 'AUTORISE' && (
-          <Button
-            size="sm"
-            className="bg-[#20A83A] hover:bg-[#178A2E] text-white text-[12px] gap-1 h-7"
-          >
-            <CheckCircle2 size={12} /> Exécuter
-          </Button>
-        )}
       </div>
     </div>
   )
@@ -135,16 +74,20 @@ function PlanDrawer({
   open,
   onClose,
 }: {
-  plan: MockPlan | null
+  plan: PLAN_DECAISSEMENT_T | null
   open: boolean
   onClose: () => void
 }) {
   if (!plan) return null
-  const badge = planStatutBadge(plan.statut)
-  const total = plan.lignes.reduce((s, l) => s + l.montant, 0)
-  const decaisse = plan.lignes
-    .filter((l) => l.statut === 'EXECUTE')
-    .reduce((s, l) => s + l.montant, 0)
+  const lignes = plan.lignes ?? []
+  const total = Number(plan.montant_planifie) || lignes.reduce((s, l) => s + Number(l.montant_ligne), 0)
+  const decaisse = lignes
+    .filter((l) => l.statut === 'VALIDE')
+    .reduce((s, l) => s + Number(l.montant_ligne), 0)
+
+  const projet = plan.micro_projet
+  const promoteurName = projet?.promoteur ? `${projet.promoteur.nom} ${projet.promoteur.prenom}` : '—'
+  const agenceName = projet?.agence ? refLabel(projet.agence) : '—'
 
   return (
     <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
@@ -156,40 +99,26 @@ function PlanDrawer({
         <div className="sticky top-0 bg-white border-b border-[#E5EAF1] px-[22px] py-[18px] z-10">
           <SheetHeader className="p-0">
             <div className="text-[11px] text-[#5A6B80]">
-              <span className="font-mono">{plan.projet_id}</span> · plan de décaissement · voie{' '}
-              {plan.voie === 'DIRECTION' ? 'Direction' : 'Agence'}
+              <span className="font-mono">{plan.code || `#PLAN-${plan.id}`}</span> · Plan de décaissement
             </div>
             <SheetTitle className="text-[17px] font-bold text-[#131C29] mt-0.5">
-              {plan.projet_titre}
+              {plan.intitule || projet?.intitule || `Plan #${plan.id}`}
             </SheetTitle>
             <div className="text-[12px] text-[#5A6B80]">
-              {plan.promoteur} · {plan.agence}
+              {promoteurName} · {agenceName}
             </div>
           </SheetHeader>
-          <div className="mt-2">
-            <StatusBadge label={badge.label} variant={badge.variant} />
-          </div>
         </div>
 
         {/* Corps */}
         <div className="px-[22px] py-[22px] space-y-5">
-          {/* Chaîne de validation */}
-          <div>
-            <p className="text-[11px] uppercase tracking-[.08em] text-[#8595A8] font-bold mb-1">
-              Chaîne de validation
-            </p>
-            <ChaineValidation statut={plan.statut} />
-          </div>
-
           {/* Infos */}
-          <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-[13px]">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-[13px] bg-white p-4 rounded-[9px] border border-[#E5EAF1]">
             {[
-              ['Agence', plan.agence],
-              ['Voie', plan.voie === 'DIRECTION' ? 'Direction' : 'Agence'],
-              ['Validation bénéficiaire', plan.valide_benef ? '✔ Validé' : 'En attente'],
-              ['Créé le', plan.cree],
-              ['Montant du crédit', money(plan.montant_credit)],
-              ['Montant total du plan', money(total)],
+              ['Code', plan.code || `PLAN-${plan.id}`],
+              ['Date prévue', formatDate(plan.date_prevue)],
+              ['Projet', projet?.intitule || (plan.budget_id ? `Budget #${plan.budget_id}` : '—')],
+              ['Montant planifié', money(total)],
             ].map(([k, v]) => (
               <div key={k}>
                 <div className="text-[11px] uppercase tracking-[.04em] text-[#8595A8] font-bold mb-0.5">
@@ -200,40 +129,38 @@ function PlanDrawer({
             ))}
           </div>
 
-          {/* Note */}
-          {plan.note && (
-            <div>
-              <p className="text-[11px] uppercase tracking-[.08em] text-[#8595A8] font-bold mb-1">
-                Note / Observations
-              </p>
-              <p className="text-[13px] text-[#5A6B80]">{plan.note}</p>
-            </div>
-          )}
-
           {/* Lignes */}
           <div>
             <p className="text-[11px] uppercase tracking-[.08em] text-[#8595A8] font-bold mb-2">
-              Lignes de décaissement ({plan.lignes.length})
+              Lignes de décaissement ({lignes.length})
             </p>
-            {plan.lignes.map((l) => (
-              <LigneRow key={l.id} ligne={l} />
-            ))}
+            {lignes.length === 0 ? (
+              <div className="text-center py-6 text-[13px] text-[#8595A8] bg-white rounded-[8px] border border-[#E5EAF1]">
+                Aucune ligne de décaissement associée.
+              </div>
+            ) : (
+              lignes.map((l, index) => (
+                <LigneRow key={l.id ?? index} ligne={l} />
+              ))
+            )}
 
             {/* Total */}
-            <div className="flex items-center gap-3 px-[14px] py-3 bg-[#EEF2F7] rounded-[8px] font-bold">
-              <div className="w-[26px] h-[26px] rounded-[8px] bg-[#5A6B80] text-white grid place-items-center text-[12px] font-bold flex-none">
-                Σ
-              </div>
-              <div className="flex-1">
-                <b className="text-[13.5px]">TOTAL</b>
-                <span className="text-[11.5px] text-[#5A6B80] ml-2">
-                  décaissé {money(decaisse)}
+            {lignes.length > 0 && (
+              <div className="flex items-center gap-3 px-[14px] py-3 bg-[#EEF2F7] rounded-[8px] font-bold mt-2">
+                <div className="w-[26px] h-[26px] rounded-[8px] bg-[#5A6B80] text-white grid place-items-center text-[12px] font-bold flex-none">
+                  Σ
+                </div>
+                <div className="flex-1">
+                  <b className="text-[13.5px]">TOTAL PLANIFIÉ : {money(total)}</b>
+                  <span className="text-[11.5px] text-[#5A6B80] ml-2">
+                    validé : {money(decaisse)}
+                  </span>
+                </div>
+                <span className="font-mono text-[13px] font-bold">
+                  RESTE : {money(Math.max(0, total - decaisse))}
                 </span>
               </div>
-              <span className="font-mono text-[13px] font-bold">
-                RESTE : {money(total - decaisse)}
-              </span>
-            </div>
+            )}
           </div>
         </div>
 
@@ -241,9 +168,6 @@ function PlanDrawer({
         <div className="sticky bottom-0 bg-white border-t border-[#EEF2F7] px-[22px] py-[15px] flex gap-2">
           <Button variant="outline" onClick={onClose} className="text-[13px]">
             Fermer
-          </Button>
-          <Button variant="ghost" className="text-[13px] gap-1.5">
-            <CreditCard size={14} /> Voir le dossier
           </Button>
         </div>
       </SheetContent>
@@ -253,68 +177,75 @@ function PlanDrawer({
 
 // ---------- Carte plan -----------------------------------------------------
 
-function PlanCard({ plan, onOpen }: { plan: MockPlan; onOpen: () => void }) {
+function PlanCard({ plan, onOpen }: { plan: PLAN_DECAISSEMENT_T; onOpen: () => void }) {
   const [expanded, setExpanded] = useState(false)
-  const badge = planStatutBadge(plan.statut)
-  const total = plan.lignes.reduce((s, l) => s + l.montant, 0)
+  const lignes = plan.lignes ?? []
+  const total = Number(plan.montant_planifie) || lignes.reduce((s, l) => s + Number(l.montant_ligne), 0)
+
+  const projet = plan.micro_projet
+  const promoteurName = projet?.promoteur ? `${projet.promoteur.nom} ${projet.promoteur.prenom}` : null
 
   return (
     <Card className="mb-4 p-0 overflow-hidden border-[#E5EAF1] shadow-[0_1px_2px_rgba(18,28,41,.05),_0_6px_20px_rgba(18,28,41,.06)]">
       {/* En-tête */}
       <div className="flex items-center gap-3 px-[18px] py-[15px] border-b border-[#EEF2F7]">
         <h3 className="text-[14.5px] font-bold text-[#131C29] min-w-0 truncate">
-          {plan.projet_id} — {plan.projet_titre}
+          {plan.code || `PLAN-${plan.id}`} — {plan.intitule || projet?.intitule || 'Plan de décaissement'}
         </h3>
         <div className="flex-1" />
-        <StatusBadge label={badge.label} variant={badge.variant} />
+        <span className="font-mono font-semibold text-[13.5px] text-[#131C29]">
+          {money(total)}
+        </span>
         <Button
           variant="outline"
           size="sm"
-          className="text-[12px] gap-1 h-7"
+          className="text-[12px] gap-1 h-7 ml-2"
           onClick={onOpen}
         >
-          Ouvrir <ChevronDown size={12} />
+          Détails <ChevronDown size={12} />
         </Button>
       </div>
 
       {/* Corps */}
       <div className="px-[18px] py-[14px]">
         {/* Méta */}
-        <div className="flex flex-wrap gap-[6px] mb-3">
-          {[
-            ['Promoteur', plan.promoteur],
-            ['Agence', plan.agence],
-            ['Voie', plan.voie === 'DIRECTION' ? 'Direction' : 'Agence'],
-            [`${plan.lignes.length} ligne(s)`, money(total)],
-            ['Bénéficiaire', plan.valide_benef ? 'validé' : 'en attente'],
-          ].map(([k, v]) => (
-            <span
-              key={k}
-              className="text-[11.5px] bg-[#f4f6fa] border border-[#EEF2F7] rounded-[7px] px-[9px] py-[4px] text-[#5A6B80] inline-flex gap-[5px] items-center"
-            >
-              {k} <b className="text-[#131C29] font-semibold">{v}</b>
-            </span>
-          ))}
+        <div className="flex flex-wrap gap-[6px] mb-2">
+          {([
+            promoteurName ? ['Promoteur', promoteurName] : null,
+            plan.budget_id ? ['Budget ID', `#${plan.budget_id}`] : null,
+            plan.date_prevue ? ['Date prévue', formatDate(plan.date_prevue)] : null,
+            [`${lignes.length} ligne(s)`, money(total)],
+          ] as [string, string][])
+            .filter((item): item is [string, string] => Boolean(item))
+            .map(([k, v]) => (
+              <span
+                key={k}
+                className="text-[11.5px] bg-[#f4f6fa] border border-[#EEF2F7] rounded-[7px] px-[9px] py-[4px] text-[#5A6B80] inline-flex gap-[5px] items-center"
+              >
+                {k} <b className="text-[#131C29] font-semibold">{v}</b>
+              </span>
+            ))}
         </div>
 
-        {/* Chaîne compacte */}
-        <ChaineValidation statut={plan.statut} />
-
         {/* Toggle lignes */}
-        <button
-          onClick={() => setExpanded((v) => !v)}
-          className="flex items-center gap-1.5 text-[12px] font-semibold text-[#5A6B80] hover:text-[#131C29] mt-2 transition-colors"
-        >
-          {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-          {expanded ? 'Masquer les lignes' : 'Voir les lignes'}
-        </button>
+        {lignes.length > 0 && (
+          <>
+            <button
+              onClick={() => setExpanded((v) => !v)}
+              className="flex items-center gap-1.5 text-[12px] font-semibold text-[#5A6B80] hover:text-[#131C29] mt-2 transition-colors"
+            >
+              {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+              {expanded ? 'Masquer les lignes' : `Voir les ${lignes.length} ligne(s)`}
+            </button>
 
-        {expanded && (
-          <div className="mt-2">
-            {plan.lignes.map((l) => (
-              <LigneRow key={l.id} ligne={l} />
-            ))}
-          </div>
+            {expanded && (
+              <div className="mt-2">
+                {lignes.map((l, index) => (
+                  <LigneRow key={l.id ?? index} ligne={l} />
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
     </Card>
@@ -324,27 +255,50 @@ function PlanCard({ plan, onOpen }: { plan: MockPlan; onOpen: () => void }) {
 // ---------- Tab principale ------------------------------------------------
 
 export function TabPlansDecaissement() {
-  const [selectedPlan, setSelectedPlan] = useState<MockPlan | null>(null)
+  const { data: plans = [], isLoading, error } = planDecaissementServices.useGetAll()
+  const [selectedPlan, setSelectedPlan] = useState<PLAN_DECAISSEMENT_T | null>(null)
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-[#5A6B80]">
+        <Loader2 size={32} className="animate-spin text-[#E7722B] mb-2" />
+        <span className="text-[13px]">Chargement des plans de décaissement...</span>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-14 text-[#D6453B]">
+        <CreditCard size={40} className="mx-auto mb-3 opacity-60" />
+        <b className="block text-[15px] mb-1 font-['Archivo']">Erreur de chargement</b>
+        <span className="text-[13px]">Impossible de récupérer les plans de décaissement.</span>
+      </div>
+    )
+  }
+
+  if (plans.length === 0) {
+    return (
+      <div className="text-center py-14 text-[#5A6B80]">
+        <CreditCard size={40} className="mx-auto mb-3 opacity-40" />
+        <b className="block text-[#131C29] text-[15px] mb-1 font-['Archivo']">
+          Aucun plan de décaissement
+        </b>
+        <span className="text-[13px]">Aucun plan de décaissement enregistré.</span>
+      </div>
+    )
+  }
 
   return (
     <>
       <div>
-        {MOCK_PLANS.length === 0 ? (
-          <div className="text-center py-14 text-[#5A6B80]">
-            <CreditCard size={40} className="mx-auto mb-3 opacity-40" />
-            <b className="block text-[#131C29] text-[15px] mb-1 font-['Archivo']">
-              Aucun plan de décaissement
-            </b>
-          </div>
-        ) : (
-          MOCK_PLANS.map((plan) => (
-            <PlanCard
-              key={plan.id}
-              plan={plan}
-              onOpen={() => setSelectedPlan(plan)}
-            />
-          ))
-        )}
+        {plans.map((plan) => (
+          <PlanCard
+            key={plan.id}
+            plan={plan}
+            onOpen={() => setSelectedPlan(plan)}
+          />
+        ))}
       </div>
 
       <PlanDrawer
@@ -355,3 +309,4 @@ export function TabPlansDecaissement() {
     </>
   )
 }
+

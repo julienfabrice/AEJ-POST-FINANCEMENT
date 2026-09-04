@@ -7,6 +7,7 @@ import { WorkflowTimeline } from './components/WorkflowTimeline'
 export function DispositifWorkflowPage() {
   const {
     wf,
+    allEtapes,
     startN,
     totalMontant,
     searchQuery,
@@ -43,6 +44,7 @@ export function DispositifWorkflowPage() {
             searchQuery={searchQuery}
             startN={startN}
             projects={projects}
+            allEtapes={allEtapes}
           />
 
           {/* Right Sidebar - Micro-projects */}

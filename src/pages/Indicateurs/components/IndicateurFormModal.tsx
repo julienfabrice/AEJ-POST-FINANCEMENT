@@ -46,7 +46,7 @@ export function IndicateurFormModal({children, open: controlledOpen, onOpenChang
                                 name="nom"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Nom <span className="text-red-500">*</span></FormLabel>
+                                        <FormLabel>Nom de l'indicateur <span className="text-red-500">*</span></FormLabel>
                                         <FormControl>
                                             <Input placeholder="Nom" {...field} />
                                         </FormControl>
@@ -73,7 +73,7 @@ export function IndicateurFormModal({children, open: controlledOpen, onOpenChang
                                 name="type_valeur"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Type valeur <span className="text-red-500">*</span></FormLabel>
+                                        <FormLabel>Type valeur </FormLabel>
 
                                         <Select
                                             onValueChange={
@@ -100,7 +100,7 @@ export function IndicateurFormModal({children, open: controlledOpen, onOpenChang
                                 name="unite"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Unite <span className="text-red-500">*</span></FormLabel>
+                                        <FormLabel>Unite </FormLabel>
                                         <FormControl>
                                             <Input placeholder="Ex. %, FCFA" {...field} />
                                         </FormControl>
@@ -108,12 +108,25 @@ export function IndicateurFormModal({children, open: controlledOpen, onOpenChang
                                     </FormItem>
                                 )}
                             />
+                            {/*<FormField*/}
+                            {/*    control={form.control}*/}
+                            {/*    name="valeur_cible"*/}
+                            {/*    render={({ field }) => (*/}
+                            {/*        <FormItem>*/}
+                            {/*            <FormLabel>Valeur cible</FormLabel>*/}
+                            {/*            <FormControl>*/}
+                            {/*                <Input placeholder="Ex. %, FCFA" {...field} />*/}
+                            {/*            </FormControl>*/}
+                            {/*            <FormMessage />*/}
+                            {/*        </FormItem>*/}
+                            {/*    )}*/}
+                            {/*/>*/}
                             <FormField
                                 control={form.control}
                                 name="statut"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Statut <span className="text-red-500">*</span></FormLabel>
+                                        <FormLabel>Statut </FormLabel>
                                         <FormControl>
                                             <Switch checked={field.value} onCheckedChange={field.onChange} />
                                         </FormControl>

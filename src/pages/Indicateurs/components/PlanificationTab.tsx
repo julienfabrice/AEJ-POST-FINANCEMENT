@@ -46,8 +46,7 @@ export function PlanificationTab() {
                     <span className="font-bold text-sm text-[#131C29]">{i.nom}</span>
                     <div className="flex-1"></div>
                     <span className="font-mono text-sm text-[#8595A8]">
-                      {/*{ i.valeur_cible ? fmt(s) / fmt(i.valeur_cible)} {i.unite}*/}
-                        0
+                      { i.valeur_cible ? fmt(s) + "/ " + fmt(i.valeur_cible): 0} {i.unite}
                     </span>
                     <span className={`font-mono font-bold text-sm ml-4 ${textCl}`}>
                       {t}%

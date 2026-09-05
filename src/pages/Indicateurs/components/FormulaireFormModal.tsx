@@ -56,9 +56,9 @@ export function FormulaireFormModal({children, open: controlledOpen, onOpenChang
                                 name="libelle"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Libelle <span className="text-red-500">*</span></FormLabel>
+                                        <FormLabel>Libellé de la fiche <span className="text-red-500">*</span></FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Libelle" {...field} />
+                                            <Input placeholder="Libellé" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

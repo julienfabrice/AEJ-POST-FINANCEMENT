@@ -80,59 +80,74 @@ export function QuestionFormModal({children, open: controlledOpen, onOpenChange,
                             <FormField
                                 control={form.control}
                                 name="ordre"
-                                render={({ field }) => (
+                                render={({ field: { onChange, ...field } }) => (
                                     <FormItem>
                                         <FormLabel>Ordre</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Ordre" {...field} />
+                                            <Input type={"number"} onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                        </div>
 
-                        <FormField
-                            control={form.control}
-                            name="type_question"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Type </FormLabel>
-
-                                    <Select
-                                        onValueChange={
-                                            (v) => field.onChange(v)
-                                        }
-                                        value={field.value ? String(field.value) : ''}
-
-                                    >
+                            <FormField
+                                control={form.control}
+                                name="libelle"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Intitulé de la question <span className="text-red-500">*</span></FormLabel>
                                         <FormControl>
-                                            <SelectTrigger className="w-full"><SelectValue placeholder="Sélectionner un type" /></SelectTrigger>
+                                            <Input placeholder="Intitulé" {...field} />
                                         </FormControl>
-                                        <SelectContent>
-                                            {types.map((t) => (
-                                                <SelectItem key={t} value={String(t)}>{t}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
-                        <FormField
-                            control={form.control}
-                            name="obligatoire"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Active </FormLabel>
-                                    <FormControl>
-                                        <Switch checked={field.value} onCheckedChange={field.onChange} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                            <FormField
+                                control={form.control}
+                                name="type_question"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Type </FormLabel>
+
+                                        <Select
+                                            onValueChange={
+                                                (v) => field.onChange(v)
+                                            }
+                                            value={field.value ? String(field.value) : ''}
+
+                                        >
+                                            <FormControl>
+                                                <SelectTrigger className="w-full"><SelectValue placeholder="Sélectionner un type" /></SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {types.map((t) => (
+                                                    <SelectItem key={t} value={String(t)}>{t}</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="obligatoire"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Obligatoire </FormLabel>
+                                        <FormControl>
+                                            <Switch checked={field.value} onCheckedChange={field.onChange} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                        </div>
 
                         <div className="flex justify-end gap-3 pt-4 border-t mt-6">
                             <Button type="button" variant="ghost" onClick={() => setOpen(false)}>

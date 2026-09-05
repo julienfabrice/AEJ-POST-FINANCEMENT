@@ -46,7 +46,7 @@ export function IndicateurSuiviFormModal({children, open: controlledOpen, onOpen
                                         <Select onValueChange={(v) => field.onChange(Number(v))} value={field.value ? String(field.value) : ''}>
                                             <FormControl>
                                                 <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder="Sélectionner un rôle" />
+                                                    <SelectValue placeholder="Sélectionner un indicateur" />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>

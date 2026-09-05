@@ -8,7 +8,6 @@ import { ActionsCellRenderer } from '@/pages/Referentiels/components/ActionsCell
 import {indicateursSuivisServices} from "@/services/indicateurs/indicateurs-suivis.services.ts";
 import {indicateurServices} from "@/services/indicateurs/indicateurs.services.ts";
 import type {INDICATEUR_SUIVI_T} from "@/types";
-import {IndicateurFormModal} from "@/pages/Indicateurs/components/IndicateurFormModal.tsx";
 import {IndicateurSuiviFormModal} from "@/pages/Indicateurs/components/IndicateurSuiviFormModal.tsx";
 
 dayjs.locale('fr')
@@ -50,7 +49,7 @@ export function useRelevesGrid(searchQuery: string) {
           { field: 'indicateur', headerName: 'Indicateur', flex: 2, cellRenderer: (params: any) => {
               const ind = indicateurs.find(i => i.id === params.data.indicateur_id)
                   {console.log(ind)}
-              return ind ? <span className="font-semibold"> {!ind.code? ind.nom :  (ind.code - ind.nom)}</span> : params.data.indicateur_id
+              return ind ? <span className="font-semibold"> {!ind.code? ind.nom :  ind.code +  "-"+  ind.nom}</span> : params.data.indicateur_id
           } },
           { field: 'jeune_id', headerName: 'Bénéficiaire', flex: 1, cellRenderer: (params: any) => <Badge variant="secondary"> {params.data.jeune_id}</Badge> },
           { field: 'valeur', headerName: 'Valeur', flex: 1, cellRenderer: (params: any) => <span className="font-bold text-[#E7722B]">{params.data.valeur}</span> },

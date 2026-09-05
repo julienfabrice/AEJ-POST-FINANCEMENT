@@ -86,6 +86,8 @@ export interface INDICATEUR_T {
   statut: boolean
   created_at?: string
   updated_at?: string
+  code?: string
+  valeur_cible?: number
 }
 
 export interface INDICATEUR_SUIVI_T {

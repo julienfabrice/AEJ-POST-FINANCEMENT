@@ -57,6 +57,8 @@ export function useQuestionForm(
                     code: '',
                     libelle: '',
                     type_question: '',
+                    ordre: 0,
+                    affichage: true,
                     obligatoire: true
                 })
             }
@@ -80,6 +82,7 @@ export function useQuestionForm(
                 }
             } )
         } else {
+
             createQuestion(values, {
                 onSuccess: () => {
                     setOpen(false)

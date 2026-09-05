@@ -28,8 +28,6 @@ export function useIndicateursGrid(activeTab: IndicateurTab, searchQuery: string
     const isLoading = byTab[activeTab].isLoading
     const modalNode = byTab[activeTab].modalNode
 
-    console.log(activeTab)
-
     return { columnDefs, data, isLoading , modalNode }
 
 

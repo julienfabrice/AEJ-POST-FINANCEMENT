@@ -18,9 +18,9 @@ export function useIndicateurTabGrid(searchQuery: string) {
         const columnDefs = useMemo<ColDef[]>(() => {
         return [
           { field: 'code', headerName: 'Code', flex: 1, cellRenderer: (params: any) => <Badge variant="outline" className="font-mono">{ params.data.code? params.data.code: params.data.id }</Badge> },
-          { field: 'nom', headerName: 'Nom', flex: 2, cellRenderer: (params: any) => <span className="font-semibold">{params.data.nom}</span> },
-          { field: 'unite', headerName: 'Unité', flex: 1 },
-          { field: 'type_valeur', headerName: 'Type de valeur', flex: 1 },
+          { field: 'libelle', headerName: 'Libellé', flex: 2, cellRenderer: (params: any) => <span className="font-semibold">{params.data.libelle}</span> },
+          { field: 'unite', headerName: 'Unité', flex: 1, cellRenderer: (params: any) => params.data.unite  },
+          // { field: 'type_valeur', headerName: 'Type de valeur', flex: 1, cellRenderer: (params: any) => params.data.type_valeur },
           { field: 'valeur_cible', headerName: 'Valeur cible', flex: 1, cellRenderer: (params: any) => params.data.valeur_cible?fmt(params.data.valeur_cible): '_' },
           {
                 headerName: 'Actions',

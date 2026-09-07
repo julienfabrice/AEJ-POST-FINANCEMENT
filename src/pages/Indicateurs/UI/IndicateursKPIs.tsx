@@ -15,7 +15,7 @@ export function IndicateursKPIs() {
             .filter((s) => s.indicateur_id.toString() === indId.toString())
             .reduce((a, s) => a + (parseFloat(s.valeur) || 0), 0)
     }
-  const totalCible = indicateurs.reduce((a, i) => a + (i.valeur_cible || 0), 0)
+  const totalCible = indicateurs.reduce((a, i) => a + (Number(i.valeur_cible) || 0), 0)
   const totalSuivi = indicateurs.reduce((a, i) => a + indicSuivi(i.id), 0)
   const globalTaux = totalCible ? Math.round((totalSuivi / totalCible) * 100) : 0
 

@@ -47,7 +47,7 @@ export function useRelevesGrid(searchQuery: string) {
           },
           { field: 'indicateur', headerName: 'Indicateur', flex: 2, cellRenderer: (params: any) => {
               const ind = indicateurs.find(i => i.id === params.data.indicateur_id)
-              return ind ? <span className="font-semibold"> {!ind.code? ind.nom :  ind.code +  "-"+  ind.nom}</span> : params.data.indicateur_id
+              return ind ? <span className="font-semibold"> {!ind.code? ind.libelle :  ind.code +  "-"+  ind.libelle}</span> : params.data.indicateur_id
           } },
           // { field: 'jeune_id', headerName: 'Bénéficiaire', flex: 1, cellRenderer: (params: any) => <Badge variant="secondary"> {params.data.jeune_id}</Badge> },
           { field: 'valeur', headerName: 'Valeur', flex: 1, cellRenderer: (params: any) => <span className="font-bold text-[#E7722B]">{params.data.valeur}</span> },

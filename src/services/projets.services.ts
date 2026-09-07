@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient, keepPreviousData, useQueries } f
 import { axiosInstance } from '@/constants/axiosInstance'
 import { toast } from 'sonner'
 import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
+import type {API_RESPONSE_T, PROJET_T} from "@/types";
 
 export interface PROJETS_API_RESPONSE_T {
   message: string
@@ -156,8 +157,18 @@ export const projetsServices = {
       placeholderData: keepPreviousData,
     })
   },
+  useFullGetAll: () => {
+        return useQuery({
+            queryKey: ['projets'],
+            queryFn: async () => {
+                const { data } = await axiosInstance.get<API_RESPONSE_T<PROJET_T[]>>('/projets')
+                return data.data
+            },
+        })
+    },
 
-  useCount: (filtres: PROJETS_FILTRES_T = {}, enabled = true) => {
+
+    useCount: (filtres: PROJETS_FILTRES_T = {}, enabled = true) => {
     const clean = nettoyerFiltres(filtres)
     return useQuery({
       queryKey: cleComptage(clean),

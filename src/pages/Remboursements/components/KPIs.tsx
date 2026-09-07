@@ -18,7 +18,7 @@ export function KPIs({ kpis }: KPIsProps) {
           Total dû
         </div>
         <div className="text-[22px] font-bold font-mono text-[#131C29]">
-          {money(kpis.du).replace(' F', '')} <small className="text-[14px]">F</small>
+          {money(kpis.du).replace(' CFA', '')} <small className="text-[14px]">CFA</small>
         </div>
       </Card>
       <Card className="p-4 shadow-sm">
@@ -26,7 +26,7 @@ export function KPIs({ kpis }: KPIsProps) {
           Total remboursé
         </div>
         <div className="text-[22px] font-bold font-mono text-[#0FA958]">
-          {money(kpis.paye).replace(' F', '')} <small className="text-[14px]">F</small>
+          {money(kpis.paye).replace(' CFA', '')} <small className="text-[14px]">CFA</small>
         </div>
       </Card>
       <Card className="p-4 shadow-sm">

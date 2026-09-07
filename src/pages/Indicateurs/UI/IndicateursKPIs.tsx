@@ -1,7 +1,11 @@
-import { indicateurs, indicateurs_suivi } from '@/mock'
+
 import { ChartBar, TrendingUp, Target, ListTodo } from 'lucide-react'
 import { KPICard } from '@/components/ui/KPICard'
+import {indicateurServices} from "@/services/indicateurs/indicateurs.services.ts";
+import {indicateursSuivisServices} from "@/services/indicateurs/indicateurs-suivis.services.ts";
 
+const { data: indicateurs=[] } = indicateurServices.useGetAll()
+const { data: indicateurs_suivi=[] } = indicateursSuivisServices.useGetAll()
 const indicSuivi = (indId: string | number) => {
   return indicateurs_suivi
     .filter((s) => s.indicateur_id.toString() === indId.toString())
@@ -9,6 +13,7 @@ const indicSuivi = (indId: string | number) => {
 }
 
 const fmt = (num: number) => new Intl.NumberFormat('fr-FR').format(num)
+
 
 export function IndicateursKPIs() {
   const totalCible = indicateurs.reduce((a, i) => a + (i.valeur_cible || 0), 0)

@@ -7,11 +7,20 @@ import { Button } from '@/components/ui/button'
 import { configurationServices } from '@/services/configurations.services'
 
 import { useProjetsStore } from '@/store/useProjetsStore'
+import { useAuthStore } from '@/store/useAuthStore'
+import { useWorkflowVersionsMap } from './useWorkflowVersionsMap'
+import { AffaireCell, AffaireCellLoading } from '../components/AffaireCell'
 
 export function useTableData() {
   const { setSelectedProjet } = useProjetsStore()
   const { data: configuration } = configurationServices.useGet()
-  
+
+  // Charge toutes les versions de workflow en UNE seule requête (pas N requêtes par ligne)
+  const { versionsMap, isLoading: versionsLoading } = useWorkflowVersionsMap()
+
+  // Rôle de l'utilisateur connecté
+  const userRoleCode = useAuthStore((s) => s.user?.role?.code)
+
   const columnDefs = useMemo<ColDef<MICRO_PROJET_T>[]>(() => [
     {
       field: 'code',
@@ -85,6 +94,27 @@ export function useTableData() {
       width: 110,
       cellRenderer: (params: any) => params.value ? dayjs(params.value).format('DD/MM/YYYY') : '-'
     },
+
+    // ── Colonne "À faire" ─────────────────────────────────────────────────────
+    {
+      headerName: 'À faire',
+      field: 'workflow_instance' as any,
+      width: 180,
+      sortable: false,
+      filter: false,
+      cellRenderer: (params: any) => {
+        if (versionsLoading) return <AffaireCellLoading />
+        return (
+          <AffaireCell
+            projet={params.data as MICRO_PROJET_T}
+            versionsMap={versionsMap}
+            userRoleCode={userRoleCode}
+          />
+        )
+      },
+    },
+
+    // ── Actions ───────────────────────────────────────────────────────────────
     {
       headerName: 'Actions',
       width: 70,
@@ -101,7 +131,8 @@ export function useTableData() {
         )
       },
     }
-  ], [setSelectedProjet, configuration])
+  ], [setSelectedProjet, configuration, versionsMap, versionsLoading, userRoleCode])
 
   return { columnDefs }
 }
+

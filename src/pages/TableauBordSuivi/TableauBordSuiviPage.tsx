@@ -3,14 +3,7 @@ import { Card } from '@/components/ui/card'
 export function TableauBordSuiviPage() {
   return (
     <div className="space-y-4">
-      <div>
-        <h1 className="text-2xl font-extrabold text-[#131C29]">Tableau de bord de suivi</h1>
-        <p className="mt-1 text-sm text-[#5A6B80]">
-          Visualisation Power BI des indicateurs de suivi et exploitation.
-        </p>
-      </div>
-
-      <Card className="p-0 overflow-hidden border-slate-200 rounded-lg shadow-sm h-[calc(100vh-210px)] w-full">
+      <Card className="p-0 overflow-hidden border-slate-200 rounded-lg shadow-sm h-[100vh] w-full">
         <iframe 
           title="Tableau de bord Power BI" 
           width="100%" 

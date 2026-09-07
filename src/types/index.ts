@@ -86,6 +86,39 @@ export interface INDICATEUR_T {
   statut: boolean
   created_at?: string
   updated_at?: string
+  code?: string
+  valeur_cible?: number
+}
+
+export interface INDICATEUR_SUIVI_T {
+    id: number
+    indicateur_id: number
+    valeur: string
+    created_at?: string
+    updated_at?: string
+}
+
+export interface FORMULAIRE_T {
+    id: number
+    code: string
+    libelle: string
+    public_cible: string
+    actif: boolean
+    created_at?: string
+    updated_at?: string
+}
+
+export interface QUESTION_T {
+    id: number,
+    formulaire_id: number
+    code: string,
+    libelle: string,
+    type_question: string,
+    ordre: number,
+    affichage: boolean,
+    obligatoire: boolean,
+    created_at?: string
+    updated_at?: string
 }
 
 export interface TYPE_ENTREPRISE_T {

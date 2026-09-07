@@ -9,21 +9,25 @@ import { DataGrid } from '@/components/ui/DataGrid'
 import { useIndicateursGrid, type IndicateurTab } from './hooks/useIndicateursGrid'
 import { PlanificationTab } from './components/PlanificationTab'
 import { IndicateursKPIs } from './UI/IndicateursKPIs'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-
+import {IndicateurFormModal} from "@/pages/Indicateurs/components/IndicateurFormModal.tsx";
+import {IndicateurSuiviFormModal} from "@/pages/Indicateurs/components/IndicateurSuiviFormModal.tsx";
+import {FormulaireFormModal} from "@/pages/Indicateurs/components/FormulaireFormModal.tsx";
+import {QuestionFormModal} from "@/pages/Indicateurs/components/QuestionFormModal.tsx";
 const TABS_CONFIG = [
-  { id: 'plan', label: 'Planification & taux', sing: 'planification' },
-  { id: 'ind', label: 'Indicateurs', sing: 'indicateur' },
-  { id: 'rel', label: 'Relevés de suivi', sing: 'relevé' },
-  { id: 'fic', label: 'Fiches de suivi', sing: 'fiche' },
-  { id: 'q', label: 'Questions', sing: 'question' }
+  { id: 'plan', label: 'Planification & taux', sing: 'planification', readOnly: true },
+  { id: 'indicateurs', label: 'Indicateurs', sing: 'indicateur', readOnly: false },
+  { id: 'releves', label: 'Relevés de suivi', sing: 'relevé', readOnly: false },
+  { id: 'fiches', label: 'Fiches de suivi', sing: 'fiche', readOnly: false },
+  { id: 'questions', label: 'Questions', sing: 'question', readOnly: false }
 ] as const
 
 export function IndicateursPage() {
   const [activeTab, setActiveTab] = useState<IndicateurTab>('plan')
   const [searchQuery, setSearchQuery] = useState('')
 
-  const { columnDefs, data, isLoading, modalNode } = useIndicateursGrid(activeTab, searchQuery)
+
+const { columnDefs, data, isLoading, modalNode } = useIndicateursGrid(activeTab, searchQuery)
+
 
   return (
     <div className="space-y-6">
@@ -39,9 +43,10 @@ export function IndicateursPage() {
       <div className="space-y-2">
         <Tabs 
           value={activeTab} 
-          onValueChange={(val) => { setActiveTab(val as IndicateurTab); setSearchQuery(''); }} 
+          onValueChange={(val) => { setActiveTab(val as IndicateurTab); setSearchQuery(''); } }
           className="w-full"
         >
+
           <div className="overflow-x-auto w-full no-scrollbar">
             <TabsList className="flex items-center gap-1 border-b border-slate-200 w-max min-w-full bg-transparent p-0 h-auto rounded-none justify-start mb-4">
               {TABS_CONFIG.map(tab => (
@@ -65,23 +70,23 @@ export function IndicateursPage() {
               )
             }
 
-            const disabledBtn = (
-              <TooltipProvider delayDuration={200}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="inline-block cursor-not-allowed">
-                      <Button className="h-9 opacity-50 pointer-events-none">
-                        <Plus className="w-4 h-4 mr-2" />
-                        {tab.id === 'fic' || tab.id === 'q' ? 'Nouvelle' : 'Nouveau'} {tab.sing}
-                      </Button>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    Fonctionnalité en cours de développement
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )
+            // const disabledBtn = (
+            //   <TooltipProvider delayDuration={200}>
+            //     <Tooltip>
+            //       <TooltipTrigger asChild>
+            //         <div className="inline-block cursor-not-allowed">
+            //           <Button className="h-9 opacity-50 pointer-events-none">
+            //             <Plus className="w-4 h-4 mr-2" />
+            //             {tab.id === 'fic' || tab.id === 'q' ? 'Nouvelle' : 'Nouveau'} {tab.sing}
+            //           </Button>
+            //         </div>
+            //       </TooltipTrigger>
+            //       <TooltipContent>
+            //         Fonctionnalité en cours de développement
+            //       </TooltipContent>
+            //     </Tooltip>
+            //   </TooltipProvider>
+            // )
 
             return (
               <TabsContent key={tab.id} value={tab.id} className="mt-0 outline-none">
@@ -99,15 +104,33 @@ export function IndicateursPage() {
                     {isLoading ? 'Chargement...' : `${data.length} ${tab.label.toLowerCase()}`}
                   </span>
                   <div className="flex-1" />
-                  
-                  {disabledBtn}
+                    {!tab.readOnly && (() => {
+                            const  btn = (
+                                <Button className="bg-[#E7722B] hover:bg-[#C85E18] text-white h-10 px-4 cursor-pointer">
+                                    <Plus className="w-4 h-4 mr-2" />
+                                    {tab.id === 'fiches' || tab.id === 'questions' ? 'Nouvelle' : 'Nouveau'} {tab.sing}
+                                </Button>
+                            )
+
+                            switch (tab.id) {
+                                case "indicateurs": return <IndicateurFormModal>{btn}</IndicateurFormModal>
+                                case "releves": return <IndicateurSuiviFormModal>{btn}</IndicateurSuiviFormModal>
+                                case "fiches": return <FormulaireFormModal>{btn}</FormulaireFormModal>
+                                case "questions": return <QuestionFormModal>{btn}</QuestionFormModal>
+                                default: return btn
+                            }
+
+                        })()}
+
                 </div>
 
-                <Card className="p-0 overflow-hidden border-slate-200 rounded-lg shadow-sm">
-                  <DataGrid 
-                    rowData={data} 
-                    columnDefs={columnDefs} 
-                    getRowId={(params: any) => params.data.id} 
+
+
+                  <Card className="p-0 overflow-hidden border-slate-200 rounded-lg shadow-sm">
+                  <DataGrid
+                    rowData={data}
+                    columnDefs={columnDefs}
+                    getRowId={(params: any) => params.data.id}
                     height="calc(100vh - 350px)"
                     rowHeight={55}
                     defaultColDef={{
@@ -117,11 +140,16 @@ export function IndicateursPage() {
                     }}
                   />
                 </Card>
+
               </TabsContent>
             )
           })}
         </Tabs>
+
+
       </div>
+
+
     </div>
   )
 }

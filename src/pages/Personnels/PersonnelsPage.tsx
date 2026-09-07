@@ -72,13 +72,15 @@ export function PersonnelsPage() {
           </div>
         )}
       </Card>
-      <PersonnelFormModal 
-        open={modalOpen} 
+
+
+        <PersonnelFormModal
+        open={modalOpen}
         onOpenChange={(open) => {
           setModalOpen(open)
           if (!open) setEditData(null)
-        }} 
-        editData={editData} 
+        }}
+        editData={editData}
       />
       <ChangePasswordModal 
         open={passwordModalOpen} 

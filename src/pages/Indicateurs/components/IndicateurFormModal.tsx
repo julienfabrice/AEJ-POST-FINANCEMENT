@@ -151,7 +151,7 @@ export function IndicateurFormModal({children, open: controlledOpen, onOpenChang
                                     <FormItem>
                                         <FormLabel>Valeur cible</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Ex. %, FCFA" {...field} />
+                                            <Input placeholder="valeur" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

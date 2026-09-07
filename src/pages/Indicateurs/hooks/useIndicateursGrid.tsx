@@ -30,48 +30,4 @@ export function useIndicateursGrid(activeTab: IndicateurTab, searchQuery: string
 
     return { columnDefs, data, isLoading , modalNode }
 
-
-
-
-
-
-  // const { columnDefs: indDefs, data: indData, isLoading: indLoading, modalNode: indModalNode } = useIndicateurTabGrid(searchQuery)
-  // const { columnDefs: relDefs, data: relData, isLoading: relLoading, modalNode: relModalNode } = useRelevesGrid(searchQuery)
-  // const { columnDefs: ficDefs, data: ficData, isLoading: ficLoading, modalNode: ficModalNode } = useFichesGrid(searchQuery)
-  // const { columnDefs: qDefs, data: qData, isLoading: qLoading, modalNode: qModalNode } = useQuestionsGrid(searchQuery)
-  //
-  // const columnDefs = useMemo<ColDef[]>(() => {
-  //   switch (activeTab) {
-  //     case 'indicateurs': return indDefs
-  //     case 'releves': return relDefs
-  //     case 'fiches': return ficDefs
-  //     case 'questions': return qDefs
-  //     default: return []
-  //   }
-  // }, [activeTab, indDefs, relDefs, ficDefs, qDefs])
-  //
-  // const data = useMemo(() => {
-  //   switch (activeTab) {
-  //     case 'indicateurs': return indData
-  //     case 'releves': return relData
-  //     case 'fiches': return ficData
-  //     case 'questions': return qData
-  //     default: return []
-  //   }
-  // }, [activeTab, indData, relData, ficData, qData])
-  //
-  // const isLoading = activeTab === 'indicateurs' ? indLoading
-  //                 : activeTab === 'releves' ? relLoading
-  //                 : activeTab === 'fiches' ? ficLoading
-  //                 : activeTab === 'questions' ? qLoading
-  //                 : false
-  //
-  //   const modalNode = useMemo(() => {
-  //       if (activeTab === 'indicateurs') return indModalNode
-  //       if (activeTab === 'releves') return relModalNode
-  //       return null
-  //   }, [activeTab])
-  //
-  //
-  // return { columnDefs, data, isLoading, modalNode: modalNode }
 }

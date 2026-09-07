@@ -12,7 +12,8 @@ import { IndicateursKPIs } from './UI/IndicateursKPIs'
 import {IndicateurFormModal} from "@/pages/Indicateurs/components/IndicateurFormModal.tsx";
 import {IndicateurSuiviFormModal} from "@/pages/Indicateurs/components/IndicateurSuiviFormModal.tsx";
 import {FormulaireFormModal} from "@/pages/Indicateurs/components/FormulaireFormModal.tsx";
-import {QuestionFormModal} from "@/pages/Indicateurs/components/QuestionFormModal.tsx";
+// import {QuestionFormModal} from "@/pages/Indicateurs/components/QuestionFormModal.tsx";
+
 const TABS_CONFIG = [
   { id: 'plan', label: 'Planification & taux', sing: 'planification', readOnly: true },
   { id: 'indicateurs', label: 'Indicateurs', sing: 'indicateur', readOnly: false },
@@ -27,7 +28,6 @@ export function IndicateursPage() {
 
 
 const { columnDefs, data, isLoading, modalNode } = useIndicateursGrid(activeTab, searchQuery)
-
 
   return (
     <div className="space-y-6">
@@ -116,8 +116,8 @@ const { columnDefs, data, isLoading, modalNode } = useIndicateursGrid(activeTab,
                                 case "indicateurs": return <IndicateurFormModal>{btn}</IndicateurFormModal>
                                 case "releves": return <IndicateurSuiviFormModal>{btn}</IndicateurSuiviFormModal>
                                 case "fiches": return <FormulaireFormModal>{btn}</FormulaireFormModal>
-                                case "questions": return <QuestionFormModal>{btn}</QuestionFormModal>
-                                default: return btn
+                                // case "questions": return <QuestionFormModal>{btn}</QuestionFormModal>
+                                // default: return btn
                             }
 
                         })()}
@@ -148,7 +148,6 @@ const { columnDefs, data, isLoading, modalNode } = useIndicateursGrid(activeTab,
 
 
       </div>
-
 
     </div>
   )

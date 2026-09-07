@@ -4,7 +4,8 @@ export const formulaireSchema = z.object({
     code: z.string().min(1),
     libelle: z.string(),
     public_cible: z.string(),
-    actif: z.boolean()
+    actif: z.boolean(),
+    questions: z.object().array().optional()
 })
 
 export type FormulaireFormValues = z.infer<typeof formulaireSchema>

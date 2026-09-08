@@ -3,8 +3,9 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { guichetSchema, type GuichetFormValues } from '@/schema/guichets/guichetSchema'
+import type { GUICHET_T } from '@/types'
 
-export function useGuichetForm(initialData: any | null, controlledOpen?: boolean, onOpenChange?: (open: boolean) => void) {
+export function useGuichetForm(initialData: GUICHET_T | null, controlledOpen?: boolean, onOpenChange?: (open: boolean) => void) {
   const [internalOpen, setInternalOpen] = useState(false)
   const isControlled = controlledOpen !== undefined
   const open = isControlled ? controlledOpen : internalOpen
@@ -22,7 +23,7 @@ export function useGuichetForm(initialData: any | null, controlledOpen?: boolean
 
   const form = useForm<GuichetFormValues>({
     resolver: zodResolver(guichetSchema),
-    defaultValues: { code: '', libelle: '', description: '', couleur: '#E7722B', montant_min: 0, montant_max: 0, is_active: true },
+    defaultValues: { code: '', libelle: '', description: '', couleur: '#E7722B', montant_min: 0, montant_max: 0, is_active: true, is_form_active: true },
   })
 
   useEffect(() => {
@@ -35,8 +36,9 @@ export function useGuichetForm(initialData: any | null, controlledOpen?: boolean
         montant_min: initialData.montant_min != null ? Number(initialData.montant_min) : 0,
         montant_max: initialData.montant_max != null ? Number(initialData.montant_max) : 0,
         is_active: initialData.is_active ?? true,
+        is_form_active: initialData.is_form_active ?? true,
       })
-      else form.reset({ code: '', libelle: '', description: '', couleur: '#E7722B', montant_min: 0, montant_max: 0, is_active: true })
+      else form.reset({ code: '', libelle: '', description: '', couleur: '#E7722B', montant_min: 0, montant_max: 0, is_active: true, is_form_active: true })
     }
   }, [open, initialData, form])
 

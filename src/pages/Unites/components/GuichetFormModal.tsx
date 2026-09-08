@@ -5,16 +5,17 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import { useGuichetForm } from '../hooks/guichets/useGuichetForm'
+import type { GUICHET_T } from '@/types'
 
 interface Props {
   children?: React.ReactNode
   open?: boolean
   onOpenChange?: (open: boolean) => void
-  initialData?: any | null
+  initialData?: GUICHET_T | null
 }
 
 export function GuichetFormModal({ children, open: controlledOpen, onOpenChange, initialData }: Props) {
-  const { form, onSubmit, isPending, isEdit, open, setOpen } = useGuichetForm(initialData, controlledOpen, onOpenChange)
+  const { form, onSubmit, isPending, isEdit, open, setOpen } = useGuichetForm(initialData ?? null, controlledOpen, onOpenChange)
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -48,6 +49,12 @@ export function GuichetFormModal({ children, open: controlledOpen, onOpenChange,
             <FormField control={form.control} name="is_active" render={({ field }) => (
               <FormItem className="flex items-center justify-between rounded-lg border p-3">
                 <FormLabel className="mb-0">Guichet actif</FormLabel>
+                <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
+              </FormItem>
+            )} />
+            <FormField control={form.control} name="is_form_active" render={({ field }) => (
+              <FormItem className="flex items-center justify-between rounded-lg border p-3">
+                <FormLabel className="mb-0">Formulaire actif</FormLabel>
                 <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
               </FormItem>
             )} />

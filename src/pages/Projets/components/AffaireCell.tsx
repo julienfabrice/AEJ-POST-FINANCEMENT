@@ -1,182 +1,152 @@
-import { AlertCircle, CheckCircle2, Clock, Users } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
-import type { WorkflowVersionMap } from '../hooks/useWorkflowVersionsMap'
-import { getEtapeActuelle, getActionsForRole } from '../hooks/useWorkflowVersionsMap'
-import type { WORKFLOW_ETAPE_T } from '@/types/workflow.types'
+import type { EtapeRolesMap } from '../hooks/useEtapeRolesMap'
+import type { WORKFLOW_ETAPE_ROLE_T } from '@/types/workflow.types'
 
-/** Labels lisibles pour les actions workflow. */
-const ACTION_LABELS: Record<string, string> = {
-  VALIDER: 'À valider',
-  APPROUVER: 'À approuver',
-  CERTIFIER: 'À certifier',
-  TRANSMETTRE: 'À transmettre',
-  DECAISSER: 'À décaisser',
-  VERIFIER: 'À vérifier',
-  SIGNER: 'À signer',
-  INSTRUIRE: 'À instruire',
-  ANALYSER: 'À analyser',
-  SOUMETTRE: 'À soumettre',
-  TRAITER: 'À traiter',
-  IMPUTER: 'À imputer',
-}
-
-/** Labels lisibles pour les codes de rôle. */
+// ─── Mapping des codes rôles → labels lisibles ───────────────────────────────
+// Couvre à la fois les codes du backend auth ET les codes du backend workflow
 const ROLE_LABELS: Record<string, string> = {
-  'ADMIN-1': 'Admin national',
+  // Codes workflow (provenant de etape-roles)
+  CHEF_AGENCE: "Chef d'agence",
   CIP: 'CIP',
-  CAR: 'Chef d\'agence',
+  SDRF: 'SDRF',
   DPF: 'DPF',
   DIC: 'DIC',
   DESSE: 'DESSE',
-  SDRF: 'SDRF',
   CSFM: 'CSFM',
   CSRGC: 'CSRGC',
-  AGENT_DIR: 'Agent direction',
   SDEF: 'SDEF',
   SDPF: 'SDPF',
   DAICG: 'DAICG',
   AF: 'Agent financier',
   COMITE: 'Comité',
   PF: 'Partenaire financier',
+  // Codes auth (provenant de user.role.code)
+  'ADMIN-1': 'Admin national',
+  CAR: "Chef d'agence",
+  AGENT_DIR: 'Agent direction',
 }
 
-/** Couleur du badge selon l'urgence / type d'action. */
-function getActionStyle(action: string): string {
-  const urgent = ['VALIDER', 'APPROUVER', 'CERTIFIER', 'SIGNER', 'DECAISSER']
-  const warning = ['TRANSMETTRE', 'INSTRUIRE', 'ANALYSER']
-  if (urgent.includes(action))
-    return 'bg-amber-50 text-amber-700 border border-amber-200'
-  if (warning.includes(action))
-    return 'bg-blue-50 text-blue-700 border border-blue-200'
-  return 'bg-slate-50 text-slate-600 border border-slate-200'
+/** Retourne le label lisible d'un role_code (workflow ou auth). */
+function roleCode(roleCode: string, roleRelation?: any): string {
+  // Priorité 1 : relation backend si chargée
+  if (roleRelation?.code) return roleRelation.code
+  // if (roleRelation?.nom) return roleRelation.nom
+  // Priorité 2 : mapping local
+  if (ROLE_LABELS[roleCode]) return ROLE_LABELS[roleCode]
+  // Fallback : code brut formaté
+  return roleCode.replace(/_/g, ' ')
 }
 
-/**
- * Retourne la liste des rôles distincts impliqués dans une étape
- * avec leur libellé lisible.
- */
-function getRolesActeurs(etape: WORKFLOW_ETAPE_T): { code: string; label: string }[] {
-  if (!etape.roles) return []
-  const seen = new Set<string>()
-  const result: { code: string; label: string }[] = []
-  for (const r of etape.roles) {
-    if (!seen.has(r.role_code)) {
-      seen.add(r.role_code)
-      // Priorité : libellé depuis la relation backend, sinon mapping local, sinon code brut
-      const label =
-        (r.role as any)?.libelle ||
-        (r.role as any)?.nom ||
-        ROLE_LABELS[r.role_code] ||
-        r.role_code
-      result.push({ code: r.role_code, label })
-    }
+/** Formate un code action en label bouton lisible.
+ *  Ex: "AJOUT_PLAN_AFFAIRES" → "Ajouter plan d'affaires" */
+function actionLabel(action: string): string {
+  const KNOWN: Record<string, string> = {
+    VALIDER: 'Valider',
+    APPROUVER: 'Approuver',
+    CERTIFIER: 'Certifier',
+    TRANSMETTRE: 'Transmettre',
+    DECAISSER: 'Décaisser',
+    VERIFIER: 'Vérifier',
+    SIGNER: 'Signer',
+    INSTRUIRE: 'Instruire',
+    ANALYSER: 'Analyser',
+    SOUMETTRE: 'Soumettre',
+    TRAITER: 'Traiter',
+    IMPUTER: 'Imputer',
   }
-  return result
+  if (KNOWN[action]) return KNOWN[action]
+  // Format générique : "AJOUT_PLAN_AFFAIRES" → "Ajout plan affaires"
+  return action
+    .toLowerCase()
+    .replace(/_/g, ' ')
+    .replace(/^\w/, (c) => c.toUpperCase())
 }
+
+// ─── Props ────────────────────────────────────────────────────────────────────
 
 interface AffaireCellProps {
   projet: MICRO_PROJET_T
-  versionsMap: WorkflowVersionMap
+  etapeRolesMap: EtapeRolesMap
+  /** Code du rôle de l'utilisateur connecté (ex: "CIP", "CHEF_AGENCE"). */
   userRoleCode: string | undefined | null
 }
 
 /**
- * Cellule "À faire" dans la liste des micro-projets.
+ * Cellule **"À faire"** dans la liste des micro-projets.
  *
  * Logique :
- * 1. Récupère l'étape actuelle depuis le `workflow_instance` du projet.
- * 2. Cherche les rôles de cette étape dans le dictionnaire des versions.
- * 3. Si l'utilisateur fait partie des rôles ⇒ affiche les actions à faire (badge coloré).
- * 4. Sinon ⇒ affiche la liste des acteurs/rôles attendus pour cette étape.
+ * 1. Lit `workflow_instance.current_etape_code` du projet.
+ * 2. Cherche les rôles de cette étape dans `etapeRolesMap`.
+ * 3a. L'utilisateur fait partie des rôles → bouton(s) avec l'action à effectuer.
+ * 3b. L'utilisateur ne fait PAS partie des rôles → liste des acteurs séparés par `/`.
+ * 4. Pas d'instance workflow ou pas de rôles → `—`.
  */
-export function AffaireCell({ projet, versionsMap, userRoleCode }: AffaireCellProps) {
+export function AffaireCell({ projet, etapeRolesMap, userRoleCode }: AffaireCellProps) {
   const instance = projet.workflow_instance
 
-  // Pas d'instance workflow : affichage neutre
-  if (!instance) {
-    return (
-      <div className="flex items-center h-full">
-        <span className="text-slate-300 text-xs">—</span>
-      </div>
-    )
+  // Pas d'instance workflow
+  if (!instance?.current_etape_code) {
+    return <span className="text-slate-300 text-xs">—</span>
   }
 
-  const etape = getEtapeActuelle(instance.workflow_version, instance.current_etape_code, versionsMap)
+  const etapeRoles: WORKFLOW_ETAPE_ROLE_T[] = etapeRolesMap[instance.current_etape_code] ?? []
 
-  // Version pas encore chargée (map vide)
-  if (!etape) {
-    return (
-      <div className="flex items-center h-full">
-        <span className="text-slate-300 text-xs flex items-center gap-1">
-          <Clock className="w-3 h-3" />
-        </span>
-      </div>
-    )
+  // Aucun rôle défini pour cette étape
+  if (etapeRoles.length === 0) {
+    return <span className="text-slate-300 text-xs">—</span>
   }
 
-  const actions = getActionsForRole(etape, userRoleCode)
+  // ── Cas 1 : l'utilisateur fait partie des rôles de l'étape ────────────────
+  const myRoles = etapeRoles.filter((r) => r.role_code === userRoleCode)
 
-  // ── Cas 1 : l'utilisateur a des actions à effectuer ─────────────────────────
-  if (actions.length > 0) {
+  if (myRoles.length > 0) {
     return (
-      <div className="flex items-center gap-1 h-full flex-wrap">
-        {actions.map((action, i) => {
-          const label = ACTION_LABELS[action] ?? action.replace(/_/g, ' ')
-          const style = getActionStyle(action)
-          return (
-            <span
-              key={i}
-              className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full ${style}`}
-            >
-              <CheckCircle2 className="w-3 h-3 shrink-0" />
-              {label}
-            </span>
-          )
-        })}
-      </div>
-    )
-  }
-
-  // ── Cas 2 : l'utilisateur n'est pas impliqué → afficher les acteurs attendus ─
-  const acteurs = getRolesActeurs(etape)
-
-  if (acteurs.length === 0) {
-    return (
-      <div className="flex items-center h-full">
-        <span className="text-slate-300 text-xs">—</span>
-      </div>
-    )
-  }
-
-  return (
-    <div className="flex flex-col justify-center gap-0.5 h-full py-1">
-      <span className="inline-flex items-center gap-1 text-[10px] text-slate-400 font-medium mb-0.5">
-        <Users className="w-3 h-3 shrink-0" />
-        En attente de :
-      </span>
-      <div className="flex flex-wrap gap-1">
-        {acteurs.map((acteur) => (
-          <span
-            key={acteur.code}
-            className="inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-500 border border-slate-200"
+      <div className="flex flex-wrap items-center gap-1 h-full">
+        {myRoles.map((r) => (
+          <button
+            key={`${r.id}-${r.action}`}
+            type="button"
+            onClick={(e) => e.stopPropagation()}
+            className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-md
+              bg-[#5B5FEF] text-white hover:bg-[#4347d6] active:scale-95
+              transition-all duration-100 shadow-sm cursor-pointer border-0 outline-none"
           >
-            {acteur.label}
-          </span>
+            {actionLabel(r.action)}
+          </button>
         ))}
       </div>
+    )
+  }
+
+  // ── Cas 2 : l'utilisateur n'est pas impliqué → afficher les acteurs ────────
+  // Rôles distincts (dédupliqués par role_code)
+  const acteursUniq = Array.from(
+    new Map(etapeRoles.map((r) => [r.role_code, r])).values()
+  )
+
+  const acteursText = acteursUniq
+    .map((r) => roleCode(r.role_code, r.role))
+    .join(' / ')
+
+  return (
+    <div className="flex items-center h-full max-w-[170px]">
+      <span
+        className="text-[11px] text-slate-500 leading-tight truncate"
+        title={acteursText}
+      >
+        {acteursText}
+      </span>
     </div>
   )
 }
 
-/** Variante pour le cas "chargement des versions en cours". */
+// ─── Skeleton affiché pendant le chargement ───────────────────────────────────
+
 export function AffaireCellLoading() {
   return (
     <div className="flex items-center h-full">
-      <span className="inline-flex items-center gap-1 text-[11px] text-slate-400 px-2 py-0.5 rounded-full bg-slate-50 border border-slate-100">
-        <AlertCircle className="w-3 h-3" />
-        Chargement...
-      </span>
+      <Loader2 className="w-3.5 h-3.5 text-slate-300 animate-spin" />
     </div>
   )
 }
-

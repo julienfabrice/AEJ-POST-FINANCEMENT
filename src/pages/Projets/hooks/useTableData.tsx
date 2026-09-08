@@ -8,15 +8,15 @@ import { configurationServices } from '@/services/configurations.services'
 
 import { useProjetsStore } from '@/store/useProjetsStore'
 import { useAuthStore } from '@/store/useAuthStore'
-import { useWorkflowVersionsMap } from './useWorkflowVersionsMap'
+import { useEtapeRolesMap } from './useEtapeRolesMap'
 import { AffaireCell, AffaireCellLoading } from '../components/AffaireCell'
 
 export function useTableData() {
   const { setSelectedProjet } = useProjetsStore()
   const { data: configuration } = configurationServices.useGet()
 
-  // Charge toutes les versions de workflow en UNE seule requête (pas N requêtes par ligne)
-  const { versionsMap, isLoading: versionsLoading } = useWorkflowVersionsMap()
+  // Charge tous les rôles d'étapes en UNE seule requête et les indexe par etape_code
+  const { etapeRolesMap, isLoading: rolesLoading } = useEtapeRolesMap()
 
   // Rôle de l'utilisateur connecté
   const userRoleCode = useAuthStore((s) => s.user?.role?.code)
@@ -99,15 +99,15 @@ export function useTableData() {
     {
       headerName: 'À faire',
       field: 'workflow_instance' as any,
-      width: 180,
+      width: 200,
       sortable: false,
       filter: false,
       cellRenderer: (params: any) => {
-        if (versionsLoading) return <AffaireCellLoading />
+        if (rolesLoading) return <AffaireCellLoading />
         return (
           <AffaireCell
             projet={params.data as MICRO_PROJET_T}
-            versionsMap={versionsMap}
+            etapeRolesMap={etapeRolesMap}
             userRoleCode={userRoleCode}
           />
         )
@@ -131,7 +131,7 @@ export function useTableData() {
         )
       },
     }
-  ], [setSelectedProjet, configuration, versionsMap, versionsLoading, userRoleCode])
+  ], [setSelectedProjet, configuration, etapeRolesMap, rolesLoading, userRoleCode])
 
   return { columnDefs }
 }

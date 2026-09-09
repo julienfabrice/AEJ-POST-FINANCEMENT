@@ -86,6 +86,39 @@ export interface INDICATEUR_T {
   statut: boolean
   created_at?: string
   updated_at?: string
+  code?: string
+  valeur_cible?: number
+}
+
+export interface INDICATEUR_SUIVI_T {
+    id: number
+    indicateur_id: number
+    valeur: string
+    created_at?: string
+    updated_at?: string
+}
+
+export interface FORMULAIRE_T {
+    id: number
+    code: string
+    libelle: string
+    public_cible: string
+    actif: boolean
+    created_at?: string
+    updated_at?: string
+}
+
+export interface QUESTION_T {
+    id: number,
+    formulaire_id: number
+    code: string,
+    libelle: string,
+    type_question: string,
+    ordre: number,
+    affichage: boolean,
+    obligatoire: boolean,
+    created_at?: string
+    updated_at?: string
 }
 
 export interface TYPE_ENTREPRISE_T {
@@ -132,6 +165,7 @@ export interface FONCTION_T {
 export interface GUICHET_T {
   id: number
   workflow_code?: string | null
+  workflow?: WORKFLOW_T | null
   code: string
   libelle: string
   description?: string | null
@@ -206,5 +240,294 @@ export interface LIEU_HABITATION_T {
   nom: string
   ville_id: number | null
 }
-export * from './workflow.types';
-export * from './workflow.types';
+
+// --- Paramétrage des workflows (référentiels, schema.v2.sql) ---
+
+export interface WORKFLOW_T {
+  id: number
+  code: string
+  name: string
+  description?: string | null
+  is_active: boolean
+}
+
+export interface WORKFLOW_ROLE_T {
+  id: number
+  code: string
+  name: string
+  description?: string | null
+  is_active: boolean
+}
+
+export interface WORKFLOW_DECISION_OUTCOME_T {
+  id: number
+  code: string
+  label: string
+}
+
+export interface WORKFLOW_DELIVERABLE_T {
+  id: number
+  code: string
+  name: string
+  description?: string | null
+  is_active: boolean
+}
+
+// --- Financement / Budgets (schema.v2.sql, section 15) ---
+
+export type BUDGET_STATUT_T = 'EN_ATTENTE' | 'APPROUVE' | 'NON_APPROUVE'
+export type SIGNATURE_CONVENTION_T = 'SIGNEE' | 'NON_SIGNEE'
+export type RECEPTION_ACTE_CREDIT_T = 'OUI' | 'NON' | 'PARTIEL'
+
+export interface BUDGET_T {
+  id: number
+  micro_projet_id: number
+  intitule: string
+  /** Laravel sérialise les colonnes DECIMAL en string dans le JSON. */
+  montant_accorde: number | string
+  date_accord?: string | null
+  source?: string | null
+  statut: BUDGET_STATUT_T
+  devise: string
+  /** Confirmé côté API : booléen (`true`/`false`), pas une chaîne "OUI"/"NON". */
+  deblocage: boolean
+  date_deblocage?: string | null
+  signature_convention: SIGNATURE_CONVENTION_T
+  date_signature?: string | null
+  reception_acte_credit: RECEPTION_ACTE_CREDIT_T
+  date_reception?: string | null
+  observations?: string | null
+  valide_par?: number | null
+  created_at?: string
+  updated_at?: string
+  /** Relation embarquée par GET /budgets — pas besoin d'un fetch séparé vers /projets. */
+  micro_projet?: import('./promoteurs.types').MICRO_PROJET_T
+}
+// --- Lots de transmission (/lots-transmission) ---
+
+export type LOT_TRANSMISSION_STATUT_T = 'BROUILLON' | 'TRANSMIS' | 'TRAITE' | 'REJETE'
+
+export interface LOT_TRANSMISSION_T {
+  id: number
+  organisme_id: number
+  guichet_id: number
+  code: string
+  titre: string
+  fichier_repartition?: string | null
+  fichier_courrier?: string | null
+  reference_courrier?: string | null
+  reference_convention?: string | null
+  date_transmission?: string | null
+  taux_recouvrement?: number | string | null
+  duree_differee?: number | null
+  duree_remboursement?: number | null
+  statut: LOT_TRANSMISSION_STATUT_T
+  created_at?: string
+  updated_at?: string
+  organisme?: ORGANISME_FINANCEMENT_T | null
+  guichet?: GUICHET_T | null
+  dossiers?: import('./promoteurs.types').MICRO_PROJET_T[]
+}
+
+// --- Décaissements (schema.v2.sql, section 15) ---
+
+export type MODE_DECAISSE_T = 'CHEQUE' | 'VIREMENT'
+export type LIGNE_DECAISSEMENT_STATUT_T = 'VALIDE' | 'NON_VALIDE'
+
+export interface LIGNE_DECAISSEMENT_T {
+  id?: number
+  plan_decaissement_id?: number
+  numero_ligne: number
+  object_ligne?: string | null
+  montant_ligne: number
+  mode_decaisse: MODE_DECAISSE_T
+  date_prevue?: string | null
+  intitule_prestataire: string
+  numero_compte?: string | null
+  contact?: string | null
+  statut: LIGNE_DECAISSEMENT_STATUT_T
+  observations?: string | null
+}
+
+export interface PLAN_DECAISSEMENT_T {
+  id: number
+  micro_projet_id?: number
+  budget_id?: number | null
+  code?: string | null
+  intitule?: string | null
+  compte_financement_id?: number | null
+  montant_planifie: number
+  date_prevue?: string | null
+  justificatif_path?: string | null
+  lignes?: LIGNE_DECAISSEMENT_T[]
+  budget?: BUDGET_T | null
+  micro_projet?: import('./promoteurs.types').MICRO_PROJET_T | null
+  created_at?: string
+  updated_at?: string
+}
+
+export type DECAISSEMENT_STATUT_T = 'EN_ATTENTE' | 'VALIDE' | 'NON_VALIDE'
+
+export interface DECAISSEMENT_T {
+  id: number
+  plan_decaissement_id: number
+  ligne_decaissement_id?: number | null
+  numero_ligne?: number | null
+  object_ligne?: string | null
+  montant_ligne?: number | null
+  mode_decaisse?: MODE_DECAISSE_T | null
+  date_prevue?: string | null
+  intitule_prestataire?: string | null
+  numero_compte?: string | null
+  contact?: string | null
+  agence_id?: number | null
+  agence?: AGENCE_REGIONALE_T | null
+  montant_decaisse?: number
+  date_decaissement?: string | null
+  reference_banque?: string | null
+  statut: DECAISSEMENT_STATUT_T
+  observations?: string | null
+  plan_decaissement?: PLAN_DECAISSEMENT_T | null
+  created_at?: string
+  updated_at?: string
+}
+
+// --- Remboursements (schema.v2.sql, section 15) ---
+
+export interface PLAN_REMBOURSEMENT_T {
+  id: number
+  micro_projet_id: number
+  budget_id?: number | null
+  echeance_mensuelle?: string | null
+  montant_echeance: number
+  periode?: number | null
+  capital_rembourse: number
+  capital_restant: number
+  interets: number
+  amortissement_capital: number
+  justificatif_path?: string | null
+  created_at?: string
+  updated_at?: string
+}
+
+export type REMBOURSEMENT_STATUT_T = 'EN_ATTENTE' | 'PAYE' | 'PARTIEL' | 'NON_PAYE'
+
+export interface REMBOURSEMENT_T {
+  id: number
+  promoteur_id: number
+  budget_id?: number | null
+  /** Laravel sérialise les colonnes DECIMAL en string dans le JSON. */
+  montant_echu: number | string
+  montant_paye: number | string
+  montant_impaye: number | string
+  penalites: number | string
+  date_paiement?: string | null
+  observations?: string | null
+  statut: REMBOURSEMENT_STATUT_T
+  promoteur?: import('./promoteurs.types').PROMOTEUR_T | null
+  budget?: BUDGET_T | null
+  created_at?: string
+  updated_at?: string
+}
+
+// --- Comptes de financement (schema.v2.sql) ---
+
+export type ETAT_OUVERTURE_T = 'NON_OUVERT' | 'OUVERT'
+export type AVIS_PARTENAIRE_T = 'ACCORDE' | 'REFUSE' | 'EN_ATTENTE'
+
+export interface COMPTE_FINANCEMENT_T {
+  id: number
+  organisme_id: number
+  micro_projet_id: number
+  etat_ouverture: ETAT_OUVERTURE_T
+  localite_ouverture?: string | null
+  date_ouverture?: string | null
+  avis_partenaire: AVIS_PARTENAIRE_T
+  observations?: string | null
+  created_at?: string
+  updated_at?: string
+  micro_projet?: import('./promoteurs.types').MICRO_PROJET_T
+}
+
+export * from './workflow.types'
+
+// --- Transactions (dépenses/recettes) ---
+
+// --- Transactions (dépenses/recettes) ---
+
+export type TRANSACTION_TYPE_T = 'DEPENSE' | 'RECETTE'
+export type TRANSACTION_STATUT_T = 'BROUILLON' | 'SOUMIS' | 'VALIDE' | 'REJETE' | 'ANNULE'
+
+export interface TRANSACTION_T {
+  id: number
+  micro_projet_id: number
+  promoteur_id?: number | null
+  categorie_id?: number | null
+  libelle: string
+  type: TRANSACTION_TYPE_T
+  montant: number | string
+  statut: TRANSACTION_STATUT_T
+  mode_paiement?: string | null
+  reference?: string | null
+  justificatif_path?: string | null
+  observations?: string | null
+  date?: string | null
+  saisi_par?: number | null
+  created_at?: string
+  updated_at?: string
+  micro_projet?: import('./promoteurs.types').MICRO_PROJET_T
+}
+
+/**
+ * --- Suivi & exploitation (rapports de visite terrain + emplois créés) ---
+ *
+ * Ré-exporté comme `workflow.types` ci-dessus : les écrans importent depuis
+ * `@/types` sans avoir à connaître le découpage des fichiers. Le détail des
+ * arbitrages maquette/API est documenté dans `suivi.types.ts`.
+ */
+export * from './suivi.types'
+
+/**
+ * --- Agrégats de tableau de bord (`/dashboard/*`) ---
+ *
+ * Ré-exporté ici pour que les écrans importent depuis `@/types`. Ces endpoints
+ * répondent `{ data }` SANS `message` : ils n'utilisent donc PAS
+ * `API_RESPONSE_T` mais `DASHBOARD_RESPONSE_T`. Détail des relevés live et des
+ * arbitrages (clés accentuées, montants en chaîne) dans `dashboard.types.ts`.
+ */
+export * from './dashboard.types'
+
+/**
+ * --- Cadre de résultat (module « Suivi & évaluation », API NON BRANCHÉE) ---
+ *
+ * Ré-exporté comme `suivi.types` et `dashboard.types` ci-dessus : les écrans,
+ * services et schémas importent depuis `@/types` sans connaître le découpage
+ * des fichiers.
+ *
+ * ⚠️ Ces types sont calqués sur un SCHÉMA SQL, pas sur une réponse d'API —
+ * l'API n'existe pas encore. Coquilles du schéma reprises telles quelles
+ * (`abgrege_cs`, `intutile_cs`, `valeur_cible_indcateur_istr`, `Date_suivi`),
+ * incohérences signalées champ par champ : tout le détail est dans
+ * `cadreResultat.types.ts`, à relire au moment du branchement.
+ */
+export * from './cadreResultat.types'
+export interface DISPOSITIF_T {
+  id: number
+  code: string
+  projet_id?: number | null
+  guichet_id?: number | null
+  workflow_version?: any | null // we can refine this later
+  intitule: string
+  budget_alloue: string | number
+  montant_min: string | number
+  montant_max: string | number
+  taux: string | number
+  duree: number
+  nbre_emplois_prevu: number
+  nbre_beneficiaire_prevu: number
+  nbre_micro_projet_prevu: number
+  created_at?: string
+  updated_at?: string
+  projet?: any | null
+  guichet?: GUICHET_T | null
+}

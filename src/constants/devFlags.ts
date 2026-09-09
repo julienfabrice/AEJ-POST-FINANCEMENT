@@ -10,7 +10,7 @@
  */
 
 
-export const AUTH_DISABLED = true
+export const AUTH_DISABLED = import.meta.env.VITE_AUTH_DISABLED === 'true'
 
 
 if (AUTH_DISABLED && typeof console !== 'undefined') {

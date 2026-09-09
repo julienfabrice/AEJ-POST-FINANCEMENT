@@ -20,7 +20,6 @@ export const MODULES = {
   // Opérations
   JEUNES: 'jeunes',
   PROJETS: 'projets',
-  FINANCEMENTS: 'financements',
   REMBOURSEMENTS: 'remboursements',
   INDICATEURS: 'indicateurs',
   ORGANISMES: 'organismes',
@@ -28,6 +27,24 @@ export const MODULES = {
 
   // Suivi & évaluation
   SUIVI: 'suivi',
+  /**
+   * ⚠️ MODULE DÉCLARÉ MAIS PAS ENCORE UTILISÉ COMME GARDE.
+   *
+   * La page « Cadre de résultat » (`/cadre-resultat`) est gardée par
+   * `MODULES.SUIVI`, PAS par cette clé — voir `AGENT_NAV_ITEMS` et
+   * `src/routes/_authenticated/_agent/cadre-resultat.tsx`.
+   *
+   * Raison : `can()` ne connaît que les modules renvoyés par `GET /auth/me`.
+   * Tant que le backend n'expose pas `cadre_resultat` dans les permissions,
+   * `can('cadre_resultat', 'v')` répond `false` pour TOUT LE MONDE : la route
+   * redirigerait vers le tableau de bord et l'entrée disparaîtrait du menu.
+   * L'écran serait livré et inaccessible.
+   *
+   * La clé est néanmoins posée dès maintenant pour que la bascule soit un
+   * changement d'UNE LIGNE à deux endroits (le `module:` de l'entrée de menu
+   * et le `requireModule(...)` de la route) le jour où le backend le renverra.
+   */
+  CADRE_RESULTAT: 'cadre_resultat',
   RAPPORTS: 'rapports',
 
   // Administration

@@ -16,7 +16,7 @@ export const guichetServices = {
   useCreate: () => {
     const queryClient = useQueryClient()
     return useMutation({
-      mutationFn: async (payload: Omit<GUICHET_T, 'id' | 'is_form_active'>) => {
+      mutationFn: async (payload: Omit<GUICHET_T, 'id'>) => {
         const response = await axiosInstance.post('/guichets', payload)
         return response.data
       },
@@ -33,7 +33,7 @@ export const guichetServices = {
   useUpdate: () => {
     const queryClient = useQueryClient()
     return useMutation({
-      mutationFn: async ({ id, data }: { id: number; data: Omit<GUICHET_T, 'id' | 'is_form_active'> }) => {
+      mutationFn: async ({ id, data }: { id: number; data: Omit<GUICHET_T, 'id'> }) => {
         const response = await axiosInstance.put(`/guichets/${id}`, data)
         return response.data
       },

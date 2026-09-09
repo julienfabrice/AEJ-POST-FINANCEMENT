@@ -5,12 +5,14 @@ import 'dayjs/locale/fr'
 import { Eye } from 'lucide-react'
 import { useKanbanData } from '../../hooks/useKanbanData'
 import { useProjetsStore } from '@/store/useProjetsStore'
+import { configurationServices } from '@/services/configurations.services'
 
 dayjs.locale('fr')
 
 export function KanbanBoard() {
   const { projets, setSelectedProjet } = useProjetsStore()
   const { columns } = useKanbanData(projets)
+  const { data: configuration } = configurationServices.useGet()
 
   return (
     <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 h-[calc(100vh-420px)] min-h-[400px]">
@@ -58,7 +60,7 @@ export function KanbanBoard() {
                     {projet.stade_projet || 'N/A'}
                   </Badge>
                   <span className="font-bold text-xs text-[#131C29]">
-                    {projet.montant_total ? new Intl.NumberFormat('fr-FR').format(parseFloat(projet.montant_total)) : '0'} F
+                    {projet.montant_total ? new Intl.NumberFormat('fr-FR').format(parseFloat(projet.montant_total)) : '0'} {configuration?.sigle_monnaie_pays || 'FCFA'}
                   </span>
                 </div>
                 

@@ -6,39 +6,72 @@ import { useRelevesGrid } from './releves/useRelevesGrid'
 import { useFichesGrid } from './fiches/useFichesGrid'
 import { useQuestionsGrid } from './questions/useQuestionsGrid'
 
-export type IndicateurTab = 'plan' | 'ind' | 'rel' | 'fic' | 'q'
+export type IndicateurTab =  'plan' | 'indicateurs' | 'releves' | 'fiches' | 'questions'
 
 export function useIndicateursGrid(activeTab: IndicateurTab, searchQuery: string = '') {
-  const { columnDefs: indDefs, data: indData, isLoading: indLoading } = useIndicateurTabGrid(searchQuery)
-  const { columnDefs: relDefs, data: relData, isLoading: relLoading } = useRelevesGrid(searchQuery)
-  const { columnDefs: ficDefs, data: ficData, isLoading: ficLoading } = useFichesGrid(searchQuery)
-  const { columnDefs: qDefs, data: qData, isLoading: qLoading } = useQuestionsGrid(searchQuery)
 
-  const columnDefs = useMemo<ColDef[]>(() => {
-    switch (activeTab) {
-      case 'ind': return indDefs
-      case 'rel': return relDefs
-      case 'fic': return ficDefs
-      case 'q': return qDefs
-      default: return []
-    }
-  }, [activeTab, indDefs, relDefs, ficDefs, qDefs])
+    const plan = {columnDefs: [], data: [],  isLoading: null, modalNode: null}
+    const indicateurs = useIndicateurTabGrid(searchQuery)
+    const releves = useRelevesGrid(searchQuery)
+    const fiches = useFichesGrid(searchQuery)
+    const questions = useQuestionsGrid(searchQuery)
 
-  const data = useMemo(() => {
-    switch (activeTab) {
-      case 'ind': return indData
-      case 'rel': return relData
-      case 'fic': return ficData
-      case 'q': return qData
-      default: return []
-    }
-  }, [activeTab, indData, relData, ficData, qData])
+    const byTab = { indicateurs, releves, fiches, questions, plan}
 
-  const isLoading = activeTab === 'ind' ? indLoading 
-                  : activeTab === 'rel' ? relLoading 
-                  : activeTab === 'fic' ? ficLoading 
-                  : activeTab === 'q' ? qLoading 
-                  : false
+    const columnDefs = useMemo<ColDef[]>(
+        () => byTab[activeTab].columnDefs,
+        [activeTab])
 
-  return { columnDefs, data, isLoading, modalNode: null }
+
+
+    const data = byTab[activeTab].data
+    const isLoading = byTab[activeTab].isLoading
+    const modalNode = byTab[activeTab].modalNode
+
+    return { columnDefs, data, isLoading , modalNode }
+
+
+
+
+
+
+  // const { columnDefs: indDefs, data: indData, isLoading: indLoading, modalNode: indModalNode } = useIndicateurTabGrid(searchQuery)
+  // const { columnDefs: relDefs, data: relData, isLoading: relLoading, modalNode: relModalNode } = useRelevesGrid(searchQuery)
+  // const { columnDefs: ficDefs, data: ficData, isLoading: ficLoading, modalNode: ficModalNode } = useFichesGrid(searchQuery)
+  // const { columnDefs: qDefs, data: qData, isLoading: qLoading, modalNode: qModalNode } = useQuestionsGrid(searchQuery)
+  //
+  // const columnDefs = useMemo<ColDef[]>(() => {
+  //   switch (activeTab) {
+  //     case 'indicateurs': return indDefs
+  //     case 'releves': return relDefs
+  //     case 'fiches': return ficDefs
+  //     case 'questions': return qDefs
+  //     default: return []
+  //   }
+  // }, [activeTab, indDefs, relDefs, ficDefs, qDefs])
+  //
+  // const data = useMemo(() => {
+  //   switch (activeTab) {
+  //     case 'indicateurs': return indData
+  //     case 'releves': return relData
+  //     case 'fiches': return ficData
+  //     case 'questions': return qData
+  //     default: return []
+  //   }
+  // }, [activeTab, indData, relData, ficData, qData])
+  //
+  // const isLoading = activeTab === 'indicateurs' ? indLoading
+  //                 : activeTab === 'releves' ? relLoading
+  //                 : activeTab === 'fiches' ? ficLoading
+  //                 : activeTab === 'questions' ? qLoading
+  //                 : false
+  //
+  //   const modalNode = useMemo(() => {
+  //       if (activeTab === 'indicateurs') return indModalNode
+  //       if (activeTab === 'releves') return relModalNode
+  //       return null
+  //   }, [activeTab])
+  //
+  //
+  // return { columnDefs, data, isLoading, modalNode: modalNode }
 }

@@ -17,6 +17,8 @@ export function indexPermissions(rows: PERMISSION_T[]): PermissionIndex {
   return idx
 }
 
+import { AUTH_DISABLED } from '@/constants/devFlags'
+
 /**
  * Projette le modèle à deux niveaux sur les quatre actions :
  *  - `v`           → il suffit d'avoir l'accès au module ;
@@ -27,6 +29,8 @@ export function canFrom(
   module: string,
   action: PERMISSION_ACTION_T = 'v',
 ): boolean {
+  if (AUTH_DISABLED) return true
+
   const m = idx?.get(module)
   if (!m?.access) return false
   return action === 'v' ? true : m.full

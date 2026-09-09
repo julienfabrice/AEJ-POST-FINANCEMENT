@@ -8,6 +8,7 @@ export type PROJETS_SEARCH_T = {
   dispositif_id?: string
   statut?: string
   agence_id?: string
+  guichet_id?: string
 }
 
 interface ProjetsState {

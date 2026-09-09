@@ -43,27 +43,20 @@ function roleCode(roleCode: string, roleRelation?: any): string {
  *  Ex: "AJOUT_PLAN_AFFAIRES" → "Ajouter plan d'affaires" */
 function actionLabel(action: string): string {
   const KNOWN: Record<string, string> = {
-    AJOUT_PLAN_AFFAIRES: "Ajout Plan d'Affaires",
-    SOUMISSION: 'Soumission',
-    VALIDATION: 'Validation',
-    REJET: 'Rejet',
-    REVISION: 'Révision / Modification',
-    CONSULTATION: 'Consultation (Lecture seule)',
-    APPROBATION_FINALE: 'Approbation Finale',
-    DECISION: 'Décision',
-    // Garder les anciens au cas où
+    JOINDRE_PLAN: 'Joindre le plan',
     VALIDER: 'Valider',
-    APPROUVER: 'Approuver',
-    CERTIFIER: 'Certifier',
     TRANSMETTRE: 'Transmettre',
-    DECAISSER: 'Décaisser',
-    VERIFIER: 'Vérifier',
-    SIGNER: 'Signer',
-    INSTRUIRE: 'Instruire',
-    ANALYSER: 'Analyser',
-    SOUMETTRE: 'Soumettre',
     TRAITER: 'Traiter',
+    DECAISSER: 'Décaisser',
+    REMBOURSEMENTS: 'Remboursements',
+    VISITE_SUIVI: 'Visite de suivi',
     IMPUTER: 'Imputer',
+    PLAN_DECAISSEMENT: 'Plan de décaissement',
+    CORRIGER: 'Corriger',
+    EXAMINER: 'Examiner',
+    AUTORISER: 'Autoriser',
+    EXECUTER: 'Exécuter',
+    PLAN_CONVENTION: 'Plan & convention'
   }
   if (KNOWN[action]) return KNOWN[action]
   // Format générique : "AJOUT_PLAN_AFFAIRES" → "Ajout plan affaires"

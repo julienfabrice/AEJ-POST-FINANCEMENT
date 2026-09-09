@@ -3,6 +3,26 @@
 import type { PERSONNEL_T } from '@/types/personnels.types'
 import type { REF_ITEM_T } from '@/types/referentials.types'
 
+export interface LOT_TRANSMISSION_T {
+  id: number
+  organisme_id: number
+  guichet_id: number
+  code: string
+  titre: string
+  fichier_repartition?: string | null
+  fichier_courrier?: string | null
+  reference_courrier?: string | null
+  reference_convention?: string | null
+  date_transmission?: string | null
+  /** Laravel sérialise les colonnes DECIMAL en string dans le JSON. */
+  taux_recouvrement?: string | number | null
+  duree_differee?: number | null
+  duree_remboursement?: number | null
+  statut: string
+  created_at?: string
+  updated_at?: string
+}
+
 export interface MICRO_PROJET_T {
   id: number
   code: string
@@ -45,6 +65,26 @@ export interface MICRO_PROJET_T {
     completed_at: string | null
     next_etape_code: string | null
   } | null
+
+  /**
+   * Relations ajoutées par la mise à jour API (GET /projets, /projets/{id}) :
+   * tout le pipeline financier d'un micro-projet en un seul appel.
+   */
+  budget?: import('./index').BUDGET_T | null
+  compte_financement?: import('./index').COMPTE_FINANCEMENT_T | null
+  plan_decaissement?: import('./index').PLAN_DECAISSEMENT_T | null
+  plan_remboursement?: import('./index').PLAN_REMBOURSEMENT_T | null
+  lot_transmission?: LOT_TRANSMISSION_T | null
+  lot_micro_projet?: {
+    id: number
+    lot_id: number
+    micro_projet_id: number
+    statut: string
+    created_at?: string
+    updated_at?: string
+  } | null
+  recouvrements?: import('./index').RECOUVREMENT_T[]
+  transactions?: import('./index').TRANSACTION_T[]
 }
 
 export interface PROMOTEUR_T {

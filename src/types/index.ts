@@ -416,6 +416,24 @@ export interface COMPTE_FINANCEMENT_T {
   micro_projet?: import('./promoteurs.types').MICRO_PROJET_T
 }
 
+// --- Recouvrements ---
+
+export type RECOUVREMENT_TYPE_ACTION_T = 'APPEL' | 'COURRIER' | 'DECHARGE' | 'MISE_EN_DEMEURE' | 'CONTENTIEUX'
+
+export interface RECOUVREMENT_T {
+  id: number
+  micro_projet_id: number
+  plan_remboursement_id?: number | null
+  agent_id?: number | null
+  montant_recouvre: number | string
+  date_recouvrement?: string | null
+  type_action: RECOUVREMENT_TYPE_ACTION_T
+  justificatif_path?: string | null
+  observations?: string | null
+  created_at?: string
+  updated_at?: string
+}
+
 export * from './workflow.types'
 
 // --- Transactions (dépenses/recettes) ---

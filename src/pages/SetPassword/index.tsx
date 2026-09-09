@@ -43,6 +43,9 @@ function SetPasswordForm({ token, mode }: { token: string; mode: PASSWORD_LINK_M
   const { form, onSubmit, isSubmitting, errorMessage } = useSetPasswordForm(token, mode)
   const copy = SET_PASSWORD_COPY[mode]
 
+
+  console.log("Formulaire valid :", form.formState.isValid)
+
   return (
     <>
       <div className="mb-8 flex flex-col items-center text-center">
@@ -103,7 +106,7 @@ function SetPasswordForm({ token, mode }: { token: string; mode: PASSWORD_LINK_M
 
           <Button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || !form.formState.isValid }
             className="h-12 w-full cursor-pointer bg-[#E7722B] text-base font-semibold text-white hover:bg-[#C85E18]"
           >
             {isSubmitting ? 'Enregistrement…' : copy.submitLabel}

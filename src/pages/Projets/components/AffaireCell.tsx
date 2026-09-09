@@ -2,6 +2,7 @@ import { Loader2 } from 'lucide-react'
 import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
 import type { EtapeRolesMap } from '../hooks/useEtapeRolesMap'
 import type { WORKFLOW_ETAPE_ROLE_T } from '@/types/workflow.types'
+import { useProjetActions } from '../hooks/actions'
 
 // ─── Mapping des codes rôles → labels lisibles ───────────────────────────────
 // Couvre à la fois les codes du backend auth ET les codes du backend workflow
@@ -42,6 +43,15 @@ function roleCode(roleCode: string, roleRelation?: any): string {
  *  Ex: "AJOUT_PLAN_AFFAIRES" → "Ajouter plan d'affaires" */
 function actionLabel(action: string): string {
   const KNOWN: Record<string, string> = {
+    AJOUT_PLAN_AFFAIRES: "Ajout Plan d'Affaires",
+    SOUMISSION: 'Soumission',
+    VALIDATION: 'Validation',
+    REJET: 'Rejet',
+    REVISION: 'Révision / Modification',
+    CONSULTATION: 'Consultation (Lecture seule)',
+    APPROBATION_FINALE: 'Approbation Finale',
+    DECISION: 'Décision',
+    // Garder les anciens au cas où
     VALIDER: 'Valider',
     APPROUVER: 'Approuver',
     CERTIFIER: 'Certifier',
@@ -100,6 +110,8 @@ export function AffaireCell({ projet, etapeRolesMap, userRoleCode }: AffaireCell
   // ── Cas 1 : l'utilisateur fait partie des rôles de l'étape ────────────────
   const myRoles = etapeRoles.filter((r) => r.role_code === userRoleCode)
 
+  const { executeAction } = useProjetActions()
+
   if (myRoles.length > 0) {
     return (
       <div className="flex flex-wrap items-center gap-1 h-full">
@@ -107,7 +119,10 @@ export function AffaireCell({ projet, etapeRolesMap, userRoleCode }: AffaireCell
           <button
             key={`${r.id}-${r.action}`}
             type="button"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation()
+              executeAction(r.action, projet)
+            }}
             className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-md
               bg-[#5B5FEF] text-white hover:bg-[#4347d6] active:scale-95
               transition-all duration-100 shadow-sm cursor-pointer border-0 outline-none"

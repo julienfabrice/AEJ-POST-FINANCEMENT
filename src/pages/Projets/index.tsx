@@ -8,7 +8,7 @@ import { useProjetsStore } from '@/store/useProjetsStore'
 
 export function ProjetsPage() {
   const { guichet_id } = useSearch({ from: '/_authenticated/_agent/projets' })
-  const { setFilters, resetFilters } = useProjetsStore()
+  const { setFilters } = useProjetsStore()
 
   // Synchronise le guichet_id de l'URL dans les filtres du store au montage
   useEffect(() => {

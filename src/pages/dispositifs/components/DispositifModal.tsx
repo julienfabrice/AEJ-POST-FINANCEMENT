@@ -56,14 +56,38 @@ export function DispositifModal({ isOpen, onClose, dispositifToEdit }: Dispositi
             </div>
           </div>
 
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="projet_id">ID Projet (optionnel)</Label>
+              <Input id="projet_id" type="number" {...register('projet_id', { valueAsNumber: true, setValueAs: (v) => (v === '' || Number.isNaN(v) ? null : v) })} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="guichet_id">ID Guichet (optionnel)</Label>
+              <Input id="guichet_id" type="number" {...register('guichet_id', { valueAsNumber: true, setValueAs: (v) => (v === '' || Number.isNaN(v) ? null : v) })} />
+            </div>
+          </div>
+
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="duree">Durée (mois)</Label>
               <Input id="duree" type="number" {...register('duree', { valueAsNumber: true })} />
             </div>
             <div className="space-y-2">
+              <Label htmlFor="taux">Taux</Label>
+              <Input id="taux" type="number" step="0.01" {...register('taux', { valueAsNumber: true })} />
+              {errors.taux && <p className="text-red-500 text-xs">{errors.taux.message}</p>}
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="nbre_emplois_prevu">Emplois prévus</Label>
               <Input id="nbre_emplois_prevu" type="number" {...register('nbre_emplois_prevu', { valueAsNumber: true })} />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="nbre_beneficiaire_prevu">Bénéficiaires prévus</Label>
+              <Input id="nbre_beneficiaire_prevu" type="number" {...register('nbre_beneficiaire_prevu', { valueAsNumber: true })} />
+              {errors.nbre_beneficiaire_prevu && <p className="text-red-500 text-xs">{errors.nbre_beneficiaire_prevu.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="nbre_micro_projet_prevu">Projets prévus</Label>

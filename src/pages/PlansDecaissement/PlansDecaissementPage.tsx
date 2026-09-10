@@ -13,6 +13,9 @@ import { useDecaissementsGrid } from './hooks/useDecaissementsGrid'
 import { CompteFinancementFormModal } from './components/CompteFinancementFormModal'
 import { useCompteFinancementsGrid } from './hooks/useCompteFinancementsGrid'
 
+import { DecaissementDeclarationFormModal } from './components/DecaissementDeclarationFormModal'
+import { useDecaissementsDeclarationsGrid } from './hooks/useDecaissementsDeclarationsGrid'
+
 function PlanSubTab() {
   const [searchQuery, setSearchQuery] = useState('')
   const { columnDefs, data, isLoading, modalNode } = usePlanDecaissementsGrid(searchQuery)
@@ -85,8 +88,32 @@ function CompteFinancementSubTab() {
   )
 }
 
+function DeclarationsSubTab() {
+  const [searchQuery, setSearchQuery] = useState('')
+  const { columnDefs, data, isLoading, modalNode } = useDecaissementsDeclarationsGrid(searchQuery)
+  return (
+    <>
+      {modalNode}
+      <GridSection
+        columnDefs={columnDefs}
+        data={data}
+        isLoading={isLoading}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Rechercher une déclaration…"
+        countLabel={`${data.length} déclaration(s)`}
+        newButton={
+          <DecaissementDeclarationFormModal>
+            <Button className="h-9"><Plus className="w-4 h-4 mr-2" />Nouvelle déclaration</Button>
+          </DecaissementDeclarationFormModal>
+        }
+      />
+    </>
+  )
+}
+
 export function PlansDecaissementPage() {
-  const [subTab, setSubTab] = useState<'plan' | 'execution' | 'compte'>('plan')
+  const [subTab, setSubTab] = useState<'plan' | 'execution' | 'compte' | 'declarations'>('plan')
 
   return (
     <div className="space-y-2">
@@ -97,11 +124,12 @@ export function PlansDecaissementPage() {
         </p>
       </div>
 
-      <Tabs value={subTab} onValueChange={(v) => setSubTab(v as 'plan' | 'execution' | 'compte')} className="w-full">
+      <Tabs value={subTab} onValueChange={(v) => setSubTab(v as 'plan' | 'execution' | 'compte' | 'declarations')} className="w-full">
         <TabsList className="bg-slate-100 p-1 h-auto rounded-md w-fit">
           <TabsTrigger value="plan" className={SUBTAB_TRIGGER_CLASS}>Plan de décaissement</TabsTrigger>
           <TabsTrigger value="execution" className={SUBTAB_TRIGGER_CLASS}>Exécution</TabsTrigger>
           <TabsTrigger value="compte" className={SUBTAB_TRIGGER_CLASS}>Comptes de financement</TabsTrigger>
+          <TabsTrigger value="declarations" className={SUBTAB_TRIGGER_CLASS}>Déclarations</TabsTrigger>
         </TabsList>
         <TabsContent value="plan" className="mt-2 outline-none">
           <PlanSubTab />
@@ -111,6 +139,9 @@ export function PlansDecaissementPage() {
         </TabsContent>
         <TabsContent value="compte" className="mt-2 outline-none">
           <CompteFinancementSubTab />
+        </TabsContent>
+        <TabsContent value="declarations" className="mt-2 outline-none">
+          <DeclarationsSubTab />
         </TabsContent>
       </Tabs>
     </div>

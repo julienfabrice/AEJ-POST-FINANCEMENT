@@ -333,28 +333,22 @@ export interface PLAN_DECAISSEMENT_T {
   updated_at?: string
 }
 
-export type DECAISSEMENT_STATUT_T = 'EN_ATTENTE' | 'VALIDE' | 'NON_VALIDE'
+// --- Déclarations de décaissement (/decaissements-declarations) ---
 
-export interface DECAISSEMENT_T {
+export type DECAISSEMENT_DECLARATION_STATUT_T = 'BROUILLON' | 'SOUMIS' | 'TRAITE'
+
+export interface DECAISSEMENT_DECLARATION_T {
   id: number
   plan_decaissement_id: number
-  ligne_decaissement_id?: number | null
-  numero_ligne?: number | null
-  object_ligne?: string | null
-  montant_ligne?: number | null
-  mode_decaisse?: MODE_DECAISSE_T | null
-  date_prevue?: string | null
-  intitule_prestataire?: string | null
-  numero_compte?: string | null
-  contact?: string | null
-  agence_id?: number | null
-  agence?: AGENCE_REGIONALE_T | null
-  montant_decaisse?: number
-  date_decaissement?: string | null
+  promoteur_id: number
+  montant_declare: number | string
+  date_declaree: string
   reference_banque?: string | null
-  statut: DECAISSEMENT_STATUT_T
+  justificatif_path?: string | null
   observations?: string | null
+  statut: DECAISSEMENT_DECLARATION_STATUT_T
   plan_decaissement?: PLAN_DECAISSEMENT_T | null
+  promoteur?: import('./promoteurs.types').PROMOTEUR_T | null
   created_at?: string
   updated_at?: string
 }

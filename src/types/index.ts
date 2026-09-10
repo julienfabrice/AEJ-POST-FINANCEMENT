@@ -432,6 +432,8 @@ export interface RECOUVREMENT_T {
   observations?: string | null
   created_at?: string
   updated_at?: string
+  micro_projet?: import('./promoteurs.types').MICRO_PROJET_T | null   // 👈 ajoute cette ligne
+  agent?: import('./personnels.types').PERSONNEL_T | null             // 👈 et celle-ci
 }
 
 export * from './workflow.types'

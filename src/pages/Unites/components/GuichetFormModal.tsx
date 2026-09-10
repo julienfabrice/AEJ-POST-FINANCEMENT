@@ -4,7 +4,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useGuichetForm } from '../hooks/guichets/useGuichetForm'
+import { workflowModelsServices } from '@/services/workflowModels.services'
 import type { GUICHET_T } from '@/types'
 
 interface Props {
@@ -16,6 +18,7 @@ interface Props {
 
 export function GuichetFormModal({ children, open: controlledOpen, onOpenChange, initialData }: Props) {
   const { form, onSubmit, isPending, isEdit, open, setOpen } = useGuichetForm(initialData ?? null, controlledOpen, onOpenChange)
+  const { data: workflowModels = [] } = workflowModelsServices.useGetAll()
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -24,6 +27,20 @@ export function GuichetFormModal({ children, open: controlledOpen, onOpenChange,
         <DialogHeader><DialogTitle>{isEdit ? 'Modifier' : 'Nouveau'} Guichet de financement</DialogTitle></DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
+            <FormField control={form.control} name="workflow_code" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Workflow</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl><SelectTrigger className="w-full"><SelectValue placeholder="Sélectionner un workflow" /></SelectTrigger></FormControl>
+                  <SelectContent>
+                    {workflowModels.map((w) => (
+                      <SelectItem key={w.id} value={w.code}>{w.name} ({w.code})</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )} />
             <div className="grid grid-cols-2 gap-4">
               <FormField control={form.control} name="code" render={({ field }) => (
                 <FormItem><FormLabel>Code</FormLabel><FormControl><Input placeholder="Ex. AGR" {...field} /></FormControl><FormMessage /></FormItem>

@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 export const guichetSchema = z.object({
+  workflow_code: z.string().min(1, 'Le workflow est requis.'),
   code: z.string().min(1, 'Le code est requis.'),
   libelle: z.string().min(1, 'Le libellé est requis.'),
   description: z.string().optional(),

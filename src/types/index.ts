@@ -332,6 +332,31 @@ export interface PLAN_DECAISSEMENT_T {
   created_at?: string
   updated_at?: string
 }
+export type DECAISSEMENT_STATUT_T = 'EN_ATTENTE' | 'VALIDE' | 'NON_VALIDE'
+
+export interface DECAISSEMENT_T {
+  id: number
+  plan_decaissement_id: number
+  ligne_decaissement_id?: number | null
+  numero_ligne?: number | null
+  object_ligne?: string | null
+  montant_ligne?: number | null
+  mode_decaisse?: MODE_DECAISSE_T | null
+  date_prevue?: string | null
+  intitule_prestataire?: string | null
+  numero_compte?: string | null
+  contact?: string | null
+  agence_id?: number | null
+  agence?: AGENCE_REGIONALE_T | null
+  montant_decaisse?: number
+  date_decaissement?: string | null
+  reference_banque?: string | null
+  statut: DECAISSEMENT_STATUT_T
+  observations?: string | null
+  plan_decaissement?: PLAN_DECAISSEMENT_T | null
+  created_at?: string
+  updated_at?: string
+}
 
 // --- Déclarations de décaissement (/decaissements-declarations) ---
 

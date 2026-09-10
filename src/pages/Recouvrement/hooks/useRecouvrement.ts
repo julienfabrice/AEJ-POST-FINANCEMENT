@@ -1,47 +1,147 @@
-import { useState, useMemo } from 'react'
-import {
-  MOCK_PROJETS_RECOUVREMENT,
-  MOCK_ACTIONS_RECOUVREMENT,
-  MOCK_RECOUVREMENT_GARANTIES,
-  type RecouvrementTab
-} from '@/mock/recouvrement.mock'
+import { useMemo, useState } from 'react'
+import { remboursementServices } from '@/services/remboursements.services'
+import { planRemboursementServices } from '@/services/planRemboursements.services'
+import { recouvrementServices } from '@/services/recouvrements.services'
+import { budgetServices } from '@/services/budgets.services'
+import { personnelsServices } from '@/services/personnels.services'
+import { refLabel } from '@/types/referentials.types'
+import { MOCK_RECOUVREMENT_GARANTIES } from '@/mock/recouvrement.mock'
+import { RECOUV_TYPE_LABEL, type ProjetRecouvrement, type ActionRecouvrement, type RecouvrementTab } from '../types'
+import type { RecouvrementFormValues } from '@/schema/recouvrements/recouvrementSchema'
 
 export function useRecouvrement() {
   const [activeTab, setActiveTab] = useState<RecouvrementTab>('portefeuille')
-  const [projets, setProjets] = useState(MOCK_PROJETS_RECOUVREMENT)
 
-  // Categorize for Portefeuille
-  const aJour = useMemo(() => projets.filter((p) => !p.contentieux && p.nbImpayes === 0), [projets])
-  const leger = useMemo(() => projets.filter((p) => !p.contentieux && p.nbImpayes > 0 && p.nbImpayes <= 3), [projets])
-  const lourd = useMemo(() => projets.filter((p) => !p.contentieux && p.nbImpayes > 3), [projets])
-  
-  // Contentieux
-  const contentieux = useMemo(() => projets.filter((p) => p.contentieux), [projets])
+  // --- Formulaire "Action amiable" / "Sortir du portefeuille" (modale partagée) ---
+  const [formOpen, setFormOpen] = useState(false)
+  const [formPrefill, setFormPrefill] = useState<Partial<RecouvrementFormValues>>({})
 
-  function handleActionAmiable(id: string) {
-    // Dans la maquette ça ouvre une modale. Pour l'instant on fait juste une alerte.
-    alert(`Ouvrir modale d'action pour le dossier ${id}`)
+  const { data: remboursements = [] } = remboursementServices.useGetAll()
+  const { data: plansRemboursement = [] } = planRemboursementServices.useGetAll()
+  const { data: recouvrements = [] } = recouvrementServices.useGetAll()
+  const { data: budgets = [] } = budgetServices.useGetAll()
+  const { data: personnels = [] } = personnelsServices.useGetAll()
+
+  const { aJour, leger, lourd, contentieux, actions } = useMemo(() => {
+    const budgetById = new Map(budgets.map((b) => [b.id, b]))
+    const personnelById = new Map(personnels.map((p) => [p.id, p]))
+
+    // --- Reste dû par micro-projet, à partir des échéances de /plan-remboursements ---
+    const resteDuByProjet = new Map<number, number>()
+    plansRemboursement.forEach((pl) => {
+      const prev = resteDuByProjet.get(pl.micro_projet_id) ?? 0
+      resteDuByProjet.set(pl.micro_projet_id, prev + Number(pl.capital_restant ?? 0))
+    })
+
+    // --- Impayés par dossier, à partir de /remboursements (regroupés via budget_id, cf. useRemboursements) ---
+    interface Agg {
+      microProjetId?: number
+      titre: string
+      code: string
+      agence: string
+      nbImpayes: number
+    }
+    const byBudget: Record<number, Agg> = {}
+    remboursements.forEach((r) => {
+      const key = r.budget_id ?? -r.promoteur_id
+      const budget = r.budget_id ? budgetById.get(r.budget_id) : undefined
+      const projet = budget?.micro_projet
+      if (!byBudget[key]) {
+        byBudget[key] = {
+          microProjetId: projet?.id,
+          titre: projet?.intitule ?? `Promoteur #${r.promoteur_id}`,
+          code: projet?.code ?? '—',
+          agence: projet?.agence ? refLabel(projet.agence) : '—',
+          nbImpayes: 0,
+        }
+      }
+      if (r.statut === 'NON_PAYE') byBudget[key].nbImpayes++
+    })
+
+    // --- Nombre d'actions + statut contentieux par micro-projet, à partir de /recouvrements ---
+    const actionsByProjet = new Map<number, number>()
+    const contentieuxProjets = new Set<number>()
+    recouvrements.forEach((r) => {
+      actionsByProjet.set(r.micro_projet_id, (actionsByProjet.get(r.micro_projet_id) ?? 0) + 1)
+      if (r.type_action === 'CONTENTIEUX') contentieuxProjets.add(r.micro_projet_id)
+    })
+
+    const aJourList: ProjetRecouvrement[] = []
+    const legerList: ProjetRecouvrement[] = []
+    const lourdList: ProjetRecouvrement[] = []
+    const contentieuxList: ProjetRecouvrement[] = []
+
+    Object.values(byBudget).forEach((agg) => {
+      const mpId = agg.microProjetId
+      const item: ProjetRecouvrement = {
+        id: String(mpId ?? agg.titre),
+        code: agg.code,
+        titre: agg.titre,
+        agence: agg.agence,
+        contentieux: mpId ? contentieuxProjets.has(mpId) : false,
+        nbImpayes: agg.nbImpayes,
+        // Jours de retard : non présent dans le payload confirmé de /remboursements ou /plan-remboursements.
+        retardJours: 0,
+        resteDu: mpId ? (resteDuByProjet.get(mpId) ?? 0) : 0,
+        nbActions: mpId ? (actionsByProjet.get(mpId) ?? 0) : 0,
+      }
+
+      if (item.contentieux) {
+        contentieuxList.push(item)
+      } else if (item.nbImpayes === 0) {
+        aJourList.push(item)
+      } else if (item.nbImpayes <= 3) {
+        legerList.push(item)
+      } else {
+        lourdList.push(item)
+      }
+    })
+
+    const actionsList: ActionRecouvrement[] = recouvrements.map((r) => {
+      const agentId = r.agent_id ?? undefined
+      const agent = r.agent ?? (agentId ? personnelById.get(agentId) : undefined)
+      const projetLabel = r.micro_projet ? `${r.micro_projet.code} — ${r.micro_projet.intitule}` : `Projet #${r.micro_projet_id}`
+      return {
+        id: String(r.id),
+        projetId: projetLabel,
+        type: r.type_action,
+        date: r.date_recouvrement ?? '',
+        resultat: r.observations ?? RECOUV_TYPE_LABEL[r.type_action],
+        piece: r.justificatif_path ?? undefined,
+        agent: agent ? `${agent.prenom} ${agent.nom}` : agentId ? `Agent #${agentId}` : '—',
+      }
+    })
+
+    return { aJour: aJourList, leger: legerList, lourd: lourdList, contentieux: contentieuxList, actions: actionsList }
+  }, [remboursements, plansRemboursement, recouvrements, budgets, personnels])
+
+  const handleActionAmiable = (id: string) => {
+    setFormPrefill({ micro_projet_id: Number(id) || undefined, type_action: 'APPEL' })
+    setFormOpen(true)
   }
 
-  function handleSortirPortefeuille(id: string) {
-    if (confirm(`Sortir ce dossier du portefeuille et saisir l'avocat de l'AEJ ?`)) {
-      setProjets((prev) =>
-        prev.map((p) => (p.id === id ? { ...p, contentieux: true } : p))
-      )
-    }
+  const handleSortirPortefeuille = (id: string) => {
+    const microProjetId = Number(id)
+    if (!microProjetId) return
+    // "Sortir du portefeuille" = journaliser une action de type CONTENTIEUX : le dossier
+    // bascule alors automatiquement dans l'onglet Contentieux (cf. calcul ci-dessus).
+    setFormPrefill({ micro_projet_id: microProjetId, type_action: 'CONTENTIEUX' })
+    setFormOpen(true)
   }
 
   return {
     activeTab,
     setActiveTab,
-    projets,
     aJour,
     leger,
     lourd,
     contentieux,
-    actions: MOCK_ACTIONS_RECOUVREMENT,
+    actions,
     garanties: MOCK_RECOUVREMENT_GARANTIES,
     handleActionAmiable,
-    handleSortirPortefeuille
+    handleSortirPortefeuille,
+    formOpen,
+    setFormOpen,
+    formPrefill,
   }
 }

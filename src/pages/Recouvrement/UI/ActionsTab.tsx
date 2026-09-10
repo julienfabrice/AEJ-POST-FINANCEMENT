@@ -3,7 +3,7 @@ import { FileText } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { DataGrid } from '@/components/ui/DataGrid'
 import { StatusBadge } from '../components/StatusBadge'
-import { type ActionRecouvrement, RECOUV_TYPE_LABEL } from '@/mock/recouvrement.mock'
+import { type ActionRecouvrement, RECOUV_TYPE_LABEL } from '../types'
 
 export function ActionsTab({ actions }: { actions: ActionRecouvrement[] }) {
   const columnDefs = useMemo(() => [

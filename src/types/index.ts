@@ -397,6 +397,26 @@ export interface REMBOURSEMENT_T {
   updated_at?: string
 }
 
+// --- Déclarations de remboursement (/remboursements-declarations) ---
+
+export type REMBOURSEMENT_DECLARATION_STATUT_T = 'BROUILLON' | 'SOUMIS' | 'TRAITE'
+
+export interface REMBOURSEMENT_DECLARATION_T {
+  id: number
+  promoteur_id: number
+  budget_id: number
+  montant_declare: number | string
+  date_declaree: string
+  reference_banque?: string | null
+  justificatif_path?: string | null
+  observations?: string | null
+  statut: REMBOURSEMENT_DECLARATION_STATUT_T
+  promoteur?: import('./promoteurs.types').PROMOTEUR_T | null
+  budget?: BUDGET_T | null
+  created_at?: string
+  updated_at?: string
+}
+
 // --- Comptes de financement (schema.v2.sql) ---
 
 export type ETAT_OUVERTURE_T = 'NON_OUVERT' | 'OUVERT'
@@ -415,26 +435,7 @@ export interface COMPTE_FINANCEMENT_T {
   updated_at?: string
   micro_projet?: import('./promoteurs.types').MICRO_PROJET_T
 }
-
-// --- Recouvrements ---
-
-export type RECOUVREMENT_TYPE_ACTION_T = 'APPEL' | 'COURRIER' | 'DECHARGE' | 'MISE_EN_DEMEURE' | 'CONTENTIEUX'
-
-export interface RECOUVREMENT_T {
-  id: number
-  micro_projet_id: number
-  plan_remboursement_id?: number | null
-  agent_id?: number | null
-  montant_recouvre: number | string
-  date_recouvrement?: string | null
-  type_action: RECOUVREMENT_TYPE_ACTION_T
-  justificatif_path?: string | null
-  observations?: string | null
-  created_at?: string
-  updated_at?: string
-  micro_projet?: import('./promoteurs.types').MICRO_PROJET_T | null   // 👈 ajoute cette ligne
-  agent?: import('./personnels.types').PERSONNEL_T | null             // 👈 et celle-ci
-}
+export type RECOUVREMENT_TYPE_ACTION_T = 'APPEL' | 'COURRIER' | 'DECHARGE' | 'MISE_EN_DEMEURE' | 'CONTENTIEUX' export interface RECOUVREMENT_T { id: number micro_projet_id: number plan_remboursement_id?: number | null agent_id?: number | null montant_recouvre: number | string date_recouvrement?: string | null type_action: RECOUVREMENT_TYPE_ACTION_T justificatif_path?: string | null observations?: string | null created_at?: string updated_at?: string /** Relations potentiellement embarquées par GET /recouvrements (non confirmées côté API — repli défensif si absentes). */ micro_projet?: import('./promoteurs.types').MICRO_PROJET_T | null agent?: import('./personnels.types').PERSONNEL_T | null } 
 
 export * from './workflow.types'
 

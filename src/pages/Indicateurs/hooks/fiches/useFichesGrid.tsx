@@ -7,12 +7,15 @@ import {formulairesServices} from "@/services/indicateurs/formulaires.services.t
 import type {FORMULAIRE_T, QUESTION_T} from "@/types";
 import {FormulaireFormModal} from "@/pages/Indicateurs/components/FormulaireFormModal.tsx";
 import {QuestionModal} from "@/pages/Indicateurs/components/QuestionModal.tsx";
+import {useQuestionsGrid} from "@/pages/Indicateurs/hooks/questions/useQuestionsGrid.tsx";
+// import {QuestionFormModal} from "@/pages/Indicateurs/components/QuestionFormModal.tsx";
 
 export function useFichesGrid(searchQuery: string) {
     const { data=[], isLoading } = formulairesServices.useGetAll()
     const { mutate: deleteMutation } = formulairesServices.useDelete()
     const [editingItem, setEditingItem] = useState<FORMULAIRE_T | null>(null)
-    const [viewingQuestion, setViewingQuetion] = useState<QUESTION_T[] | null> (null)
+    const [viewingQuestion, setViewingQuestion] = useState<QUESTION_T[] | null> (null)
+    const { columnDefs: questionColumnDefs, modalNode: questionModalNode} = useQuestionsGrid('')
 
 
   const columnDefs = useMemo<ColDef[]>(() => {
@@ -38,11 +41,11 @@ export function useFichesGrid(searchQuery: string) {
             cellRendererParams: {
                 onEdit: (row: FORMULAIRE_T) => setEditingItem(row),
                 onDelete: (id: number) => deleteMutation(id),
-                onViewDetails: (row: QUESTION_T[])=> setViewingQuetion(row)
+                onViewDetails: (row: QUESTION_T[])=> setViewingQuestion(row)
             },
         }
     ]
-  }, [deleteMutation])
+  }, [deleteMutation, setViewingQuestion])
 
 
   const filteredData = useMemo(() => {
@@ -59,7 +62,14 @@ export function useFichesGrid(searchQuery: string) {
     const modalNode = (
         <>
             <FormulaireFormModal open={!!editingItem} onOpenChange={(open) => !open && setEditingItem(null)} editData={editingItem} />
-            <QuestionModal open={!!viewingQuestion} onOpenChange ={(open) => !(open) && setViewingQuetion(null)} data={viewingQuestion} />
+            <QuestionModal
+                open={!!viewingQuestion}
+                onOpenChange ={(open) => !(open) && setViewingQuestion(null)}
+                data={viewingQuestion}
+                columnDefs = {questionColumnDefs}
+            />
+            {questionModalNode}
+
         </>
 
     )

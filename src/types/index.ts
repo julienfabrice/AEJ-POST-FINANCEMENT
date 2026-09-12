@@ -123,6 +123,7 @@ export interface QUESTION_T {
     obligatoire: boolean,
     created_at?: string
     updated_at?: string
+    options?: string[] | null
 }
 
 export interface TYPE_ENTREPRISE_T {

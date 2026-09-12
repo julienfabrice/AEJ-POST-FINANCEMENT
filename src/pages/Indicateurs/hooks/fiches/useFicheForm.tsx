@@ -31,7 +31,8 @@ export function useFicheForm(
             code: '',
             libelle: '',
             public_cible: '',
-            actif: true
+            actif: true,
+            questions: []
         }
     })
 
@@ -44,14 +45,16 @@ export function useFicheForm(
                     code: initialData.code || '',
                     libelle: initialData.libelle || '',
                     public_cible: initialData.public_cible || '',
-                    actif: initialData.actif|| true
+                    actif: initialData.actif|| true,
+                    questions: []
                 })
             } else {
                 form.reset({
                     code: '',
                     libelle: '',
                     public_cible: '',
-                    actif: true
+                    actif: true,
+                    questions: []
                 })
             }
         }

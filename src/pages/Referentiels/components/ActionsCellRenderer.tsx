@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import {Pencil, Trash2, Key, Eye} from 'lucide-react'
+import {Pencil, Trash2, Key, Eye, Download} from 'lucide-react'
 import type { ICellRendererParams } from 'ag-grid-community'
 import { toast } from 'sonner'
 import {
@@ -20,6 +20,7 @@ export interface ActionsCellRendererParams extends ICellRendererParams {
   onEdit?: (row: any) => void;
   onChangePassword?: (row: any) => void;
   onViewDetails?: (row: any) => void;
+  onExport?: (row: any) => void;
   readonly?: boolean;
   readonlyMessage?: string;
 }
@@ -85,6 +86,12 @@ export const ActionsCellRenderer = (params: ActionsCellRendererParams) => {
       }
   }
 
+  const handleExport = () => {
+      if (params.onExport && params.data) {
+          params.onExport(params.data)
+      }
+  }
+
   const ViewButton = (
       <button
           onClick={handleViewDetails}
@@ -121,9 +128,30 @@ export const ActionsCellRenderer = (params: ActionsCellRendererParams) => {
     </button>
   )
 
+    const ExportButton = (
+        <button
+            onClick={handleExport}
+            className="flex items-center justify-center w-8 h-8 rounded transition-colors text-slate-400 hover:text-green-600 hover:bg-green-50"
+        >
+            <Download className="w-4 h-4" />
+        </button>
+    )
+
   return (
     <TooltipProvider delayDuration={200}>
       <div className="flex items-center justify-end gap-1 h-full">
+
+          {params.onExport && (
+              <Tooltip>
+                  <TooltipTrigger asChild>
+                      <div className="inline-block">
+                          {ExportButton}
+                      </div>
+                  </TooltipTrigger>
+                  <TooltipContent>Exporter en Excel</TooltipContent>
+              </Tooltip>
+          )}
+
          {params.onViewDetails && (
               <Tooltip>
                   <TooltipTrigger asChild>

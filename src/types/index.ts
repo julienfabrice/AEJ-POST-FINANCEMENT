@@ -109,6 +109,7 @@ export interface FORMULAIRE_T {
     actif: boolean
     created_at?: string
     updated_at?: string
+    questions?: QUESTION_T[]
 }
 
 export interface QUESTION_T {

@@ -8,6 +8,7 @@ import type {FORMULAIRE_T, QUESTION_T} from "@/types";
 import {FormulaireFormModal} from "@/pages/Indicateurs/components/FormulaireFormModal.tsx";
 import {QuestionModal} from "@/pages/Indicateurs/components/QuestionModal.tsx";
 import {useQuestionsGrid} from "@/pages/Indicateurs/hooks/questions/useQuestionsGrid.tsx";
+import {ExporterFormulaire} from "@/pages/Indicateurs/UI/ExporterFormulaire.tsx";
 
 export function useFichesGrid(searchQuery: string) {
     const { data=[], isLoading } = formulairesServices.useGetAll()
@@ -40,7 +41,8 @@ export function useFichesGrid(searchQuery: string) {
             cellRendererParams: {
                 onEdit: (row: FORMULAIRE_T) => setEditingItem(row),
                 onDelete: (id: number) => deleteMutation(id),
-                onViewDetails: (row: QUESTION_T[])=> setViewingQuestion(row)
+                onViewDetails: (row: QUESTION_T[])=> setViewingQuestion(row),
+                onExport: (row: FORMULAIRE_T)=> ExporterFormulaire(row)
             },
         }
     ]

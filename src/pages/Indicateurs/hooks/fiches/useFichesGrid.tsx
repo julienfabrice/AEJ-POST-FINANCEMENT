@@ -33,8 +33,8 @@ export function useFichesGrid(searchQuery: string) {
         },
         {
             headerName: 'Actions',
-            width: 150,
-            minWidth: 150,
+            width: 190,
+            minWidth: 190,
             sortable: false,
             filter: false,
             cellRenderer: ActionsCellRenderer,

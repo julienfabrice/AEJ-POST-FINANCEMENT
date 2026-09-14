@@ -4,7 +4,6 @@ import {useEffect, useState} from "react";
 import {toast} from "sonner";
 import {type FormulaireFormValues, formulaireSchema} from "@/schema/indicateurs/formulaireSchema.ts";
 import {formulairesServices} from "@/services/indicateurs/formulaires.services.ts";
-import {questionServices} from "@/services/indicateurs/questions.services.ts";
 
 export function useFicheForm(
     initialData: any | null, controlledOpen?: boolean, onOpenChange?: (open: boolean) => void
@@ -20,7 +19,6 @@ export function useFicheForm(
 
     const { mutate: createFormulaire, isPending: isCreating } = formulairesServices.useCreate()
     const { mutate: updateFormulaire, isPending: isUpdating } = formulairesServices.useUpdate()
-    const {data: questions = []} = questionServices.useGetAll()
 
     const isPending = isCreating || isUpdating
     const isEdit = !!initialData
@@ -31,8 +29,7 @@ export function useFicheForm(
             code: '',
             libelle: '',
             public_cible: '',
-            actif: true,
-            questions: []
+            actif: true
         }
     })
 
@@ -45,16 +42,14 @@ export function useFicheForm(
                     code: initialData.code || '',
                     libelle: initialData.libelle || '',
                     public_cible: initialData.public_cible || '',
-                    actif: initialData.actif|| true,
-                    questions: []
+                    actif: initialData.actif|| true
                 })
             } else {
                 form.reset({
                     code: '',
                     libelle: '',
                     public_cible: '',
-                    actif: true,
-                    questions: []
+                    actif: true
                 })
             }
         }
@@ -96,7 +91,6 @@ export function useFicheForm(
         isPending,
         isEdit,
         open,
-        setOpen,
-        questions
+        setOpen
     }
 }

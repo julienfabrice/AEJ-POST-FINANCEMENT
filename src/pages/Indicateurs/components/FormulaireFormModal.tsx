@@ -6,7 +6,6 @@ import {Button} from "@/components/ui/button.tsx";
 import {useFicheForm} from "@/pages/Indicateurs/hooks/fiches/useFicheForm.tsx";
 import * as React from "react";
 import {Switch} from "@/components/ui/switch.tsx";
-import {MultiSelect, MultiSelectContent, MultiSelectEmpty, MultiSelectItem, MultiSelectTrigger} from "@/components/ui/multi-select.tsx";
 
 interface Props {
     children?: React.ReactNode
@@ -22,8 +21,7 @@ export function FormulaireFormModal({children, open: controlledOpen, onOpenChang
         isPending,
         isEdit,
         open,
-        setOpen,
-        questions
+        setOpen
     } = useFicheForm(editData, controlledOpen, onOpenChange)
     const cibles = [ 'Bénéficiare', 'Partenaire', 'Agent']
 
@@ -95,39 +93,6 @@ export function FormulaireFormModal({children, open: controlledOpen, onOpenChang
                             />
 
 
-                            <FormField
-                                control={form.control}
-                                name="questions"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Questions <span className="text-red-500">*</span></FormLabel>
-                                        <MultiSelect
-                                            value={(field.value || []).map((q: any) => String(q.id))}
-                                            onValueChange={(selectedIds) => {
-                                                const fullObjects = selectedIds.map(id =>
-                                                    questions.find(q => String(q.id) === id)
-                                                )
-                                                console.log('fullObjects envoyés:', fullObjects)
-                                                field.onChange(fullObjects)
-                                            }}
-                                            options={questions.map(q => ({ value: String(q.id), label: q.libelle }))}
-                                        >
-                                            <FormControl>
-                                                <MultiSelectTrigger placeholder="Sélectionner des questions" />
-                                            </FormControl>
-                                            <MultiSelectContent>
-                                                {questions.length === 0 && <MultiSelectEmpty />}
-                                                {questions.map(q => (
-                                                    <MultiSelectItem key={q.id} value={String(q.id)}>
-                                                        {q.libelle}
-                                                    </MultiSelectItem>
-                                                ))}
-                                            </MultiSelectContent>
-                                        </MultiSelect>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
 
 
                             <FormField

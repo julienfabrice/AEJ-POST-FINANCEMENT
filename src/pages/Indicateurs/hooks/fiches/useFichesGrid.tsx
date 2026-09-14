@@ -8,7 +8,6 @@ import type {FORMULAIRE_T, QUESTION_T} from "@/types";
 import {FormulaireFormModal} from "@/pages/Indicateurs/components/FormulaireFormModal.tsx";
 import {QuestionModal} from "@/pages/Indicateurs/components/QuestionModal.tsx";
 import {useQuestionsGrid} from "@/pages/Indicateurs/hooks/questions/useQuestionsGrid.tsx";
-// import {QuestionFormModal} from "@/pages/Indicateurs/components/QuestionFormModal.tsx";
 
 export function useFichesGrid(searchQuery: string) {
     const { data=[], isLoading } = formulairesServices.useGetAll()

@@ -5,6 +5,7 @@ import {toast} from "sonner";
 import {indicateurSuiviSchema, type IndicateurSuiviValues} from "@/schema/indicateurs/indicateurSuiviSchema.ts";
 import {indicateursSuivisServices} from "@/services/indicateurs/indicateurs-suivis.services.ts";
 import {indicateurServices} from "@/services/indicateurs/indicateurs.services.ts";
+import {promoteursServices} from "@/services/promoteurs.services.ts";
 
 export function useReleveForm(
     editData: any|null,
@@ -24,6 +25,7 @@ export function useReleveForm(
     const { mutate: createIndicateurSuivi, isPending: isCreating } = indicateursSuivisServices.useCreate()
     const { mutate: updateIndicateurSuivi, isPending: isUpdating } = indicateursSuivisServices.useUpdate()
     const { data: indicateurs = [] } = indicateurServices.useGetAll()
+    const { data: promoteurs = [] } = promoteursServices.useGetAll()
 
     const isPending = isCreating || isUpdating
     const isEdit = !!editData
@@ -32,7 +34,8 @@ export function useReleveForm(
         resolver: zodResolver(indicateurSuiviSchema),
         defaultValues: {
             indicateur_id: 0,
-            valeur: ''
+            valeur: '',
+            periode: ''
         }
     })
 
@@ -43,11 +46,14 @@ export function useReleveForm(
                 form.reset({
                     indicateur_id: editData.indicateur_id || '',
                     valeur: editData.valeur|| '',
+                    promoteur_id: editData.promoteur_id || 0,
+                    periode: editData.periode || ''
                 })
             } else {
                 form.reset({
                     indicateur_id: 0,
-                    valeur: ''
+                    valeur: '',
+                    periode: ''
                 })
             }
         }
@@ -86,8 +92,9 @@ export function useReleveForm(
         onSubmit,
         isPending,
         isEdit,
-        indicateurs,
         open,
-        setOpen
+        setOpen,
+        indicateurs,
+        promoteurs
     }
 }

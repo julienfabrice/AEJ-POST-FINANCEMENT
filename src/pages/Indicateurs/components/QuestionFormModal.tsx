@@ -25,7 +25,7 @@ export function QuestionFormModal({children, open: controlledOpen, onOpenChange,
         fiches
     } = useQuestionForm(editData, controlledOpen, onOpenChange)
 
-    const types = ["nombre", "texte", "choix"]
+    const types = ["number", "select", "text", "textarea", "date", "boolean"]
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>

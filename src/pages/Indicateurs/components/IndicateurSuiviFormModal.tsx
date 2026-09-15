@@ -19,9 +19,10 @@ export function IndicateurSuiviFormModal({children, open: controlledOpen, onOpen
         onSubmit,
         isPending,
         isEdit,
-        indicateurs,
         open,
-        setOpen
+        setOpen,
+        indicateurs,
+        promoteurs
     } = useReleveForm(editData, controlledOpen, onOpenChange)
 
     return (
@@ -51,8 +52,30 @@ export function IndicateurSuiviFormModal({children, open: controlledOpen, onOpen
                                             </FormControl>
                                             <SelectContent>
                                                    {indicateurs.map(ind => (
-                                                       <SelectItem key={ind.id} value={String(ind.id)}>{ind.nom }</SelectItem>
+                                                       <SelectItem key={ind.id} value={String(ind.id)}>{ind.libelle }</SelectItem>
                                                    ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="promoteur_id"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Promoteur <span className="text-red-500">*</span></FormLabel>
+                                        <Select onValueChange={(v) => field.onChange(Number(v))} value={field.value ? String(field.value) : ''}>
+                                            <FormControl>
+                                                <SelectTrigger className="w-full">
+                                                    <SelectValue placeholder="Sélectionner un promoteur" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {promoteurs.map(ind => (
+                                                    <SelectItem key={ind.id} value={String(ind.id)}>{ind.nom }</SelectItem>
+                                                ))}
                                             </SelectContent>
                                         </Select>
                                         <FormMessage />
@@ -72,6 +95,10 @@ export function IndicateurSuiviFormModal({children, open: controlledOpen, onOpen
                                     </FormItem>
                                 )}
                             />
+
+                            <FormField control={form.control} name="periode" render={({ field }) => (
+                                <FormItem><FormLabel>Période</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>
+                            )} />
                         </div>
 
                         <div className="flex justify-end gap-3 pt-4 border-t mt-6">

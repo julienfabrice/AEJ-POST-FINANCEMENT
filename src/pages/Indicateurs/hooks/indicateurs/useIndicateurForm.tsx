@@ -4,6 +4,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {indicateurServices} from "@/services/indicateurs/indicateurs.services.ts";
 import {useEffect, useState} from "react";
 import {toast} from "sonner";
+import {projetsServices} from "@/services/projets.services.ts";
 
 export function useIndicateurForm(
     initialData: any | null, controlledOpen?: boolean, onOpenChange?: (open: boolean) => void
@@ -19,6 +20,7 @@ export function useIndicateurForm(
 
     const { mutate: createIndicateur, isPending: isCreating } = indicateurServices.useCreate()
     const { mutate: updateIndicateur, isPending: isUpdating } = indicateurServices.useUpdate()
+    const { data: microProjets = []} = projetsServices.useFullGetAll()
 
     const isPending = isCreating || isUpdating
     const isEdit = !!initialData
@@ -26,11 +28,14 @@ export function useIndicateurForm(
     const form = useForm<IndicateurFormValues>({
         resolver: zodResolver(indicateurSchema),
         defaultValues: {
-            nom: '',
+            libelle: '',
             description: '',
             type_valeur: '',
             unite: '',
-            statut: true
+            statut: true,
+            valeur_cible: '',
+            code: ''
+
         }
     })
 
@@ -39,19 +44,24 @@ export function useIndicateurForm(
         if (open){
             if (initialData){
                 form.reset({
-                    nom: initialData.nom || '',
+                    libelle: initialData.libelle || '',
                     description: initialData.description || '',
                     type_valeur: initialData.type_valeur || '',
                     unite: initialData.unite || '',
-                    statut: initialData.statut || true
+                    statut: initialData.statut || true,
+                    valeur_cible: initialData.valeur_cible || '',
+                    micro_projet_id: initialData.micro_projet_id ,
+                    code: initialData.code || ''
                 })
             } else {
                 form.reset({
-                    nom: '',
+                    libelle: '',
                     description: '',
                     type_valeur: '',
                     unite: '',
-                    statut: true
+                    statut: true,
+                    valeur_cible: '',
+                    code: ''
                 })
             }
         }
@@ -91,6 +101,7 @@ export function useIndicateurForm(
         isPending,
         isEdit,
         open,
-        setOpen
+        setOpen,
+        microProjets
     }
 }

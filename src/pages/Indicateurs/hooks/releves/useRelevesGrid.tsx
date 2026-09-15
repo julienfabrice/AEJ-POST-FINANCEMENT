@@ -3,7 +3,6 @@ import type { ColDef } from 'ag-grid-community'
 import Fuse from 'fuse.js'
 import dayjs from 'dayjs'
 import 'dayjs/locale/fr'
-import { Badge } from '@/components/ui/badge'
 import { ActionsCellRenderer } from '@/pages/Referentiels/components/ActionsCellRenderer'
 import {indicateursSuivisServices} from "@/services/indicateurs/indicateurs-suivis.services.ts";
 import {indicateurServices} from "@/services/indicateurs/indicateurs.services.ts";
@@ -17,7 +16,7 @@ dayjs.locale('fr')
 export function useRelevesGrid(searchQuery: string) {
     const { data: indicateurs = [] } = indicateurServices.useGetAll()
     const { data: indicateurs_suivis = [], isLoading } = indicateursSuivisServices.useGetAll()
-    const [editReleve,setEditReleve] = useState<INDICATEUR_SUIVI_T | null>(null)
+    const [editReleve, setEditReleve] = useState<INDICATEUR_SUIVI_T | null>(null)
     const { mutate: deleteReleve} = indicateursSuivisServices.useDelete()
 
 
@@ -48,10 +47,9 @@ export function useRelevesGrid(searchQuery: string) {
           },
           { field: 'indicateur', headerName: 'Indicateur', flex: 2, cellRenderer: (params: any) => {
               const ind = indicateurs.find(i => i.id === params.data.indicateur_id)
-                  {console.log(ind)}
-              return ind ? <span className="font-semibold"> {!ind.code? ind.nom :  ind.code +  "-"+  ind.nom}</span> : params.data.indicateur_id
+              return ind ? <span className="font-semibold"> {!ind.code? ind.libelle :  ind.code +  "-"+  ind.libelle}</span> : params.data.indicateur_id
           } },
-          { field: 'jeune_id', headerName: 'Bénéficiaire', flex: 1, cellRenderer: (params: any) => <Badge variant="secondary"> {params.data.jeune_id}</Badge> },
+          // { field: 'jeune_id', headerName: 'Bénéficiaire', flex: 1, cellRenderer: (params: any) => <Badge variant="secondary"> {params.data.jeune_id}</Badge> },
           { field: 'valeur', headerName: 'Valeur', flex: 1, cellRenderer: (params: any) => <span className="font-bold text-[#E7722B]">{params.data.valeur}</span> },
           {
             field: 'created',
@@ -64,7 +62,7 @@ export function useRelevesGrid(searchQuery: string) {
           },
           actionsCol
         ]
-      }, [])
+      }, [indicateurs])
 
   const filteredData = useMemo(() => {
     if (!searchQuery.trim()) return indicateurs_suivis

@@ -27,7 +27,7 @@ export interface JEUNE_T {
 export interface PROJET_T {
   id: string
   ref: string
-  titre: string
+  intitule: string
   promoteur: string
   dispositif: string
   agence: string
@@ -79,15 +79,16 @@ export interface SITUATION_MATRIMONIALE_T {
 
 export interface INDICATEUR_T {
   id: number
-  nom: string
+  libelle: string
   description?: string | null
   type_valeur: string
   unite: string
   statut: boolean
   created_at?: string
   updated_at?: string
-  code?: string
-  valeur_cible?: number
+  code: string
+  valeur_cible: string,
+  micro_projet_id: number
 }
 
 export interface INDICATEUR_SUIVI_T {
@@ -96,6 +97,8 @@ export interface INDICATEUR_SUIVI_T {
     valeur: string
     created_at?: string
     updated_at?: string
+    promoteur_id: number
+    periode: string
 }
 
 export interface FORMULAIRE_T {
@@ -106,6 +109,7 @@ export interface FORMULAIRE_T {
     actif: boolean
     created_at?: string
     updated_at?: string
+    questions?: QUESTION_T[]
 }
 
 export interface QUESTION_T {
@@ -119,6 +123,7 @@ export interface QUESTION_T {
     obligatoire: boolean,
     created_at?: string
     updated_at?: string
+    options?: string[] | null
 }
 
 export interface TYPE_ENTREPRISE_T {

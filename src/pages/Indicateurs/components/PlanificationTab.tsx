@@ -43,10 +43,10 @@ export function PlanificationTab() {
                     <Badge variant="outline" className="font-mono text-[#E7722B] border-[#E7722B] bg-[#FBEADE]">
                       {i.code}
                     </Badge>
-                    <span className="font-bold text-sm text-[#131C29]">{i.nom}</span>
+                    <span className="font-bold text-sm text-[#131C29]">{i.libelle}</span>
                     <div className="flex-1"></div>
                     <span className="font-mono text-sm text-[#8595A8]">
-                      { i.valeur_cible ? fmt(s) + "/ " + fmt(i.valeur_cible): 0} {i.unite}
+                      { i.valeur_cible ? fmt(s) + "/ " + i.valeur_cible: 0} {i.unite}
                     </span>
                     <span className={`font-mono font-bold text-sm ml-4 ${textCl}`}>
                       {t}%

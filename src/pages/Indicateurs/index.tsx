@@ -12,13 +12,14 @@ import { IndicateursKPIs } from './UI/IndicateursKPIs'
 import {IndicateurFormModal} from "@/pages/Indicateurs/components/IndicateurFormModal.tsx";
 import {IndicateurSuiviFormModal} from "@/pages/Indicateurs/components/IndicateurSuiviFormModal.tsx";
 import {FormulaireFormModal} from "@/pages/Indicateurs/components/FormulaireFormModal.tsx";
-import {QuestionFormModal} from "@/pages/Indicateurs/components/QuestionFormModal.tsx";
+// import {QuestionFormModal} from "@/pages/Indicateurs/components/QuestionFormModal.tsx";
+
 const TABS_CONFIG = [
   { id: 'plan', label: 'Planification & taux', sing: 'planification', readOnly: true },
   { id: 'indicateurs', label: 'Indicateurs', sing: 'indicateur', readOnly: false },
   { id: 'releves', label: 'Relevés de suivi', sing: 'relevé', readOnly: false },
   { id: 'fiches', label: 'Fiches de suivi', sing: 'fiche', readOnly: false },
-  { id: 'questions', label: 'Questions', sing: 'question', readOnly: false }
+  // { id: 'questions', label: 'Questions', sing: 'question', readOnly: false }
 ] as const
 
 export function IndicateursPage() {
@@ -27,7 +28,6 @@ export function IndicateursPage() {
 
 
 const { columnDefs, data, isLoading, modalNode } = useIndicateursGrid(activeTab, searchQuery)
-
 
   return (
     <div className="space-y-6">
@@ -108,7 +108,7 @@ const { columnDefs, data, isLoading, modalNode } = useIndicateursGrid(activeTab,
                             const  btn = (
                                 <Button className="bg-[#E7722B] hover:bg-[#C85E18] text-white h-10 px-4 cursor-pointer">
                                     <Plus className="w-4 h-4 mr-2" />
-                                    {tab.id === 'fiches' || tab.id === 'questions' ? 'Nouvelle' : 'Nouveau'} {tab.sing}
+                                    {tab.id === 'fiches' ? 'Nouvelle' : 'Nouveau'} {tab.sing}
                                 </Button>
                             )
 
@@ -116,7 +116,6 @@ const { columnDefs, data, isLoading, modalNode } = useIndicateursGrid(activeTab,
                                 case "indicateurs": return <IndicateurFormModal>{btn}</IndicateurFormModal>
                                 case "releves": return <IndicateurSuiviFormModal>{btn}</IndicateurSuiviFormModal>
                                 case "fiches": return <FormulaireFormModal>{btn}</FormulaireFormModal>
-                                case "questions": return <QuestionFormModal>{btn}</QuestionFormModal>
                                 default: return btn
                             }
 
@@ -148,7 +147,6 @@ const { columnDefs, data, isLoading, modalNode } = useIndicateursGrid(activeTab,
 
 
       </div>
-
 
     </div>
   )

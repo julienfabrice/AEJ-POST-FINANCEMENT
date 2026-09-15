@@ -17,7 +17,7 @@ export const formulairesServices = {
     useCreate: () => {
         const queryClient = useQueryClient()
         return useMutation({
-            mutationFn: async (payload: Omit<FORMULAIRE_T, 'id' | 'created_at' | 'updated_at'>) => {
+            mutationFn: async (payload: Omit<FORMULAIRE_T, 'id' | 'created_at' | 'updated_at' | 'questions'>) => {
                 const response = await axiosInstance.post('/formulaires-evaluation', payload)
                 return response.data
             },
@@ -35,7 +35,7 @@ export const formulairesServices = {
     useUpdate: () => {
         const queryClient = useQueryClient()
         return useMutation({
-            mutationFn: async ({ id, data }: { id: number; data: Omit<FORMULAIRE_T, 'id' | 'created_at' | 'updated_at'> }) => {
+            mutationFn: async ({ id, data }: { id: number; data: Omit<FORMULAIRE_T, 'id' | 'created_at' | 'updated_at'| 'questions'> }) => {
                 const response = await axiosInstance.put(`/formulaires-evaluation/${id}`, data)
                 return response.data
             },

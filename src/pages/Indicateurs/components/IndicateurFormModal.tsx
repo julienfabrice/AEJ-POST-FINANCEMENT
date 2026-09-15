@@ -22,7 +22,8 @@ export function IndicateurFormModal({children, open: controlledOpen, onOpenChang
         isPending,
         isEdit,
         open,
-        setOpen
+        setOpen,
+        microProjets
     } = useIndicateurForm(editData, controlledOpen, onOpenChange)
 
     const types = ["numérique", "texte", "pourcentage", "booleen"];
@@ -43,13 +44,48 @@ export function IndicateurFormModal({children, open: controlledOpen, onOpenChang
                         <div className="grid grid-cols-2 gap-4">
                             <FormField
                                 control={form.control}
-                                name="nom"
+                                name="code"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Code<span className="text-red-500">*</span></FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Code" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="libelle"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Nom de l'indicateur <span className="text-red-500">*</span></FormLabel>
                                         <FormControl>
                                             <Input placeholder="Nom" {...field} />
                                         </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="micro_projet_id"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Micro-projets <span className="text-red-500">*</span></FormLabel>
+                                        <Select onValueChange={(v) => field.onChange(Number(v))} value={field.value ? String(field.value) : ''}>
+                                            <FormControl>
+                                                <SelectTrigger className="w-full">
+                                                    <SelectValue placeholder="Sélectionner un indicateur" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {microProjets.map(ind => (
+                                                    <SelectItem key={ind.id} value={String(ind.id)}>{ind.intitule }</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -108,19 +144,19 @@ export function IndicateurFormModal({children, open: controlledOpen, onOpenChang
                                     </FormItem>
                                 )}
                             />
-                            {/*<FormField*/}
-                            {/*    control={form.control}*/}
-                            {/*    name="valeur_cible"*/}
-                            {/*    render={({ field }) => (*/}
-                            {/*        <FormItem>*/}
-                            {/*            <FormLabel>Valeur cible</FormLabel>*/}
-                            {/*            <FormControl>*/}
-                            {/*                <Input placeholder="Ex. %, FCFA" {...field} />*/}
-                            {/*            </FormControl>*/}
-                            {/*            <FormMessage />*/}
-                            {/*        </FormItem>*/}
-                            {/*    )}*/}
-                            {/*/>*/}
+                            <FormField
+                                control={form.control}
+                                name="valeur_cible"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Valeur cible</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="valeur" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <FormField
                                 control={form.control}
                                 name="statut"

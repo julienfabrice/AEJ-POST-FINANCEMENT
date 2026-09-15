@@ -2,7 +2,7 @@ import { Folder, Plus } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { StatusBadge, type BadgeCls } from './StatusBadge'
-import { type ProjetRecouvrement } from '@/mock/recouvrement.mock'
+import { type ProjetRecouvrement } from '../types'
 import { money } from '@/helpers/money'
 
 export interface CartePortefeuilleProps {

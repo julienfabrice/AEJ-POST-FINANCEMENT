@@ -1,7 +1,7 @@
 import { Flag } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { StatusBadge } from '../components/StatusBadge'
-import { type ProjetRecouvrement } from '@/mock/recouvrement.mock'
+import { type ProjetRecouvrement } from '../types'
 import { money } from '@/helpers/money'
 
 export function ContentieuxTab({ contentieux }: { contentieux: ProjetRecouvrement[] }) {

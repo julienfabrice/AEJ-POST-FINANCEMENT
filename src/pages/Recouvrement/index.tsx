@@ -4,6 +4,7 @@ import { PortefeuilleTab } from './UI/PortefeuilleTab'
 import { ContentieuxTab } from './UI/ContentieuxTab'
 import { ActionsTab } from './UI/ActionsTab'
 import { GarantiesTab } from './UI/GarantiesTab'
+import { RecouvrementFormModal } from './components/RecouvrementFormModal'
 
 export function RecouvrementPage() {
   const {
@@ -16,7 +17,10 @@ export function RecouvrementPage() {
     actions,
     garanties,
     handleActionAmiable,
-    handleSortirPortefeuille
+    handleSortirPortefeuille,
+    formOpen,
+    setFormOpen,
+    formPrefill,
   } = useRecouvrement()
 
   const tabsConfig = [
@@ -92,6 +96,8 @@ export function RecouvrementPage() {
           <GarantiesTab garanties={garanties} />
         </TabsContent>
       </Tabs>
+
+      <RecouvrementFormModal open={formOpen} onOpenChange={setFormOpen} prefill={formPrefill} />
     </div>
   )
 }

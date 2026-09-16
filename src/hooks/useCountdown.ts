@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
 
 /**
- * Compte à rebours en secondes, purement local. L'écran OTP en utilise deux :
- * le délai avant renvoi et la validité du code.
+ * Compte à rebours en secondes, purement local.
+ *
+ * Utilisé par l'écran OTP (délai de renvoi, validité du code) et par l'écran de
+ * connexion (durée de blocage du compte).
  */
 export function useCountdown() {
   const [seconds, setSeconds] = useState(0)
@@ -13,7 +15,7 @@ export function useCountdown() {
     return () => clearTimeout(timer)
   }, [seconds])
 
-  const start = useCallback((from: number) => setSeconds(from), [])
+  const start = useCallback((from: number) => setSeconds(Math.max(0, Math.floor(from))), [])
   const stop = useCallback(() => setSeconds(0), [])
 
   return { seconds, start, stop, isRunning: seconds > 0 }

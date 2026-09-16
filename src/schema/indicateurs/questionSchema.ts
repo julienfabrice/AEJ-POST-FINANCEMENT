@@ -8,7 +8,8 @@ export const questionSchema = z.object(
         type_question: z.string(),
         ordre: z.number(),
         affichage: z.boolean(),
-        obligatoire: z.boolean()
+        obligatoire: z.boolean(),
+        options: z.array(z.string()).nullable().optional()
     })
 
 export type QuestionFormValues = z.infer<typeof questionSchema>

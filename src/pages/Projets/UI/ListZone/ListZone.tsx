@@ -72,7 +72,7 @@ export function ListZone() {
               rowData={projets}
               columnDefs={columnDefs}
               height="calc(100vh - 450px)"
-              rowHeight={60}
+              rowHeight={72}
               pagination={false}
               defaultColDef={{
                 sortable: true,

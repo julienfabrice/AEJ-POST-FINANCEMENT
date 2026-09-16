@@ -1,7 +1,7 @@
 import { Wrench } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { CartePortefeuille } from '../components/CartePortefeuille'
-import { type ProjetRecouvrement } from '@/mock/recouvrement.mock'
+import { type ProjetRecouvrement } from '../types'
 
 interface PortefeuilleTabProps {
   aJour: ProjetRecouvrement[]

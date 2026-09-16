@@ -27,6 +27,7 @@ export function useSetPasswordForm(
   const form = useForm<SetPasswordFormValues>({
     resolver: zodResolver(schema),
     defaultValues: { new_password: '', confirm_new_password: '' },
+    mode : 'onChange'
   })
 
   const submit = async (values: SetPasswordFormValues) => {
@@ -49,6 +50,6 @@ export function useSetPasswordForm(
     form,
     onSubmit: form.handleSubmit(submit),
     isSubmitting: form.formState.isSubmitting,
-    errorMessage: form.formState.errors.root?.message,
+    errorMessage: form.formState.errors.root?.message
   }
 }

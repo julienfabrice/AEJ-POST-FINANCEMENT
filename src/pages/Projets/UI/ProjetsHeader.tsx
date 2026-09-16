@@ -1,19 +1,32 @@
 import { useMemo } from 'react'
-import { Plus } from 'lucide-react'
+import { Plus, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { PermissionGate } from '@/components/PermissionGate'
 import { MODULES } from '@/constants/modules'
+import { ROUTES } from '@/constants/routes'
 import { ExportPdfButton } from '@/components/generics/ExportPdfButton'
 import type { ExportColumn } from '@/components/generics/ExportPdfButton'
 import { useProjetsStore } from '@/store/useProjetsStore'
 import { configurationServices } from '@/services/configurations.services'
+import { guichetServices } from '@/services/guichets.services'
 import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
 import dayjs from 'dayjs'
+import { useSearch, useNavigate } from '@tanstack/react-router'
 
 export function ProjetsHeader() {
   const { projets } = useProjetsStore()
   const { data: configuration } = configurationServices.useGet()
+  const { guichet_id } = useSearch({ from: '/_authenticated/_agent/projets' })
+  const navigate = useNavigate()
+
+  // Récupère le libellé du guichet depuis le cache si on vient des guichets
+  const { data: guichets } = guichetServices.useGetAll()
+  const guichetLabel = useMemo(() => {
+    if (!guichet_id || !guichets) return null
+    const found = guichets.find((g) => String(g.id) === String(guichet_id))
+    return found?.libelle ?? null
+  }, [guichet_id, guichets])
 
   const exportColumns = useMemo<ExportColumn<MICRO_PROJET_T>[]>(() => [
     { header: 'Référence', accessor: (p) => p.code },
@@ -28,8 +41,26 @@ export function ProjetsHeader() {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
-        <h1 className="text-2xl font-extrabold text-[#131C29]">Micro-projets</h1>
-        <p className="text-sm text-[#5A6B80] mt-1">Suivi des dossiers de financement des jeunes promoteurs</p>
+        {guichet_id && (
+          <button
+            onClick={() => navigate({ to: ROUTES.GUICHETS_HOME })}
+            className="flex items-center gap-1.5 text-sm text-[#5B5FEF] hover:text-[#4347d6] font-medium mb-2 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Retour aux guichets
+          </button>
+        )}
+        <h1 className="text-2xl font-extrabold text-[#131C29]">
+          Micro-projets
+          {guichetLabel && (
+            <span className="text-lg font-semibold text-[#5B5FEF] ml-2">— {guichetLabel}</span>
+          )}
+        </h1>
+        <p className="text-sm text-[#5A6B80] mt-1">
+          {guichetLabel
+            ? `Dossiers de financement du guichet « ${guichetLabel} »`
+            : 'Suivi des dossiers de financement des jeunes promoteurs'}
+        </p>
       </div>
       <div className="flex items-center gap-2">
         <ExportPdfButton
@@ -61,3 +92,4 @@ export function ProjetsHeader() {
     </div>
   )
 }
+

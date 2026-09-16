@@ -4,6 +4,7 @@ import { ProjetsHeader } from './UI/ProjetsHeader'
 import { ProjetsFilters } from './UI/ProjetsFilters'
 import { ListZone } from './UI/ListZone'
 import { ProjetDetailsSheet } from './UI/ProjetDetailsSheet'
+import { JoindrePlanModal } from './UI/JoindrePlanModal'
 import { useProjetsStore } from '@/store/useProjetsStore'
 
 export function ProjetsPage() {
@@ -30,6 +31,9 @@ export function ProjetsPage() {
 
       {/* Drawer d'informations détaillées */}
       <ProjetDetailsSheet />
+
+      {/* Modals pour les actions sur les projets */}
+      <JoindrePlanModal />
     </div>
   )
 }

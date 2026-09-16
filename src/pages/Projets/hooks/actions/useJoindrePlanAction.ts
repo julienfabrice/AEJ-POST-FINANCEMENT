@@ -1,10 +1,58 @@
+import { useState } from 'react'
 import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
+import { useProjetsStore } from '@/store/useProjetsStore'
+import { useUploadDocumentMutation } from '@/services/documents.services'
+import { toast } from 'sonner'
 
 export function useJoindrePlanAction() {
-  const execute = async (projet: MICRO_PROJET_T) => {
-    console.log('Exécution de l\'action JOINDRE_PLAN pour le projet', projet.id)
-    // TODO: Implémenter la logique spécifique
+  const { joindrePlanModalProjet: projet, setJoindrePlanModalProjet } = useProjetsStore()
+  const uploadMutation = useUploadDocumentMutation()
+
+  const [file, setFile] = useState<File | null>(null)
+  const [observation, setObservation] = useState('')
+
+  const execute = async (projetToOpen: MICRO_PROJET_T) => {
+    setJoindrePlanModalProjet(projetToOpen)
   }
 
-  return { execute }
+  const handleClose = () => {
+    setJoindrePlanModalProjet(null)
+    setFile(null)
+    setObservation('')
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!file) {
+      toast.error("Le fichier du plan d'affaires est requis")
+      return
+    }
+    
+    if (!projet) return
+
+    try {
+      await uploadMutation.mutateAsync({
+        file,
+        folder: 'Mega',
+        micro_projet_id: projet.id.toString()
+      })
+      handleClose()
+    } catch (error) {
+      // L'erreur est déjà gérée dans la mutation
+    }
+  }
+
+  return { 
+    execute,
+    projet,
+    isOpen: !!projet,
+    handleClose,
+    handleSubmit,
+    file,
+    setFile,
+    observation,
+    setObservation,
+    isSubmitting: uploadMutation.isPending 
+  }
 }

@@ -20,11 +20,13 @@ interface ProjetsState {
   filters: PROJETS_SEARCH_T
   projets: MICRO_PROJET_T[]
   selectedProjet: MICRO_PROJET_T | null
+  joindrePlanModalProjet: MICRO_PROJET_T | null
   
   // Actions
   setPagination: (pagination: Partial<{ page: number; perPage: number }>) => void
   setViewMode: (viewMode: ViewMode) => void
   setSelectedProjet: (projet: MICRO_PROJET_T | null) => void
+  setJoindrePlanModalProjet: (projet: MICRO_PROJET_T | null) => void
   setProjets: (projets: MICRO_PROJET_T[]) => void
   setFilters: (filters: Partial<PROJETS_SEARCH_T>) => void
   resetFilters: () => void
@@ -39,6 +41,7 @@ export const useProjetsStore = create<ProjetsState>((set) => ({
   filters: {},
   projets: [],
   selectedProjet: null,
+  joindrePlanModalProjet: null,
   setPagination: (newPagination) => set((state) => {
     // Si on modifie perPage, on force la page à 1
     const page = newPagination.perPage !== undefined ? 1 : (newPagination.page ?? state.pagination.page)
@@ -50,6 +53,7 @@ export const useProjetsStore = create<ProjetsState>((set) => ({
   }),
   setViewMode: (viewMode) => set({ viewMode }),
   setSelectedProjet: (selectedProjet) => set({ selectedProjet }),
+  setJoindrePlanModalProjet: (joindrePlanModalProjet) => set({ joindrePlanModalProjet }),
   setProjets: (projets) => set({ projets }),
   setFilters: (newFilters) => set((state) => ({ 
     filters: { ...state.filters, ...newFilters },

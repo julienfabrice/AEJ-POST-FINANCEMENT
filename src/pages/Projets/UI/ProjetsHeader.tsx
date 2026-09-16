@@ -44,7 +44,7 @@ export function ProjetsHeader() {
         {guichet_id && (
           <button
             onClick={() => navigate({ to: ROUTES.GUICHETS_HOME })}
-            className="flex items-center gap-1.5 text-sm text-[#5B5FEF] hover:text-[#4347d6] font-medium mb-2 transition-colors"
+            className="flex items-center gap-1.5 text-sm text-[#E7722B] hover:text-[#C85E18] font-medium mb-2 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Retour aux guichets
@@ -53,7 +53,7 @@ export function ProjetsHeader() {
         <h1 className="text-2xl font-extrabold text-[#131C29]">
           Micro-projets
           {guichetLabel && (
-            <span className="text-lg font-semibold text-[#5B5FEF] ml-2">— {guichetLabel}</span>
+            <span className="text-lg font-semibold text-[#E7722B] ml-2">— {guichetLabel}</span>
           )}
         </h1>
         <p className="text-sm text-[#5A6B80] mt-1">

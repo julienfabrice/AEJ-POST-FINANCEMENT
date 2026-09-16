@@ -3,6 +3,7 @@ import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
 import type { EtapeRolesMap } from '../hooks/useEtapeRolesMap'
 import type { WORKFLOW_ETAPE_ROLE_T } from '@/types/workflow.types'
 import { useProjetActions } from '../hooks/actions'
+import { Button } from '@/components/ui/button'
 
 // ─── Mapping des codes rôles → labels lisibles ───────────────────────────────
 // Couvre à la fois les codes du backend auth ET les codes du backend workflow
@@ -109,19 +110,18 @@ export function AffaireCell({ projet, etapeRolesMap, userRoleCode }: AffaireCell
     return (
       <div className="flex flex-wrap items-center gap-1 h-full">
         {myRoles.map((r) => (
-          <button
+          <Button
             key={`${r.id}-${r.action}`}
             type="button"
+            size="sm"
             onClick={(e) => {
               e.stopPropagation()
               executeAction(r.action, projet)
             }}
-            className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-md
-              bg-[#5B5FEF] text-white hover:bg-[#4347d6] active:scale-95
-              transition-all duration-100 shadow-sm cursor-pointer border-0 outline-none"
+            className="bg-[#E7722B] text-white hover:bg-[#C85E18] h-7 px-3 text-[11px] font-semibold"
           >
             {actionLabel(r.action)}
-          </button>
+          </Button>
         ))}
       </div>
     )

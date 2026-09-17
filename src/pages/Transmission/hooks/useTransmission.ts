@@ -1,14 +1,58 @@
-import { useState, useCallback } from 'react'
-import { MOCK_DISPOSITIFS_OPTS, MOCK_PROJETS_A_REPARTIR } from '@/mock/transmission.mock'
+import { useState, useCallback, useMemo, useEffect } from 'react'
+import { getRouteApi, useNavigate } from '@tanstack/react-router'
+import { toast } from 'sonner'
+import { projetsServices } from '@/services/projets.services'
+import { dispositifServices } from '@/services/dispositifs.services'
+import { lotsTransmissionServices } from '@/services/lotsTransmission.services'
+import { useAdvanceWorkflow } from '@/pages/Projets/hooks/useAdvanceWorkflow'
+
+const route = getRouteApi('/_authenticated/_agent/transmission')
 
 export function useTransmission() {
+  const search = route.useSearch()
+  const navigate = useNavigate()
+
   const [activeTab, setActiveTab] = useState<'composer' | 'lots'>('composer')
-  const [selectedGuichet, setSelectedGuichet] = useState(MOCK_DISPOSITIFS_OPTS[0].value)
-  const [selectedDossiers, setSelectedDossiers] = useState<Set<string>>(new Set())
+  const [selectedGuichet, setSelectedGuichet] = useState(search.guichet_id || '')
+  
+  // Si on a un projet en search param, on le pré-coche
+  const [selectedDossiers, setSelectedDossiers] = useState<Set<string>>(
+    new Set(search.projet_id ? [search.projet_id] : [])
+  )
+
+  // Nettoyer les search params après le premier montage
+  useState(() => {
+    if (search.guichet_id || search.projet_id) {
+      navigate({
+        to: '/transmission',
+        replace: true,
+      })
+    }
+  })
+
+  // Récupérer les vrais dispositifs (guichets)
+  const { data: dispositifs = [], isLoading: isLoadingDispositifs } = dispositifServices.useGetAll()
+
+  // Auto-sélectionner le premier dispositif si aucun n'est sélectionné et que la liste est chargée
+  useEffect(() => {
+    if (!selectedGuichet && dispositifs.length > 0) {
+      setSelectedGuichet(dispositifs[0].id.toString())
+    }
+  }, [selectedGuichet, dispositifs])
+
+  // Récupérer les vrais projets pour ce guichet
+  const { data: projetsRes, isLoading: isLoadingProjets } = projetsServices.useGetAll(1, 100, {
+    dispositif_id: selectedGuichet,
+  })
+
+  // Filtrer uniquement les projets éligibles à la transmission
+  const projetsEligibles = useMemo(() => {
+    return (projetsRes?.data || []).filter(p => !!p.workflow_instance)
+  }, [projetsRes])
 
   const handleSelectAll = useCallback(() => {
-    setSelectedDossiers(new Set(MOCK_PROJETS_A_REPARTIR.map((p) => p.id)))
-  }, [])
+    setSelectedDossiers(new Set(projetsEligibles.map((p) => p.id.toString())))
+  }, [projetsEligibles])
 
   const toggleDossier = useCallback((id: string) => {
     setSelectedDossiers((prev) => {
@@ -19,13 +63,61 @@ export function useTransmission() {
     })
   }, [])
 
+  const createLotMutation = lotsTransmissionServices.useCreate()
+  const { advance, isAdvancing } = useAdvanceWorkflow()
+
+  const handleSubmit = async (payload: any) => {
+    if (selectedDossiers.size === 0) {
+      toast.error('Veuillez sélectionner au moins un dossier.')
+      return
+    }
+
+    try {
+      // 1. Création du lot en base
+      const lotData = {
+        ...payload,
+        guichet_id: Number(selectedGuichet), // Assuming it's an ID
+        statut: 'TRANSMIS',
+      }
+      // TODO: Activer l'API de création de lot quand elle sera prête
+      // await createLotMutation.mutateAsync(lotData)
+      console.log('Lot créé avec succès :', lotData)
+
+      // 2. Avancement du workflow pour chaque projet
+      const dossiersAAvancer = projetsEligibles.filter((p) => selectedDossiers.has(p.id.toString()))
+      
+      for (const projet of dossiersAAvancer) {
+        await advance({
+          projet,
+          action: 'TRANSMETTRE',
+          comment: `Transmis dans le lot ${payload.reference_courrier || ''}`,
+        })
+      }
+
+      toast.success(`${dossiersAAvancer.length} dossier(s) transmis avec succès !`)
+      
+      // Réinitialiser et basculer sur l'onglet lots
+      setSelectedDossiers(new Set())
+      setActiveTab('lots')
+    } catch (error) {
+      toast.error('Erreur lors de la transmission du lot.')
+      console.error(error)
+    }
+  }
+
   return {
     activeTab,
     setActiveTab,
     selectedGuichet,
     setSelectedGuichet,
     selectedDossiers,
+    projetsEligibles,
+    isLoadingProjets,
+    dispositifs,
+    isLoadingDispositifs,
     handleSelectAll,
     toggleDossier,
+    handleSubmit,
+    isSubmitting: createLotMutation.isPending || isAdvancing,
   }
 }

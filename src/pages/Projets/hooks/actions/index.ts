@@ -42,6 +42,7 @@ export function useProjetActions() {
       case 'VALIDER':
         return valider.execute(projet)
       case 'TRANSMETTRE':
+      case 'TRANSMISSION':
         return transmettre.execute(projet)
       case 'TRAITER':
         return traiter.execute(projet)

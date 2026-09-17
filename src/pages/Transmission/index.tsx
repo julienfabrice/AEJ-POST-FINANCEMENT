@@ -14,6 +14,12 @@ export function TransmissionPage() {
     selectedDossiers,
     handleSelectAll,
     toggleDossier,
+    projetsEligibles,
+    isLoadingProjets,
+    dispositifs,
+    isLoadingDispositifs,
+    handleSubmit,
+    isSubmitting,
   } = useTransmission()
 
   return (
@@ -60,6 +66,12 @@ export function TransmissionPage() {
             selectedDossiers={selectedDossiers}
             toggleDossier={toggleDossier}
             handleSelectAll={handleSelectAll}
+            projetsEligibles={projetsEligibles}
+            isLoadingProjets={isLoadingProjets}
+            dispositifs={dispositifs}
+            isLoadingDispositifs={isLoadingDispositifs}
+            handleSubmit={handleSubmit}
+            isSubmitting={isSubmitting}
           />
         </TabsContent>
 

@@ -1,20 +1,13 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { MOCK_TRANSMISSION_LOTS } from '@/mock/transmission.mock'
+import { lotsTransmissionServices } from '@/services/lotsTransmission.services'
 import { useTransmission } from './hooks/useTransmission'
 import { TransmissionHeader } from './UI/TransmissionHeader'
 import { ComposerLotTab } from './UI/ComposerLotTab'
 import { LotsTransmisTab } from './UI/LotsTransmisTab'
 
 export function TransmissionPage() {
-  const {
-    activeTab,
-    setActiveTab,
-    selectedGuichet,
-    setSelectedGuichet,
-    selectedDossiers,
-    handleSelectAll,
-    toggleDossier,
-  } = useTransmission()
+  const { activeTab, setActiveTab } = useTransmission()
+  const { data: lots = [] } = lotsTransmissionServices.useGetAll()
 
   return (
     <div className="space-y-6">
@@ -47,20 +40,14 @@ export function TransmissionPage() {
             >
               Lots transmis
               <span className="bg-[#EEF2F7] text-[#5A6B80] px-2 py-0.5 rounded-full text-[11px]">
-                {MOCK_TRANSMISSION_LOTS.length}
+                {lots.length}
               </span>
             </TabsTrigger>
           </TabsList>
         </div>
 
         <TabsContent value="composer" className="mt-5 outline-none">
-          <ComposerLotTab
-            selectedGuichet={selectedGuichet}
-            setSelectedGuichet={setSelectedGuichet}
-            selectedDossiers={selectedDossiers}
-            toggleDossier={toggleDossier}
-            handleSelectAll={handleSelectAll}
-          />
+          <ComposerLotTab />
         </TabsContent>
 
         <TabsContent value="lots" className="mt-5 outline-none">

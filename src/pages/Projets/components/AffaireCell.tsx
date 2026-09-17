@@ -1,4 +1,4 @@
-import { Loader2 } from 'lucide-react'
+import { Loader2, Clock } from 'lucide-react'
 import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
 import type { EtapeRolesMap } from '../hooks/useEtapeRolesMap'
 import type { WORKFLOW_ETAPE_ROLE_T } from '@/types/workflow.types'
@@ -140,10 +140,11 @@ export function AffaireCell({ projet, etapeRolesMap, userRoleCode }: AffaireCell
   return (
     <div className="flex items-center h-full max-w-[170px]">
       <span
-        className="text-[11px] text-slate-500 leading-tight truncate"
-        title={acteursText}
+        className="inline-flex items-center gap-1.5 text-[11.5px] font-semibold text-slate-500 whitespace-nowrap truncate"
+        title={`En attente de : ${acteursText}`}
       >
-        {acteursText}
+        <Clock className="w-3.5 h-3.5 opacity-80 shrink-0" />
+        <span className="truncate">{acteursText}</span>
       </span>
     </div>
   )

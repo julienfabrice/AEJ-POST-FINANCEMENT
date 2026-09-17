@@ -334,36 +334,6 @@ export interface LOT_TRANSMISSION_T {
   dossiers?: import('./promoteurs.types').MICRO_PROJET_T[]
 }
 
-// --- Import brut de l'Excel de répartition (/lots-importation) ---
-// Étape 1 de la composition d'un lot : chaque ligne extraite du fichier Excel
-// (côté navigateur) est postée telle quelle, avant tout rapprochement avec un
-// micro-projet existant.
-
-export interface LOT_IMPORTATION_T {
-  id: number
-  code: string
-  nom_promoteur: string
-  prenom_promoteur: string
-  montant_sollicite: number | string
-  created_at?: string
-  updated_at?: string
-}
-
-// --- Association micro-projets ↔ lot (/lots-micro-projets) ---
-// Étape 3 : une fois les dossiers sélectionnés, on les rattache au lot créé.
-
-export type LOT_MICRO_PROJET_STATUT_T = 'EN_ATTENTE' | 'APPROUVE' | 'NON_APPROUVE'
-
-export interface LOT_MICRO_PROJET_T {
-  id: number
-  lot_id: number
-  micro_projet_id: number
-  statut: LOT_MICRO_PROJET_STATUT_T
-  created_at?: string
-  updated_at?: string
-  micro_projet?: import('./promoteurs.types').MICRO_PROJET_T | null
-}
-
 // --- Décaissements (schema.v2.sql, section 15) ---
 
 export type MODE_DECAISSE_T = 'CHEQUE' | 'VIREMENT'

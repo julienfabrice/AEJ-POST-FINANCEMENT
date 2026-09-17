@@ -5,6 +5,7 @@ import { ProjetsFilters } from './UI/ProjetsFilters'
 import { ListZone } from './UI/ListZone'
 import { ProjetDetailsSheet } from './UI/ProjetDetailsSheet'
 import { JoindrePlanModal } from './UI/JoindrePlanModal'
+import { DecaissementModal } from './UI/DecaissementModal'
 import { useProjetsStore } from '@/store/useProjetsStore'
 
 export function ProjetsPage() {
@@ -34,6 +35,7 @@ export function ProjetsPage() {
 
       {/* Modals pour les actions sur les projets */}
       <JoindrePlanModal />
+      <DecaissementModal />
     </div>
   )
 }

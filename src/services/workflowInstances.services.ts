@@ -25,7 +25,7 @@ export const workflowInstancesServices = {
   },
 
   /**
-   * PATCH /workflow-instances/{id}
+   * PATCH /workflow-instances/instances/{id}
    * Met à jour l'instance : étape courante, statut, completed_at.
    */
   usePatchInstance: () => {
@@ -38,7 +38,7 @@ export const workflowInstancesServices = {
         instanceId: number
         patch: WorkflowInstancePatchValues
       }) => {
-        const { data } = await axiosInstance.patch(`/workflow-instances/${instanceId}`, patch)
+        const { data } = await axiosInstance.patch(`/workflow-instances/instances/${instanceId}`, patch)
         return data.data ?? data
       },
       onSuccess: () => {

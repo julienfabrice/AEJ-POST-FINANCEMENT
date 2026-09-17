@@ -215,7 +215,7 @@ export const AGENT_NAV_ITEMS: NavItem[] = [
   // `MODULES.CADRE_RESULTAT` ici et dans la route du même nom.
   { key: 'cadre_resultat', label: 'Cadre de résultat', path: ROUTES.CADRE_RESULTAT, icon: ListTree, group: 'SUIVI & ÉVALUATION', module: MODULES.SUIVI },
   { key: 'rapports', label: 'Rapports', path: ROUTES.RAPPORTS, icon: FileText, group: 'SUIVI & ÉVALUATION', module: MODULES.RAPPORTS },
-  { key: 'tableau_bord_suivi', label: 'Tableau de bord', path: ROUTES.TABLEAU_BORD_SUIVI, icon: PieChart, group: 'SUIVI & ÉVALUATION', module: MODULES.SUIVI },
+  { key: 'tableau_bord_suivi', label: 'Power BI', path: ROUTES.TABLEAU_BORD_SUIVI, icon: PieChart, group: 'SUIVI & ÉVALUATION', module: MODULES.SUIVI },
   // ADMINISTRATION
   {
     key: 'admin_profils',
@@ -344,7 +344,7 @@ export const PAGE_TITLES: Partial<Record<AppRoute, string>> = {
   [ROUTES.SUIVI]: 'Suivi & exploitation',
   [ROUTES.CADRE_RESULTAT]: 'Cadre de résultat',
   [ROUTES.RAPPORTS]: 'Rapports',
-  [ROUTES.TABLEAU_BORD_SUIVI]: 'Tableau de bord',
+  [ROUTES.TABLEAU_BORD_SUIVI]: 'Power BI',
   [ROUTES.ADMIN_PROFILS]: 'Profils & permissions',
   [ROUTES.ADMIN_PERSONNELS]: 'Personnels',
   [ROUTES.ADMIN_LOCALITES]: 'Localités',

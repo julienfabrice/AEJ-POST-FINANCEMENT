@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { Pencil, Trash2, Key } from 'lucide-react'
+import {Pencil, Trash2, Key, Eye, Download} from 'lucide-react'
 import type { ICellRendererParams } from 'ag-grid-community'
 import { toast } from 'sonner'
 import {
@@ -19,6 +19,8 @@ export interface ActionsCellRendererParams extends ICellRendererParams {
   onDelete?: (id: number | string) => void;
   onEdit?: (row: any) => void;
   onChangePassword?: (row: any) => void;
+  onViewDetails?: (row: any) => void;
+  onExport?: (row: any) => void;
   readonly?: boolean;
   readonlyMessage?: string;
 }
@@ -78,6 +80,27 @@ export const ActionsCellRenderer = (params: ActionsCellRendererParams) => {
     }, 5000)
   }
 
+  const handleViewDetails = () => {
+      if (params.onViewDetails && params.data) {
+          params.onViewDetails(params.data.questions)
+      }
+  }
+
+  const handleExport = () => {
+      if (params.onExport && params.data) {
+          params.onExport(params.data)
+      }
+  }
+
+  const ViewButton = (
+      <button
+          onClick={handleViewDetails}
+          className="flex items-center justify-center w-8 h-8 rounded transition-colors text-slate-400 hover:text-blue-600 hover:bg-blue-50"
+      >
+        <Eye className="w-4 h-4" />
+      </button>
+  )
+
   const EditButton = (
     <button 
       onClick={handleEdit}
@@ -105,9 +128,41 @@ export const ActionsCellRenderer = (params: ActionsCellRendererParams) => {
     </button>
   )
 
+    const ExportButton = (
+        <button
+            onClick={handleExport}
+            className="flex items-center justify-center w-8 h-8 rounded transition-colors text-slate-400 hover:text-green-600 hover:bg-green-50"
+        >
+            <Download className="w-4 h-4" />
+        </button>
+    )
+
   return (
     <TooltipProvider delayDuration={200}>
       <div className="flex items-center justify-end gap-1 h-full">
+
+          {params.onExport && (
+              <Tooltip>
+                  <TooltipTrigger asChild>
+                      <div className="inline-block">
+                          {ExportButton}
+                      </div>
+                  </TooltipTrigger>
+                  <TooltipContent>Exporter en Excel</TooltipContent>
+              </Tooltip>
+          )}
+
+         {params.onViewDetails && (
+              <Tooltip>
+                  <TooltipTrigger asChild>
+                      <div className="inline-block">
+                          {ViewButton}
+                      </div>
+                  </TooltipTrigger>
+                  <TooltipContent>Voir les détails</TooltipContent>
+              </Tooltip>
+          )}
+
         {params.onChangePassword && (
           <Tooltip>
             <TooltipTrigger asChild>

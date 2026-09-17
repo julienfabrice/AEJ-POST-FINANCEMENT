@@ -72,3 +72,21 @@ export interface WORKFLOW_VERSION_T {
     workflow: WORKFLOW_BASE_T;
     etapes: WORKFLOW_ETAPE_T[];
 }
+
+export interface WORKFLOW_INSTANCE_HISTORY_T {
+  id: number
+  workflow_instance_id: number
+  etape_code: string
+  role_code: string
+  acted_by: number
+  acted_at: string
+  action: string
+  comment?: string | null
+}
+
+export interface WORKFLOW_INSTANCE_PATCH_T {
+  current_etape_code?: string | null
+  next_etape_code?: string | null
+  statut?: string
+  completed_at?: string | null
+}

@@ -1,24 +1,23 @@
-import { useMemo } from 'react'
+import {useMemo, useState} from 'react'
 import type { ColDef } from 'ag-grid-community'
 import Fuse from 'fuse.js'
-import { formulaires } from '@/mock'
 import { Badge } from '@/components/ui/badge'
 import { ActionsCellRenderer } from '@/pages/Referentiels/components/ActionsCellRenderer'
-
-const actionsCol: ColDef = {
-  headerName: 'Actions',
-  width: 120,
-  minWidth: 120,
-  sortable: false,
-  filter: false,
-  cellRenderer: ActionsCellRenderer,
-  cellRendererParams: {
-    onEdit: () => console.log('Edit action clicked'),
-    onDelete: () => console.log('Delete action clicked')
-  },
-}
+import {formulairesServices} from "@/services/indicateurs/formulaires.services.ts";
+import type {FORMULAIRE_T, QUESTION_T} from "@/types";
+import {FormulaireFormModal} from "@/pages/Indicateurs/components/FormulaireFormModal.tsx";
+import {QuestionModal} from "@/pages/Indicateurs/components/QuestionModal.tsx";
+import {useQuestionsGrid} from "@/pages/Indicateurs/hooks/questions/useQuestionsGrid.tsx";
+import {ExporterFormulaire} from "@/pages/Indicateurs/UI/ExporterFormulaire.tsx";
 
 export function useFichesGrid(searchQuery: string) {
+    const { data=[], isLoading } = formulairesServices.useGetAll()
+    const { mutate: deleteMutation } = formulairesServices.useDelete()
+    const [editingItem, setEditingItem] = useState<FORMULAIRE_T | null>(null)
+    const [viewingQuestion, setViewingQuestion] = useState<QUESTION_T[] | null> (null)
+    const { columnDefs: questionColumnDefs, modalNode: questionModalNode} = useQuestionsGrid('')
+
+
   const columnDefs = useMemo<ColDef[]>(() => {
     return [
       { field: 'code', headerName: 'Code', flex: 1, cellRenderer: (params: any) => <Badge variant="outline" className="font-mono">{params.data.code}</Badge> },
@@ -29,20 +28,52 @@ export function useFichesGrid(searchQuery: string) {
           {params.data.actif ? 'Oui' : 'Non'}
         </Badge>
       ) },
-      actionsCol
+        {
+            field: 'questions', headerName: 'Questions', flex: 1, cellRenderer: (params: any) => (params.data.questions? params.data.questions.length: '_')
+        },
+        {
+            headerName: 'Actions',
+            width: 190,
+            minWidth: 190,
+            sortable: false,
+            filter: false,
+            cellRenderer: ActionsCellRenderer,
+            cellRendererParams: {
+                onEdit: (row: FORMULAIRE_T) => setEditingItem(row),
+                onDelete: (id: number) => deleteMutation(id),
+                onViewDetails: (row: QUESTION_T[])=> setViewingQuestion(row),
+                onExport: (row: FORMULAIRE_T)=> ExporterFormulaire(row)
+            },
+        }
     ]
-  }, [])
+  }, [deleteMutation, setViewingQuestion])
+
 
   const filteredData = useMemo(() => {
-    if (!searchQuery.trim()) return formulaires
+    if (!searchQuery.trim()) return data
 
-    const fuse = new Fuse(formulaires, {
+    const fuse = new Fuse(data, {
       keys: ['code', 'libelle', 'public_cible'],
       threshold: 0.3,
       ignoreLocation: true
     })
     return fuse.search(searchQuery).map(res => res.item)
-  }, [searchQuery])
+  }, [searchQuery, data])
 
-  return { columnDefs, data: filteredData, isLoading: false }
+    const modalNode = (
+        <>
+            <FormulaireFormModal open={!!editingItem} onOpenChange={(open) => !open && setEditingItem(null)} editData={editingItem} />
+            <QuestionModal
+                open={!!viewingQuestion}
+                onOpenChange ={(open) => !(open) && setViewingQuestion(null)}
+                data={viewingQuestion}
+                columnDefs = {questionColumnDefs}
+            />
+            {questionModalNode}
+
+        </>
+
+    )
+
+  return { columnDefs, data: filteredData, isLoading: isLoading, modalNode: modalNode }
 }

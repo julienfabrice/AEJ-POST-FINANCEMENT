@@ -87,14 +87,20 @@ export function RoleForm({ etapeCode, selectedRole = null, onCancel, onSuccess }
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="AJOUT_PLAN_AFFAIRES">Ajout Plan d'Affaires</SelectItem>
-                  <SelectItem value="SOUMISSION">Soumission</SelectItem>
-                  <SelectItem value="VALIDATION">Validation</SelectItem>
-                  <SelectItem value="REJET">Rejet</SelectItem>
-                  <SelectItem value="REVISION">Révision / Modification</SelectItem>
-                  <SelectItem value="CONSULTATION">Consultation (Lecture seule)</SelectItem>
-                  <SelectItem value="APPROBATION_FINALE">Approbation Finale</SelectItem>
-                  <SelectItem value="DECISION">Décision</SelectItem>
+                  <SelectItem value="JOINDRE_PLAN">Joindre le plan</SelectItem>
+                  <SelectItem value="VALIDER">Valider</SelectItem>
+                  <SelectItem value="TRANSMETTRE">Transmettre</SelectItem>
+                  <SelectItem value="TRAITER">Traiter</SelectItem>
+                  <SelectItem value="DECAISSER">Décaisser</SelectItem>
+                  <SelectItem value="REMBOURSEMENTS">Remboursements</SelectItem>
+                  <SelectItem value="VISITE_SUIVI">Visite de suivi</SelectItem>
+                  <SelectItem value="IMPUTER">Imputer</SelectItem>
+                  <SelectItem value="PLAN_DECAISSEMENT">Plan de décaissement</SelectItem>
+                  <SelectItem value="CORRIGER">Corriger</SelectItem>
+                  <SelectItem value="EXAMINER">Examiner</SelectItem>
+                  <SelectItem value="AUTORISER">Autoriser</SelectItem>
+                  <SelectItem value="EXECUTER">Exécuter</SelectItem>
+                  <SelectItem value="PLAN_CONVENTION">Plan & convention</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />

@@ -7,11 +7,20 @@ import { Button } from '@/components/ui/button'
 import { configurationServices } from '@/services/configurations.services'
 
 import { useProjetsStore } from '@/store/useProjetsStore'
+import { useAuthStore } from '@/store/useAuthStore'
+import { useEtapeRolesMap } from './useEtapeRolesMap'
+import { AffaireCell, AffaireCellLoading } from '../components/AffaireCell'
 
 export function useTableData() {
   const { setSelectedProjet } = useProjetsStore()
   const { data: configuration } = configurationServices.useGet()
-  
+
+  // Charge tous les rôles d'étapes en UNE seule requête et les indexe par etape_code
+  const { etapeRolesMap, isLoading: rolesLoading } = useEtapeRolesMap()
+
+  // Rôle de l'utilisateur connecté
+  const userRoleCode = useAuthStore((s) => s.user?.role?.code)
+
   const columnDefs = useMemo<ColDef<MICRO_PROJET_T>[]>(() => [
     {
       field: 'code',
@@ -85,6 +94,27 @@ export function useTableData() {
       width: 110,
       cellRenderer: (params: any) => params.value ? dayjs(params.value).format('DD/MM/YYYY') : '-'
     },
+
+    // ── Colonne "À faire" ─────────────────────────────────────────────────────
+    {
+      headerName: 'À faire',
+      field: 'workflow_instance' as any,
+      width: 200,
+      sortable: false,
+      filter: false,
+      cellRenderer: (params: any) => {
+        if (rolesLoading) return <AffaireCellLoading />
+        return (
+          <AffaireCell
+            projet={params.data as MICRO_PROJET_T}
+            etapeRolesMap={etapeRolesMap}
+            userRoleCode={userRoleCode}
+          />
+        )
+      },
+    },
+
+    // ── Actions ───────────────────────────────────────────────────────────────
     {
       headerName: 'Actions',
       width: 70,
@@ -101,7 +131,8 @@ export function useTableData() {
         )
       },
     }
-  ], [setSelectedProjet, configuration])
+  ], [setSelectedProjet, configuration, etapeRolesMap, rolesLoading, userRoleCode])
 
   return { columnDefs }
 }
+

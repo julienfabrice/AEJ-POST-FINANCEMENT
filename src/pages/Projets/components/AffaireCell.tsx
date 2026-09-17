@@ -45,6 +45,7 @@ function roleCode(roleCode: string, roleRelation?: any): string {
 function actionLabel(action: string): string {
   const KNOWN: Record<string, string> = {
     JOINDRE_PLAN: 'Joindre le plan',
+    AJOUT_PLAN_AFFAIRES: 'Joindre le plan',
     VALIDER: 'Valider',
     TRANSMETTRE: 'Transmettre',
     TRAITER: 'Traiter',

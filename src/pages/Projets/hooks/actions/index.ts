@@ -37,6 +37,7 @@ export function useProjetActions() {
   const executeAction = async (actionCode: string, projet: MICRO_PROJET_T) => {
     switch (actionCode) {
       case 'JOINDRE_PLAN':
+      case 'AJOUT_PLAN_AFFAIRES':
         return joindrePlan.execute(projet)
       case 'VALIDER':
         return valider.execute(projet)

@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router'
 import dayjs from 'dayjs'
 import 'dayjs/locale/fr'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -9,8 +10,10 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AlertTriangle } from 'lucide-react'
 import { money } from '@/helpers/money'
 import { useDecaissementModal } from '../hooks/actions/decaissement/useDecaissementModal'
+import { DeliverableUploadSection } from './DeliverableUploadSection'
 
 export function DecaissementModal() {
+  const navigate = useNavigate()
   const {
     projet,
     isOpen,
@@ -26,6 +29,11 @@ export function DecaissementModal() {
     isSubmitting,
     handleClose,
     onSubmit,
+    etapeDeliverables,
+    isLoadingConfig,
+    sources,
+    setDeliverableFile,
+    setExistingDocument,
   } = useDecaissementModal()
 
   // Tous les hooks sont appelés avant tout return conditionnel
@@ -45,8 +53,14 @@ export function DecaissementModal() {
         {!hasPlan && (
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>
-              Ce projet ne possède pas encore de plan de décaissement. Veuillez d'abord créer un plan avant de saisir un décaissement.
+            <AlertDescription className="flex items-center justify-between">
+              <span>Ce projet ne possède pas encore de plan de décaissement. Veuillez d'abord créer un plan avant de saisir un décaissement.</span>
+              <Button variant="outline" size="sm" className="ml-4 shrink-0 bg-white text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200" onClick={() => {
+                handleClose()
+                navigate({ to: '/plans-decaissement' })
+              }}>
+                Cliquer pour en créer
+              </Button>
             </AlertDescription>
           </Alert>
         )}
@@ -99,6 +113,14 @@ export function DecaissementModal() {
           <h4 className="text-sm font-semibold mb-3 border-b pb-1">Nouveau décaissement</h4>
           <Form {...form}>
             <form onSubmit={onSubmit} className="space-y-4">
+              <DeliverableUploadSection
+                etapeDeliverables={etapeDeliverables}
+                isLoadingConfig={isLoadingConfig}
+                sources={sources}
+                setFile={setDeliverableFile}
+                setExistingDocument={setExistingDocument}
+                microProjetId={projet.id}
+              />
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={form.control}

@@ -7,6 +7,7 @@ import { decaissementSchema, type DecaissementFormValues } from '@/schema/decais
 import { decaissementServices } from '@/services/decaissements.services'
 import { useUploadDocumentMutation } from '@/services/documents.services'
 import { useAdvanceWorkflow } from '../../useAdvanceWorkflow'
+import { useDeliverableUploads } from '../../useDeliverableUploads'
 
 function generateRef() {
   return `VIR-${Math.floor(Math.random() * 90000 + 10000)}`
@@ -18,6 +19,9 @@ export function useDecaissementModal() {
   const createDecaissement = decaissementServices.useCreate()
   const uploadDocument = useUploadDocumentMutation()
   const { advance, isAdvancing } = useAdvanceWorkflow()
+
+  const currentEtapeCode = projet?.workflow_instance?.current_etape_code
+  const deliverableUploads = useDeliverableUploads(currentEtapeCode)
 
   const [file, setFile] = useState<File | null>(null)
   const [isUploading, setIsUploading] = useState(false)
@@ -56,6 +60,7 @@ export function useDecaissementModal() {
     setDecaissementModalProjet(null)
     setFile(null)
     form.reset()
+    deliverableUploads.reset()
   }
 
   const onSubmit = form.handleSubmit(async (data: DecaissementFormValues) => {
@@ -67,7 +72,10 @@ export function useDecaissementModal() {
     }
 
     try {
-      // 1. Upload du justificatif si un fichier est sélectionné
+      // 1. Upload & enregistrement des livrables workflow (si requis)
+      await deliverableUploads.submitDeliverables(projet)
+
+      // 2. Upload du justificatif spécifique au décaissement (si fourni)
       let justificatif_path: string | null = null
       if (file) {
         setIsUploading(true)
@@ -77,14 +85,13 @@ export function useDecaissementModal() {
           micro_projet_id: projet.id.toString(),
         })
         setIsUploading(false)
-        // L'API retourne { path: "Dossier/xxx.pdf", ... }
         justificatif_path = uploadRes?.path ?? null
       }
 
-      // 2. Création du décaissement
+      // 3. Création du décaissement
       await createDecaissement.mutateAsync({ ...data, justificatif_path } as any)
 
-      // 3. Avancement de workflow uniquement pour le 1er décaissement
+      // 4. Avancement de workflow uniquement pour le 1er décaissement
       if (decaissements.length === 0) {
         await advance({
           projet,
@@ -116,8 +123,14 @@ export function useDecaissementModal() {
     budgetMontant,
     dejaDecaisse,
     resteADecaisser,
-    isSubmitting: createDecaissement.isPending || isAdvancing || isUploading,
+    isSubmitting: createDecaissement.isPending || isAdvancing || isUploading || deliverableUploads.isSubmittingDeliverables,
     handleClose,
     onSubmit,
+    // Upload de livrables
+    etapeDeliverables: deliverableUploads.etapeDeliverables,
+    isLoadingConfig: deliverableUploads.isLoadingConfig,
+    sources: deliverableUploads.sources,
+    setDeliverableFile: deliverableUploads.setFile,
+    setExistingDocument: deliverableUploads.setExistingDocument,
   }
 }

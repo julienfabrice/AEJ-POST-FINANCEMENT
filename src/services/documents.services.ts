@@ -1,6 +1,41 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { axiosInstance } from '@/constants/axiosInstance'
 import { toast } from 'sonner'
+
+export interface DOCUMENT_T {
+  id: number
+  name: string
+  path: string
+  type: string
+  size: number
+  url: string
+  micro_projet_id: number | null
+  created_at: string
+  updated_at: string
+  created_by?: {
+    id: number
+    nom: string
+    prenom: string
+    email: string
+  }
+}
+
+/**
+ * GET /documents
+ * Récupère la liste des documents, filtrables par micro_projet_id.
+ */
+export function useGetDocuments(micro_projet_id?: number) {
+  return useQuery({
+    queryKey: ['documents', micro_projet_id],
+    queryFn: async (): Promise<DOCUMENT_T[]> => {
+      const { data } = await axiosInstance.get('/documents', {
+        params: micro_projet_id ? { micro_projet_id } : undefined,
+      })
+      return data.data ?? data
+    },
+    enabled: micro_projet_id !== undefined,
+  })
+}
 
 export function useUploadDocumentMutation() {
   const queryClient = useQueryClient()
@@ -19,8 +54,9 @@ export function useUploadDocumentMutation() {
       })
       return res.data
     },
-    onSuccess: () => {
-      toast.success("Document joint et soumis avec succès.")
+    onSuccess: (_, vars) => {
+      toast.success('Document joint et soumis avec succès.')
+      queryClient.invalidateQueries({ queryKey: ['documents', Number(vars.micro_projet_id)] })
       queryClient.invalidateQueries({ queryKey: ['projets'] })
     },
     onError: (error) => {

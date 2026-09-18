@@ -68,4 +68,35 @@ export const workflowInstancesServices = {
       enabled: !!workflow_instance_id,
     })
   },
+
+  /**
+   * POST /workflow-instances/deliverables
+   * Enregistre un livrable produit lors d'une étape de workflow.
+   */
+  useCreateDeliverable: () => {
+    const queryClient = useQueryClient()
+    return useMutation({
+      mutationFn: async (payload: {
+        workflow_instance_id: number
+        deliverable_code: string
+        file_path: string
+        file_name: string
+        file_size: number
+        file_type: string
+        observations?: string | null
+        produced_at: string
+        produced_by_id: number | null
+      }): Promise<WORKFLOW_INSTANCE_DELIVERABLE_T> => {
+        const { data } = await axiosInstance.post('/workflow-instances/deliverables', payload)
+        return data.data ?? data
+      },
+      onSuccess: (_, vars) => {
+        queryClient.invalidateQueries({ queryKey: ['workflow-deliverables', vars.workflow_instance_id] })
+      },
+      onError: (error) => {
+        console.error("Erreur lors de l'enregistrement du livrable", error)
+        toast.error("Erreur lors de l'enregistrement du livrable.")
+      },
+    })
+  },
 }

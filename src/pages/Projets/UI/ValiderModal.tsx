@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Check } from 'lucide-react'
 import { useValiderAction } from '../hooks/actions/useValiderAction'
+import { DeliverableUploadSection } from './DeliverableUploadSection'
 
 export function ValiderModal() {
   const {
@@ -26,36 +27,46 @@ export function ValiderModal() {
     onSubmit,
     form,
     isSubmitting,
+    // Livrable existant (lecture)
     planAffairesDeliverable,
-    isLoadingDeliverables,
+    isLoadingExisting,
+    // Upload de livrables
+    etapeDeliverables,
+    isLoadingConfig,
+    sources,
+    setFile,
+    setExistingDocument,
   } = useValiderAction()
 
   if (!projet) return null
 
+  const baseUrl = import.meta.env.VITE_API_URL?.replace(/\/api\/?$/, '') ?? ''
+
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Validation — {projet.code}</DialogTitle>
           <div className="text-sm text-slate-500 mt-1 space-y-1">
             <p>
-              {projet.intitule} — {projet.promoteur?.nom} {projet.promoteur?.prenom} 
+              {projet.intitule} — {projet.promoteur?.nom} {projet.promoteur?.prenom}
               {projet.agence?.nom && ` · ${projet.agence.nom}`}
             </p>
+            {/* Plan d'affaires déjà joint (lecture seule) */}
             {planAffairesDeliverable ? (
               <p>
                 Plan d'affaires joint :{' '}
-                <a 
-                  href={`${import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '')}${planAffairesDeliverable.file_path.startsWith('/') ? '' : '/'}${planAffairesDeliverable.file_path}`} 
-                  target="_blank" 
-                  rel="noreferrer" 
-                  className="font-medium text-[#E7722B] hover:underline inline-flex items-center gap-1"
+                <a
+                  href={`${baseUrl}${planAffairesDeliverable.file_path.startsWith('/') ? '' : '/'}${planAffairesDeliverable.file_path}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-medium text-[#E7722B] hover:underline"
                 >
                   {planAffairesDeliverable.file_name}
                 </a>
               </p>
-            ) : isLoadingDeliverables ? (
-              <p className="text-slate-400">Recherche du plan d'affaires...</p>
+            ) : isLoadingExisting ? (
+              <p className="text-slate-400">Recherche du plan d'affaires…</p>
             ) : (
               <p>Plan d'affaires joint : <b className="text-slate-400">—</b></p>
             )}
@@ -64,6 +75,16 @@ export function ValiderModal() {
 
         <Form {...form}>
           <form onSubmit={onSubmit} className="space-y-4 pt-2">
+            {/* Livrables à uploader pour cette étape */}
+            <DeliverableUploadSection
+              etapeDeliverables={etapeDeliverables}
+              isLoadingConfig={isLoadingConfig}
+              sources={sources}
+              setFile={setFile}
+              setExistingDocument={setExistingDocument}
+              microProjetId={projet.id}
+            />
+
             <FormField
               control={form.control}
               name="observation"
@@ -88,7 +109,7 @@ export function ValiderModal() {
               </Button>
               <Button type="submit" disabled={isSubmitting}>
                 <Check className="mr-2 h-4 w-4" />
-                {isSubmitting ? 'Validation...' : 'Valider et transmettre'}
+                {isSubmitting ? 'Validation en cours…' : 'Valider et transmettre'}
               </Button>
             </DialogFooter>
           </form>

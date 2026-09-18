@@ -1,7 +1,7 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { axiosInstance } from '@/constants/axiosInstance'
 import { toast } from 'sonner'
-import type { WORKFLOW_INSTANCE_HISTORY_T } from '@/types/workflow.types'
+import type { WORKFLOW_INSTANCE_HISTORY_T, WORKFLOW_INSTANCE_DELIVERABLE_T } from '@/types/workflow.types'
 import type { WorkflowInstancePatchValues, WorkflowHistoryValues } from '@/schema/workflow'
 
 // ─── Hooks ────────────────────────────────────────────────────────────────────
@@ -49,6 +49,23 @@ export const workflowInstancesServices = {
         console.error("Erreur lors de la mise à jour de l'instance workflow", error)
         toast.error("Erreur lors de la mise à jour du workflow.")
       },
+    })
+  },
+
+  /**
+   * GET /workflow-instances/deliverables
+   * Récupère les livrables d'une instance de workflow.
+   */
+  useGetDeliverables: (workflow_instance_id?: number) => {
+    return useQuery({
+      queryKey: ['workflow-deliverables', workflow_instance_id],
+      queryFn: async (): Promise<WORKFLOW_INSTANCE_DELIVERABLE_T[]> => {
+        const { data } = await axiosInstance.get('/workflow-instances/deliverables', {
+          params: { workflow_instance_id },
+        })
+        return data.data ?? data
+      },
+      enabled: !!workflow_instance_id,
     })
   },
 }

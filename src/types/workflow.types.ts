@@ -90,3 +90,19 @@ export interface WORKFLOW_INSTANCE_PATCH_T {
   statut?: string
   completed_at?: string | null
 }
+
+export interface WORKFLOW_INSTANCE_DELIVERABLE_T {
+  id: number
+  workflow_instance_id: number
+  deliverable_code: string
+  file_path: string
+  file_name: string
+  file_size: number
+  file_type: string
+  produced_at: string
+  produced_by_id: number | null
+  observations: string | null
+  workflow_instance?: any
+  deliverable?: any
+  produced_by?: any
+}

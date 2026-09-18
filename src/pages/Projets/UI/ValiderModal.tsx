@@ -26,6 +26,8 @@ export function ValiderModal() {
     onSubmit,
     form,
     isSubmitting,
+    planAffairesDeliverable,
+    isLoadingDeliverables,
   } = useValiderAction()
 
   if (!projet) return null
@@ -35,10 +37,29 @@ export function ValiderModal() {
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Validation — {projet.code}</DialogTitle>
-          <p className="text-sm text-slate-500 mt-1">
-            {projet.intitule} — {projet.promoteur?.nom} {projet.promoteur?.prenom} 
-            {projet.agence?.nom && ` · ${projet.agence.nom}`}
-          </p>
+          <div className="text-sm text-slate-500 mt-1 space-y-1">
+            <p>
+              {projet.intitule} — {projet.promoteur?.nom} {projet.promoteur?.prenom} 
+              {projet.agence?.nom && ` · ${projet.agence.nom}`}
+            </p>
+            {planAffairesDeliverable ? (
+              <p>
+                Plan d'affaires joint :{' '}
+                <a 
+                  href={`${import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '')}${planAffairesDeliverable.file_path.startsWith('/') ? '' : '/'}${planAffairesDeliverable.file_path}`} 
+                  target="_blank" 
+                  rel="noreferrer" 
+                  className="font-medium text-[#E7722B] hover:underline inline-flex items-center gap-1"
+                >
+                  {planAffairesDeliverable.file_name}
+                </a>
+              </p>
+            ) : isLoadingDeliverables ? (
+              <p className="text-slate-400">Recherche du plan d'affaires...</p>
+            ) : (
+              <p>Plan d'affaires joint : <b className="text-slate-400">—</b></p>
+            )}
+          </div>
         </DialogHeader>
 
         <Form {...form}>

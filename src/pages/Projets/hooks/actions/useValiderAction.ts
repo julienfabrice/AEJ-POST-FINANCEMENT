@@ -4,10 +4,17 @@ import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
 import { useProjetsStore } from '@/store/useProjetsStore'
 import { useAdvanceWorkflow } from '../useAdvanceWorkflow'
 import { validerSchema, type ValiderFormValues } from '@/schema/workflowActions/validerSchema'
+import { workflowInstancesServices } from '@/services/workflowInstances.services'
 
 export function useValiderAction() {
   const { validerModalProjet: projet, setValiderModalProjet } = useProjetsStore()
   const { advance, isAdvancing } = useAdvanceWorkflow()
+
+  const { data: deliverables, isLoading: isLoadingDeliverables } = workflowInstancesServices.useGetDeliverables(
+    projet?.workflow_instance?.id
+  )
+
+  const planAffairesDeliverable = deliverables?.find(d => d.deliverable_code === 'PLAN_AFFAIRES')
 
   const form = useForm<ValiderFormValues>({
     resolver: zodResolver(validerSchema),
@@ -48,5 +55,7 @@ export function useValiderAction() {
     onSubmit,
     form,
     isSubmitting: isAdvancing,
+    planAffairesDeliverable,
+    isLoadingDeliverables,
   }
 }

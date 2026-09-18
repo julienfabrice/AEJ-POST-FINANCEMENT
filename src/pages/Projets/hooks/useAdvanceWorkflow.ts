@@ -2,6 +2,8 @@ import { useAuthStore } from '@/store/useAuthStore'
 import { workflowInstancesServices } from '@/services/workflowInstances.services'
 import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
 import { useWorkflowVersionsMap, resolveNextEtape } from './useWorkflowVersionsMap'
+import { WORKFLOW_ADVANCE_DISABLED } from '@/constants/devFlags'
+import { toast } from 'sonner'
 
 interface AdvanceWorkflowParams {
   /** Le projet dont on veut avancer le workflow */
@@ -53,6 +55,13 @@ export function useAdvanceWorkflow() {
         : resolveNextEtape(version?.etapes ?? [], instance.current_etape_code)
 
     const isLastStep = nextEtapeCode === null
+
+    // Block the actual api calls if the workflow is frozen
+    if (WORKFLOW_ADVANCE_DISABLED) {
+      console.log('[useAdvanceWorkflow] Simulation de passage à l\'étape:', isLastStep ? 'FIN' : nextEtapeCode)
+      toast.info('Action simulée : le workflow ne bougera pas (VITE_WORKFLOW_ADVANCE_DISABLED=true)', { duration: 5000 })
+      return
+    }
 
     // 1. Enregistrement de l'historique
     await createHistory.mutateAsync({

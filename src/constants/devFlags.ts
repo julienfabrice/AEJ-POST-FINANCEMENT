@@ -9,6 +9,7 @@
 
 export const AUTH_DISABLED = import.meta.env.VITE_AUTH_DISABLED === 'true'
 export const MOCK_USER_ROLE = import.meta.env.VITE_MOCK_USER_ROLE
+export const WORKFLOW_ADVANCE_DISABLED = import.meta.env.VITE_WORKFLOW_ADVANCE_DISABLED === 'true'
 
 if (AUTH_DISABLED && typeof console !== 'undefined') {
   console.warn(
@@ -21,5 +22,12 @@ if (MOCK_USER_ROLE && typeof console !== 'undefined') {
   console.warn(
     `[MOCK-ROLE] Simulation du rôle workflow avec: ${MOCK_USER_ROLE}. ` +
       'Retirez VITE_MOCK_USER_ROLE du .env pour utiliser le rôle réel.',
+  )
+}
+
+if (WORKFLOW_ADVANCE_DISABLED && typeof console !== 'undefined') {
+  console.warn(
+    `[WORKFLOW-FROZEN] Avancement du workflow DÉSACTIVÉ (VITE_WORKFLOW_ADVANCE_DISABLED=true). ` +
+      'Les actions ne feront pas avancer le statut du projet.',
   )
 }

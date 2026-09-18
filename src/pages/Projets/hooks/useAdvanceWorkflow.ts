@@ -41,7 +41,7 @@ export function useAdvanceWorkflow() {
       return
     }
 
-    const roleCode = user.role?.code ?? ''
+    const roleCode = import.meta.env.VITE_MOCK_USER_ROLE || user.role?.code || ''
 
     // ── Résolution de la prochaine étape ─────────────────────────────────────
     // Priorité 1 : valeur fournie par le backend

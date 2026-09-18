@@ -47,6 +47,7 @@ function actionLabel(action: string): string {
     JOINDRE_PLAN: 'Joindre le plan',
     AJOUT_PLAN_AFFAIRES: 'Joindre le plan',
     VALIDER: 'Valider',
+    VALIDATION: 'Valider',
     TRANSMETTRE: 'Transmettre',
     TRANSMISSION: 'Transmettre',
     TRAITER: 'Traiter',

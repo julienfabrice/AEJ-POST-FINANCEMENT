@@ -19,7 +19,8 @@ export function useTableData() {
   const { etapeRolesMap, isLoading: rolesLoading } = useEtapeRolesMap()
 
   // Rôle de l'utilisateur connecté
-  const userRoleCode = useAuthStore((s) => s.user?.role?.code)
+  const actualUserRoleCode = useAuthStore((s) => s.user?.role?.code)
+  const userRoleCode = import.meta.env.VITE_MOCK_USER_ROLE || actualUserRoleCode
 
   const columnDefs = useMemo<ColDef<MICRO_PROJET_T>[]>(() => [
     {

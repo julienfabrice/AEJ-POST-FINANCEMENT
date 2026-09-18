@@ -40,6 +40,7 @@ export function useProjetActions() {
       case 'AJOUT_PLAN_AFFAIRES':
         return joindrePlan.execute(projet)
       case 'VALIDER':
+      case 'VALIDATION':
         return valider.execute(projet)
       case 'TRANSMETTRE':
       case 'TRANSMISSION':

@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useJoindrePlanAction } from '../hooks/actions/useJoindrePlanAction'
+import { DeliverableUploadSection } from './DeliverableUploadSection'
 
 export function JoindrePlanModal() {
   const { 
@@ -19,17 +20,22 @@ export function JoindrePlanModal() {
     isOpen,
     handleClose,
     handleSubmit,
-    setFile,
     observation,
     setObservation,
-    isSubmitting 
+    setPaFile,
+    isSubmitting,
+    etapeDeliverables,
+    isLoadingConfig,
+    sources,
+    setFile,
+    setExistingDocument,
   } = useJoindrePlanAction()
 
   if (!projet) return null
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             Plan d'affaires — {projet.code}
@@ -46,6 +52,7 @@ export function JoindrePlanModal() {
 
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
+            {/* Ancien champ Plan d'affaires obligatoire */}
             <div className="flex flex-col gap-2">
               <Label htmlFor="paFile" className="font-semibold">
                 Fichier du plan d'affaires *
@@ -54,9 +61,19 @@ export function JoindrePlanModal() {
                 id="paFile"
                 type="file"
                 accept=".pdf,.doc,.docx"
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
+                onChange={(e) => setPaFile(e.target.files?.[0] || null)}
               />
             </div>
+
+            {/* Nouveaux champs livrables génériques */}
+            <DeliverableUploadSection
+              etapeDeliverables={etapeDeliverables}
+              isLoadingConfig={isLoadingConfig}
+              sources={sources}
+              setFile={setFile}
+              setExistingDocument={setExistingDocument}
+              microProjetId={projet.id}
+            />
             
             <div className="flex flex-col gap-2">
               <Label htmlFor="paObs" className="font-semibold">

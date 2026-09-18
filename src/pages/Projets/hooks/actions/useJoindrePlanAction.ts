@@ -1,16 +1,20 @@
 import { useState } from 'react'
 import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
 import { useProjetsStore } from '@/store/useProjetsStore'
-import { useUploadDocumentMutation } from '@/services/documents.services'
 import { useAdvanceWorkflow } from '../useAdvanceWorkflow'
+import { useDeliverableUploads } from '../useDeliverableUploads'
+import { useUploadDocumentMutation } from '@/services/documents.services'
 import { toast } from 'sonner'
 
 export function useJoindrePlanAction() {
   const { joindrePlanModalProjet: projet, setJoindrePlanModalProjet } = useProjetsStore()
-  const uploadMutation = useUploadDocumentMutation()
   const { advance, isAdvancing } = useAdvanceWorkflow()
+  const uploadMutation = useUploadDocumentMutation()
 
-  const [file, setFile] = useState<File | null>(null)
+  const currentEtapeCode = projet?.workflow_instance?.current_etape_code
+  const deliverableUploads = useDeliverableUploads(currentEtapeCode)
+
+  const [paFile, setPaFile] = useState<File | null>(null)
   const [observation, setObservation] = useState('')
 
   const execute = async (projetToOpen: MICRO_PROJET_T) => {
@@ -19,29 +23,33 @@ export function useJoindrePlanAction() {
 
   const handleClose = () => {
     setJoindrePlanModalProjet(null)
-    setFile(null)
     setObservation('')
+    setPaFile(null)
+    deliverableUploads.reset()
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!file) {
+    if (!projet) return
+
+    if (!paFile) {
       toast.error("Le fichier du plan d'affaires est requis")
       return
     }
 
-    if (!projet) return
-
     try {
-      // 1. Upload du document
+      // 1. Upload manuel de paFile dans "Mega"
       await uploadMutation.mutateAsync({
-        file,
+        file: paFile,
         folder: 'Mega',
-        micro_projet_id: projet.id.toString()
+        micro_projet_id: projet.id.toString(),
       })
 
-      // 2. Avancement du workflow (historique + patch instance)
+      // 2. Upload & enregistrement des livrables workflow
+      await deliverableUploads.submitDeliverables(projet)
+
+      // 3. Avancement du workflow (historique + patch instance)
       await advance({
         projet,
         action: 'JOINDRE_PLAN',
@@ -50,7 +58,7 @@ export function useJoindrePlanAction() {
 
       handleClose()
     } catch (error) {
-      // Les erreurs sont déjà gérées dans chaque mutation
+      // Les erreurs sont gérées dans submitDeliverables, uploadMutation et advance
     }
   }
 
@@ -60,11 +68,17 @@ export function useJoindrePlanAction() {
     isOpen: !!projet,
     handleClose,
     handleSubmit,
-    file,
-    setFile,
     observation,
     setObservation,
-    isSubmitting: uploadMutation.isPending || isAdvancing,
+    paFile,
+    setPaFile,
+    isSubmitting: isAdvancing || deliverableUploads.isSubmittingDeliverables || uploadMutation.isPending,
+    // Upload de livrables
+    etapeDeliverables: deliverableUploads.etapeDeliverables,
+    isLoadingConfig: deliverableUploads.isLoadingConfig,
+    sources: deliverableUploads.sources,
+    setFile: deliverableUploads.setFile,
+    setExistingDocument: deliverableUploads.setExistingDocument,
   }
 }
 

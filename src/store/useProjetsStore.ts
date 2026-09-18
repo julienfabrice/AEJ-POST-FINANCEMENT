@@ -41,7 +41,7 @@ export const useProjetsStore = create<ProjetsState>((set) => ({
     page: 1,
     perPage: 20,
   },
-  viewMode: 'kanban',
+  viewMode: 'list',
   filters: {},
   projets: [],
   selectedProjet: null,

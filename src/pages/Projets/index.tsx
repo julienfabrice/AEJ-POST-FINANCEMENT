@@ -6,6 +6,7 @@ import { ListZone } from './UI/ListZone'
 import { ProjetDetailsSheet } from './UI/ProjetDetailsSheet'
 import { JoindrePlanModal } from './UI/JoindrePlanModal'
 import { DecaissementModal } from './UI/DecaissementModal'
+import { ValiderModal } from './UI/ValiderModal'
 import { useProjetsStore } from '@/store/useProjetsStore'
 
 export function ProjetsPage() {
@@ -36,6 +37,7 @@ export function ProjetsPage() {
       {/* Modals pour les actions sur les projets */}
       <JoindrePlanModal />
       <DecaissementModal />
+      <ValiderModal />
     </div>
   )
 }

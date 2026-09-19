@@ -23,6 +23,7 @@ interface ProjetsState {
   joindrePlanModalProjet: MICRO_PROJET_T | null
   decaissementModalProjet: MICRO_PROJET_T | null
   validerModalProjet: MICRO_PROJET_T | null
+  traiterModalProjet: MICRO_PROJET_T | null
 
   // Actions
   setPagination: (pagination: Partial<{ page: number; perPage: number }>) => void
@@ -31,6 +32,7 @@ interface ProjetsState {
   setJoindrePlanModalProjet: (projet: MICRO_PROJET_T | null) => void
   setDecaissementModalProjet: (projet: MICRO_PROJET_T | null) => void
   setValiderModalProjet: (projet: MICRO_PROJET_T | null) => void
+  setTraiterModalProjet: (projet: MICRO_PROJET_T | null) => void
   setProjets: (projets: MICRO_PROJET_T[]) => void
   setFilters: (filters: Partial<PROJETS_SEARCH_T>) => void
   resetFilters: () => void
@@ -48,6 +50,7 @@ export const useProjetsStore = create<ProjetsState>((set) => ({
   joindrePlanModalProjet: null,
   decaissementModalProjet: null,
   validerModalProjet: null,
+  traiterModalProjet: null,
   setPagination: (newPagination) => set((state) => {
     // Si on modifie perPage, on force la page à 1
     const page = newPagination.perPage !== undefined ? 1 : (newPagination.page ?? state.pagination.page)
@@ -62,6 +65,7 @@ export const useProjetsStore = create<ProjetsState>((set) => ({
   setJoindrePlanModalProjet: (joindrePlanModalProjet) => set({ joindrePlanModalProjet }),
   setDecaissementModalProjet: (decaissementModalProjet) => set({ decaissementModalProjet }),
   setValiderModalProjet: (validerModalProjet) => set({ validerModalProjet }),
+  setTraiterModalProjet: (traiterModalProjet) => set({ traiterModalProjet }),
   setProjets: (projets) => set({ projets }),
   setFilters: (newFilters) => set((state) => ({ 
     filters: { ...state.filters, ...newFilters },

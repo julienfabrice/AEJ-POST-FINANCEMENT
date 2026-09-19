@@ -284,6 +284,18 @@ export type BUDGET_STATUT_T = 'EN_ATTENTE' | 'APPROUVE' | 'NON_APPROUVE'
 export type SIGNATURE_CONVENTION_T = 'SIGNEE' | 'NON_SIGNEE'
 export type RECEPTION_ACTE_CREDIT_T = 'OUI' | 'NON' | 'PARTIEL'
 
+export interface AMORTISSEMENT_LIGNE_T {
+  numero: number
+  periode: number
+  date: string
+  capital_debut: number
+  interet: number
+  amortissement: number
+  mensualite: number
+  capital_restant: number
+  statut_paiement: 'PAYE' | 'NON_PAYE'
+}
+
 export interface BUDGET_T {
   id: number
   micro_projet_id: number

@@ -30,6 +30,21 @@ export const tableauAmortissementServices = {
       },
     })
   },
+  useUpdate: () => {
+    const queryClient = useQueryClient()
+    return useMutation({
+      mutationFn: async ({ id, data }: { id: number; data: Partial<TABLEAU_AMORTISSEMENT_T> }) => {
+        const response = await axiosInstance.put(`/tableau-amortissements/${id}`, data)
+        return response.data
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['tableau-amortissements'] })
+      },
+      onError: (error) => {
+        console.error(error)
+      },
+    })
+  },
   useSaveEcheancier: () => {
     const queryClient = useQueryClient()
     return useMutation({

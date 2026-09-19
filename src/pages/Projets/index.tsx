@@ -8,6 +8,7 @@ import { JoindrePlanModal } from './UI/JoindrePlanModal'
 import { DecaissementModal } from './UI/DecaissementModal'
 import { ValiderModal } from './UI/ValiderModal'
 import { TraiterModal } from './UI/TraiterModal'
+import { RemboursementsModal } from './UI/remboursements/RemboursementsModal'
 import { useProjetsStore } from '@/store/useProjetsStore'
 
 export function ProjetsPage() {
@@ -40,6 +41,7 @@ export function ProjetsPage() {
       <DecaissementModal />
       <ValiderModal />
       <TraiterModal />
+      <RemboursementsModal />
     </div>
   )
 }

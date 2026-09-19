@@ -7,7 +7,7 @@ export const decaissementSchema = z.object({
   reference_banque: z.string().min(1, 'La référence bancaire est requise.'),
   date_decaissement: z.string().min(1, 'La date est requise.'),
   // Pas de z.coerce → on convertit manuellement via valueAsNumber dans l'input
-  montant_decaisse: z.number({ invalid_type_error: 'Le montant doit être un nombre.' }).positive('Le montant doit être positif.'),
+  montant_decaisse: z.number({ message: 'Le montant doit être un nombre.' }).positive('Le montant doit être positif.'),
   statut: z.enum(['EN_ATTENTE', 'VALIDE', 'NON_VALIDE']),
   observations: z.string().optional(),
 })

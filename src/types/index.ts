@@ -432,15 +432,30 @@ export interface DECAISSEMENT_DECLARATION_T {
 export interface PLAN_REMBOURSEMENT_T {
   id: number
   micro_projet_id: number
-  budget_id?: number | null
-  echeance_mensuelle?: string | null
+  budget_id: number
+  date_ouverture: string
+  montant_credit: number
+  decision: 'EN_ATTENTE' | 'APPROUVE' | 'NON_APPROUVE'
+  interets: number
+  duree_pret: number
+  duree_remboursement: number
+  fichier_amortissement?: string | null
+  fichier_convention?: string | null
+  created_at?: string
+  updated_at?: string
+}
+
+export interface TABLEAU_AMORTISSEMENT_T {
+  id: number
+  plan_remboursement_id: number
+  periode: number
+  date_echeance: string
   montant_echeance: number
-  periode?: number | null
   capital_rembourse: number
   capital_restant: number
   interets: number
   amortissement_capital: number
-  justificatif_path?: string | null
+  statut: 'PAYE' | 'PARTIEL' | 'NON_PAYE'
   created_at?: string
   updated_at?: string
 }

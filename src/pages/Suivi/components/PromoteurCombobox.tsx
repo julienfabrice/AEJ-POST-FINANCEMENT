@@ -1,7 +1,7 @@
 import { useMemo, useState, type AriaAttributes } from 'react'
 import { promoteursServices } from '@/services/promoteurs.services'
 import type { PROMOTEUR_EMBAUCHE_T } from '@/types'
-import { AsyncSearchCombobox, type AsyncComboboxOption } from './AsyncSearchCombobox'
+import { AsyncSearchCombobox, type AsyncComboboxOption } from '@/components/generics/VisiteSuiviFormModal/AsyncSearchCombobox'
 
 /** Même lot que la recherche de micro-projets : une combobox n'affiche pas plus. */
 const PROMOTEURS_SEARCH_PER_PAGE = 25

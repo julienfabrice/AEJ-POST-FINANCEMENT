@@ -9,11 +9,15 @@ import { DecaissementModal } from './UI/DecaissementModal'
 import { ValiderModal } from './UI/ValiderModal'
 import { TraiterModal } from './UI/TraiterModal'
 import { RemboursementsModal } from './UI/remboursements/RemboursementsModal'
+import { VisiteSuiviFormModal } from '@/components/generics/VisiteSuiviFormModal'
 import { useProjetsStore } from '@/store/useProjetsStore'
 
 export function ProjetsPage() {
   const { guichet_id } = useSearch({ from: '/_authenticated/_agent/projets' })
   const { setFilters } = useProjetsStore()
+
+  const visiteSuiviProjet = useProjetsStore(s => s.visiteSuiviModalProjet)
+  const setVisiteSuiviProjet = useProjetsStore(s => s.setVisiteSuiviModalProjet)
 
   // Synchronise le guichet_id de l'URL dans les filtres du store au montage
   useEffect(() => {
@@ -30,7 +34,7 @@ export function ProjetsPage() {
       <ProjetsHeader />
 
       <ProjetsFilters />
-      
+
       <ListZone />
 
       {/* Drawer d'informations détaillées */}
@@ -42,6 +46,11 @@ export function ProjetsPage() {
       <ValiderModal />
       <TraiterModal />
       <RemboursementsModal />
+      <VisiteSuiviFormModal
+        open={!!visiteSuiviProjet}
+        onOpenChange={(val) => !val && setVisiteSuiviProjet(null)}
+        projetFixed={visiteSuiviProjet}
+      />
     </div>
   )
 }

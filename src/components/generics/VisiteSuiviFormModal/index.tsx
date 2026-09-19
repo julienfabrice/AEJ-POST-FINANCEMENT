@@ -22,10 +22,11 @@ import {
   type EXPLOITATION_T,
   type REALISATION_VIDE_T,
 } from '@/types'
-import { useExploitationForm } from '../hooks/exploitations/useExploitationForm'
+import { useExploitationForm } from '@/pages/Suivi/hooks/exploitations/useExploitationForm'
 import { MicroProjetCombobox } from './MicroProjetCombobox'
 import { PositionGpsFields } from './PositionGpsFields'
 import { VisitePhotosSection } from './VisitePhotosSection'
+import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
 
 /**
  * Sentinelle « aucun agent ».
@@ -58,13 +59,15 @@ interface Props {
   open?: boolean
   onOpenChange?: (open: boolean) => void
   initialData?: EXPLOITATION_T | null
+  projetFixed?: MICRO_PROJET_T | null
 }
 
-export function ExploitationFormModal({ children, open: controlledOpen, onOpenChange, initialData }: Props) {
+export function VisiteSuiviFormModal({ children, open: controlledOpen, onOpenChange, initialData, projetFixed }: Props) {
   const { form, onSubmit, isPending, isEdit, open, setOpen } = useExploitationForm(
     initialData ?? null,
     controlledOpen,
     onOpenChange,
+    projetFixed
   )
 
   // La Dialog Radix est modale : elle neutralise les pointer-events hors de son
@@ -101,14 +104,22 @@ export function ExploitationFormModal({ children, open: controlledOpen, onOpenCh
                 <FormItem>
                   <FormLabel>Projet visité</FormLabel>
                   <FormControl>
-                    <MicroProjetCombobox
-                      value={field.value}
-                      onChange={field.onChange}
-                      // En ÉDITION, le projet lié est déjà sur la ligne : on le
-                      // réaffiche sans requête supplémentaire.
-                      projetInitial={initialData?.micro_projet ?? null}
-                      container={portal}
-                    />
+                    {projetFixed ? (
+                      <Input
+                        value={`${projetFixed.code} - ${projetFixed.intitule}`}
+                        disabled
+                        className="bg-slate-50 cursor-not-allowed"
+                      />
+                    ) : (
+                      <MicroProjetCombobox
+                        value={field.value}
+                        onChange={field.onChange}
+                        // En ÉDITION, le projet lié est déjà sur la ligne : on le
+                        // réaffiche sans requête supplémentaire.
+                        projetInitial={initialData?.micro_projet ?? null}
+                        container={portal}
+                      />
+                    )}
                   </FormControl>
                   <FormMessage />
                 </FormItem>

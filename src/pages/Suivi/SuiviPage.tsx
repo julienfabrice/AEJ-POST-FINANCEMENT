@@ -10,7 +10,7 @@ import { PermissionGate } from '@/components/PermissionGate'
 import { MODULES } from '@/constants/modules'
 
 import { EmbaucheFormModal } from './components/EmbaucheFormModal'
-import { ExploitationFormModal } from './components/ExploitationFormModal'
+import { VisiteSuiviFormModal } from '@/components/generics/VisiteSuiviFormModal'
 import { useSuiviGrid, type SuiviTab } from './hooks/useSuiviGrid'
 
 /**
@@ -126,12 +126,12 @@ export function SuiviPage() {
                 {/* Création réservée au droit `c` du module « suivi ». */}
                 <PermissionGate module={MODULES.SUIVI} action="c">
                   {tab.id === 'exploitations' ? (
-                    <ExploitationFormModal>
+                    <VisiteSuiviFormModal>
                       <Button className="h-9">
                         <Plus className="mr-2 h-4 w-4" />
                         {tab.boutonCreation}
                       </Button>
-                    </ExploitationFormModal>
+                    </VisiteSuiviFormModal>
                   ) : (
                     <EmbaucheFormModal>
                       <Button className="h-9">

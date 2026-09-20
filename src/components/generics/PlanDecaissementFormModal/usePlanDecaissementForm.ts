@@ -34,6 +34,8 @@ export function usePlanDecaissementForm(
   initialData: PLAN_DECAISSEMENT_T | null,
   controlledOpen?: boolean,
   onOpenChange?: (open: boolean) => void,
+  onSuccess?: (data: any) => void,
+  lockedMicroProjetId?: number
 ) {
   const [internalOpen, setInternalOpen] = useState(false)
   const isControlled = controlledOpen !== undefined
@@ -52,7 +54,7 @@ export function usePlanDecaissementForm(
 
   const form = useForm<PlanDecaissementFormValues>({
     resolver: zodResolver(planDecaissementSchema),
-    defaultValues: DEFAULT_VALUES,
+    defaultValues: { ...DEFAULT_VALUES, micro_projet_id: lockedMicroProjetId || 0 },
   })
 
   const { fields, append, remove } = useFieldArray({ control: form.control, name: 'lignes' })
@@ -61,7 +63,7 @@ export function usePlanDecaissementForm(
     if (open) {
       if (initialData) {
         form.reset({
-          micro_projet_id: initialData.micro_projet_id,
+          micro_projet_id: lockedMicroProjetId || initialData.micro_projet_id,
           budget_id: initialData.budget_id ?? undefined,
           compte_financement_id: initialData.compte_financement_id ?? undefined,
           montant_planifie: initialData.montant_planifie,
@@ -82,20 +84,30 @@ export function usePlanDecaissementForm(
             : [EMPTY_LIGNE],
         })
       } else {
-        form.reset(DEFAULT_VALUES)
+        form.reset({ ...DEFAULT_VALUES, micro_projet_id: lockedMicroProjetId || 0 })
       }
     }
-  }, [open, initialData, form])
+  }, [open, initialData, form, lockedMicroProjetId])
 
   const addLigne = () => append({ ...EMPTY_LIGNE, numero_ligne: fields.length + 1 })
 
   const onSubmit = (values: PlanDecaissementFormValues) => {
     if (isEdit && initialData) {
-      updateMutation({ id: initialData.id, data: values }, { onSuccess: () => setOpen(false) })
+      updateMutation({ id: initialData.id, data: values }, { 
+        onSuccess: (data) => {
+          setOpen(false)
+          onSuccess?.(data)
+        } 
+      })
     } else {
-      createMutation(values, { onSuccess: () => setOpen(false) })
+      createMutation(values, { 
+        onSuccess: (data) => {
+          setOpen(false)
+          onSuccess?.(data)
+        } 
+      })
     }
   }
 
-  return { form, fields, addLigne, removeLigne: remove, onSubmit, isPending, isEdit, open, setOpen }
+  return { form, fields, addLigne, removeLigne: remove, onSubmit, isPending, isEdit, open, setOpen, lockedMicroProjetId }
 }

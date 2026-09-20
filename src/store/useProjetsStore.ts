@@ -27,6 +27,7 @@ interface ProjetsState {
   remboursementsModalProjet: MICRO_PROJET_T | null
   visiteSuiviModalProjet: MICRO_PROJET_T | null
   imputerAlertModalProjet: MICRO_PROJET_T | null
+  planDecaissementModalProjet: MICRO_PROJET_T | null
 
   // Actions
   setPagination: (pagination: Partial<{ page: number; perPage: number }>) => void
@@ -39,6 +40,7 @@ interface ProjetsState {
   setRemboursementsModalProjet: (projet: MICRO_PROJET_T | null) => void
   setVisiteSuiviModalProjet: (projet: MICRO_PROJET_T | null) => void
   setImputerAlertModalProjet: (projet: MICRO_PROJET_T | null) => void
+  setPlanDecaissementModalProjet: (projet: MICRO_PROJET_T | null) => void
   setProjets: (projets: MICRO_PROJET_T[]) => void
   setFilters: (filters: Partial<PROJETS_SEARCH_T>) => void
   resetFilters: () => void
@@ -60,6 +62,7 @@ export const useProjetsStore = create<ProjetsState>((set) => ({
   remboursementsModalProjet: null,
   visiteSuiviModalProjet: null,
   imputerAlertModalProjet: null,
+  planDecaissementModalProjet: null,
   setPagination: (newPagination) => set((state) => {
     // Si on modifie perPage, on force la page à 1
     const page = newPagination.perPage !== undefined ? 1 : (newPagination.page ?? state.pagination.page)
@@ -78,6 +81,7 @@ export const useProjetsStore = create<ProjetsState>((set) => ({
   setRemboursementsModalProjet: (remboursementsModalProjet) => set({ remboursementsModalProjet }),
   setVisiteSuiviModalProjet: (visiteSuiviModalProjet) => set({ visiteSuiviModalProjet }),
   setImputerAlertModalProjet: (imputerAlertModalProjet) => set({ imputerAlertModalProjet }),
+  setPlanDecaissementModalProjet: (planDecaissementModalProjet) => set({ planDecaissementModalProjet }),
   setProjets: (projets) => set({ projets }),
   setFilters: (newFilters) => set((state) => ({ 
     filters: { ...state.filters, ...newFilters },

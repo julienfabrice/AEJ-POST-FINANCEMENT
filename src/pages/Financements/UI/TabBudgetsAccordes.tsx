@@ -6,7 +6,7 @@ import { money } from '@/helpers/money'
 import { budgetServices } from '@/services/budgets.services'
 import { guichetServices } from '@/services/guichets.services'
 import { organismeServices } from '@/services/organismes.services'
-import { BudgetEditModal } from '../components/BudgetEditModal'
+import { BudgetFormModal } from '@/components/generics/BudgetFormModal'
 import { DeleteConfirmModal } from '@/components/DeleteConfirmModal'
 import type { BUDGET_T } from '@/types'
 
@@ -24,7 +24,11 @@ export function TabBudgetsAccordes() {
 
   return (
     <Card className="p-0 overflow-hidden border-[#E5EAF1] shadow-[0_1px_2px_rgba(18,28,41,.05),_0_6px_20px_rgba(18,28,41,.06)]">
-      <BudgetEditModal budget={budgetToEdit} onClose={() => setBudgetToEdit(null)} />
+      <BudgetFormModal 
+        open={!!budgetToEdit} 
+        onOpenChange={(val) => !val && setBudgetToEdit(null)} 
+        initialData={budgetToEdit} 
+      />
       <DeleteConfirmModal
         open={!!budgetToDelete}
         onOpenChange={(open) => !open && setBudgetToDelete(null)}

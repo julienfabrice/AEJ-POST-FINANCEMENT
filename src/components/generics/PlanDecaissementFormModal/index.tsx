@@ -11,38 +11,101 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { usePlanDecaissementForm } from '../hooks/usePlanDecaissementForm'
+import { usePlanDecaissementForm } from './usePlanDecaissementForm'
 import type { PLAN_DECAISSEMENT_T } from '@/types'
+import { budgetServices } from '@/services/budgets.services'
+import { BudgetFormModal } from '../BudgetFormModal'
+import { useState } from 'react'
 
 interface Props {
   children?: React.ReactNode
   open?: boolean
   onOpenChange?: (open: boolean) => void
   initialData?: PLAN_DECAISSEMENT_T | null
+  onSuccess?: (data: any) => void
+  lockedMicroProjetId?: number
 }
 
-export function PlanDecaissementFormModal({ children, open: controlledOpen, onOpenChange, initialData }: Props) {
+export function PlanDecaissementFormModal({ children, open: controlledOpen, onOpenChange, initialData, onSuccess, lockedMicroProjetId }: Props) {
   const { form, fields, addLigne, removeLigne, onSubmit, isPending, isEdit, open, setOpen } = usePlanDecaissementForm(
     initialData ?? null,
     controlledOpen,
     onOpenChange,
+    onSuccess,
+    lockedMicroProjetId
   )
 
+  const { data: budgets, isLoading: isBudgetsLoading } = budgetServices.useGetAll()
+  const currentProjetId = form.watch('micro_projet_id')
+
+  // On filtre les budgets correspondants au projet actuellement sélectionné, s'il y en a un.
+  const filteredBudgets = budgets?.filter(b => b.micro_projet_id === currentProjetId) || []
+
+  const [showBudgetModal, setShowBudgetModal] = useState(false)
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      {children && <DialogTrigger asChild>{children}</DialogTrigger>}
-      <DialogContent className="sm:max-w-[720px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader><DialogTitle>{isEdit ? 'Modifier le' : 'Nouveau'} plan de décaissement</DialogTitle></DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-2">
-            <div className="grid grid-cols-3 gap-4">
-              <FormField control={form.control} name="micro_projet_id" render={({ field: { onChange, ...field } }) => (
-                <FormItem><FormLabel>ID Micro-projet</FormLabel><FormControl><Input type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
-              )} />
-              <FormField control={form.control} name="budget_id" render={({ field: { onChange, ...field } }) => (
-                <FormItem><FormLabel>ID Budget</FormLabel><FormControl><Input type="number" onChange={(e) => onChange(e.target.valueAsNumber || undefined)} {...field} /></FormControl><FormMessage /></FormItem>
-              )} />
-              <FormField control={form.control} name="montant_planifie" render={({ field: { onChange, ...field } }) => (
+    <>
+      <Dialog open={open} onOpenChange={setOpen}>
+        {children && <DialogTrigger asChild>{children}</DialogTrigger>}
+        <DialogContent className="sm:max-w-[720px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>{isEdit ? 'Modifier le' : 'Nouveau'} plan de décaissement</DialogTitle></DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-2">
+              <div className="grid grid-cols-3 gap-4">
+                <FormField control={form.control} name="micro_projet_id" render={({ field: { onChange, ...field } }) => (
+                  <FormItem>
+                    <FormLabel>ID Micro-projet</FormLabel>
+                    <FormControl>
+                      <Input 
+                        type="number" 
+                        disabled={!!lockedMicroProjetId}
+                        onChange={(e) => onChange(e.target.valueAsNumber || 0)} 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="budget_id" render={({ field }) => (
+                  <FormItem className="min-w-0">
+                    <FormLabel>Budget</FormLabel>
+                    <div className="grid grid-cols-[1fr_auto] gap-2 items-center">
+                      <div className="min-w-0">
+                        <Select 
+                          onValueChange={(val) => field.onChange(parseInt(val, 10))} 
+                          value={field.value ? field.value.toString() : ''}
+                          disabled={isBudgetsLoading || filteredBudgets.length === 0}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="w-full truncate">
+                              <SelectValue placeholder={isBudgetsLoading ? 'Chargement...' : 'Sélectionner'} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {filteredBudgets.map(b => (
+                              <SelectItem key={b.id} value={b.id.toString()}>
+                                <span className="truncate block">{b.intitule} ({b.montant_accorde})</span>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        size="icon" 
+                        title="Créer un nouveau budget"
+                        onClick={() => setShowBudgetModal(true)}
+                        disabled={!currentProjetId}
+                        className="shrink-0"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="montant_planifie" render={({ field: { onChange, ...field } }) => (
                 <FormItem><FormLabel>Montant planifié</FormLabel><FormControl><Input type="number" step="0.01" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
               )} />
             </div>
@@ -131,5 +194,12 @@ export function PlanDecaissementFormModal({ children, open: controlledOpen, onOp
         </Form>
       </DialogContent>
     </Dialog>
+
+    <BudgetFormModal 
+      open={showBudgetModal} 
+      onOpenChange={setShowBudgetModal} 
+      lockedMicroProjetId={currentProjetId || undefined} 
+    />
+  </>
   )
 }

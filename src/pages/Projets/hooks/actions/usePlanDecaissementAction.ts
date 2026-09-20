@@ -1,9 +1,11 @@
 import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
+import { useProjetsStore } from '@/store/useProjetsStore'
 
 export function usePlanDecaissementAction() {
+  const setPlanDecaissementModalProjet = useProjetsStore(s => s.setPlanDecaissementModalProjet)
+  
   const execute = async (projet: MICRO_PROJET_T) => {
-    console.log('Exécution de l\'action PLAN_DECAISSEMENT pour le projet', projet.id)
-    // TODO: Implémenter la logique spécifique
+    setPlanDecaissementModalProjet(projet)
   }
 
   return { execute }

@@ -1,11 +1,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { indicateurs, indicateurs_suivi } from '@/mock'
+import {indicateurServices} from "@/services/indicateurs/indicateurs.services.ts";
+import {indicateursSuivisServices} from "@/services/indicateurs/indicateurs-suivis.services.ts";
 
 const fmt = (num: number) => new Intl.NumberFormat('fr-FR').format(num)
 
 export function PlanificationTab() {
-  const indicSuivi = (indId: number | string) => {
+    const { data: indicateurs = [] } = indicateurServices.useGetAll()
+    const { data: indicateurs_suivi = []} = indicateursSuivisServices.useGetAll()
+    const indicSuivi = (indId: number | string) => {
     return indicateurs_suivi
       .filter((s) => s.indicateur_id.toString() === indId.toString())
       .reduce((a, s) => a + (parseFloat(s.valeur) || 0), 0)
@@ -40,10 +43,10 @@ export function PlanificationTab() {
                     <Badge variant="outline" className="font-mono text-[#E7722B] border-[#E7722B] bg-[#FBEADE]">
                       {i.code}
                     </Badge>
-                    <span className="font-bold text-sm text-[#131C29]">{i.nom}</span>
+                    <span className="font-bold text-sm text-[#131C29]">{i.libelle}</span>
                     <div className="flex-1"></div>
                     <span className="font-mono text-sm text-[#8595A8]">
-                      {fmt(s)} / {fmt(i.valeur_cible)} {i.unite}
+                      { i.valeur_cible ? fmt(s) + "/ " + i.valeur_cible: 0} {i.unite}
                     </span>
                     <span className={`font-mono font-bold text-sm ml-4 ${textCl}`}>
                       {t}%

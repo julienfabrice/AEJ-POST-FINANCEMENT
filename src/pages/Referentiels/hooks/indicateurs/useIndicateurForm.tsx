@@ -1,4 +1,4 @@
-import { indicateurServices } from '@/services/indicateurs.services'
+import { indicateurServices } from '@/services/indicateurs/indicateurs.services.ts'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -22,21 +22,21 @@ export function useIndicateurForm(initialData: any | null, controlledOpen?: bool
 
   const form = useForm<IndicateurFormValues>({
     resolver: zodResolver(indicateurSchema) as any,
-    defaultValues: { nom: '', description: '', type_valeur: '', unite: '', statut: true },
+    defaultValues: { libelle: '', description: '', type_valeur: '', unite: '', statut: true },
   })
 
   useEffect(() => {
     if (open) {
       if (initialData) {
         form.reset({
-          nom: initialData.nom || '',
+          libelle: initialData.libelle || '',
           description: initialData.description || '',
           type_valeur: initialData.type_valeur || '',
           unite: initialData.unite || '',
           statut: initialData.statut !== false
         })
       }
-      else form.reset({ nom: '', description: '', type_valeur: '', unite: '', statut: true })
+      else form.reset({ libelle: '', description: '', type_valeur: '', unite: '', statut: true })
     }
   }, [open, initialData, form])
 

@@ -1,4 +1,4 @@
-import { indicateurServices } from '@/services/indicateurs.services'
+import { indicateurServices } from '@/services/indicateurs/indicateurs.services.ts'
 import { useMemo } from 'react'
 import type { ColDef, ICellRendererParams } from 'ag-grid-community'
 import Fuse from 'fuse.js'

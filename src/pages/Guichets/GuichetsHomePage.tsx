@@ -69,7 +69,7 @@ export function GuichetsHomePage() {
             <GuichetCard
               key={g.id}
               guichet={g}
-              onClick={() => navigate({ to: ROUTES.DISPOSITIFS })}
+              onClick={() => navigate({ to: ROUTES.PROJETS, search: { guichet_id: String(g.id) } })}
             />
           ))}
         </div>

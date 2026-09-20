@@ -18,7 +18,8 @@ export function useUnitesGrid(activeTab: UniteTab, searchQuery: string) {
 
   const byTab = { agences, guichets, directions, services, fonctions }
 
-  const columnDefs = useMemo<ColDef[]>(() => byTab[activeTab].columnDefs, [activeTab, agences.columnDefs, guichets.columnDefs, directions.columnDefs, services.columnDefs, fonctions.columnDefs])
+  const columnDefs = useMemo<ColDef[]>(() => byTab[activeTab].columnDefs,
+      [activeTab, agences.columnDefs, guichets.columnDefs, directions.columnDefs, services.columnDefs, fonctions.columnDefs])
   const data = byTab[activeTab].data
   const isLoading = byTab[activeTab].isLoading
   const modalNode = byTab[activeTab].modalNode

@@ -23,6 +23,21 @@ export const etapeRolesServices = {
     })
   },
 
+  /**
+   * Charge TOUS les rôles d'étapes en une seule requête.
+   * Utilisé pour construire un index `etape_code → rôles[]` côté client
+   * sans faire N requêtes pour N projets dans la liste.
+   */
+  useGetAllEtapeRoles: () => {
+    return useQuery({
+      queryKey: [...workflowRolesKeys.all, 'all'] as const,
+      queryFn: async () => {
+        const { data } = await axiosInstance.get('/workflow/etape-roles')
+        return (data.data || (Array.isArray(data) ? data : [])) as WORKFLOW_ETAPE_ROLE_T[]
+      },
+    })
+  },
+
   useCreateEtapeRole: () => {
     const queryClient = useQueryClient()
     return useMutation({

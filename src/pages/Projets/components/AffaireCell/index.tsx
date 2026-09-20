@@ -1,8 +1,8 @@
 import { Loader2, Clock } from 'lucide-react'
 import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
-import type { EtapeRolesMap } from '../hooks/useEtapeRolesMap'
+import type { EtapeRolesMap } from '../../hooks/useEtapeRolesMap'
 import type { WORKFLOW_ETAPE_ROLE_T } from '@/types/workflow.types'
-import { useProjetActions } from '../hooks/actions'
+import { useProjetActions } from '../../hooks/actions'
 import { Button } from '@/components/ui/button'
 
 // ─── Mapping des codes rôles → labels lisibles ───────────────────────────────

@@ -109,46 +109,66 @@ export function AffaireCell({ projet, etapeRolesMap, userRoleCode }: AffaireCell
 
   const { executeAction } = useProjetActions()
 
-  if (myRoles.length > 0) {
+  // Logique du bouton de remboursement parallèle au workflow
+  // Il est disponible si le plan de remboursement existe ET qu'on n'est pas terminé
+  const isRemboursementAvailable = Boolean(projet.plan_remboursement) && projet.statut !== 'TERMINE' && projet.stade_projet !== 'TERMINE'
+
+  // Si on n'est ni acteur de l'étape, ni éligible au remboursement, on affiche l'attente
+  if (myRoles.length === 0 && !isRemboursementAvailable) {
+    // ── Cas 2 : l'utilisateur n'est pas impliqué → afficher les acteurs ────────
+    // Rôles distincts (dédupliqués par role_code)
+    const acteursUniq = Array.from(
+      new Map(etapeRoles.map((r) => [r.role_code, r])).values()
+    )
+
+    const acteursText = acteursUniq
+      .map((r) => roleCode(r.role_code, r.role))
+      .join(' / ')
+
     return (
-      <div className="flex flex-wrap items-center gap-1 h-full">
-        {myRoles.map((r) => (
-          <Button
-            key={`${r.id}-${r.action}`}
-            type="button"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation()
-              executeAction(r.action, projet)
-            }}
-            className="bg-[#E7722B] text-white hover:bg-[#C85E18] h-7 px-3 text-[11px] font-semibold"
-          >
-            {actionLabel(r.action)}
-          </Button>
-        ))}
+      <div className="flex items-center h-full max-w-[170px]">
+        <span
+          className="inline-flex items-center gap-1.5 text-[11.5px] font-semibold text-slate-500 whitespace-nowrap truncate"
+          title={`En attente de : ${acteursText}`}
+        >
+          <Clock className="w-3.5 h-3.5 opacity-80 shrink-0" />
+          <span className="truncate">{acteursText}</span>
+        </span>
       </div>
     )
   }
 
-  // ── Cas 2 : l'utilisateur n'est pas impliqué → afficher les acteurs ────────
-  // Rôles distincts (dédupliqués par role_code)
-  const acteursUniq = Array.from(
-    new Map(etapeRoles.map((r) => [r.role_code, r])).values()
-  )
-
-  const acteursText = acteursUniq
-    .map((r) => roleCode(r.role_code, r.role))
-    .join(' / ')
-
+  // Sinon, on affiche les boutons d'actions (les actions du workflow + Remboursement si éligible)
   return (
-    <div className="flex items-center h-full max-w-[170px]">
-      <span
-        className="inline-flex items-center gap-1.5 text-[11.5px] font-semibold text-slate-500 whitespace-nowrap truncate"
-        title={`En attente de : ${acteursText}`}
-      >
-        <Clock className="w-3.5 h-3.5 opacity-80 shrink-0" />
-        <span className="truncate">{acteursText}</span>
-      </span>
+    <div className="flex flex-wrap items-center gap-1 h-full">
+      {myRoles.map((r) => (
+        <Button
+          key={`${r.id}-${r.action}`}
+          type="button"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation()
+            executeAction(r.action, projet)
+          }}
+          className="bg-[#E7722B] text-white hover:bg-[#C85E18] h-7 px-3 text-[11px] font-semibold"
+        >
+          {actionLabel(r.action)}
+        </Button>
+      ))}
+
+      {isRemboursementAvailable && (
+        <Button
+          type="button"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation()
+            executeAction('REMBOURSEMENTS', projet)
+          }}
+          className="bg-green-600 text-white hover:bg-green-700 h-7 px-3 text-[11px] font-semibold"
+        >
+          Remboursement
+        </Button>
+      )}
     </div>
   )
 }

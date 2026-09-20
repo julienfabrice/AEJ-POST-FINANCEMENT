@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import { Loader2, X } from 'lucide-react'
+import { Download, Loader2, Upload, X } from 'lucide-react'
 import { Card } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import {
@@ -16,13 +15,24 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from './components/Badge'
 import { LgnAttente } from './UI/LgnAttente'
 import { LgnFait } from './UI/LgnFait'
+import { ImputationImportDialog } from './UI/ImputationImportDialog'
 import { useImputation } from './hooks/useImputation'
+import { useImputationExcel } from './hooks/useImputationExcel'
+import { axiosInstance } from '@/constants/axiosInstance'
+import { WORKFLOW_ADVANCE_DISABLED } from '@/constants/devFlags'
+import { useAdvanceWorkflow } from '@/pages/Projets/hooks/useAdvanceWorkflow'
+import { useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 
 export function ImputationPage() {
   const { 
     attente, 
-    faits, 
+    faits,
+    projets,
     agences, 
+    guichets,
+    selectedGuichetId,
+    setSelectedGuichetId,
     isLoading,
     selectedIds,
     selectedProjets,
@@ -31,6 +41,19 @@ export function ImputationPage() {
     handleBulkImputation,
     isBulkImputing
   } = useImputation()
+
+  const { advance } = useAdvanceWorkflow()
+  const queryClient = useQueryClient()
+
+  const {
+    fileInputRef,
+    downloadCanvas,
+    openFilePicker,
+    handleFileChange,
+    preview,
+    clearPreview,
+    isProcessing,
+  } = useImputationExcel({ attente, agences, allProjets: projets })
 
   const [selectedAgence, setSelectedAgence] = useState<string>('')
 
@@ -44,7 +67,6 @@ export function ImputationPage() {
   }
 
   const allSelected = attente.length > 0 && selectedIds.length === attente.length
-  const indeterminate = selectedIds.length > 0 && selectedIds.length < attente.length
 
   const onImputerAgence = () => {
     if (!selectedAgence) return
@@ -55,8 +77,61 @@ export function ImputationPage() {
     handleBulkImputation(null)
   }
 
+  /**
+   * Confirme l'imputation depuis l'import Excel.
+   * Les projets sont groupés par agence_id pour minimiser les appels.
+   */
+  const onConfirmExcelImport = async (
+    grouped: { agence_id: number | null; projetIds: number[] }[]
+  ) => {
+    const projetsCibles = grouped.flatMap(g =>
+      g.projetIds.map(id => ({ id, agence_id: g.agence_id }))
+    )
+
+    await Promise.all(
+      projetsCibles.map(async ({ id, agence_id }) => {
+        const projet = projets.find(p => p.id === id)
+        if (!projet) return
+
+        if (agence_id !== null && !WORKFLOW_ADVANCE_DISABLED) {
+          try {
+            await axiosInstance.patch(`/projets/${id}`, { agence_id })
+          } catch {
+            await axiosInstance.put(`/projets/${id}`, { agence_id })
+          }
+        }
+
+        if (projet.workflow_instance) {
+          await advance({ projet, action: 'IMPUTER' })
+        }
+      })
+    )
+
+    queryClient.invalidateQueries({ queryKey: ['projets'] })
+    toast.success(`${projetsCibles.length} dossier(s) imputé(s) via l'import Excel`)
+  }
+
   return (
     <div className="space-y-5">
+      {/* Input fichier caché pour l'import Excel */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".xlsx,.xls"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+
+      {/* Dialog de prévisualisation import Excel */}
+      {preview && (
+        <ImputationImportDialog
+          open={true}
+          rows={preview}
+          onClose={clearPreview}
+          onConfirm={onConfirmExcelImport}
+        />
+      )}
+
       {/* Panneau de configuration d'imputation en masse */}
       {selectedIds.length > 0 && (
         <Card className="p-4 border-[#E7722B] bg-[#FFF8F3] shadow-sm flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between sticky top-4 z-10">
@@ -141,19 +216,68 @@ export function ImputationPage() {
         </Card>
       )}
 
+      {/* Filtres globaux */}
+      <div className="flex items-center gap-3 bg-white p-3 rounded-lg border border-[#E5EAF1] shadow-sm">
+        <span className="text-[13.5px] font-medium text-[#5A6B80]">Filtrer par guichet :</span>
+        <Select value={selectedGuichetId} onValueChange={setSelectedGuichetId}>
+          <SelectTrigger className="w-[280px] h-[36px] bg-white border-[#cdd6e2]">
+            <SelectValue placeholder="Tous les guichets" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tous les guichets</SelectItem>
+            {guichets.map(g => (
+              <SelectItem key={g.id} value={g.id.toString()}>
+                {g.libelle}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
       {/* Card 1 : Dossiers approuvés à imputer */}
       <Card className="p-0 border-[#E5EAF1] shadow-[0_1px_2px_rgba(18,28,41,.05),_0_6px_20px_rgba(18,28,41,.06)] overflow-hidden">
         <div className="flex items-center gap-3 px-[18px] py-[15px] border-b border-[#EEF2F7]">
-          {attente.length > 0 && (
-            <Checkbox 
-              checked={allSelected ? true : indeterminate ? 'indeterminate' : false}
-              onCheckedChange={(checked) => toggleAllSelection(checked === true)}
-              className="data-[state=checked]:bg-[#E7722B] data-[state=checked]:border-[#E7722B] mr-2"
-            />
-          )}
           <h3 className="text-[14.5px] font-bold text-[#131C29]">Dossiers approuvés à imputer</h3>
           <div className="flex-1" />
           <Badge text={attente.length} cls="am" />
+
+          {/* Boutons d'action */}
+          <div className="flex items-center gap-2 ml-2">
+            {attente.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-[32px] text-[12.5px] border-[#cdd6e2] text-[#5A6B80] hover:bg-[#f1f4f8]"
+                onClick={() => toggleAllSelection(!allSelected)}
+              >
+                {allSelected ? 'Tout désélectionner' : 'Tout sélectionner'}
+              </Button>
+            )}
+            
+            <div className="w-[1px] h-4 bg-[#cdd6e2] mx-1" /> {/* Séparateur */}
+
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-[32px] text-[12.5px] border-[#cdd6e2] text-[#5A6B80] hover:bg-[#f1f4f8] gap-1.5"
+              onClick={downloadCanvas}
+              title="Télécharger le canevas Excel"
+            >
+              <Download size={13} />
+              Canevas
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-[32px] text-[12.5px] border-[#E7722B] text-[#E7722B] hover:bg-[#FFF8F3] gap-1.5"
+              onClick={openFilePicker}
+              disabled={isProcessing}
+              title="Importer un fichier Excel rempli"
+            >
+              {isProcessing ? <Loader2 size={13} className="animate-spin" /> : <Upload size={13} />}
+              Importer Excel
+            </Button>
+          </div>
         </div>
 
         <div className="p-[18px]">
@@ -196,4 +320,3 @@ export function ImputationPage() {
     </div>
   )
 }
-

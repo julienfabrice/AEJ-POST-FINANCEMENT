@@ -2,6 +2,7 @@ import { useMemo, useState, useCallback } from 'react'
 import { useSearch } from '@tanstack/react-router'
 import { projetsServices } from '@/services/projets.services'
 import { agenceRegionaleServices } from '@/services/agences-regionales.services'
+import { guichetServices } from '@/services/guichets.services'
 import { useAdvanceWorkflow } from '@/pages/Projets/hooks/useAdvanceWorkflow'
 import { useQueryClient } from '@tanstack/react-query'
 import { axiosInstance } from '@/constants/axiosInstance'
@@ -34,16 +35,24 @@ export function useImputation() {
   // Charger tous les projets sans filtre de statut pour ne pas rater ceux à imputer
   const { data: projetsRes, isLoading: isLoadingProjets, isFetching } = projetsServices.useGetAll(1, 200)
   const { data: agences = [], isLoading: isLoadingAgences } = agenceRegionaleServices.useGetAll()
+  const { data: guichets = [], isLoading: isLoadingGuichets } = guichetServices.useGetAll()
   const { advance, isAdvancing } = useAdvanceWorkflow()
   const queryClient = useQueryClient()
 
+  const [selectedGuichetId, setSelectedGuichetId] = useState<string>('all')
+
   const projets: MICRO_PROJET_T[] = useMemo(() => projetsRes?.data ?? [], [projetsRes])
 
+  const filteredProjets = useMemo(() => {
+    if (selectedGuichetId === 'all') return projets
+    return projets.filter(p => p.guichet_id?.toString() === selectedGuichetId)
+  }, [projets, selectedGuichetId])
+
   /** Dossiers en attente = pas encore imputés, à l'étape IMPUTATION */
-  const attente = useMemo(() => projets.filter(isEnAttenteImputation), [projets])
+  const attente = useMemo(() => filteredProjets.filter(isEnAttenteImputation), [filteredProjets])
 
   /** Dossiers déjà imputés = agence_id défini et hors étape IMPUTATION */
-  const faits = useMemo(() => projets.filter(p => !isEnAttenteImputation(p)), [projets])
+  const faits = useMemo(() => filteredProjets.filter(p => !isEnAttenteImputation(p)), [filteredProjets])
 
   // ─── Sélection de masse ──────────────────────────────────────────────────
   const [selectedIds, setSelectedIds] = useState<number[]>(
@@ -130,9 +139,12 @@ export function useImputation() {
     faits,
     projets,
     agences,
+    guichets,
+    selectedGuichetId,
+    setSelectedGuichetId,
     totalApprouves,
     nbAgences,
-    isLoading: isLoadingProjets || isLoadingAgences,
+    isLoading: isLoadingProjets || isLoadingAgences || isLoadingGuichets,
     isFetching,
     isAdvancing,
     isBulkImputing,

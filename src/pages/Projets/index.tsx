@@ -9,6 +9,7 @@ import { DecaissementModal } from './UI/DecaissementModal'
 import { ValiderModal } from './UI/ValiderModal'
 import { TraiterModal } from './UI/TraiterModal'
 import { RemboursementsModal } from './UI/remboursements/RemboursementsModal'
+import { ImputerAlertModal } from './UI/ImputerAlertModal'
 import { VisiteSuiviFormModal } from '@/components/generics/VisiteSuiviFormModal'
 import { useProjetsStore } from '@/store/useProjetsStore'
 
@@ -46,6 +47,7 @@ export function ProjetsPage() {
       <ValiderModal />
       <TraiterModal />
       <RemboursementsModal />
+      <ImputerAlertModal />
       <VisiteSuiviFormModal
         open={!!visiteSuiviProjet}
         onOpenChange={(val) => !val && setVisiteSuiviProjet(null)}

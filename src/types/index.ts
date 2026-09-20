@@ -269,6 +269,38 @@ export interface BUDGET_T {
   updated_at?: string
   /** Relation embarquée par GET /budgets — pas besoin d'un fetch séparé vers /projets. */
   micro_projet?: import('./promoteurs.types').MICRO_PROJET_T
+  /**
+   * Confirmé dans la réponse réelle de GET /budgets (18/09/2026) : un seul
+   * plan de décaissement/remboursement par budget, malgré le nom au
+   * pluriel — objet singulier, pas un tableau.
+   */
+  plan_decaissements?: {
+    id: number
+    micro_projet_id: number
+    budget_id: number
+    compte_financement_id: number | null
+    montant_planifie: number | string
+    date_prevue?: string | null
+    justificatif_path?: string | null
+    created_at?: string
+    updated_at?: string
+  } | null
+  plan_remboursements?: {
+    id: number
+    micro_projet_id: number
+    budget_id: number
+    date_ouverture?: string | null
+    decision?: string | null
+    montant_credit: number | string
+    /** Taux d'intérêt — échelle non confirmée (ex. "0.50" : 0,5 % ou 50 % ?). À vérifier avec le backend avant affichage définitif. */
+    interets: number | string
+    duree_pret?: number | null
+    duree_remboursement?: number | null
+    fichier_amortissement?: string | null
+    fichier_convention?: string | null
+    created_at?: string
+    updated_at?: string
+  } | null
 }
 // --- Lots de transmission (/lots-transmission) ---
 

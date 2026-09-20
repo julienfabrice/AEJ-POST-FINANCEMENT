@@ -1,9 +1,18 @@
 import { useState } from 'react'
-import { Loader2 } from 'lucide-react'
+import { Loader2, X } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { Badge } from './components/Badge'
 import { LgnAttente } from './UI/LgnAttente'
 import { LgnFait } from './UI/LgnFait'
@@ -16,6 +25,7 @@ export function ImputationPage() {
     agences, 
     isLoading,
     selectedIds,
+    selectedProjets,
     toggleSelection,
     toggleAllSelection,
     handleBulkImputation,
@@ -36,10 +46,13 @@ export function ImputationPage() {
   const allSelected = attente.length > 0 && selectedIds.length === attente.length
   const indeterminate = selectedIds.length > 0 && selectedIds.length < attente.length
 
-  const onImputer = () => {
+  const onImputerAgence = () => {
     if (!selectedAgence) return
-    const agenceId = selectedAgence === 'DIRECTION' ? null : Number(selectedAgence)
-    handleBulkImputation(agenceId)
+    handleBulkImputation(Number(selectedAgence))
+  }
+
+  const onConserverDirection = () => {
+    handleBulkImputation(null)
   }
 
   return (
@@ -48,34 +61,81 @@ export function ImputationPage() {
       {selectedIds.length > 0 && (
         <Card className="p-4 border-[#E7722B] bg-[#FFF8F3] shadow-sm flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between sticky top-4 z-10">
           <div className="flex items-center gap-2">
-            <Badge text={selectedIds.length} cls="am" />
-            <span className="text-[14px] font-medium text-[#131C29]">
-              dossier(s) sélectionné(s) pour l'imputation
-            </span>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  className="h-auto p-1 px-2 hover:bg-[#F2E8E1] rounded flex items-center gap-2 group"
+                >
+                  <Badge text={selectedIds.length} cls="am" />
+                  <span className="text-[14px] font-medium text-[#131C29] underline-offset-4 group-hover:underline">
+                    dossier(s) sélectionné(s) — Voir la liste
+                  </span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[400px] sm:w-[540px] bg-[#F4F7F9]">
+                <SheetHeader className="mb-6">
+                  <SheetTitle className="text-[#131C29]">Dossiers sélectionnés ({selectedIds.length})</SheetTitle>
+                  <SheetDescription>
+                    Passez en revue les dossiers avant de valider l'imputation.
+                  </SheetDescription>
+                </SheetHeader>
+                <ScrollArea className="h-[calc(100vh-140px)] pr-4">
+                  <div className="space-y-3">
+                    {selectedProjets.map((p) => (
+                      <div key={p.id} className="flex items-center justify-between p-3 border border-[#E5EAF1] rounded-lg bg-white shadow-sm hover:border-[#E7722B] transition-colors">
+                        <div className="flex flex-col overflow-hidden mr-4">
+                          <span className="font-semibold text-[13.5px] text-[#131C29] truncate">{p.code}</span>
+                          <span className="text-[12.5px] text-[#5A6B80] truncate" title={p.intitule}>{p.intitule}</span>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-[#5A6B80] hover:text-red-600 hover:bg-red-50 flex-shrink-0"
+                          onClick={() => toggleSelection(p.id)}
+                          title="Retirer de la sélection"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </SheetContent>
+            </Sheet>
           </div>
           
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <Select value={selectedAgence} onValueChange={setSelectedAgence}>
-              <SelectTrigger className="w-[240px] h-[36px] bg-white border-[#cdd6e2]">
-                <SelectValue placeholder="Sélectionner la destination..." />
+              <SelectTrigger className="w-[210px] h-[36px] bg-white border-[#cdd6e2]">
+                <SelectValue placeholder="Choisir une agence..." />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="DIRECTION">Conserver à la Direction</SelectItem>
                 {agences.map(ag => (
                   <SelectItem key={ag.id} value={ag.id.toString()}>
-                    Imputer à {ag.nom}
+                    {ag.nom}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
 
             <Button 
-              className="h-[36px] bg-[#131C29] hover:bg-[#1f2d40]"
+              className="h-[36px] bg-[#E7722B] hover:bg-[#c9601e]"
               disabled={!selectedAgence || isBulkImputing}
-              onClick={onImputer}
+              onClick={onImputerAgence}
             >
               {isBulkImputing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Valider l'imputation
+              Imputer à l'agence
+            </Button>
+
+            <Button
+              variant="outline"
+              className="h-[36px] border-[#5A6B80] text-[#5A6B80] hover:bg-[#f1f4f8]"
+              disabled={isBulkImputing}
+              onClick={onConserverDirection}
+            >
+              {isBulkImputing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Conserver à la Direction
             </Button>
           </div>
         </Card>

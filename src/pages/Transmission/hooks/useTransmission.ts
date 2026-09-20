@@ -9,6 +9,9 @@ import { useAdvanceWorkflow } from '@/pages/Projets/hooks/useAdvanceWorkflow'
 const route = getRouteApi('/_authenticated/_agent/transmission')
 
 export function useTransmission() {
+  const search = route.useSearch() as { guichet_id?: string; projet_id?: string }
+  const navigate = useNavigate()
+
   const [activeTab, setActiveTab] = useState<'composer' | 'lots'>('composer')
   const [selectedGuichet, setSelectedGuichet] = useState(search.guichet_id || '')
   
@@ -18,14 +21,14 @@ export function useTransmission() {
   )
 
   // Nettoyer les search params après le premier montage
-  useState(() => {
+  useEffect(() => {
     if (search.guichet_id || search.projet_id) {
       navigate({
         to: '/transmission',
         replace: true,
       })
     }
-  })
+  }, [search.guichet_id, search.projet_id, navigate])
 
   // Récupérer les vrais dispositifs (guichets)
   const { data: dispositifs = [], isLoading: isLoadingDispositifs } = dispositifServices.useGetAll()
@@ -59,6 +62,40 @@ export function useTransmission() {
       return next
     })
   }, [])
+
+  const createLotMutation = lotsTransmissionServices.useCreate()
+  const { advance, isAdvancing } = useAdvanceWorkflow()
+
+  const handleSubmit = async (values: any) => {
+    try {
+      await createLotMutation.mutateAsync({
+        ...values,
+        guichet_id: Number(selectedGuichet),
+        organisme_id: 1, // À ajuster selon l'utilisateur
+        statut: 'EN_ATTENTE',
+      })
+
+      // Avancer le workflow pour tous les projets sélectionnés
+      await Promise.all(
+        Array.from(selectedDossiers).map(async (id) => {
+          const projet = projetsEligibles.find((p) => p.id.toString() === id)
+          if (projet?.workflow_instance) {
+            await advance({
+              projet,
+              action: 'TRANSMISSION',
+            })
+          }
+        })
+      )
+
+      toast.success('Lot créé et projets transmis avec succès')
+      setSelectedDossiers(new Set())
+      setActiveTab('lots')
+    } catch (error) {
+      console.error(error)
+      toast.error('Erreur lors de la transmission')
+    }
+  }
 
   return {
     activeTab,

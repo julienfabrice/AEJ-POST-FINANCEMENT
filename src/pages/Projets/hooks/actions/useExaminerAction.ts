@@ -1,9 +1,11 @@
 import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
+import { useProjetsStore } from '@/store/useProjetsStore'
 
 export function useExaminerAction() {
+  const setExaminerModalProjet = useProjetsStore(s => s.setExaminerModalProjet)
+
   const execute = async (projet: MICRO_PROJET_T) => {
-    console.log('Exécution de l\'action EXAMINER pour le projet', projet.id)
-    // TODO: Implémenter la logique spécifique
+    setExaminerModalProjet(projet)
   }
 
   return { execute }

@@ -398,6 +398,12 @@ export interface LIGNE_DECAISSEMENT_T {
   observations?: string | null
 }
 
+export type PLAN_DECAISSEMENT_STATUT_T =
+  | 'BROUILLON'
+  | 'EN_VALIDATION'
+  | 'TRANSMIS_PF'
+  | 'AJOURNE'
+
 export interface PLAN_DECAISSEMENT_T {
   id: number
   micro_projet_id?: number
@@ -408,6 +414,7 @@ export interface PLAN_DECAISSEMENT_T {
   montant_planifie: number
   date_prevue?: string | null
   justificatif_path?: string | null
+  statut?: PLAN_DECAISSEMENT_STATUT_T | null
   lignes?: LIGNE_DECAISSEMENT_T[]
   budget?: BUDGET_T | null
   micro_projet?: import('./promoteurs.types').MICRO_PROJET_T | null

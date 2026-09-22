@@ -5084,14 +5084,13 @@
         { id: 'p9', titre: "Unité de recyclage plastique", jeune_id: 'j9', dispositif_id: 'wf-mpe', agence_id: 'ag3', organisme_id: 'or3', montant: 3900000, statut: 'IMPUTATION', etape: 3, cree: "2024-12-02", statut_selection: 'Retenu', statut_formation: 'Formé', date_formation: "2024-11-20", prestataire: "Institut Excellence Entreprendre" },
         { id: 'p10', titre: "Plateforme e-santé régionale", jeune_id: 'j10', dispositif_id: 'wf-meps', agence_id: 'ag1', organisme_id: 'or2', montant: 28000000, statut: 'DECAISSEMENT', etape: 7, cree: "2024-11-28", statut_selection: 'Retenu', statut_formation: 'Formé', date_formation: "2024-11-14", prestataire: "Institut Excellence Entreprendre" },
         /* --- dossiers Projets structurants / Start-Up --- */
-        { id: 'p11', titre: "Agro-industrie — transformation manioc", jeune_id: 'j11', dispositif_id: 'wf-startup', agence_id: 'ag1', organisme_id: 'or1', montant: 45000000, statut: 'RECUPERATION', etape: 1, cree: "2025-01-09", statut_selection: 'Certifié', statut_formation: 'Formé', date_formation: "2024-12-05", prestataire: "Cabinet Convergence RH" },
+        { id: 'p11', titre: "Agro-industrie — transformation manioc", jeune_id: 'j11', dispositif_id: 'wf-startup', agence_id: 'ag1', organisme_id: 'or1', montant: 45000000, statut: 'VALIDATION', etape: 4, cree: "2025-01-09", statut_selection: 'Certifié', statut_formation: 'Formé', date_formation: "2024-12-05", prestataire: "Cabinet Convergence RH" },
         /* --- dossiers AGR complémentaires : couvrent l'entrée du parcours et le passage chez le partenaire --- */
         { id: 'p13', titre: "Maquis-restaurant Le Baoulé", jeune_id: 'j13', dispositif_id: 'wf-agr', agence_id: 'ag1', organisme_id: 'or1', montant: 750000, statut: 'PLAN_AFFAIRES', etape: 7, cree: "2025-01-14", statut_selection: 'Retenu', statut_formation: 'Formé', date_formation: "2025-01-06", prestataire: "Cabinet Convergence RH" },
         { id: 'p14', titre: "Pisciculture en étangs", jeune_id: 'j14', dispositif_id: 'wf-agr', agence_id: 'ag2', organisme_id: 'or1', montant: 920000, statut: 'TRAITEMENT_PF', etape: 9, cree: "2024-12-19", statut_selection: 'Retenu', statut_formation: 'Formé', date_formation: "2024-12-09", prestataire: "Institut Excellence Entreprendre" },
         { id: 'p12', titre: "Usine de préfabriqués béton", jeune_id: 'j12', dispositif_id: 'wf-startup', agence_id: 'ag4', organisme_id: 'or2', montant: 62000000, statut: 'DECAISSEMENT', etape: 6, cree: "2024-12-11", statut_selection: 'Certifié', statut_formation: 'Formé', date_formation: "2024-11-26", prestataire: "Institut Excellence Entreprendre" },
         // dossier dédié à la démonstration du cas « à jour » du portefeuille de recouvrement
         { id: 'p15', titre: "Salon de coiffure moderne", jeune_id: 'j15', dispositif_id: 'wf-agr', agence_id: 'ag3', organisme_id: 'or1', montant: 500000, statut: 'SUIVI', etape: 7, cree: "2024-08-10", statut_selection: 'Retenu', statut_formation: 'Formé', date_formation: "2024-07-28", prestataire: "Institut Excellence Entreprendre" },
-        // dossier dédié à la démonstration de l'onglet Contentieux (déjà sorti du portefeuille, garantie déjà appelée)
         { id: 'p16', titre: "Menuiserie artisanale", jeune_id: 'j16', dispositif_id: 'wf-agr', agence_id: 'ag4', organisme_id: 'or1', montant: 480000, statut: 'SUIVI', etape: 7, cree: "2024-05-12", statut_selection: 'Retenu', statut_formation: 'Formé', date_formation: "2024-04-30", prestataire: "Cabinet Convergence RH", contentieux: true }
       ],
       budgets: [
@@ -5326,7 +5325,9 @@
     // et de remboursement — sans quoi l'espace partenaire et le portail bénéficiaire restent vides.
     DB.plans_decaissement = [
       { id: 'pd10', projet_id: 'p10', voie: 'AGENCE', saisi_par: 'u-cip1', note: "Décaissement en 3 tranches conditionnées à l'avancement du développement de la plateforme.", fichier_signe: "plan_decaissement_p10_signe.pdf", valide_benef: true, statut: 'TRANSMIS_PF', cran: 6, cree: "2024-12-20" },
-      { id: 'pd12', projet_id: 'p12', voie: 'AGENCE', saisi_par: 'u-cip1', note: "Acquisition des presses puis génie civil, décaissement en 3 tranches.", fichier_signe: "plan_decaissement_p12_signe.pdf", valide_benef: true, statut: 'TRANSMIS_PF', cran: 6, cree: "2025-01-05" }
+      { id: 'pd12', projet_id: 'p12', voie: 'AGENCE', saisi_par: 'u-cip1', note: "Acquisition des presses puis génie civil, décaissement en 3 tranches.", fichier_signe: "plan_decaissement_p12_signe.pdf", valide_benef: true, statut: 'TRANSMIS_PF', cran: 6, cree: "2025-01-05" },
+      // Plan pour tester l'action "Corriger" (pour p11)
+      { id: 'pd_ajourne', projet_id: 'p11', voie: 'AGENCE', saisi_par: 'u-cip1', note: "Test correction", fichier_signe: "plan_test.pdf", valide_benef: true, statut: 'AJOURNE', cran: 1, cree: "2025-01-21" }
     ];
     DB.lignes_plan = [
       // numéro 1 : plusieurs lignes rattachées au même numéro — le partenaire autorise / l'agence exécute en bloc

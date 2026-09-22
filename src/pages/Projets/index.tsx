@@ -25,6 +25,9 @@ export function ProjetsPage() {
   const planDecaissementProjet = useProjetsStore(s => s.planDecaissementModalProjet)
   const setPlanDecaissementProjet = useProjetsStore(s => s.setPlanDecaissementModalProjet)
 
+  const corrigerModalProjet = useProjetsStore(s => s.corrigerModalProjet)
+  const setCorrigerModalProjet = useProjetsStore(s => s.setCorrigerModalProjet)
+
   const { advance } = useAdvanceWorkflow()
 
   // Synchronise le guichet_id de l'URL dans les filtres du store au montage
@@ -73,6 +76,23 @@ export function ProjetsPage() {
               action: 'PLAN_DECAISSEMENT',
               comment: 'Plan de décaissement enregistré'
             })
+          }
+        }}
+      />
+
+      {/* Modal Correction : pré-rempli avec le plan ajourné du projet */}
+      <PlanDecaissementFormModal
+        open={!!corrigerModalProjet}
+        onOpenChange={(val) => !val && setCorrigerModalProjet(null)}
+        lockedMicroProjetId={corrigerModalProjet?.id}
+        initialData={corrigerModalProjet?.plan_decaissement ?? null}
+        onSuccess={() => {
+          if (corrigerModalProjet) {
+            advance({
+              projet: corrigerModalProjet,
+              action: 'CORRIGER',
+            })
+            setCorrigerModalProjet(null)
           }
         }}
       />

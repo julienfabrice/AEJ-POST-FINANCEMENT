@@ -5085,6 +5085,7 @@
         { id: 'p10', titre: "Plateforme e-santé régionale", jeune_id: 'j10', dispositif_id: 'wf-meps', agence_id: 'ag1', organisme_id: 'or2', montant: 28000000, statut: 'DECAISSEMENT', etape: 7, cree: "2024-11-28", statut_selection: 'Retenu', statut_formation: 'Formé', date_formation: "2024-11-14", prestataire: "Institut Excellence Entreprendre" },
         /* --- dossiers Projets structurants / Start-Up --- */
         { id: 'p11', titre: "Agro-industrie — transformation manioc", jeune_id: 'j11', dispositif_id: 'wf-startup', agence_id: 'ag1', organisme_id: 'or1', montant: 45000000, statut: 'VALIDATION', etape: 4, cree: "2025-01-09", statut_selection: 'Certifié', statut_formation: 'Formé', date_formation: "2024-12-05", prestataire: "Cabinet Convergence RH" },
+        { id: 'p_test_examen', titre: "Projet Test Examiner", jeune_id: 'j1', dispositif_id: 'wf-startup', agence_id: 'ag1', organisme_id: 'or1', montant: 45000000, statut: 'VALIDATION', etape: 4, cree: "2025-01-09", statut_selection: 'Certifié', statut_formation: 'Formé', date_formation: "2024-12-05", prestataire: "Cabinet Convergence RH" },
         /* --- dossiers AGR complémentaires : couvrent l'entrée du parcours et le passage chez le partenaire --- */
         { id: 'p13', titre: "Maquis-restaurant Le Baoulé", jeune_id: 'j13', dispositif_id: 'wf-agr', agence_id: 'ag1', organisme_id: 'or1', montant: 750000, statut: 'PLAN_AFFAIRES', etape: 7, cree: "2025-01-14", statut_selection: 'Retenu', statut_formation: 'Formé', date_formation: "2025-01-06", prestataire: "Cabinet Convergence RH" },
         { id: 'p14', titre: "Pisciculture en étangs", jeune_id: 'j14', dispositif_id: 'wf-agr', agence_id: 'ag2', organisme_id: 'or1', montant: 920000, statut: 'TRAITEMENT_PF', etape: 9, cree: "2024-12-19", statut_selection: 'Retenu', statut_formation: 'Formé', date_formation: "2024-12-09", prestataire: "Institut Excellence Entreprendre" },
@@ -5328,6 +5329,7 @@
       { id: 'pd12', projet_id: 'p12', voie: 'AGENCE', saisi_par: 'u-cip1', note: "Acquisition des presses puis génie civil, décaissement en 3 tranches.", fichier_signe: "plan_decaissement_p12_signe.pdf", valide_benef: true, statut: 'TRANSMIS_PF', cran: 6, cree: "2025-01-05" },
       // Plan pour tester l'action "Corriger" (pour p11)
       { id: 'pd_ajourne', projet_id: 'p11', voie: 'AGENCE', saisi_par: 'u-cip1', note: "Test correction", fichier_signe: "plan_test.pdf", valide_benef: true, statut: 'AJOURNE', cran: 1, cree: "2025-01-21" }
+      , { id: 'pd_examen', projet_id: 'p_test_examen', voie: 'AGENCE', saisi_par: 'u-cip1', note: "Test examen", fichier_signe: "plan_test_examen.pdf", valide_benef: true, statut: 'EN_VALIDATION', cran: 1, cree: "2025-01-21" }
     ];
     DB.lignes_plan = [
       // numéro 1 : plusieurs lignes rattachées au même numéro — le partenaire autorise / l'agence exécute en bloc

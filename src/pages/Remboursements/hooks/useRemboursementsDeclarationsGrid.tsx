@@ -5,6 +5,7 @@ import Fuse from 'fuse.js'
 import { ActionsCellRenderer } from '@/pages/Referentiels/components/ActionsCellRenderer'
 import { RemboursementDeclarationStatutCellRenderer } from '../components/RemboursementDeclarationStatutCellRenderer'
 import { PromoteurDeclarationCellRenderer } from '../components/PromoteurDeclarationCellRenderer'
+import { BudgetDeclarationCellRenderer } from '../components/BudgetDeclarationCellRenderer'
 import { RemboursementDeclarationFormModal } from '../components/RemboursementDeclarationFormModal'
 import { money } from '@/helpers/money'
 import type { REMBOURSEMENT_DECLARATION_T } from '@/types'
@@ -33,7 +34,13 @@ export function useRemboursementsDeclarationsGrid(searchQuery: string) {
         },
         cellRenderer: PromoteurDeclarationCellRenderer,
       },
-      { field: 'budget_id', headerName: 'Budget', width: 100 },
+      {
+        field: 'budget_id',
+        headerName: 'Budget',
+        minWidth: 190,
+        flex: 1,
+        cellRenderer: BudgetDeclarationCellRenderer,
+      },
       {
         field: 'montant_declare',
         headerName: 'Montant déclaré',

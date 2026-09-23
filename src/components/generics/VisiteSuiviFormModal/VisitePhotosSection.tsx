@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { formatDate } from '@/helpers/age'
 import { exploitationServices } from '@/services/exploitations.services'
 import { visitePhotoServices } from '@/services/visitePhotos.services'
+import { useUploadDocumentMutation } from '@/services/documents.services'
 import { useAuthStore } from '@/store/useAuthStore'
 import type { VISITE_PHOTO_T } from '@/types'
 
@@ -42,9 +43,13 @@ interface Props {
    * déjà la relation `visite_photos`). Sert d'AMORÇAGE : voir `photos`.
    */
   photosInitiales?: VISITE_PHOTO_T[]
+  /**
+   * Identifiant du micro-projet associé (nécessaire pour l'upload de document)
+   */
+  microProjetId: number | null
 }
 
-export function VisitePhotosSection({ exploitationId, photosInitiales }: Props) {
+export function VisitePhotosSection({ exploitationId, photosInitiales, microProjetId }: Props) {
   const champUrlId = useId()
   const champDescriptionId = useId()
   const champDateId = useId()
@@ -88,7 +93,7 @@ export function VisitePhotosSection({ exploitationId, photosInitiales }: Props) 
    * imprévisible). Trois champs dont un seul obligatoire ne justifient de
    * toute façon ni résolveur ni schéma.
    */
-  const [photoUrl, setPhotoUrl] = useState('')
+  const [file, setFile] = useState<File | null>(null)
   const [description, setDescription] = useState('')
   // Par défaut la date du jour : on relève une photo le jour où on la verse.
   const [priseLe, setPriseLe] = useState(() => dayjs().format('YYYY-MM-DD'))
@@ -96,18 +101,32 @@ export function VisitePhotosSection({ exploitationId, photosInitiales }: Props) 
   /** Photo dont la suppression attend confirmation (`null` = aucune). */
   const [idAConfirmer, setIdAConfirmer] = useState<number | null>(null)
 
+  const { mutateAsync: uploadDocument, isPending: uploadEnCours } = useUploadDocumentMutation()
   const { mutate: creerPhoto, isPending: ajoutEnCours } = visitePhotoServices.useCreate()
   const { mutate: supprimerPhoto, isPending: suppressionEnCours } = visitePhotoServices.useDelete()
 
-  const urlSaisie = photoUrl.trim()
-  const ajoutPossible = exploitationId !== null && urlSaisie.length > 0 && !ajoutEnCours
+  const isUploadingOrAdding = uploadEnCours || ajoutEnCours
+  const ajoutPossible = exploitationId !== null && microProjetId !== null && file !== null && !isUploadingOrAdding
 
-  const ajouter = () => {
-    if (!ajoutPossible || exploitationId === null) return
-    creerPhoto(
+  const ajouter = async () => {
+    if (!ajoutPossible || exploitationId === null || microProjetId === null || !file) return
+    
+    try {
+      // 1. Upload du fichier via documents.services
+      const uploadRes = await uploadDocument({
+        file,
+        folder: 'visite-photos',
+        micro_projet_id: String(microProjetId)
+      })
+      
+      // Le chemin retourné par l'API (on tente plusieurs formats courants)
+      const uploadedUrl = uploadRes?.data?.path || uploadRes?.data?.url || uploadRes?.path || uploadRes?.url || uploadRes?.file_path || file.name
+
+      // 2. Enregistrement de la photo de visite
+      creerPhoto(
       {
         exploitation_id: exploitationId,
-        photo_url: urlSaisie,
+        photo_url: uploadedUrl,
         description,
         prise_le: priseLe,
         prise_par_id: utilisateurId,
@@ -116,12 +135,15 @@ export function VisitePhotosSection({ exploitationId, photosInitiales }: Props) 
         // On ne vide les champs qu'en cas de SUCCÈS : après un rejet de
         // validation, la saisie est conservée pour être corrigée.
         onSuccess: () => {
-          setPhotoUrl('')
+          setFile(null)
           setDescription('')
           setPriseLe(dayjs().format('YYYY-MM-DD'))
         },
-      },
+      }
     )
+    } catch (error) {
+      console.error("Erreur lors de l'ajout de la photo", error)
+    }
   }
 
   /**
@@ -285,11 +307,14 @@ export function VisitePhotosSection({ exploitationId, photosInitiales }: Props) 
                 */}
                 <Input
                   id={champUrlId}
-                  value={photoUrl}
-                  onChange={(evenement) => setPhotoUrl(evenement.target.value)}
+                  type="file"
+                  accept="image/*"
+                  onChange={(evenement) => {
+                    const selectedFile = evenement.target.files?.[0]
+                    setFile(selectedFile || null)
+                  }}
                   onKeyDown={surEntree}
-                  placeholder="/storage/photos/visite_001.jpg"
-                  className="h-9 bg-white font-mono text-[12.5px]"
+                  className="h-9 bg-white text-[12.5px] file:text-[12.5px] file:text-slate-500 file:border-0 file:bg-transparent file:font-medium"
                 />
               </div>
 
@@ -341,7 +366,7 @@ export function VisitePhotosSection({ exploitationId, photosInitiales }: Props) 
                   onClick={ajouter}
                 >
                   <Plus className="h-4 w-4" />
-                  {ajoutEnCours ? 'Ajout…' : 'Ajouter'}
+                  {isUploadingOrAdding ? 'Ajout…' : 'Ajouter'}
                 </Button>
               </div>
             </div>

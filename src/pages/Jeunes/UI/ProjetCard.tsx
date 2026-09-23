@@ -5,7 +5,7 @@ import {
   PROJET_TYPE_OPTIONS,
   type FilterOption,
 } from '@/constants/promoteurs.filters'
-import { formatMontant } from '@/helpers/numbers'
+import { money } from '@/helpers/money'
 import { cn } from '@/lib/utils'
 import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
 
@@ -23,7 +23,10 @@ const statutTone = (statut: string) => {
 
 
 export function ProjetCard({ projet }: { projet: MICRO_PROJET_T }) {
-  const montant = formatMontant(projet.montant_total , 'FCFA')
+  const montant =
+    projet.montant_total != null && !Number.isNaN(Number(projet.montant_total))
+      ? money(Number(projet.montant_total))
+      : null
 
   return (
     <article className="rounded-lg border border-border p-3">

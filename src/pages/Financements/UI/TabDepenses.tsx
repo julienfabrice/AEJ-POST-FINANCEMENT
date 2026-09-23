@@ -1,10 +1,11 @@
-import { Plus, Search } from 'lucide-react'
+import { Plus, Search, Upload } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { DataGrid } from '@/components/ui/DataGrid'
 import { TransactionFormModal } from '../components/TransactionFormModal'
+import { TransactionImportModal } from '../components/TransactionImportModal'
 import { useTabDepenses } from '../hooks/useTabDepenses'
 
 export function TabDepenses() {
@@ -16,6 +17,8 @@ export function TabDepenses() {
     columnDefs,
     isCreateOpen,
     setIsCreateOpen,
+    isImportOpen,
+    setIsImportOpen,
     toEdit,
     handleCloseModal,
   } = useTabDepenses()
@@ -26,6 +29,11 @@ export function TabDepenses() {
         open={isCreateOpen || !!toEdit} 
         onOpenChange={handleCloseModal} 
         initialData={toEdit} 
+      />
+
+      <TransactionImportModal
+        open={isImportOpen}
+        onOpenChange={setIsImportOpen}
       />
 
       {/* Toolbar */}
@@ -43,7 +51,15 @@ export function TabDepenses() {
           {isLoading ? 'Chargement...' : `${filteredData.length} dépense(s)`}
         </span>
         <div className="flex-1" />
-        <Button onClick={() => setIsCreateOpen(true)} className="h-9 cursor-pointer">
+        <Button
+          variant="outline"
+          onClick={() => setIsImportOpen(true)}
+          className="h-9 cursor-pointer border-slate-200 text-slate-700 hover:bg-slate-50"
+        >
+          <Upload className="w-4 h-4 mr-2 text-[#E7722B]" />
+          Importer
+        </Button>
+        <Button onClick={() => setIsCreateOpen(true)} className="h-9 cursor-pointer bg-[#E7722B] text-white hover:bg-[#C85E18]">
           <Plus className="w-4 h-4 mr-2" />
           Nouvelle dépense
         </Button>

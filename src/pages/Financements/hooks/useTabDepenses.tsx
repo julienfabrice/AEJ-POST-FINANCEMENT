@@ -23,6 +23,7 @@ export function useTabDepenses() {
   const [searchQuery, setSearchQuery] = useState('')
   const [toEdit, setToEdit] = useState<TRANSACTION_T | null>(null)
   const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [isImportOpen, setIsImportOpen] = useState(false)
 
   const handleCloseModal = useCallback((open: boolean) => {
     if (!open) {
@@ -146,6 +147,8 @@ export function useTabDepenses() {
     setToEdit,
     isCreateOpen,
     setIsCreateOpen,
+    isImportOpen,
+    setIsImportOpen,
     handleCloseModal,
     deleteTransaction,
   }

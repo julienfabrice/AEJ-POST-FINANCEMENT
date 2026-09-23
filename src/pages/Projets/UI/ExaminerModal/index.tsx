@@ -89,7 +89,7 @@ export function ExaminerModal() {
           </div>
         </div>
 
-        <ExaminerFooter handleClose={handleClose} />
+        <ExaminerFooter handleClose={handleClose} projet={projet} />
       </SheetContent>
     </Sheet>
   )

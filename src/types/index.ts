@@ -387,7 +387,7 @@ export interface LOT_TRANSMISSION_T {
 // --- Décaissements (schema.v2.sql, section 15) ---
 
 export type MODE_DECAISSE_T = 'CHEQUE' | 'VIREMENT'
-export type LIGNE_DECAISSEMENT_STATUT_T = 'VALIDE' | 'NON_VALIDE'
+export type LIGNE_DECAISSEMENT_STATUT_T = 'PREVU' | 'AUTORISE' | 'EXECUTE'
 
 export interface LIGNE_DECAISSEMENT_T {
   id?: number
@@ -402,6 +402,10 @@ export interface LIGNE_DECAISSEMENT_T {
   contact?: string | null
   statut: LIGNE_DECAISSEMENT_STATUT_T
   observations?: string | null
+  date_autorisation?: string | null
+  justif_autorisation?: string | null
+  date_execution?: string | null
+  justif_execution?: string | null
 }
 
 export type PLAN_DECAISSEMENT_STATUT_T =

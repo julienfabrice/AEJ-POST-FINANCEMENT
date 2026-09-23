@@ -11,7 +11,7 @@ import { useImputerAction } from './imputater/useImputerAction'
 import { usePlanDecaissementAction } from './usePlanDecaissementAction'
 import { useCorrigerAction } from './useCorrigerAction'
 import { useExaminerAction } from './examiner/useExaminerAction'
-import { useAutoriserAction } from './useAutoriserAction'
+import { useAutoriserAction } from './autoriser/useAutoriserAction'
 import { useExecuterAction } from './executer/useExecuterAction'
 import { usePlanConventionAction } from './usePlanConventionAction'
 

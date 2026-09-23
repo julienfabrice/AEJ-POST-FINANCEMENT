@@ -7,7 +7,7 @@ import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
 
 interface ExaminerFooterProps {
   handleClose: () => void
-  projet: MICRO_PROJET_T
+  projet: MICRO_PROJET_T | null
 }
 
 export function ExaminerFooter({ handleClose, projet }: ExaminerFooterProps) {

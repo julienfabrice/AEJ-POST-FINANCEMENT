@@ -63,7 +63,7 @@ export function PlanDecaissementModal() {
             <SectionTitle>
               Lignes de décaissement {projet.plan_decaissement?.lignes?.length ? `(${projet.plan_decaissement.lignes.length})` : ''}
             </SectionTitle>
-            <LignesTable lignes={projet.plan_decaissement?.lignes || []} />
+            <LignesTable lignes={projet.plan_decaissement?.lignes || []} projet={projet} />
 
             {historiques && historiques.length > 0 ? (
               <>

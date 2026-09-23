@@ -44,7 +44,15 @@ export function ProjetDetailsSheet() {
                 </TabsTrigger>
               ))}
             </TabsList>
-            <Button variant="ghost" size="sm" className="h-7 text-[12px] text-aej-slate hover:bg-aej-line/50">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-7 text-[12px] text-aej-slate hover:bg-aej-line/50"
+              onClick={() => {
+                handleClose()
+                useProjetsStore.getState().setAntecedentsModalProjet(projet)
+              }}
+            >
               <Users className="w-3.5 h-3.5 mr-1.5 text-aej-slate-2" />
               Antécédents
             </Button>

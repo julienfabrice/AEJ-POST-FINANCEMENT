@@ -219,7 +219,7 @@ export const AGENT_NAV_ITEMS: NavItem[] = [
   // ADMINISTRATION
   {
     key: 'admin_profils',
-    label: 'Profils & permissions',
+    label: 'Rôles & permissions',
     path: ROUTES.ADMIN_PROFILS,
     icon: Shield,
     group: 'ADMINISTRATION',
@@ -345,7 +345,7 @@ export const PAGE_TITLES: Partial<Record<AppRoute, string>> = {
   [ROUTES.CADRE_RESULTAT]: 'Cadre de résultat',
   [ROUTES.RAPPORTS]: 'Rapports',
   [ROUTES.TABLEAU_BORD_SUIVI]: 'Power BI',
-  [ROUTES.ADMIN_PROFILS]: 'Profils & permissions',
+  [ROUTES.ADMIN_PROFILS]: 'Rôles & permissions',
   [ROUTES.ADMIN_PERSONNELS]: 'Personnels',
   [ROUTES.ADMIN_LOCALITES]: 'Localités',
   [ROUTES.ADMIN_UNITES]: 'Unités de gestion',

@@ -612,6 +612,7 @@ export interface TRANSACTION_T {
  * arbitrages maquette/API est documenté dans `suivi.types.ts`.
  */
 export * from './suivi.types'
+export * from './observations.types'
 
 /**
  * --- Agrégats de tableau de bord (`/dashboard/*`) ---

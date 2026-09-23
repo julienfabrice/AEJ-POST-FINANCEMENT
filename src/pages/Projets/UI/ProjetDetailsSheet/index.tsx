@@ -52,9 +52,9 @@ export function ProjetDetailsSheet() {
 
           <div className="flex-1 overflow-y-auto custom-scrollbar p-6 bg-aej-bg text-[13px]">
             <DossierTab projet={projet} />
-            <WorkflowTab />
+            <WorkflowTab projet={projet} />
             <PiecesTab />
-            <ObservationsTab />
+            <ObservationsTab projet={projet} />
           </div>
 
           <ProjetSheetFooter onClose={handleClose} />

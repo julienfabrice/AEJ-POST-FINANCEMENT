@@ -18,6 +18,7 @@ import {
   ChevronRight,
 } from 'lucide-react'
 import { useProjetsStore } from '@/store/useProjetsStore'
+import { workflowServices } from '@/services/workflow'
 import { cn } from '@/lib/utils'
 
 // ─── Données statiques mock (Phase 1) ───────────────────────────────────────
@@ -111,10 +112,16 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   )
 }
 
-function ChaineValidation() {
+function ChaineValidation({ chaine, totalSteps, visibleStartIndex }: { chaine: { role: string; statut: 'done' | 'current' | 'pending'; originalIndex: number }[], totalSteps: number, visibleStartIndex: number }) {
   return (
     <div className="flex items-center gap-0 overflow-x-auto pb-1">
-      {MOCK_CHAINE.map((step, i) => (
+      {visibleStartIndex > 0 && (
+        <div className="flex items-center shrink-0 text-slate-300 mr-2 mb-4">
+          ...
+          <ChevronRight className="w-4 h-4 mx-2" />
+        </div>
+      )}
+      {chaine.map((step, i) => (
         <div key={i} className="flex items-center shrink-0">
           <div className="flex flex-col items-center gap-1">
             <div
@@ -128,25 +135,29 @@ function ChaineValidation() {
               {step.statut === 'done' ? (
                 <Check className="w-3.5 h-3.5" />
               ) : (
-                <span>{i + 1}</span>
+                <span>{step.originalIndex + 1}</span>
               )}
             </div>
             <span
               className={cn(
-                'text-[10px] font-medium text-center max-w-[80px] leading-tight',
-                step.statut === 'current' && 'text-[#C85E18]',
-                step.statut === 'pending' && 'text-slate-400',
-                step.statut === 'done'    && 'text-green-600',
+                'text-[11px] font-semibold text-center leading-tight w-24',
+                step.statut === 'current' ? 'text-[#E7722B]' : 'text-slate-500'
               )}
             >
               {step.role}
             </span>
           </div>
-          {i < MOCK_CHAINE.length - 1 && (
-            <ChevronRight className="w-4 h-4 text-slate-300 mx-1 mb-4 shrink-0" />
+          {i < chaine.length - 1 && (
+            <ChevronRight className={cn("w-4 h-4 mx-2 mb-4 shrink-0", step.statut === 'done' ? 'text-green-300' : 'text-slate-200')} />
           )}
         </div>
       ))}
+      {(visibleStartIndex + chaine.length) < totalSteps && (
+        <div className="flex items-center shrink-0 text-slate-300 ml-2 mb-4">
+          <ChevronRight className="w-4 h-4 mx-2" />
+          ...
+        </div>
+      )}
     </div>
   )
 }
@@ -255,10 +266,59 @@ export function ExaminerModal() {
   const projet = useProjetsStore(s => s.examinerModalProjet)
   const setExaminerModalProjet = useProjetsStore(s => s.setExaminerModalProjet)
 
+  const { data: versions } = workflowServices.useGetVersions()
+  const { data: allEtapeRoles } = workflowServices.useGetAllEtapeRoles()
+
   const handleClose = () => setExaminerModalProjet(null)
 
   const currentStatut = projet?.plan_decaissement?.statut ?? projet?.statut ?? 'BROUILLON'
   const statutConfig = STATUT_PLAN[currentStatut] ?? { label: currentStatut, variant: 'outline' as const }
+
+  // Génération dynamique de la chaîne de validation
+  const currentVersion = versions?.find(v => v.code === projet?.workflow_instance?.workflow_version)
+  const mainSteps = (currentVersion?.etapes || [])
+    .filter(e => !e.parent_etape_code)
+    .sort((a, b) => (a.order || 0) - (b.order || 0))
+
+  const currentStepCode = projet?.workflow_instance?.current_etape_code
+  const currentIndex = mainSteps.findIndex(s => s.code === currentStepCode)
+
+  let visibleStartIndex = 0
+  let visibleEndIndex = mainSteps.length
+
+  if (mainSteps.length > 0) {
+    if (currentIndex !== -1) {
+      visibleStartIndex = Math.max(0, currentIndex - 2)
+      visibleEndIndex = Math.min(mainSteps.length, currentIndex + 3)
+    } else if (projet?.workflow_instance?.statut === 'ACHEVE' || projet?.workflow_instance?.statut === 'TERMINE') {
+      visibleStartIndex = Math.max(0, mainSteps.length - 5)
+    }
+  }
+
+  const visibleSteps = mainSteps.slice(visibleStartIndex, visibleEndIndex)
+
+  const chaineValidation = visibleSteps.length > 0 ? visibleSteps.map((step, mappedIndex) => {
+    const originalIndex = visibleStartIndex + mappedIndex
+    let statut: 'done' | 'current' | 'pending' = 'pending'
+    if (currentIndex === -1) {
+      if (projet?.workflow_instance?.statut === 'ACHEVE' || projet?.workflow_instance?.statut === 'TERMINE') {
+        statut = 'done'
+      }
+    } else if (originalIndex < currentIndex) {
+      statut = 'done'
+    } else if (originalIndex === currentIndex) {
+      statut = 'current'
+    }
+
+    // Chercher le premier rôle associé à cette étape
+    const etapeRoles = allEtapeRoles?.filter(r => r.etape_code === step.code) || []
+    const firstRoleCode = etapeRoles.length > 0 ? etapeRoles[0].role_code : undefined
+    
+    // On affiche le code du rôle, sinon on fallback sur le nom de l'étape
+    const roleCode = firstRoleCode || step.name
+
+    return { role: roleCode, statut, originalIndex }
+  }) : MOCK_CHAINE.map((c, i) => ({ ...c, originalIndex: i }))
 
   return (
     <Sheet open={!!projet} onOpenChange={(open) => !open && handleClose()}>
@@ -302,7 +362,11 @@ export function ExaminerModal() {
 
             {/* Chaîne de validation */}
             <SectionTitle>Chaîne de validation</SectionTitle>
-            <ChaineValidation />
+            <ChaineValidation 
+              chaine={chaineValidation} 
+              totalSteps={mainSteps.length > 0 ? mainSteps.length : MOCK_CHAINE.length} 
+              visibleStartIndex={visibleStartIndex} 
+            />
 
             {/* Métadonnées */}
             <SectionTitle>Informations du plan</SectionTitle>

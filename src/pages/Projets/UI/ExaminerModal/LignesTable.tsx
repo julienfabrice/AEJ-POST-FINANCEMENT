@@ -6,7 +6,7 @@ import { STATUT_LIGNE } from '@/constants/PLAN_STATUSES'
 import { useConfigStore } from '@/store/useConfigStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useAutoriserNumero } from '../../hooks/actions/autoriser/useAutoriserNumero'
-import { useExecuterNumero } from '../../hooks/actions/executer/useExecuterNumero'
+import { useExecuterModal } from '../../hooks/actions/executer/useExecuterModal'
 import { AutoriserModal } from '../PlanDecaissementModal/AutoriserModal'
 import { ExecuterModal } from '../PlanDecaissementModal/ExecuterModal'
 import { Button } from '@/components/ui/button'
@@ -34,7 +34,7 @@ export function LignesTable({ lignes, projet }: { lignes: LIGNE_DECAISSEMENT_T[]
   const roleCode = import.meta.env.VITE_MOCK_USER_ROLE || user?.role?.code || ''
   
   const autoriserHook = useAutoriserNumero(projet || null)
-  const executerHook = useExecuterNumero(projet || null)
+  const executerHook = useExecuterModal(projet || null)
 
   if (!lignes || lignes.length === 0) {
     return (

@@ -20,14 +20,14 @@ import type { PLAN_DECAISSEMENT_T, LIGNE_DECAISSEMENT_T } from '@/types'
 function LigneRow({ ligne }: { ligne: LIGNE_DECAISSEMENT_T }) {
   const badge = ligneStatutBadge(ligne.statut)
   const numCls =
-    ligne.statut === 'VALIDE'
+    ligne.statut === 'EXECUTE'
       ? 'bg-[#20A83A]'
       : 'bg-[#131C29]'
 
   return (
     <div
       className={`border rounded-[8px] mb-2 overflow-hidden ${
-        ligne.statut === 'VALIDE'
+        ligne.statut === 'EXECUTE'
           ? 'border-[#c7ebd0]'
           : 'border-[#E5EAF1]'
       }`}
@@ -82,7 +82,7 @@ function PlanDrawer({
   const lignes = plan.lignes ?? []
   const total = Number(plan.montant_planifie) || lignes.reduce((s, l) => s + Number(l.montant_ligne), 0)
   const decaisse = lignes
-    .filter((l) => l.statut === 'VALIDE')
+    .filter((l) => l.statut === 'EXECUTE')
     .reduce((s, l) => s + Number(l.montant_ligne), 0)
 
   const projet = plan.micro_projet

@@ -6,6 +6,7 @@ import { useWorkflowVersionsMap, getEtapeActuelle } from '@/pages/Projets/hooks/
 import { useProjetActions } from '@/pages/Projets/hooks/actions'
 import { roleCode, actionLabel } from '@/helpers/workflowLabels'
 import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
+import { useProjetsStore } from '@/store/useProjetsStore'
 
 interface ActionBannerProps {
   projet: MICRO_PROJET_T

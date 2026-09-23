@@ -7,8 +7,10 @@ import { WORKFLOW_ADVANCE_DISABLED } from '@/constants/devFlags'
 import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { axiosInstance } from '@/constants/axiosInstance'
+import { useUploadDocumentMutation } from '@/services/documents.services'
+import type { ExecutionLigneDecaissementPayload } from '@/schema/plan-decaissements/executionSchema'
 
-export function useExecuterNumero(projet: MICRO_PROJET_T | null) {
+export function useExecuterModal(projet: MICRO_PROJET_T | null) {
   const [isOpen, setIsOpen] = useState(false)
   const [numeroToExec, setNumeroToExec] = useState<number | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -18,15 +20,11 @@ export function useExecuterNumero(projet: MICRO_PROJET_T | null) {
   const queryClient = useQueryClient()
   const user = useAuthStore((s) => s.user)
   const roleCode = import.meta.env.VITE_MOCK_USER_ROLE || user?.role?.code || ''
+  const uploadMutation = useUploadDocumentMutation()
 
-  // Mutation hypothétique vers un endpoint bulk pour exécuter les lignes d'un même numéro
   const executerMutation = useMutation({
-    mutationFn: async ({ planId, numero, date, justif }: { planId: number, numero: number, date: string, justif: string }) => {
-      const response = await axiosInstance.patch(`/plan-decaissements/${planId}/executer-numero`, {
-        numero_ligne: numero,
-        date_execution: date,
-        justif_execution: justif
-      })
+    mutationFn: async (payload: ExecutionLigneDecaissementPayload) => {
+      const response = await axiosInstance.post(`/execution-ligne-decaissements`, payload)
       return response.data
     },
     onSuccess: () => {
@@ -45,23 +43,57 @@ export function useExecuterNumero(projet: MICRO_PROJET_T | null) {
     setNumeroToExec(null)
   }
 
-  const submitExecution = async (date: string, justifId: string) => {
+  const submitExecution = async ({
+    date,
+    file,
+    mode_decaisse,
+    observations
+  }: {
+    date: string
+    file: File
+    mode_decaisse: 'CHEQUE' | 'VIREMENT'
+    observations: string
+  }) => {
     if (!projet || numeroToExec === null) return
     const plan = projet.plan_decaissement
     if (!plan) return
+    const lignesToExec = (plan.lignes || []).filter(l => l.numero_ligne === numeroToExec)
+    if (!lignesToExec.length) return
 
     setIsSubmitting(true)
     try {
+      let justificatif_path = ''
+
+      try {
+        const docResult = await uploadMutation.mutateAsync({
+          file,
+          folder: 'Decaissements',
+          micro_projet_id: projet.id.toString()
+        })
+        justificatif_path = docResult.path
+      } catch (err) {
+        console.error(err)
+        toast.error("Erreur lors de l'upload du justificatif.")
+        setIsSubmitting(false)
+        return
+      }
+
       if (WORKFLOW_ADVANCE_DISABLED) {
         console.log(`[useExecuterNumero] Simulation d'exécution du N°${numeroToExec}`)
         toast.info(`Lignes du N°${numeroToExec} exécutées (Simulation)`)
       } else {
-        await executerMutation.mutateAsync({
-          planId: plan.id,
-          numero: numeroToExec,
-          date,
-          justif: justifId
-        })
+        await Promise.all(
+          lignesToExec.map(ligne =>
+            executerMutation.mutateAsync({
+              ligne_decaissement_id: ligne.id!,
+              statut: 'VALIDE',
+              mode_decaisse,
+              date_decaisse: date,
+              justificatif_path,
+              observations: observations || undefined
+            })
+          )
+        )
         toast.success(`Le décaissement (N°${numeroToExec}) a été exécuté.`)
       }
 

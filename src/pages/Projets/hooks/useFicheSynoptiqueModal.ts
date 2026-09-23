@@ -14,7 +14,7 @@ export function useFicheSynoptiqueModal() {
   // Montant décaissé : somme des lignes de décaissement validées, ou du plan de décaissement, ou 0
   const lignesDecaissement = projet?.plan_decaissement?.lignes || []
   const montantDecaisseRaw = lignesDecaissement
-    .filter(l => l.statut === 'VALIDE')
+    .filter(l => l.statut === 'EXECUTE')
     .reduce((acc, l) => acc + Number(l.montant_ligne), 0)
   const montantDecaisse = montantDecaisseRaw > 0 
     ? new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'XOF' }).format(montantDecaisseRaw) 

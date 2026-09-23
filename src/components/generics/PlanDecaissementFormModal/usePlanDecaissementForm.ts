@@ -17,7 +17,7 @@ const EMPTY_LIGNE = {
   intitule_prestataire: '',
   numero_compte: '',
   contact: '',
-  statut: 'NON_VALIDE' as const,
+  statut: 'PREVU' as const,
   observations: '',
 }
 

@@ -12,6 +12,12 @@ export interface API_RESPONSE_T<T> {
   data: T
 }
 
+export interface PAYS_T {
+  id: number
+  code_iso: string
+  nom: string
+}
+
 export interface JEUNE_T {
   id: string
   matricule: string

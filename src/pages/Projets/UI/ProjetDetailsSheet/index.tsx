@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Users } from 'lucide-react'
 import { useProjetsStore } from '@/store/useProjetsStore'
 import { ProjetSheetHeader, ProjetSheetFooter } from './components'
+import { ActionBanner } from './components/ActionBanner'
 import { DossierTab, WorkflowTab, ObservationsTab } from './Tabs'
 
 export function ProjetDetailsSheet() {
@@ -50,6 +51,7 @@ export function ProjetDetailsSheet() {
           </div>
 
           <div className="flex-1 overflow-y-auto custom-scrollbar p-6 bg-aej-bg text-[13px]">
+            <ActionBanner projet={projet} />
             <DossierTab projet={projet} />
             <WorkflowTab projet={projet} />
             <ObservationsTab projet={projet} />

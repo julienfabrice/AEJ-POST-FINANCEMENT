@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { FileText, Lock, FileSignature, Receipt } from 'lucide-react'
+import { FileText, Receipt } from 'lucide-react'
 import { useProjetsStore } from '@/store/useProjetsStore'
 
 interface ProjetSheetFooterProps {
@@ -23,19 +23,20 @@ export function ProjetSheetFooter({ onClose }: ProjetSheetFooterProps) {
         <FileText className="w-4 h-4 mr-1.5" />
         Fiche synoptique
       </Button>
-      <Button variant="ghost" size="sm" className="h-9 text-[13px] text-aej-slate hover:bg-aej-line-2">
+      <Button 
+        variant="ghost" 
+        size="sm" 
+        className="h-9 text-[13px] text-aej-slate hover:bg-aej-line-2"
+        onClick={() => {
+          if (selectedProjet) {
+            useProjetsStore.getState().setPlanDecaissementViewerProjet(selectedProjet)
+          }
+        }}
+      >
         <Receipt className="w-4 h-4 mr-1.5" />
         Plan de décaissement
       </Button>
       <div className="flex-1" />
-      <Button size="sm" className="h-9 bg-aej-green hover:bg-aej-green-deep text-white shadow-none">
-        <FileSignature className="w-4 h-4 mr-1.5" />
-        Convention de prêt signée
-      </Button>
-      <Button size="sm" variant="destructive" className="h-9 bg-aej-red-soft text-aej-red border border-aej-red-soft hover:bg-aej-red-soft shadow-none">
-        <Lock className="w-4 h-4 mr-1.5" />
-        Annulation du prêt
-      </Button>
     </div>
   )
 }

@@ -13,6 +13,8 @@ interface AdvanceWorkflowParams {
   action: string
   /** Commentaire / observation optionnel à enregistrer dans l'historique */
   comment?: string
+  /** Retourner à la première étape du workflow (ex: en cas de rejet) */
+  goToFirst?: boolean
 }
 
 /**
@@ -33,7 +35,7 @@ export function useAdvanceWorkflow() {
   const patchInstance = workflowInstancesServices.usePatchInstance()
   const { versionsMap } = useWorkflowVersionsMap()
 
-  const advance = async ({ projet, action, comment }: AdvanceWorkflowParams) => {
+  const advance = async ({ projet, action, comment, goToFirst }: AdvanceWorkflowParams) => {
     const instance = projet.workflow_instance
     if (!instance) {
       console.warn('[useAdvanceWorkflow] Aucune instance workflow sur ce projet.', projet.id)
@@ -47,21 +49,29 @@ export function useAdvanceWorkflow() {
     const roleCode = import.meta.env.VITE_MOCK_USER_ROLE || user.role?.code || ''
 
     // ── Résolution de la prochaine étape ─────────────────────────────────────
-    // Priorité 1 : valeur fournie par le backend
-    // Priorité 2 : calcul front depuis la définition du workflow
     const version = versionsMap[instance.workflow_version]
-    const nextEtapeCode: string | null =
-      instance.next_etape_code !== null && instance.next_etape_code !== undefined
-        ? instance.next_etape_code
-        : resolveNextEtape(version?.etapes ?? [], instance.current_etape_code)
+    
+    let nextEtapeCode: string | null = null
+    let statutPatch = 'EN_COURS'
+    let isLastStep = false
 
-    const isLastStep = nextEtapeCode === null
+    if (goToFirst) {
+      const mainSteps = (version?.etapes || [])
+        .filter(e => !e.parent_etape_code)
+        .sort((a, b) => (a.order || 0) - (b.order || 0))
+      
+      nextEtapeCode = mainSteps[0]?.code || null
+      statutPatch = 'AJOURNE'
+    } else {
+      // Priorité 1 : valeur fournie par le backend
+      // Priorité 2 : calcul front depuis la définition du workflow
+      nextEtapeCode =
+        instance.next_etape_code !== null && instance.next_etape_code !== undefined
+          ? instance.next_etape_code
+          : resolveNextEtape(version?.etapes ?? [], instance.current_etape_code)
 
-    // Block the actual api calls if the workflow is frozen
-    if (WORKFLOW_ADVANCE_DISABLED) {
-      console.log('[useAdvanceWorkflow] Simulation de passage à l\'étape:', isLastStep ? 'FIN' : nextEtapeCode)
-      toast.info('Action simulée : le workflow ne bougera pas (VITE_WORKFLOW_ADVANCE_DISABLED=true)', { duration: 5000 })
-      return
+      isLastStep = nextEtapeCode === null
+      statutPatch = isLastStep ? 'TERMINE' : 'EN_COURS'
     }
 
     // 1. Enregistrement de l'historique
@@ -74,13 +84,20 @@ export function useAdvanceWorkflow() {
       comment: comment || null,
     })
 
+    // Block the actual api calls if the workflow is frozen
+    if (WORKFLOW_ADVANCE_DISABLED) {
+      console.log('[useAdvanceWorkflow] Simulation de passage à l\'étape:', isLastStep ? 'FIN' : nextEtapeCode)
+      toast.info('Action simulée : le workflow ne bougera pas (VITE_WORKFLOW_ADVANCE_DISABLED=true)', { duration: 5000 })
+      return
+    }
+
     // 2. Mise à jour de l'instance
     await patchInstance.mutateAsync({
       instanceId: instance.id,
       patch: {
         current_etape_code: nextEtapeCode,
         next_etape_code: null,
-        statut: isLastStep ? 'TERMINE' : 'EN_COURS',
+        statut: statutPatch,
         completed_at: isLastStep ? new Date().toISOString() : null,
       },
     })

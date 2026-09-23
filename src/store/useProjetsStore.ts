@@ -44,6 +44,8 @@ interface ProjetsState {
   setVisiteSuiviModalProjet: (projet: MICRO_PROJET_T | null) => void
   setImputerAlertModalProjet: (projet: MICRO_PROJET_T | null) => void
   setPlanDecaissementModalProjet: (projet: MICRO_PROJET_T | null) => void
+  planDecaissementViewerProjet: MICRO_PROJET_T | null
+  setPlanDecaissementViewerProjet: (projet: MICRO_PROJET_T | null) => void
   setCorrigerModalProjet: (projet: MICRO_PROJET_T | null) => void
   setExaminerModalProjet: (projet: MICRO_PROJET_T | null) => void
   setFicheSynoptiqueModalProjet: (projet: MICRO_PROJET_T | null) => void
@@ -69,6 +71,7 @@ export const useProjetsStore = create<ProjetsState>((set) => ({
   visiteSuiviModalProjet: null,
   imputerAlertModalProjet: null,
   planDecaissementModalProjet: null,
+  planDecaissementViewerProjet: null,
   corrigerModalProjet: null,
   examinerModalProjet: null,
   ficheSynoptiqueModalProjet: null,
@@ -91,6 +94,7 @@ export const useProjetsStore = create<ProjetsState>((set) => ({
   setVisiteSuiviModalProjet: (visiteSuiviModalProjet) => set({ visiteSuiviModalProjet }),
   setImputerAlertModalProjet: (imputerAlertModalProjet) => set({ imputerAlertModalProjet }),
   setPlanDecaissementModalProjet: (planDecaissementModalProjet) => set({ planDecaissementModalProjet }),
+  setPlanDecaissementViewerProjet: (planDecaissementViewerProjet) => set({ planDecaissementViewerProjet }),
   setCorrigerModalProjet: (corrigerModalProjet) => set({ corrigerModalProjet }),
   setExaminerModalProjet: (examinerModalProjet) => set({ examinerModalProjet }),
   setFicheSynoptiqueModalProjet: (ficheSynoptiqueModalProjet) => set({ ficheSynoptiqueModalProjet }),

@@ -12,6 +12,7 @@ import { RemboursementsModal } from './UI/remboursements/RemboursementsModal'
 import { ImputerAlertModal } from './UI/ImputerAlertModal'
 import { ExaminerModal } from './UI/ExaminerModal'
 import { FicheSynoptiqueModal } from './UI/FicheSynoptiqueModal'
+import { PlanDecaissementModal } from './UI/PlanDecaissementModal'
 import { VisiteSuiviFormModal } from '@/components/generics/VisiteSuiviFormModal'
 import { PlanDecaissementFormModal } from '@/components/generics/PlanDecaissementFormModal'
 import { useProjetsStore } from '@/store/useProjetsStore'
@@ -62,6 +63,7 @@ export function ProjetsPage() {
       <ImputerAlertModal />
       <ExaminerModal />
       <FicheSynoptiqueModal />
+      <PlanDecaissementModal />
       
       <VisiteSuiviFormModal
         open={!!visiteSuiviProjet}

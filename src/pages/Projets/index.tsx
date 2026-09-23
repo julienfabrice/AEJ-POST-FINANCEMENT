@@ -14,6 +14,7 @@ import { ExaminerModal } from './UI/ExaminerModal'
 import { FicheSynoptiqueModal } from './UI/FicheSynoptiqueModal'
 import { PlanDecaissementModal } from './UI/PlanDecaissementModal'
 import { AntecedentsModal } from './UI/AntecedentsModal'
+import { PlanConventionModal } from './UI/PlanConventionModal'
 import { VisiteSuiviFormModal } from '@/components/generics/VisiteSuiviFormModal'
 import { PlanDecaissementFormModal } from '@/components/generics/PlanDecaissementFormModal'
 import { useProjetsStore } from '@/store/useProjetsStore'
@@ -66,6 +67,7 @@ export function ProjetsPage() {
       <FicheSynoptiqueModal />
       <PlanDecaissementModal />
       <AntecedentsModal />
+      <PlanConventionModal />
       
       <VisiteSuiviFormModal
         open={!!visiteSuiviProjet}

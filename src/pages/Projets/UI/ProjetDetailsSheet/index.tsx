@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Users } from 'lucide-react'
 import { useProjetsStore } from '@/store/useProjetsStore'
 import { ProjetSheetHeader, ProjetSheetFooter } from './components'
-import { DossierTab, WorkflowTab, PiecesTab, ObservationsTab } from './Tabs'
+import { DossierTab, WorkflowTab, ObservationsTab } from './Tabs'
 
 export function ProjetDetailsSheet() {
   const { selectedProjet: projet, setSelectedProjet } = useProjetsStore()
@@ -32,7 +32,6 @@ export function ProjetDetailsSheet() {
               {[
                 { id: 'dossier', label: 'Dossier' },
                 { id: 'workflow', label: 'Parcours workflow' },
-                { id: 'pieces', label: 'Pièces' },
                 { id: 'observations', label: 'Observations' }
               ].map(t => (
                 <TabsTrigger 
@@ -53,7 +52,6 @@ export function ProjetDetailsSheet() {
           <div className="flex-1 overflow-y-auto custom-scrollbar p-6 bg-aej-bg text-[13px]">
             <DossierTab projet={projet} />
             <WorkflowTab projet={projet} />
-            <PiecesTab />
             <ObservationsTab projet={projet} />
           </div>
 

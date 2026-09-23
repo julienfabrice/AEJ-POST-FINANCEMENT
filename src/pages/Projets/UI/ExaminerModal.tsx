@@ -6,7 +6,6 @@ import {
 } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   CheckCircle2,
   Clock,
@@ -20,6 +19,8 @@ import {
 import { useProjetsStore } from '@/store/useProjetsStore'
 import { workflowServices } from '@/services/workflow'
 import { cn } from '@/lib/utils'
+import type { LIGNE_DECAISSEMENT_T } from '@/types'
+import dayjs from 'dayjs'
 
 // ─── Données statiques mock (Phase 1) ───────────────────────────────────────
 
@@ -162,24 +163,33 @@ function ChaineValidation({ chaine, totalSteps, visibleStartIndex }: { chaine: {
   )
 }
 
-function LignesTable() {
+function LignesTable({ lignes }: { lignes: LIGNE_DECAISSEMENT_T[] }) {
+  if (!lignes || lignes.length === 0) {
+    return (
+      <div className="text-[12px] text-slate-500 italic p-3 border border-slate-100 rounded-lg bg-slate-50 text-center">
+        Aucune ligne de décaissement trouvée.
+      </div>
+    )
+  }
+
   // Grouper les lignes par numéro
-  const grouped = MOCK_LIGNES.reduce<Record<number, typeof MOCK_LIGNES>>((acc, l) => {
-    if (!acc[l.num]) acc[l.num] = []
-    acc[l.num].push(l)
+  const grouped = lignes.reduce<Record<number, LIGNE_DECAISSEMENT_T[]>>((acc, l) => {
+    const num = l.numero_ligne
+    if (!acc[num]) acc[num] = []
+    acc[num].push(l)
     return acc
   }, {})
 
   return (
     <div className="space-y-3">
-      {Object.entries(grouped).map(([num, lignes]) => (
+      {Object.entries(grouped).map(([num, grpLignes]) => (
         <div key={num} className="border border-slate-100 rounded-lg overflow-hidden">
           <div className="bg-slate-50 px-3 py-1.5 flex items-center gap-2">
             <span className="w-5 h-5 rounded bg-slate-700 text-white text-[11px] font-bold flex items-center justify-center flex-none">
               {num}
             </span>
             <span className="text-xs font-semibold text-slate-500">
-              {lignes.length} ligne{lignes.length > 1 ? 's' : ''} · Numéro {num}
+              {grpLignes.length} ligne{grpLignes.length > 1 ? 's' : ''} · Numéro {num}
             </span>
           </div>
           <table className="w-full text-[12.5px]">
@@ -193,14 +203,18 @@ function LignesTable() {
               </tr>
             </thead>
             <tbody>
-              {lignes.map((l, i) => {
+              {grpLignes.map((l, i) => {
                 const st = STATUT_LIGNE[l.statut] ?? { label: l.statut, color: 'text-slate-500 bg-slate-100' }
                 return (
                   <tr key={i} className="border-b border-slate-50 last:border-0">
-                    <td className="px-3 py-2 text-slate-700">{l.libelle}</td>
-                    <td className="px-3 py-2 text-right font-mono font-semibold text-slate-800">{l.montant}</td>
-                    <td className="px-3 py-2 text-slate-500 hidden sm:table-cell">{l.datePrevue}</td>
-                    <td className="px-3 py-2 text-slate-500 hidden sm:table-cell">{l.mode}</td>
+                    <td className="px-3 py-2 text-slate-700">{l.object_ligne || 'N/A'}</td>
+                    <td className="px-3 py-2 text-right font-mono font-semibold text-slate-800">
+                      {Number(l.montant_ligne || 0).toLocaleString('fr-FR')} F
+                    </td>
+                    <td className="px-3 py-2 text-slate-500 hidden sm:table-cell">
+                      {l.date_prevue ? dayjs(l.date_prevue).format('DD/MM/YYYY') : 'N/A'}
+                    </td>
+                    <td className="px-3 py-2 text-slate-500 hidden sm:table-cell">{l.mode_decaisse || 'N/A'}</td>
                     <td className="px-3 py-2">
                       <span className={cn('text-[11px] font-semibold px-2 py-0.5 rounded-full', st.color)}>
                         {st.label}
@@ -357,7 +371,7 @@ export function ExaminerModal() {
         </SheetHeader>
 
         {/* ── Corps scrollable ── */}
-        <ScrollArea className="flex-1 min-h-0">
+        <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar">
           <div className="px-5 pb-4">
 
             {/* Chaîne de validation */}
@@ -371,61 +385,80 @@ export function ExaminerModal() {
             {/* Métadonnées */}
             <SectionTitle>Informations du plan</SectionTitle>
             <FieldGrid>
-              <Field label="Chargé de Suivi / Saisisseur">{MOCK_PLAN.saisisseur}</Field>
-              <Field label="Point focal banque / IMF">{MOCK_PLAN.pointFocal}</Field>
-              <Field label="Créé le">{MOCK_PLAN.dateCree}</Field>
-              <Field label="Validation du bénéficiaire">
-                {MOCK_PLAN.validationBeneficiaire ? (
-                  <span className="inline-flex items-center gap-1 text-green-700 font-semibold text-[12px]">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> Validé depuis l'appli mobile
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 text-amber-600 font-semibold text-[12px]">
-                    <Clock className="w-3.5 h-3.5" /> En attente
-                  </span>
-                )}
+              <Field label="Créé le">
+                {projet?.plan_decaissement?.created_at || projet?.created_at 
+                  ? dayjs(projet?.plan_decaissement?.created_at || projet?.created_at).format('DD/MM/YYYY') 
+                  : 'N/A'
+                }
+              </Field>
+              <Field label="Organisme / Partenaire">
+                {projet?.organisme?.libelle || projet?.organisme?.nom || 'N/A'}
+              </Field>
+              <Field label="Dispositif / Guichet">
+                {projet?.dispositif?.libelle || projet?.dispositif?.nom || 'N/A'} 
+                {projet?.guichet ? ` — ${projet.guichet.libelle || projet.guichet.nom}` : ''}
+              </Field>
+              <Field label="Secteur d'activité">
+                {projet?.secteur?.libelle || projet?.secteur?.nom || 'N/A'}
               </Field>
               <Field label="Plan signé (PDF)">
-                {MOCK_PLAN.fichierSigne ? (
-                  <span className="inline-flex items-center gap-1 text-blue-600">
+                {projet?.plan_decaissement?.justificatif_path ? (
+                  <span className="inline-flex items-center gap-1.5 text-blue-600 font-semibold hover:underline cursor-pointer">
                     <FileText className="w-3.5 h-3.5" />
-                    {MOCK_PLAN.fichierSigne}
+                    Télécharger le justificatif
                   </span>
-                ) : '—'}
+                ) : (
+                  <span className="text-slate-400">Aucun justificatif</span>
+                )}
               </Field>
-              <Field label="Montant total du plan">
-                <span className="font-mono font-bold">{MOCK_PLAN.montantTotal}</span>
+              <Field label="Montant du plan de décaissement">
+                <span className="font-mono font-bold text-slate-800 text-[13px]">
+                  {projet?.plan_decaissement?.montant_planifie 
+                    ? `${Number(projet.plan_decaissement.montant_planifie).toLocaleString('fr-FR')} F CFA` 
+                    : 'N/A'
+                  }
+                </span>
               </Field>
-              <Field label="Montant du crédit accordé">
-                <span className="font-mono">{MOCK_PLAN.montantCredit}</span>
+              <Field label="Coût total du projet">
+                <span className="font-mono font-semibold text-slate-600 text-[13px]">
+                  {projet?.montant_total 
+                    ? `${Number(projet.montant_total).toLocaleString('fr-FR')} F CFA` 
+                    : 'N/A'
+                  }
+                </span>
               </Field>
             </FieldGrid>
 
-            {/* Note */}
-            {MOCK_PLAN.note && (
+            {/* Note d'observations */}
+            {projet?.description && (
               <>
                 <SectionTitle>Note / Observations</SectionTitle>
-                <p className="text-[13px] text-slate-600 leading-relaxed">{MOCK_PLAN.note}</p>
+                <div className="text-[13px] text-slate-600 leading-relaxed bg-white border border-slate-100 p-3 rounded-lg">
+                  {projet.description}
+                </div>
               </>
             )}
 
             {/* Lignes de décaissement */}
-            <SectionTitle>Lignes de décaissement ({MOCK_LIGNES.length})</SectionTitle>
-            <LignesTable />
+            <SectionTitle>
+              Lignes de décaissement {projet?.plan_decaissement?.lignes?.length ? `(${projet?.plan_decaissement.lignes.length})` : ''}
+            </SectionTitle>
+            <LignesTable lignes={projet?.plan_decaissement?.lignes || []} />
 
             {/* Historique */}
             {MOCK_HISTORIQUE.length > 0 && (
               <>
                 <SectionTitle>Historique des décisions</SectionTitle>
-                <div className="mt-2">
-                  {MOCK_HISTORIQUE.map((item, i) => (
-                    <HistoriqueItem key={i} item={item} />
+                <div className="space-y-4">
+                  {MOCK_HISTORIQUE.map((h, i) => (
+                    <HistoriqueItem key={i} item={h} />
                   ))}
                 </div>
               </>
             )}
+
           </div>
-        </ScrollArea>
+        </div>
 
         {/* ── Footer ── */}
         <div className="shrink-0 border-t border-slate-100 bg-slate-50 px-5 py-3 flex items-center gap-2 flex-wrap">

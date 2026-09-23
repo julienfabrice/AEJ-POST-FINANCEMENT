@@ -7,12 +7,19 @@ import { RemboursementDeclarationStatutCellRenderer } from '../components/Rembou
 import { PromoteurDeclarationCellRenderer } from '../components/PromoteurDeclarationCellRenderer'
 import { BudgetDeclarationCellRenderer } from '../components/BudgetDeclarationCellRenderer'
 import { RemboursementDeclarationFormModal } from '../components/RemboursementDeclarationFormModal'
+import dayjs from 'dayjs'
 import { money } from '@/helpers/money'
 import type { REMBOURSEMENT_DECLARATION_T } from '@/types'
 
 const formatMontant = (params: ValueFormatterParams) => {
   const val = Number(params.value)
   return isNaN(val) ? (params.value ?? '—') : money(val)
+}
+
+const formatDate = (params: ValueFormatterParams) => {
+  if (!params.value) return '—'
+  const d = dayjs(params.value)
+  return d.isValid() ? d.format('DD/MM/YYYY') : String(params.value)
 }
 
 export function useRemboursementsDeclarationsGrid(searchQuery: string) {
@@ -48,7 +55,12 @@ export function useRemboursementsDeclarationsGrid(searchQuery: string) {
         valueFormatter: formatMontant,
         cellClass: 'font-mono font-semibold text-[#131C29]',
       },
-      { field: 'date_declaree', headerName: 'Date déclarée', width: 130 },
+      {
+        field: 'date_declaree',
+        headerName: 'Date déclarée',
+        width: 140,
+        valueFormatter: formatDate,
+      },
       { field: 'reference_banque', headerName: 'Référence bancaire', width: 160 },
       { field: 'statut', headerName: 'Statut', width: 220, cellRenderer: RemboursementDeclarationStatutCellRenderer },
       {

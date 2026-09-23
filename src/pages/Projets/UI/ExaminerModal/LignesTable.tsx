@@ -6,7 +6,9 @@ import { STATUT_LIGNE } from '@/constants/PLAN_STATUSES'
 import { useConfigStore } from '@/store/useConfigStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useAutoriserNumero } from '../../hooks/actions/autoriser/useAutoriserNumero'
+import { useExecuterNumero } from '../../hooks/actions/executer/useExecuterNumero'
 import { AutoriserModal } from '../PlanDecaissementModal/AutoriserModal'
+import { ExecuterModal } from '../PlanDecaissementModal/ExecuterModal'
 import { Button } from '@/components/ui/button'
 
 export function peutAutoriserNumero(num: number, lignes: LIGNE_DECAISSEMENT_T[]) {
@@ -16,12 +18,23 @@ export function peutAutoriserNumero(num: number, lignes: LIGNE_DECAISSEMENT_T[])
   return prec.every(l => l.statut === 'EXECUTE')
 }
 
+export function peutExecuterNumero(num: number, lignes: LIGNE_DECAISSEMENT_T[]) {
+  const grp = lignes.filter(l => l.numero_ligne === num)
+  if (!grp.length) return false
+  // L'agence peut exécuter si toutes les lignes du groupe sont au moins AUTORISE,
+  // et qu'il reste au moins une ligne qui n'est pas encore EXECUTE.
+  if (!grp.every(l => l.statut === 'AUTORISE' || l.statut === 'EXECUTE')) return false
+  if (grp.every(l => l.statut === 'EXECUTE')) return false
+  return true
+}
+
 export function LignesTable({ lignes, projet }: { lignes: LIGNE_DECAISSEMENT_T[], projet?: MICRO_PROJET_T }) {
   const { sigle_monnaie_pays } = useConfigStore()
   const user = useAuthStore(s => s.user)
   const roleCode = import.meta.env.VITE_MOCK_USER_ROLE || user?.role?.code || ''
   
   const autoriserHook = useAutoriserNumero(projet || null)
+  const executerHook = useExecuterNumero(projet || null)
 
   if (!lignes || lignes.length === 0) {
     return (
@@ -45,6 +58,7 @@ export function LignesTable({ lignes, projet }: { lignes: LIGNE_DECAISSEMENT_T[]
         {Object.entries(grouped).map(([numStr, grpLignes]) => {
           const num = Number(numStr)
           const peutAutoriser = roleCode === 'PF' && peutAutoriserNumero(num, lignes)
+          const peutExecuter = ['CAR', 'CIP'].includes(roleCode) && peutExecuterNumero(num, lignes)
 
           return (
             <div key={num} className="border border-slate-100 rounded-lg overflow-hidden">
@@ -57,15 +71,26 @@ export function LignesTable({ lignes, projet }: { lignes: LIGNE_DECAISSEMENT_T[]
                     {grpLignes.length} ligne{grpLignes.length > 1 ? 's' : ''} · Numéro {num}
                   </span>
                 </div>
-                {peutAutoriser && (
-                  <Button 
-                    size="sm" 
-                    className="h-7 text-[11px] bg-amber-600 hover:bg-amber-700 text-white"
-                    onClick={() => autoriserHook.openAutoriserModal(num)}
-                  >
-                    Autoriser le décaissement
-                  </Button>
-                )}
+                <div className="flex items-center gap-2">
+                  {peutAutoriser && (
+                    <Button 
+                      size="sm" 
+                      className="h-7 text-[11px] bg-amber-600 hover:bg-amber-700 text-white"
+                      onClick={() => autoriserHook.openAutoriserModal(num)}
+                    >
+                      Autoriser le décaissement
+                    </Button>
+                  )}
+                  {peutExecuter && (
+                    <Button 
+                      size="sm" 
+                      className="h-7 text-[11px] bg-green-600 hover:bg-green-700 text-white"
+                      onClick={() => executerHook.openExecuterModal(num)}
+                    >
+                      Exécuter le décaissement
+                    </Button>
+                  )}
+                </div>
               </div>
               <table className="w-full text-[12.5px]">
                 <thead>
@@ -105,6 +130,7 @@ export function LignesTable({ lignes, projet }: { lignes: LIGNE_DECAISSEMENT_T[]
         })}
       </div>
       <AutoriserModal hook={autoriserHook} />
+      <ExecuterModal hook={executerHook} />
     </>
   )
 }

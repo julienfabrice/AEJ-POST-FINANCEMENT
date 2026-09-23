@@ -19,7 +19,8 @@ export function useTableData() {
   const { etapeRolesMap, isLoading: rolesLoading } = useEtapeRolesMap()
 
   // Rôle de l'utilisateur connecté
-  const userRoleCode = useAuthStore((s) => s.user?.role?.code)
+  const actualUserRoleCode = useAuthStore((s) => s.user?.role?.code)
+  const userRoleCode = import.meta.env.VITE_MOCK_USER_ROLE || actualUserRoleCode
 
   const columnDefs = useMemo<ColDef<MICRO_PROJET_T>[]>(() => [
     {
@@ -42,9 +43,9 @@ export function useTableData() {
         )
       }
     },
-    { 
-      field: 'promoteur_id', 
-      headerName: 'Promoteur', 
+    {
+      field: 'promoteur_id',
+      headerName: 'Promoteur',
       width: 180,
       cellRenderer: (params: any) => {
         const p = params.data.promoteur
@@ -58,9 +59,9 @@ export function useTableData() {
         ) : '-'
       }
     },
-    { 
-      field: 'agence_id', 
-      headerName: 'Agence', 
+    {
+      field: 'agence_id',
+      headerName: 'Agence',
       width: 130,
       cellRenderer: (params: any) => params.data.agence?.libelle || '-'
     },
@@ -88,9 +89,9 @@ export function useTableData() {
         )
       }
     },
-    { 
-      field: 'created_at', 
-      headerName: 'Date', 
+    {
+      field: 'created_at',
+      headerName: 'Date',
       width: 110,
       cellRenderer: (params: any) => params.value ? dayjs(params.value).format('DD/MM/YYYY') : '-'
     },

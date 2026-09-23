@@ -7,7 +7,7 @@ import type { DECAISSEMENT_T } from '@/types'
 
 const DEFAULT_VALUES: DecaissementFormValues = {
   plan_decaissement_id: 0,
-  ligne_decaissement_id: undefined,
+  numero_decaissement: '',
   agence_id: undefined,
   montant_decaisse: 0,
   date_decaissement: '',
@@ -46,9 +46,9 @@ export function useDecaissementForm(
       if (initialData) {
         form.reset({
           plan_decaissement_id: initialData.plan_decaissement_id,
-          ligne_decaissement_id: initialData.ligne_decaissement_id ?? undefined,
+          numero_decaissement: initialData.numero_decaissement ?? '',
           agence_id: initialData.agence_id ?? undefined,
-          montant_decaisse: initialData.montant_decaisse,
+          montant_decaisse: Number(initialData.montant_decaisse ?? 0),
           date_decaissement: initialData.date_decaissement ?? '',
           reference_banque: initialData.reference_banque ?? '',
           statut: initialData.statut,

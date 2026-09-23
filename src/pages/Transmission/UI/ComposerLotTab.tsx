@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -6,10 +7,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button'
 import { money } from "@/helpers/money"
 import {
-  MOCK_PROJETS_A_REPARTIR,
   MOCK_PARTENAIRES_OPTS,
-  MOCK_DISPOSITIFS_OPTS,
 } from '@/mock/transmission.mock'
+import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
+import type { DISPOSITIF_T } from '@/types'
 
 interface ComposerLotTabProps {
   selectedGuichet: string
@@ -17,6 +18,12 @@ interface ComposerLotTabProps {
   selectedDossiers: Set<string>
   toggleDossier: (id: string) => void
   handleSelectAll: () => void
+  projetsEligibles: MICRO_PROJET_T[]
+  isLoadingProjets: boolean
+  dispositifs: DISPOSITIF_T[]
+  isLoadingDispositifs: boolean
+  handleSubmit: (payload: any) => void
+  isSubmitting: boolean
 }
 
 export function ComposerLotTab({
@@ -25,7 +32,38 @@ export function ComposerLotTab({
   selectedDossiers,
   toggleDossier,
   handleSelectAll,
+  projetsEligibles,
+  isLoadingProjets,
+  dispositifs,
+  isLoadingDispositifs,
+  handleSubmit,
+  isSubmitting,
 }: ComposerLotTabProps) {
+  
+  const currentDispo = dispositifs.find(d => d.id.toString() === selectedGuichet)
+
+  const [formData, setFormData] = useState({
+    organisme_id: MOCK_PARTENAIRES_OPTS[0].value,
+    reference: `LOT-${currentDispo?.code || 'AGR'}-2024-001`,
+    fichier_repartition: `repartition_${currentDispo?.code?.toLowerCase() || 'agr'}.xlsx`,
+    courrier_fichier: 'courrier_transmission.pdf',
+    courrier_reference: 'CRT-2024-0150',
+    date_transmission: new Date().toISOString().slice(0, 10),
+    titre_courrier: `Transmission lot ${currentDispo?.code || 'AGR'}`,
+    taux_couverture: 80,
+    duree_differe: 3,
+    duree_remboursement: 24,
+    reference_convention: 'CONV-2024-0075',
+  })
+
+  const handleChange = (field: string, value: string | number) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+  }
+
+  const onSubmit = () => {
+    handleSubmit(formData)
+  }
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-5 items-start">
       <Card className="flex flex-col border-[#E5EAF1] shadow-[0_1px_2px_rgba(18,28,41,.05)] lg:h-[calc(100vh-220px)] h-auto min-h-[500px]">
@@ -33,19 +71,21 @@ export function ComposerLotTab({
           <div className="flex items-center justify-between">
             <h3 className="text-[14px] font-bold text-[#131C29]">Dossiers à répartir</h3>
             <span className="bg-[#FEF5E6] text-[#E7722B] px-2.5 py-0.5 rounded-full text-[11.5px] font-semibold">
-              {MOCK_PROJETS_A_REPARTIR.length} éligible(s)
+              {projetsEligibles.length} éligible(s)
             </span>
           </div>
 
           <div className="flex flex-col gap-1.5">
             <Label className="text-[12px] text-[#5A6B80]">Guichet</Label>
-            <Select value={selectedGuichet} onValueChange={setSelectedGuichet}>
+            <Select value={selectedGuichet} onValueChange={setSelectedGuichet} disabled={isLoadingDispositifs}>
               <SelectTrigger className="h-9 text-[13px]">
-                <SelectValue />
+                <SelectValue placeholder={isLoadingDispositifs ? "Chargement..." : "Sélectionner un guichet"} />
               </SelectTrigger>
               <SelectContent>
-                {MOCK_DISPOSITIFS_OPTS.map(d => (
-                  <SelectItem key={d.value} value={d.value} className="text-[13px]">{d.label}</SelectItem>
+                {dispositifs.map(d => (
+                  <SelectItem key={d.id} value={d.id.toString()} className="text-[13px]">
+                    {d.intitule || d.code}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -63,35 +103,35 @@ export function ComposerLotTab({
         </div>
 
         <div className="flex-1 overflow-y-auto p-0">
-          {MOCK_PROJETS_A_REPARTIR.map((p) => (
-            <label
-              key={p.id}
-              className="flex items-center gap-3 p-3 border-b border-[#EEF2F7] hover:bg-[#fafbfe] cursor-pointer transition-colors"
-            >
-              <Checkbox
-                checked={selectedDossiers.has(p.id)}
-                onCheckedChange={() => toggleDossier(p.id)}
-                className="data-[state=checked]:bg-[#2D6BD4] data-[state=checked]:border-[#2D6BD4]"
-              />
-              <div className="flex-1 min-w-0">
-                <b className="block text-[13px] text-[#131C29] truncate">
-                  {p.code} — {p.titre}
-                </b>
-                <span className="block text-[12px] text-[#5A6B80] truncate mt-0.5">
-                  {p.jeune_nom} · {p.agence}
-                  {selectedGuichet === 'wf-agr' && (
-                    <span>
-                      {' · '}
-                      {p.plan_affaires ? 'plan d\'affaires joint' : 'plan d\'affaires manquant'}
-                    </span>
-                  )}
+          {isLoadingProjets ? (
+            <div className="p-4 text-center text-slate-500 text-[13px]">Chargement des dossiers...</div>
+          ) : projetsEligibles.length === 0 ? (
+            <div className="p-4 text-center text-slate-500 text-[13px]">Aucun dossier en attente pour ce guichet.</div>
+          ) : (
+            projetsEligibles.map((p) => (
+              <label
+                key={p.id}
+                className="flex items-center gap-3 p-3 border-b border-[#EEF2F7] hover:bg-[#fafbfe] cursor-pointer transition-colors"
+              >
+                <Checkbox
+                  checked={selectedDossiers.has(p.id.toString())}
+                  onCheckedChange={() => toggleDossier(p.id.toString())}
+                  className="data-[state=checked]:bg-[#2D6BD4] data-[state=checked]:border-[#2D6BD4]"
+                />
+                <div className="flex-1 min-w-0">
+                  <b className="block text-[13px] text-[#131C29] truncate">
+                    {p.code} — {p.intitule}
+                  </b>
+                  <span className="block text-[12px] text-[#5A6B80] truncate mt-0.5">
+                    {p.promoteur?.nom} {p.promoteur?.prenom} · {p.agence?.nom}
+                  </span>
+                </div>
+                <span className="text-[13.5px] font-mono font-semibold text-[#131C29] shrink-0">
+                  {money(Number(p.montant_total) || 0)}
                 </span>
-              </div>
-              <span className="text-[13.5px] font-mono font-semibold text-[#131C29] shrink-0">
-                {money(p.montant)}
-              </span>
-            </label>
-          ))}
+              </label>
+            ))
+          )}
         </div>
       </Card>
 
@@ -101,7 +141,7 @@ export function ComposerLotTab({
         <div className="flex flex-col gap-4">
           <div className="space-y-1.5">
             <Label className="text-[12px] text-[#5A6B80]">Partenaire financier *</Label>
-            <Select defaultValue={MOCK_PARTENAIRES_OPTS[0].value}>
+            <Select value={formData.organisme_id} onValueChange={(val) => handleChange('organisme_id', val)}>
               <SelectTrigger className="h-9 text-[13px]">
                 <SelectValue />
               </SelectTrigger>
@@ -115,54 +155,54 @@ export function ComposerLotTab({
 
           <div className="space-y-1.5">
             <Label className="text-[12px] text-[#5A6B80]">Référence du lot</Label>
-            <Input className="h-9 text-[13px]" defaultValue={`LOT-${MOCK_DISPOSITIFS_OPTS.find(d => d.value === selectedGuichet)?.code}-2024-001`} />
+            <Input className="h-9 text-[13px]" value={formData.reference} onChange={(e) => handleChange('reference', e.target.value)} />
           </div>
 
           <div className="space-y-1.5">
             <Label className="text-[12px] text-[#5A6B80]">Fichier Excel de répartition</Label>
-            <Input className="h-9 text-[13px]" defaultValue={`repartition_${MOCK_DISPOSITIFS_OPTS.find(d => d.value === selectedGuichet)?.code?.toLowerCase()}.xlsx`} />
+            <Input className="h-9 text-[13px]" value={formData.fichier_repartition} onChange={(e) => handleChange('fichier_repartition', e.target.value)} />
           </div>
 
           <div className="space-y-1.5">
             <Label className="text-[12px] text-[#5A6B80]">Courrier (pièce jointe)</Label>
-            <Input className="h-9 text-[13px]" defaultValue="courrier_transmission.pdf" />
+            <Input className="h-9 text-[13px]" value={formData.courrier_fichier} onChange={(e) => handleChange('courrier_fichier', e.target.value)} />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className="text-[12px] text-[#5A6B80]">Réf. du courrier *</Label>
-              <Input className="h-9 text-[13px]" defaultValue="CRT-2024-0150" />
+              <Input className="h-9 text-[13px]" value={formData.courrier_reference} onChange={(e) => handleChange('courrier_reference', e.target.value)} />
             </div>
             <div className="space-y-1.5">
               <Label className="text-[12px] text-[#5A6B80]">Date de transmission</Label>
-              <Input type="date" className="h-9 text-[13px]" defaultValue={new Date().toISOString().slice(0, 10)} />
+              <Input type="date" className="h-9 text-[13px]" value={formData.date_transmission} onChange={(e) => handleChange('date_transmission', e.target.value)} />
             </div>
           </div>
 
           <div className="space-y-1.5">
             <Label className="text-[12px] text-[#5A6B80]">Titre du courrier</Label>
-            <Input className="h-9 text-[13px]" defaultValue={`Transmission lot ${MOCK_DISPOSITIFS_OPTS.find(d => d.value === selectedGuichet)?.code}`} />
+            <Input className="h-9 text-[13px]" value={formData.titre_courrier} onChange={(e) => handleChange('titre_courrier', e.target.value)} />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className="text-[12px] text-[#5A6B80]">Taux couverture (%)</Label>
-              <Input type="number" className="h-9 text-[13px]" defaultValue={80} />
+              <Input type="number" className="h-9 text-[13px]" value={formData.taux_couverture} onChange={(e) => handleChange('taux_couverture', Number(e.target.value))} />
             </div>
             <div className="space-y-1.5">
               <Label className="text-[12px] text-[#5A6B80]">Différé (mois)</Label>
-              <Input type="number" className="h-9 text-[13px]" defaultValue={3} />
+              <Input type="number" className="h-9 text-[13px]" value={formData.duree_differe} onChange={(e) => handleChange('duree_differe', Number(e.target.value))} />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className="text-[12px] text-[#5A6B80]">Durée rembt. (mois)</Label>
-              <Input type="number" className="h-9 text-[13px]" defaultValue={24} />
+              <Input type="number" className="h-9 text-[13px]" value={formData.duree_remboursement} onChange={(e) => handleChange('duree_remboursement', Number(e.target.value))} />
             </div>
             <div className="space-y-1.5">
               <Label className="text-[12px] text-[#5A6B80]">Réf. convention</Label>
-              <Input className="h-9 text-[13px]" defaultValue="CONV-2024-0075" />
+              <Input className="h-9 text-[13px]" value={formData.reference_convention} onChange={(e) => handleChange('reference_convention', e.target.value)} />
             </div>
           </div>
 
@@ -171,12 +211,17 @@ export function ComposerLotTab({
             <span>Modèles « courrier de transmission » et « fichier Excel de répartition » <em>— à fournir par l'AEJ</em></span>
           </div>
 
-          <Button className="w-full mt-2 bg-[#131C29] hover:bg-[#2D6BD4] transition-colors gap-2 text-[13px] font-semibold h-10 text-white">
+          <Button 
+            className="w-full mt-2 bg-[#131C29] hover:bg-[#2D6BD4] transition-colors gap-2 text-[13px] font-semibold h-10 text-white"
+            onClick={onSubmit}
+            disabled={isSubmitting}
+          >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            Transmettre le lot au partenaire
+            {isSubmitting ? 'Transmission en cours...' : 'Transmettre le lot au partenaire'}
           </Button>
         </div>
       </Card>
     </div>
   )
 }
+

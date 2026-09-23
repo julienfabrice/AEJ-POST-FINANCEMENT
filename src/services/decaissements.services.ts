@@ -1,16 +1,17 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { axiosInstance } from '@/constants/axiosInstance'
 import { toast } from 'sonner'
-import type { DECAISSEMENT_T, DECAISSEMENT_STATUT_T, API_RESPONSE_T } from '@/types'
+import type { DECAISSEMENT_T, DECAISSEMENT_STATUT_T, DECAISSEMENT_SEARCH_T, API_RESPONSE_T } from '@/types'
 
 export const decaissementServices = {
-  useGetAll: () => {
+  useGetAll: (params?: DECAISSEMENT_SEARCH_T, enabled: boolean = true) => {
     return useQuery({
-      queryKey: ['decaissements'],
+      queryKey: ['decaissements', params],
       queryFn: async () => {
-        const { data } = await axiosInstance.get<API_RESPONSE_T<DECAISSEMENT_T[]>>('/decaissements')
+        const { data } = await axiosInstance.get<API_RESPONSE_T<DECAISSEMENT_T[]>>('/decaissements', { params })
         return data.data
       },
+      enabled,
     })
   },
   useGetOne: (id: number | null) => {

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { remboursementServices } from '@/services/remboursements.services'
 import { planRemboursementServices } from '@/services/planRemboursements.services'
+import { tableauAmortissementServices } from '@/services/tableauAmortissements.services'
 import { recouvrementServices } from '@/services/recouvrements.services'
 import { budgetServices } from '@/services/budgets.services'
 import { personnelsServices } from '@/services/personnels.services'
@@ -18,6 +19,7 @@ export function useRecouvrement() {
 
   const { data: remboursements = [] } = remboursementServices.useGetAll()
   const { data: plansRemboursement = [] } = planRemboursementServices.useGetAll()
+  const { data: tableauAmortissements = [] } = tableauAmortissementServices.useGetAll()
   const { data: recouvrements = [] } = recouvrementServices.useGetAll()
   const { data: budgets = [] } = budgetServices.useGetAll()
   const { data: personnels = [] } = personnelsServices.useGetAll()
@@ -26,11 +28,16 @@ export function useRecouvrement() {
     const budgetById = new Map(budgets.map((b) => [b.id, b]))
     const personnelById = new Map(personnels.map((p) => [p.id, p]))
 
-    // --- Reste dû par micro-projet, à partir des échéances de /plan-remboursements ---
+    const planById = new Map(plansRemboursement.map(pl => [pl.id, pl]))
+
+    // --- Reste dû par micro-projet, à partir des échéances du tableau ---
     const resteDuByProjet = new Map<number, number>()
-    plansRemboursement.forEach((pl) => {
-      const prev = resteDuByProjet.get(pl.micro_projet_id) ?? 0
-      resteDuByProjet.set(pl.micro_projet_id, prev + Number(pl.capital_restant ?? 0))
+    tableauAmortissements.forEach((tab) => {
+      const plan = planById.get(tab.plan_remboursement_id)
+      if (plan && tab.statut === 'NON_PAYE') {
+        const prev = resteDuByProjet.get(plan.micro_projet_id) ?? 0
+        resteDuByProjet.set(plan.micro_projet_id, prev + Number(tab.capital_restant ?? 0))
+      }
     })
 
     // --- Impayés par dossier, à partir de /remboursements (regroupés via budget_id, cf. useRemboursements) ---
@@ -113,7 +120,7 @@ export function useRecouvrement() {
     })
 
     return { aJour: aJourList, leger: legerList, lourd: lourdList, contentieux: contentieuxList, actions: actionsList }
-  }, [remboursements, plansRemboursement, recouvrements, budgets, personnels])
+  }, [remboursements, plansRemboursement, tableauAmortissements, recouvrements, budgets, personnels])
 
   const handleActionAmiable = (id: string) => {
     setFormPrefill({ micro_projet_id: Number(id) || undefined, type_action: 'APPEL' })

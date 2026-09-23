@@ -9,7 +9,7 @@ export const ligneDecaissementSchema = z.object({
   intitule_prestataire: z.string().min(1, 'Le prestataire est requis.'),
   numero_compte: z.string().optional(),
   contact: z.string().optional(),
-  statut: z.enum(['VALIDE', 'NON_VALIDE']),
+  statut: z.enum(['PREVU', 'AUTORISE', 'EXECUTE']),
   observations: z.string().optional(),
 })
 

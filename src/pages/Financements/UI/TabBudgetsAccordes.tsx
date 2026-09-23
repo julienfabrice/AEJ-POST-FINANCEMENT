@@ -6,7 +6,7 @@ import { money } from '@/helpers/money'
 import { budgetServices } from '@/services/budgets.services'
 import { guichetServices } from '@/services/guichets.services'
 import { organismeServices } from '@/services/organismes.services'
-import { BudgetEditModal } from '../components/BudgetEditModal'
+import { BudgetFormModal } from '@/components/generics/BudgetFormModal'
 import { DeleteConfirmModal } from '@/components/DeleteConfirmModal'
 import type { BUDGET_T } from '@/types'
 
@@ -24,7 +24,11 @@ export function TabBudgetsAccordes() {
 
   return (
     <Card className="p-0 overflow-hidden border-[#E5EAF1] shadow-[0_1px_2px_rgba(18,28,41,.05),_0_6px_20px_rgba(18,28,41,.06)]">
-      <BudgetEditModal budget={budgetToEdit} onClose={() => setBudgetToEdit(null)} />
+      <BudgetFormModal 
+        open={!!budgetToEdit} 
+        onOpenChange={(val) => !val && setBudgetToEdit(null)} 
+        initialData={budgetToEdit} 
+      />
       <DeleteConfirmModal
         open={!!budgetToDelete}
         onOpenChange={(open) => !open && setBudgetToDelete(null)}
@@ -40,9 +44,7 @@ export function TabBudgetsAccordes() {
                 'Projet',
                 'Guichet',
                 'Partenaire',
-                'Réf courrier',
                 'Transmis',
-                'Couverture',
                 'Montant',
                 'Approbation',
                 'Taux. Int',
@@ -64,19 +66,16 @@ export function TabBudgetsAccordes() {
           </thead>
           <tbody>
             {isLoading && (
-              <tr><td colSpan={13} className="px-[14px] py-6 text-center text-[13px] text-[#8595A8]">Chargement...</td></tr>
+              <tr><td colSpan={11} className="px-[14px] py-6 text-center text-[13px] text-[#8595A8]">Chargement...</td></tr>
             )}
             {!isLoading && budgets.length === 0 && (
-              <tr><td colSpan={13} className="px-[14px] py-6 text-center text-[13px] text-[#8595A8]">Aucun budget accordé.</td></tr>
+              <tr><td colSpan={11} className="px-[14px] py-6 text-center text-[13px] text-[#8595A8]">Aucun budget accordé.</td></tr>
             )}
             {budgets.map((b) => {
               const projet = b.micro_projet
-              // Ajouté par la mise à jour API (GET /projets embarque lot_transmission
-              // avec réf. courrier, date de transmission, taux de couverture, durée
-              // de remboursement) — voir src/types/promoteurs.types.ts::LOT_TRANSMISSION_T
-              const lot = projet?.lot_transmission
-              const guichet = lot?.guichet_id ? guichetById.get(lot.guichet_id) : undefined
-              const organisme = lot?.organisme_id ? organismeById.get(lot.organisme_id) : undefined
+              const guichet = projet?.guichet_id ? guichetById.get(projet.guichet_id) : undefined
+              const organisme = projet?.organisme_id ? organismeById.get(projet.organisme_id) : undefined
+              const remboursement = b.plan_remboursements
 
               return (
                 <tr key={b.id} className="hover:bg-[#fafbfe] transition-colors">
@@ -92,14 +91,8 @@ export function TabBudgetsAccordes() {
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#131C29]">
                     {organisme?.sigle ?? organisme?.nom ?? '—'}
                   </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] font-mono text-[#5A6B80]">
-                    {lot?.reference_courrier ?? '—'}
-                  </td>
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">
-                    {lot?.date_transmission ? dayjs(lot.date_transmission).format('DD/MM/YYYY') : '—'}
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">
-                    {lot?.taux_recouvrement != null ? `${Math.round(Number(lot.taux_recouvrement) * 100)}%` : '—'}
+                    {projet?.date_transmission_partenaire ? dayjs(projet.date_transmission_partenaire).format('DD/MM/YYYY') : '—'}
                   </td>
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] font-mono font-semibold text-[#131C29]">
                     {money(Number(b.montant_accorde))}
@@ -110,13 +103,15 @@ export function TabBudgetsAccordes() {
                       variant={b.statut === 'APPROUVE' ? 'gr' : b.statut === 'EN_ATTENTE' ? 'am' : 'rd'}
                     />
                   </td>
-                  {/* Taux. Int (taux d'intérêt) : toujours sans source confirmée —
-                      ni /compte-financements ni lot_transmission ne l'exposent
-                      (lot_transmission.taux_recouvrement est la couverture, pas
-                      un taux d'intérêt). */}
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">—</td>
+                  {/* Taux d'intérêt : source plan_remboursements.interets (confirmé
+                      dans la réponse réelle de GET /budgets le 18/09/2026), mais
+                      l'échelle du nombre (ex. "0.50") n'est pas confirmée côté
+                      backend — affiché tel quel en attendant clarification. */}
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">
-                    {lot?.duree_remboursement != null ? `${lot.duree_remboursement} mois` : '—'}
+                    {remboursement?.interets != null ? `${remboursement.interets}%` : '—'}
+                  </td>
+                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">
+                    {remboursement?.duree_remboursement != null ? `${remboursement.duree_remboursement} mois` : '—'}
                   </td>
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7]">
                     <StatusBadge

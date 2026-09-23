@@ -1,9 +1,11 @@
 import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
+import { useProjetsStore } from '@/store/useProjetsStore'
 
 export function useCorrigerAction() {
+  const setCorrigerModalProjet = useProjetsStore(s => s.setCorrigerModalProjet)
+
   const execute = async (projet: MICRO_PROJET_T) => {
-    console.log('Exécution de l\'action CORRIGER pour le projet', projet.id)
-    // TODO: Implémenter la logique spécifique
+    setCorrigerModalProjet(projet)
   }
 
   return { execute }

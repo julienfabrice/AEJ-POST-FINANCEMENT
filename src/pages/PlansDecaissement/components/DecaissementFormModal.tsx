@@ -38,8 +38,8 @@ export function DecaissementFormModal({ children, open: controlledOpen, onOpenCh
               <FormField control={form.control} name="plan_decaissement_id" render={({ field: { onChange, ...field } }) => (
                 <FormItem><FormLabel>ID Plan de décaissement</FormLabel><FormControl><Input type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
               )} />
-              <FormField control={form.control} name="ligne_decaissement_id" render={({ field: { onChange, ...field } }) => (
-                <FormItem><FormLabel>ID Ligne (optionnel)</FormLabel><FormControl><Input type="number" onChange={(e) => onChange(e.target.valueAsNumber || undefined)} {...field} /></FormControl><FormMessage /></FormItem>
+              <FormField control={form.control} name="numero_decaissement" render={({ field }) => (
+                <FormItem><FormLabel>Numéro décaissement</FormLabel><FormControl><Input placeholder="Ex. DEC-001" {...field} /></FormControl><FormMessage /></FormItem>
               )} />
               <FormField control={form.control} name="agence_id" render={({ field: { onChange, ...field } }) => (
                 <FormItem><FormLabel>ID Agence</FormLabel><FormControl><Input type="number" onChange={(e) => onChange(e.target.valueAsNumber || undefined)} {...field} /></FormControl><FormMessage /></FormItem>

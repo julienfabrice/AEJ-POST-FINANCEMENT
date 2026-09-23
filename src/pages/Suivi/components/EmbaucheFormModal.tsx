@@ -15,7 +15,7 @@ import { entrepriseServices } from '@/services/entreprises.services'
 import { typeEmploiServices } from '@/services/typeEmplois.services'
 import type { EMBAUCHE_T } from '@/types'
 import { useEmbaucheForm } from '../hooks/embauches/useEmbaucheForm'
-import { MicroProjetCombobox } from './MicroProjetCombobox'
+import { MicroProjetCombobox } from '@/components/generics/VisiteSuiviFormModal/MicroProjetCombobox'
 import { PromoteurCombobox } from './PromoteurCombobox'
 
 /**

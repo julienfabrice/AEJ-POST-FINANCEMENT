@@ -63,7 +63,7 @@ export function TabDecaissements() {
           <tbody>
             {decaissements.map((d) => {
               const badge = ligneStatutBadge(d.statut)
-              const montant = Number(d.montant_ligne ?? d.montant_decaisse ?? 0)
+              const montant = Number(d.montant_decaisse ?? d.plan_decaissement?.montant_planifie ?? 0)
 
               return (
                 <tr key={d.id} className="hover:bg-[#fafbfe] transition-colors">
@@ -80,7 +80,7 @@ export function TabDecaissements() {
 
                   {/* Date */}
                   <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[12px] text-[#5A6B80] whitespace-nowrap">
-                    {formatDate(d.date_prevue || d.date_decaissement)}
+                    {formatDate(d.date_decaissement || d.plan_decaissement?.date_prevue)}
                   </td>
 
                   {/* Statut */}

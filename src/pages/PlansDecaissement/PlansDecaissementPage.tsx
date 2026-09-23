@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { GridSection, SUBTAB_TRIGGER_CLASS } from '@/components/shared/GridSection'
 
-import { PlanDecaissementFormModal } from './components/PlanDecaissementFormModal'
+import { PlanDecaissementFormModal } from '@/components/generics/PlanDecaissementFormModal'
 import { usePlanDecaissementsGrid } from './hooks/usePlanDecaissementsGrid'
 
 import { DecaissementFormModal } from './components/DecaissementFormModal'

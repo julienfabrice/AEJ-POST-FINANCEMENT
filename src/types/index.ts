@@ -12,6 +12,12 @@ export interface API_RESPONSE_T<T> {
   data: T
 }
 
+export interface PAYS_T {
+  id: number
+  code_iso: string
+  nom: string
+}
+
 export interface JEUNE_T {
   id: string
   matricule: string
@@ -284,6 +290,18 @@ export type BUDGET_STATUT_T = 'EN_ATTENTE' | 'APPROUVE' | 'NON_APPROUVE'
 export type SIGNATURE_CONVENTION_T = 'SIGNEE' | 'NON_SIGNEE'
 export type RECEPTION_ACTE_CREDIT_T = 'OUI' | 'NON' | 'PARTIEL'
 
+export interface AMORTISSEMENT_LIGNE_T {
+  numero: number
+  periode: number
+  date: string
+  capital_debut: number
+  interet: number
+  amortissement: number
+  mensualite: number
+  capital_restant: number
+  statut_paiement: 'PAYE' | 'NON_PAYE'
+}
+
 export interface BUDGET_T {
   id: number
   micro_projet_id: number
@@ -307,6 +325,38 @@ export interface BUDGET_T {
   updated_at?: string
   /** Relation embarquée par GET /budgets — pas besoin d'un fetch séparé vers /projets. */
   micro_projet?: import('./promoteurs.types').MICRO_PROJET_T
+  /**
+   * Confirmé dans la réponse réelle de GET /budgets (18/09/2026) : un seul
+   * plan de décaissement/remboursement par budget, malgré le nom au
+   * pluriel — objet singulier, pas un tableau.
+   */
+  plan_decaissements?: {
+    id: number
+    micro_projet_id: number
+    budget_id: number
+    compte_financement_id: number | null
+    montant_planifie: number | string
+    date_prevue?: string | null
+    justificatif_path?: string | null
+    created_at?: string
+    updated_at?: string
+  } | null
+  plan_remboursements?: {
+    id: number
+    micro_projet_id: number
+    budget_id: number
+    date_ouverture?: string | null
+    decision?: string | null
+    montant_credit: number | string
+    /** Taux d'intérêt — échelle non confirmée (ex. "0.50" : 0,5 % ou 50 % ?). À vérifier avec le backend avant affichage définitif. */
+    interets: number | string
+    duree_pret?: number | null
+    duree_remboursement?: number | null
+    fichier_amortissement?: string | null
+    fichier_convention?: string | null
+    created_at?: string
+    updated_at?: string
+  } | null
 }
 // --- Lots de transmission (/lots-transmission) ---
 
@@ -337,7 +387,7 @@ export interface LOT_TRANSMISSION_T {
 // --- Décaissements (schema.v2.sql, section 15) ---
 
 export type MODE_DECAISSE_T = 'CHEQUE' | 'VIREMENT'
-export type LIGNE_DECAISSEMENT_STATUT_T = 'VALIDE' | 'NON_VALIDE'
+export type LIGNE_DECAISSEMENT_STATUT_T = 'PREVU' | 'AUTORISE' | 'EXECUTE'
 
 export interface LIGNE_DECAISSEMENT_T {
   id?: number
@@ -352,7 +402,17 @@ export interface LIGNE_DECAISSEMENT_T {
   contact?: string | null
   statut: LIGNE_DECAISSEMENT_STATUT_T
   observations?: string | null
+  date_autorisation?: string | null
+  justif_autorisation?: string | null
+  date_execution?: string | null
+  justif_execution?: string | null
 }
+
+export type PLAN_DECAISSEMENT_STATUT_T =
+  | 'BROUILLON'
+  | 'EN_VALIDATION'
+  | 'TRANSMIS_PF'
+  | 'AJOURNE'
 
 export interface PLAN_DECAISSEMENT_T {
   id: number
@@ -364,6 +424,7 @@ export interface PLAN_DECAISSEMENT_T {
   montant_planifie: number
   date_prevue?: string | null
   justificatif_path?: string | null
+  statut?: PLAN_DECAISSEMENT_STATUT_T | null
   lignes?: LIGNE_DECAISSEMENT_T[]
   budget?: BUDGET_T | null
   micro_projet?: import('./promoteurs.types').MICRO_PROJET_T | null
@@ -372,23 +433,22 @@ export interface PLAN_DECAISSEMENT_T {
 }
 export type DECAISSEMENT_STATUT_T = 'EN_ATTENTE' | 'VALIDE' | 'NON_VALIDE'
 
+export interface DECAISSEMENT_SEARCH_T {
+  plan_decaissement_id?: number
+  statut?: DECAISSEMENT_STATUT_T
+}
+
 export interface DECAISSEMENT_T {
   id: number
   plan_decaissement_id: number
-  ligne_decaissement_id?: number | null
-  numero_ligne?: number | null
-  object_ligne?: string | null
-  montant_ligne?: number | null
-  mode_decaisse?: MODE_DECAISSE_T | null
-  date_prevue?: string | null
-  intitule_prestataire?: string | null
-  numero_compte?: string | null
-  contact?: string | null
   agence_id?: number | null
   agence?: AGENCE_REGIONALE_T | null
-  montant_decaisse?: number
-  date_decaissement?: string | null
+  numero_decaissement?: string | null
   reference_banque?: string | null
+  date_decaissement?: string | null
+  /** Laravel sérialise les colonnes DECIMAL en string dans le JSON */
+  montant_decaisse?: number | string
+  justificatif_path?: string | null
   statut: DECAISSEMENT_STATUT_T
   observations?: string | null
   plan_decaissement?: PLAN_DECAISSEMENT_T | null
@@ -421,15 +481,30 @@ export interface DECAISSEMENT_DECLARATION_T {
 export interface PLAN_REMBOURSEMENT_T {
   id: number
   micro_projet_id: number
-  budget_id?: number | null
-  echeance_mensuelle?: string | null
+  budget_id: number
+  date_ouverture: string
+  montant_credit: number
+  decision: 'EN_ATTENTE' | 'APPROUVE' | 'NON_APPROUVE'
+  interets: number
+  duree_pret: number
+  duree_remboursement: number
+  fichier_amortissement?: string | null
+  fichier_convention?: string | null
+  created_at?: string
+  updated_at?: string
+}
+
+export interface TABLEAU_AMORTISSEMENT_T {
+  id: number
+  plan_remboursement_id: number
+  periode: number
+  date_echeance: string
   montant_echeance: number
-  periode?: number | null
   capital_rembourse: number
   capital_restant: number
   interets: number
   amortissement_capital: number
-  justificatif_path?: string | null
+  statut: 'PAYE' | 'PARTIEL' | 'NON_PAYE'
   created_at?: string
   updated_at?: string
 }
@@ -547,6 +622,7 @@ export interface TRANSACTION_T {
  * arbitrages maquette/API est documenté dans `suivi.types.ts`.
  */
 export * from './suivi.types'
+export * from './observations.types'
 
 /**
  * --- Agrégats de tableau de bord (`/dashboard/*`) ---

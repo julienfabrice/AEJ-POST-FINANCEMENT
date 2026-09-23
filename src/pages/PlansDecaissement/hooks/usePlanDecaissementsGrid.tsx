@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react'
 import type { ColDef, ValueFormatterParams } from 'ag-grid-community'
 import Fuse from 'fuse.js'
 import { ActionsCellRenderer } from '@/pages/Referentiels/components/ActionsCellRenderer'
-import { PlanDecaissementFormModal } from '../components/PlanDecaissementFormModal'
+import { PlanDecaissementFormModal } from '@/components/generics/PlanDecaissementFormModal'
 import type { PLAN_DECAISSEMENT_T } from '@/types'
 
 const formatMontant = (params: ValueFormatterParams) =>
@@ -37,7 +37,7 @@ export function usePlanDecaissementsGrid(searchQuery: string) {
   }, [fetchedData, searchQuery])
 
   const modalNode = (
-    <PlanDecaissementFormModal open={!!editingItem} onOpenChange={(open) => !open && setEditingItem(null)} initialData={editingItem} />
+    <PlanDecaissementFormModal open={!!editingItem} onOpenChange={(open: boolean) => !open && setEditingItem(null)} initialData={editingItem} />
   )
 
   return { columnDefs, data: filteredData, isLoading, modalNode }

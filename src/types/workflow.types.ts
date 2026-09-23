@@ -72,3 +72,37 @@ export interface WORKFLOW_VERSION_T {
     workflow: WORKFLOW_BASE_T;
     etapes: WORKFLOW_ETAPE_T[];
 }
+
+export interface WORKFLOW_INSTANCE_HISTORY_T {
+  id: number
+  workflow_instance_id: number
+  etape_code: string
+  role_code: string
+  acted_by: number
+  acted_at: string
+  action: string
+  comment?: string | null
+}
+
+export interface WORKFLOW_INSTANCE_PATCH_T {
+  current_etape_code?: string | null
+  next_etape_code?: string | null
+  statut?: string
+  completed_at?: string | null
+}
+
+export interface WORKFLOW_INSTANCE_DELIVERABLE_T {
+  id: number
+  workflow_instance_id: number
+  deliverable_code: string
+  file_path: string
+  file_name: string
+  file_size: number
+  file_type: string
+  produced_at: string
+  produced_by_id: number | null
+  observations: string | null
+  workflow_instance?: any
+  deliverable?: any
+  produced_by?: any
+}

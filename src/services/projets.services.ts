@@ -142,6 +142,31 @@ export const projetsServices = {
     })
   },
 
+  useBulkImputer: () => {
+    const queryClient = useQueryClient()
+    return useMutation({
+      mutationFn: async ({ ids, agence_id }: { ids: number[]; agence_id: number | null }) => {
+        // Exécuter l'imputation pour chaque dossier
+        const promises = ids.map(async (id) => {
+          try {
+            await axiosInstance.patch(`/projets/${id}`, { agence_id })
+          } catch {
+            await axiosInstance.put(`/projets/${id}`, { agence_id })
+          }
+        })
+        await Promise.all(promises)
+      },
+      onSuccess: (_, variables) => {
+        queryClient.invalidateQueries({ queryKey: ['projets'] })
+        toast.success(`${variables.ids.length} dossier(s) imputé(s) avec succès !`)
+      },
+      onError: (error) => {
+        toast.error("Erreur lors de l'imputation des dossiers.")
+        console.error(error)
+      },
+    })
+  },
+
   useSearch: (term: string, enabled = true) => {
     const search = term.trim()
 

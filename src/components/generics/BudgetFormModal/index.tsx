@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -11,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { projetsServices } from '@/services/projets.services'
 import type { BUDGET_T } from '@/types'
 import { useBudgetForm } from './useBudgetForm'
 
@@ -24,6 +26,16 @@ interface Props {
 export function BudgetFormModal({ open, onOpenChange, initialData, lockedMicroProjetId }: Props) {
   const { form, onSubmit, isPending, isEdit } = useBudgetForm(open, onOpenChange, initialData, lockedMicroProjetId)
 
+  const { data: projetsRes, isLoading: isLoadingProjets } = projetsServices.useGetAll(1, 200)
+
+  const projets = useMemo(() => {
+    const list = projetsRes?.data ? [...projetsRes.data] : []
+    if (initialData?.micro_projet && !list.some((p) => p.id === initialData.micro_projet?.id)) {
+      list.unshift(initialData.micro_projet)
+    }
+    return list
+  }, [projetsRes, initialData])
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[480px]">
@@ -31,17 +43,44 @@ export function BudgetFormModal({ open, onOpenChange, initialData, lockedMicroPr
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-2">
             <div className="grid grid-cols-2 gap-4">
-              <FormField control={form.control} name="micro_projet_id" render={({ field: { onChange, ...field } }) => (
+              <FormField control={form.control} name="micro_projet_id" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>ID Micro-projet</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="number" 
-                      disabled={!!lockedMicroProjetId}
-                      onChange={(e) => onChange(e.target.valueAsNumber || 0)} 
-                      {...field} 
-                    />
-                  </FormControl>
+                  <FormLabel>Micro-projet</FormLabel>
+                  <Select
+                    disabled={!!lockedMicroProjetId || isLoadingProjets}
+                    value={field.value && field.value > 0 ? String(field.value) : ''}
+                    onValueChange={(val) => field.onChange(val ? Number(val) : 0)}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-full cursor-pointer">
+                        <SelectValue
+                          placeholder={
+                            isLoadingProjets
+                              ? 'Chargement...'
+                              : 'Sélectionner un projet'
+                          }
+                        />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent position="popper" className="max-h-[260px]">
+                      {field.value && field.value > 0 && !projets.some((p) => p.id === field.value) && (
+                        <SelectItem value={String(field.value)}>
+                          {initialData?.micro_projet?.intitule ?? `Projet #${field.value}`}
+                        </SelectItem>
+                      )}
+                      {projets.map((p) => {
+                        const code = p.code ? `[${p.code}] ` : ''
+                        const promoteur = p.promoteur
+                          ? ` (${p.promoteur.nom} ${p.promoteur.prenom})`
+                          : ''
+                        return (
+                          <SelectItem key={p.id} value={String(p.id)}>
+                            {code}{p.intitule}{promoteur}
+                          </SelectItem>
+                        )
+                      })}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )} />

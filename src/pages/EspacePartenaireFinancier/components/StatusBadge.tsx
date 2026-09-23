@@ -36,14 +36,14 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-[5px] text-[11.5px] font-semibold px-[9px] py-[3px] rounded-full whitespace-nowrap',
+        'inline-flex items-center gap-[5px] text-[11px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap h-fit leading-tight',
         BADGE_CLASSES[variant],
         className,
       )}
     >
       {dot && (
         <span
-          className={cn('w-[7px] h-[7px] rounded-full inline-block', dotColor[variant])}
+          className={cn('w-[6px] h-[6px] rounded-full inline-block', dotColor[variant])}
         />
       )}
       {label}

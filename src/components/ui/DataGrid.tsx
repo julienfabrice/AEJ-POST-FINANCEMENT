@@ -63,6 +63,17 @@ export const DataGrid = forwardRef<AgGridReact, DataGridProps>(({
           display: flex;
           align-items: center;
         }
+        .ag-cell-wrapper {
+          display: flex;
+          align-items: center;
+          height: 100%;
+        }
+        .ag-react-container {
+          display: flex;
+          align-items: center;
+          height: 100%;
+          width: 100%;
+        }
         .ag-row {
           border-bottom: 1px solid #EEF2F7 !important;
           transition: background-color 0.1s ease;

@@ -53,7 +53,7 @@ export const ActionsCellRenderer = (params: ActionsCellRendererParams) => {
     if (isReadonly || !params.onDelete || !params.data) return
 
     const itemId = params.data.id
-    const itemLabel = params.data.libelle || params.data.nom || `Élément #${itemId}`
+    const itemLabel = params.data.libelle || params.data.nom || params.data.intitule || `Élément #${itemId}`
 
     toast.error(`Suppression de "${itemLabel}" programmée`, {
       description: (

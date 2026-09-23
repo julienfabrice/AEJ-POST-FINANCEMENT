@@ -1,13 +1,24 @@
 import { useState, useMemo } from 'react'
 import dayjs from 'dayjs'
+import { SearchX, WalletCards } from 'lucide-react'
+import type { ColDef, ICellRendererParams } from 'ag-grid-community'
 import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
+import { DataGrid } from '@/components/ui/DataGrid'
+import { EmptyState } from '@/components/generics/emptyState'
 import { StatusBadge } from '../../EspacePartenaireFinancier/components/StatusBadge'
+import { ActionsCellRenderer } from '@/pages/Referentiels/components/ActionsCellRenderer'
 import { money } from '@/helpers/money'
 import { budgetServices } from '@/services/budgets.services'
 import { guichetServices } from '@/services/guichets.services'
 import { organismeServices } from '@/services/organismes.services'
+import { secteurServices } from '@/services/secteurs.services'
+import { agenceRegionaleServices } from '@/services/agences-regionales.services'
 import { BudgetFormModal } from '@/components/generics/BudgetFormModal'
-import { DeleteConfirmModal } from '@/components/DeleteConfirmModal'
+import { BudgetImportModal } from '../components/BudgetImportModal'
+import { BudgetsFilters } from './BudgetsFilters'
+import { useBudgetsFilters } from '../hooks/useBudgetsFilters'
 import type { BUDGET_T } from '@/types'
 
 export function TabBudgetsAccordes() {
@@ -15,140 +26,265 @@ export function TabBudgetsAccordes() {
   const { mutate: deleteBudget } = budgetServices.useDelete()
   const { data: guichets = [] } = guichetServices.useGetAll()
   const { data: organismes = [] } = organismeServices.useGetAll()
+  const { data: secteurs = [] } = secteurServices.useGetAll()
+  const { data: agences = [] } = agenceRegionaleServices.useGetAll()
+
+  const {
+    filters,
+    setFilters,
+    resetFilters,
+    hasFilters,
+    filteredBudgets: filteredData,
+  } = useBudgetsFilters({
+    budgets,
+    organismes,
+  })
+
+  const [budgetToEdit, setBudgetToEdit] = useState<BUDGET_T | null>(null)
+  const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [isImportOpen, setIsImportOpen] = useState(false)
 
   const guichetById = useMemo(() => new Map(guichets.map((g) => [g.id, g])), [guichets])
   const organismeById = useMemo(() => new Map(organismes.map((o) => [o.id, o])), [organismes])
 
-  const [budgetToEdit, setBudgetToEdit] = useState<BUDGET_T | null>(null)
-  const [budgetToDelete, setBudgetToDelete] = useState<BUDGET_T | null>(null)
+  const columnDefs = useMemo<ColDef<BUDGET_T>[]>(() => [
+    {
+      headerName: 'Projet',
+      minWidth: 220,
+      flex: 1.2,
+      valueGetter: (p) =>
+        `${p.data?.micro_projet?.code ?? ''} ${p.data?.micro_projet?.intitule ?? ''} ${p.data?.intitule ?? ''}`.trim(),
+      cellRenderer: (p: ICellRendererParams<BUDGET_T>) => {
+        const projet = p.data?.micro_projet
+        return (
+          <div className="flex flex-col justify-center min-w-0 py-1 leading-tight">
+            <b className="text-[#2D6BD4] font-semibold text-[13px] truncate">
+              {projet?.code ?? `#${p.data?.micro_projet_id}`}
+            </b>
+            <span className="text-[#5A6B80] text-xs truncate">
+              {projet?.intitule ?? p.data?.intitule ?? '—'}
+            </span>
+          </div>
+        )
+      },
+    },
+    {
+      headerName: 'Guichet',
+      width: 110,
+      valueGetter: (p) => {
+        const gId = p.data?.micro_projet?.guichet_id
+        return gId ? (guichetById.get(gId)?.code ?? '—') : '—'
+      },
+      cellRenderer: (p: ICellRendererParams<BUDGET_T>) => (
+        <div className="flex items-center h-full">
+          <span className="inline-flex items-center font-mono font-semibold text-[11px] px-2 py-0.5 rounded-full bg-[#EEF2F7] text-[#5A6B80] h-fit leading-tight">
+            {p.value}
+          </span>
+        </div>
+      ),
+    },
+    {
+      headerName: 'Partenaire',
+      width: 150,
+      valueGetter: (p) => {
+        const oId = p.data?.micro_projet?.organisme_id
+        if (!oId) return '—'
+        const org = organismeById.get(oId)
+        return org?.sigle ?? org?.nom ?? '—'
+      },
+      cellRenderer: (p: ICellRendererParams<BUDGET_T>) => (
+        <span className="text-[13px] text-[#131C29] truncate">{p.value}</span>
+      ),
+    },
+    {
+      headerName: 'Transmis',
+      width: 120,
+      valueGetter: (p) =>
+        p.data?.micro_projet?.date_transmission_partenaire
+          ? dayjs(p.data.micro_projet.date_transmission_partenaire).format('DD/MM/YYYY')
+          : '—',
+      cellRenderer: (p: ICellRendererParams<BUDGET_T>) => (
+        <span className="text-[13px] text-[#5A6B80]">{p.value}</span>
+      ),
+    },
+    {
+      field: 'montant_accorde',
+      headerName: 'Montant',
+      width: 150,
+      valueGetter: (p) => Number(p.data?.montant_accorde) || 0,
+      cellRenderer: (p: ICellRendererParams<BUDGET_T>) => (
+        <span className="text-[13px] font-mono font-semibold text-[#131C29]">
+          {money(p.value)}
+        </span>
+      ),
+    },
+    {
+      field: 'statut',
+      headerName: 'Approbation',
+      width: 140,
+      cellRenderer: (p: ICellRendererParams<BUDGET_T>) => (
+        <div className="flex items-center h-full">
+          <StatusBadge
+            label={p.value}
+            variant={p.value === 'APPROUVE' ? 'gr' : p.value === 'EN_ATTENTE' ? 'am' : 'rd'}
+          />
+        </div>
+      ),
+    },
+    {
+      headerName: 'Taux Int.',
+      width: 100,
+      valueGetter: (p) =>
+        p.data?.plan_remboursements?.interets != null
+          ? `${p.data.plan_remboursements.interets}%`
+          : '—',
+      cellRenderer: (p: ICellRendererParams<BUDGET_T>) => (
+        <span className="text-[13px] text-[#5A6B80]">{p.value}</span>
+      ),
+    },
+    {
+      headerName: 'Durée Remb',
+      width: 120,
+      valueGetter: (p) =>
+        p.data?.plan_remboursements?.duree_remboursement != null
+          ? `${p.data.plan_remboursements.duree_remboursement} mois`
+          : '—',
+      cellRenderer: (p: ICellRendererParams<BUDGET_T>) => (
+        <span className="text-[13px] text-[#5A6B80]">{p.value}</span>
+      ),
+    },
+    {
+      field: 'signature_convention',
+      headerName: 'Convention',
+      width: 130,
+      cellRenderer: (p: ICellRendererParams<BUDGET_T>) => (
+        <div className="flex items-center h-full">
+          <StatusBadge
+            label={p.value === 'SIGNEE' ? 'Signée' : 'En cours'}
+            variant={p.value === 'SIGNEE' ? 'gr' : 'am'}
+          />
+        </div>
+      ),
+    },
+    {
+      field: 'deblocage',
+      headerName: 'Déblocage',
+      width: 130,
+      cellRenderer: (p: ICellRendererParams<BUDGET_T>) => (
+        <div className="flex items-center h-full">
+          <StatusBadge
+            label={p.value ? 'DEBLOQUE' : 'NON'}
+            variant={p.value ? 'gr' : 'gy'}
+          />
+        </div>
+      ),
+    },
+    {
+      headerName: 'Actions',
+      width: 100,
+      pinned: 'right',
+      sortable: false,
+      filter: false,
+      cellRenderer: ActionsCellRenderer,
+      cellRendererParams: {
+        onEdit: (row: BUDGET_T) => setBudgetToEdit(row),
+        onDelete: (id: number) => deleteBudget(Number(id)),
+      },
+    },
+  ], [guichetById, organismeById, deleteBudget])
 
   return (
-    <Card className="p-0 overflow-hidden border-[#E5EAF1] shadow-[0_1px_2px_rgba(18,28,41,.05),_0_6px_20px_rgba(18,28,41,.06)]">
+    <div className="space-y-4">
       <BudgetFormModal 
-        open={!!budgetToEdit} 
-        onOpenChange={(val) => !val && setBudgetToEdit(null)} 
+        open={isCreateOpen || !!budgetToEdit} 
+        onOpenChange={(val) => {
+          if (!val) {
+            setBudgetToEdit(null)
+            setIsCreateOpen(false)
+          }
+        }} 
         initialData={budgetToEdit} 
       />
-      <DeleteConfirmModal
-        open={!!budgetToDelete}
-        onOpenChange={(open) => !open && setBudgetToDelete(null)}
-        itemLabel={budgetToDelete?.intitule}
-        onConfirm={() => budgetToDelete && deleteBudget(budgetToDelete.id)}
+
+      {/* Advanced Filters Bar & Dialog */}
+      <BudgetsFilters
+        filters={filters}
+        onFiltersChange={setFilters}
+        onReset={resetFilters}
+        totalCount={budgets.length}
+        filteredCount={filteredData.length}
+        isLoading={isLoading}
+        onAddNew={() => setIsCreateOpen(true)}
+        onImport={() => setIsImportOpen(true)}
+        organismes={organismes}
+        guichets={guichets}
+        secteurs={secteurs}
+        agences={agences}
       />
 
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse">
-          <thead>
-            <tr>
-              {[
-                'Projet',
-                'Guichet',
-                'Partenaire',
-                'Transmis',
-                'Montant',
-                'Approbation',
-                'Taux. Int',
-                'Durée Remb',
-                'Convention',
-                'Déblocage',
-                '',
-              ].map((h, i) => (
-                <th
-                  key={i}
-                  className={`text-left text-[11px] uppercase tracking-[.05em] text-[#8595A8] font-bold px-[14px] py-[11px] border-b border-[#E5EAF1] bg-[#fafbfd] whitespace-nowrap ${
-                    h === '' ? 'text-right' : ''
-                  }`}
-                >
-                  {h === '' ? 'Actions' : h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading && (
-              <tr><td colSpan={11} className="px-[14px] py-6 text-center text-[13px] text-[#8595A8]">Chargement...</td></tr>
-            )}
-            {!isLoading && budgets.length === 0 && (
-              <tr><td colSpan={11} className="px-[14px] py-6 text-center text-[13px] text-[#8595A8]">Aucun budget accordé.</td></tr>
-            )}
-            {budgets.map((b) => {
-              const projet = b.micro_projet
-              const guichet = projet?.guichet_id ? guichetById.get(projet.guichet_id) : undefined
-              const organisme = projet?.organisme_id ? organismeById.get(projet.organisme_id) : undefined
-              const remboursement = b.plan_remboursements
+      <BudgetImportModal
+        open={isImportOpen}
+        onOpenChange={setIsImportOpen}
+      />
 
-              return (
-                <tr key={b.id} className="hover:bg-[#fafbfe] transition-colors">
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px]">
-                    <b className="text-[#2D6BD4] font-semibold block">{projet?.code ?? `#${b.micro_projet_id}`}</b>
-                    <span className="text-[#5A6B80] text-[12px]">{projet?.intitule ?? '—'}</span>
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7]">
-                    <span className="inline-flex font-mono font-semibold text-[11.5px] px-2 py-0.5 rounded-full bg-[#EEF2F7] text-[#5A6B80]">
-                      {guichet?.code ?? '—'}
-                    </span>
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#131C29]">
-                    {organisme?.sigle ?? organisme?.nom ?? '—'}
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">
-                    {projet?.date_transmission_partenaire ? dayjs(projet.date_transmission_partenaire).format('DD/MM/YYYY') : '—'}
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] font-mono font-semibold text-[#131C29]">
-                    {money(Number(b.montant_accorde))}
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7]">
-                    <StatusBadge
-                      label={b.statut}
-                      variant={b.statut === 'APPROUVE' ? 'gr' : b.statut === 'EN_ATTENTE' ? 'am' : 'rd'}
-                    />
-                  </td>
-                  {/* Taux d'intérêt : source plan_remboursements.interets (confirmé
-                      dans la réponse réelle de GET /budgets le 18/09/2026), mais
-                      l'échelle du nombre (ex. "0.50") n'est pas confirmée côté
-                      backend — affiché tel quel en attendant clarification. */}
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">
-                    {remboursement?.interets != null ? `${remboursement.interets}%` : '—'}
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">
-                    {remboursement?.duree_remboursement != null ? `${remboursement.duree_remboursement} mois` : '—'}
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7]">
-                    <StatusBadge
-                      label={b.signature_convention === 'SIGNEE' ? 'Signée' : 'En cours'}
-                      variant={b.signature_convention === 'SIGNEE' ? 'gr' : 'am'}
-                    />
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7]">
-                    <StatusBadge
-                      label={b.deblocage ? 'DEBLOQUE' : 'NON'}
-                      variant={b.deblocage ? 'gr' : 'gy'}
-                    />
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7]">
-                    <div className="flex items-center justify-end gap-1">
-                      <button
-                        onClick={() => setBudgetToEdit(b)}
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-[#8595A8] hover:bg-[#EEF2F7] hover:text-[#2D6BD4] transition-colors"
-                        title="Modifier"
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
-                      </button>
-                      <button
-                        onClick={() => setBudgetToDelete(b)}
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-[#8595A8] hover:bg-[#FBE7E5] hover:text-[#D6453B] transition-colors"
-                        title="Supprimer"
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
-    </Card>
+      <Card className="p-0 overflow-hidden border-slate-200 rounded-lg shadow-sm">
+        {isLoading ? (
+          <div className="w-full h-[calc(100vh-340px)] flex flex-col">
+            <div className="h-[48px] bg-[#fafbfd] border-b border-[#E5EAF1] flex items-center px-4 gap-4">
+              <Skeleton className="h-4 w-12" />
+              <Skeleton className="h-4 w-32" />
+              <div className="flex-1" />
+              <Skeleton className="h-4 w-16" />
+            </div>
+            <div className="flex-1 p-4 space-y-4">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-4 py-2 border-b border-slate-50 last:border-0">
+                  <Skeleton className="h-5 w-12" />
+                  <Skeleton className="h-5 w-48" />
+                  <div className="flex-1" />
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-7 w-7 rounded-md" />
+                    <Skeleton className="h-7 w-7 rounded-md" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : filteredData.length === 0 ? (
+          <EmptyState
+            variant="bare"
+            icon={hasFilters ? SearchX : WalletCards}
+            title={hasFilters ? 'Aucun résultat' : 'Aucun budget accordé'}
+            description={
+              hasFilters
+                ? 'Aucun budget ne correspond à vos critères de recherche. Modifiez ou réinitialisez les filtres.'
+                : 'Les budgets accordés apparaîtront ici dès leur enregistrement.'
+            }
+          >
+            {hasFilters && (
+              <Button
+                variant="outline"
+                onClick={resetFilters}
+                className="cursor-pointer mt-2"
+              >
+                Réinitialiser les filtres
+              </Button>
+            )}
+          </EmptyState>
+        ) : (
+          <DataGrid 
+            rowData={filteredData} 
+            columnDefs={columnDefs} 
+            height="calc(100vh - 340px)"
+            rowHeight={60}
+            defaultColDef={{
+              sortable: true,
+              filter: true,
+              resizable: true,
+            }}
+          />
+        )}
+      </Card>
+    </div>
   )
 }

@@ -8,8 +8,7 @@ import { ActionsCellRenderer } from '@/pages/Referentiels/components/ActionsCell
 import { toast } from 'sonner'
 
 export function usePersonnelsGrid(
-  onEdit: (data: any) => void,
-  onChangePassword: (data: any) => void
+  onEdit: (data: any) => void
 ) {
   const { data: fetchedData = [], isLoading, isError, error } = personnelsServices.useGetAll()
   const { mutate: deletePersonnel } = personnelsServices.useDelete()
@@ -30,7 +29,6 @@ export function usePersonnelsGrid(
       cellRenderer: ActionsCellRenderer,
       cellRendererParams: {
         onEdit: (data: any) => onEdit(data),
-        onChangePassword: (data: any) => onChangePassword(data),
         onDelete: (id: number) => deletePersonnel(id, {
           onSuccess: () => toast.success("Personnel supprimé avec succès."),
           onError: (err) => {
@@ -40,7 +38,7 @@ export function usePersonnelsGrid(
         }),
       },
     },
-  ], [onEdit, onChangePassword, deletePersonnel])
+  ], [onEdit, deletePersonnel])
 
   const availableRoles = useMemo(() => {
     const map = new Map<number, string>()

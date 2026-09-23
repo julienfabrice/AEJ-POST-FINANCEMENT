@@ -6,25 +6,16 @@ import { usePersonnelsGrid } from './hooks/usePersonnelsGrid'
 import { usePersonnelsFilters } from './hooks/usePersonnelsFilters'
 import { PersonnelsFilters } from './components/PersonnelsFilters'
 import { PersonnelFormModal } from './components/PersonnelFormModal'
-import { ChangePasswordModal } from './components/ChangePasswordModal'
 
 export function PersonnelsPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [editData, setEditData] = useState<any>(null)
-  const [passwordModalOpen, setPasswordModalOpen] = useState(false)
-  const [passwordData, setPasswordData] = useState<any>(null)
-  
   const handleEdit = (data: any) => {
     setEditData(data)
     setModalOpen(true)
   }
 
-  const handlePasswordChange = (data: any) => {
-    setPasswordData(data)
-    setPasswordModalOpen(true)
-  }
-
-  const { columnDefs, fetchedData, isLoading, isError, error, availableRoles, availableFonctions } = usePersonnelsGrid(handleEdit, handlePasswordChange)
+  const { columnDefs, fetchedData, isLoading, isError, error, availableRoles, availableFonctions } = usePersonnelsGrid(handleEdit)
   const { filters, setFilters, filteredData } = usePersonnelsFilters(fetchedData)
 
   return (
@@ -81,14 +72,6 @@ export function PersonnelsPage() {
           if (!open) setEditData(null)
         }}
         editData={editData}
-      />
-      <ChangePasswordModal 
-        open={passwordModalOpen} 
-        onOpenChange={(open) => {
-          setPasswordModalOpen(open)
-          if (!open) setPasswordData(null)
-        }} 
-        userData={passwordData} 
       />
     </div>
   )

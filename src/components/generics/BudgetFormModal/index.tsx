@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useState } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { projetsServices } from '@/services/projets.services'
+import { MicroProjetCombobox } from '@/components/generics/MicroProjetCombobox'
 import type { BUDGET_T } from '@/types'
 import { useBudgetForm } from './useBudgetForm'
 
@@ -24,66 +24,36 @@ interface Props {
 }
 
 export function BudgetFormModal({ open, onOpenChange, initialData, lockedMicroProjetId }: Props) {
+  const [portal, setPortal] = useState<HTMLElement | null>(null)
   const { form, onSubmit, isPending, isEdit } = useBudgetForm(open, onOpenChange, initialData, lockedMicroProjetId)
-
-  const { data: projetsRes, isLoading: isLoadingProjets } = projetsServices.useGetAll(1, 200)
-
-  const projets = useMemo(() => {
-    const list = projetsRes?.data ? [...projetsRes.data] : []
-    if (initialData?.micro_projet && !list.some((p) => p.id === initialData.micro_projet?.id)) {
-      list.unshift(initialData.micro_projet)
-    }
-    return list
-  }, [projetsRes, initialData])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px]">
+      <DialogContent ref={setPortal} className="sm:max-w-[480px]">
         <DialogHeader><DialogTitle>{isEdit ? 'Modifier le' : 'Créer un'} budget</DialogTitle></DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-2">
             <div className="grid grid-cols-2 gap-4">
-              <FormField control={form.control} name="micro_projet_id" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Micro-projet</FormLabel>
-                  <Select
-                    disabled={!!lockedMicroProjetId || isLoadingProjets}
-                    value={field.value && field.value > 0 ? String(field.value) : ''}
-                    onValueChange={(val) => field.onChange(val ? Number(val) : 0)}
-                  >
+              <FormField
+                control={form.control}
+                name="micro_projet_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Micro-projet</FormLabel>
                     <FormControl>
-                      <SelectTrigger className="w-full cursor-pointer">
-                        <SelectValue
-                          placeholder={
-                            isLoadingProjets
-                              ? 'Chargement...'
-                              : 'Sélectionner un projet'
-                          }
-                        />
-                      </SelectTrigger>
+                      <MicroProjetCombobox
+                        value={field.value}
+                        onChange={field.onChange}
+                        projetInitial={initialData?.micro_projet ?? null}
+                        disabled={!!lockedMicroProjetId}
+                        container={portal}
+                        placeholder="Rechercher..."
+                      />
                     </FormControl>
-                    <SelectContent position="popper" className="max-h-[260px]">
-                      {field.value && field.value > 0 && !projets.some((p) => p.id === field.value) && (
-                        <SelectItem value={String(field.value)}>
-                          {initialData?.micro_projet?.intitule ?? `Projet #${field.value}`}
-                        </SelectItem>
-                      )}
-                      {projets.map((p) => {
-                        const code = p.code ? `[${p.code}] ` : ''
-                        const promoteur = p.promoteur
-                          ? ` (${p.promoteur.nom} ${p.promoteur.prenom})`
-                          : ''
-                        return (
-                          <SelectItem key={p.id} value={String(p.id)}>
-                            {code}{p.intitule}{promoteur}
-                          </SelectItem>
-                        )
-                      })}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )} />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField control={form.control} name="intitule" render={({ field }) => (
                 <FormItem><FormLabel>Intitulé du budget</FormLabel><FormControl><Input placeholder="Ex: Matériel agricole" {...field} /></FormControl><FormMessage /></FormItem>
               )} />

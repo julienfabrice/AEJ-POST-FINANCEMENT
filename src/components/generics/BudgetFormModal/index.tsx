@@ -58,7 +58,7 @@ export function BudgetFormModal({ open, onOpenChange, initialData, lockedMicroPr
                 <FormItem><FormLabel>Intitulé du budget</FormLabel><FormControl><Input placeholder="Ex: Matériel agricole" {...field} /></FormControl><FormMessage /></FormItem>
               )} />
               <FormField control={form.control} name="montant_accorde" render={({ field: { onChange, ...field } }) => (
-                <FormItem><FormLabel>Montant accordé</FormLabel><FormControl><Input type="number" step="0.01" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Montant accordé</FormLabel><FormControl><Input type="number" step="5" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
               )} />
               <FormField control={form.control} name="source" render={({ field }) => (
                 <FormItem><FormLabel>Source</FormLabel><FormControl><Input placeholder="Ex. AFD, BAD..." {...field} /></FormControl><FormMessage /></FormItem>

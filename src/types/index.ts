@@ -594,6 +594,25 @@ export * from './workflow.types'
 export type TRANSACTION_TYPE_T = 'DEPENSE' | 'RECETTE'
 export type TRANSACTION_STATUT_T = 'BROUILLON' | 'SOUMIS' | 'VALIDE' | 'REJETE' | 'ANNULE'
 
+export interface CATEGORIE_TRANSACTION_T {
+  id: number
+  code: string
+  libelle: string
+  description?: string | null
+  niveau: number
+  parent_id?: number | null
+  created_at?: string
+  updated_at?: string
+  parent?: CATEGORIE_TRANSACTION_T | null
+  children?: CATEGORIE_TRANSACTION_T[]
+}
+
+export interface CATEGORIES_TRANSACTIONS_API_RESPONSE_T {
+  Message?: string
+  message?: string
+  data: CATEGORIE_TRANSACTION_T[]
+}
+
 export interface TRANSACTION_T {
   id: number
   micro_projet_id: number
@@ -612,6 +631,7 @@ export interface TRANSACTION_T {
   created_at?: string
   updated_at?: string
   micro_projet?: import('./promoteurs.types').MICRO_PROJET_T
+  categorie?: CATEGORIE_TRANSACTION_T | null
 }
 
 /**
@@ -635,12 +655,19 @@ export * from './observations.types'
 export * from './dashboard.types'
 
 
+export interface DISPOSITIF_WORKFLOW_VERSION_T {
+  id?: number | string | null
+  code?: string | null
+  name?: string | null
+  [key: string]: unknown
+}
+
 export interface DISPOSITIF_T {
   id: number
   code: string
   projet_id?: number | null
   guichet_id?: number | null
-  workflow_version?: any | null // we can refine this later
+  workflow_version?: DISPOSITIF_WORKFLOW_VERSION_T | null
   intitule: string
   budget_alloue: string | number
   montant_min: string | number
@@ -652,6 +679,6 @@ export interface DISPOSITIF_T {
   nbre_micro_projet_prevu: number
   created_at?: string
   updated_at?: string
-  projet?: any | null
+  projet?: PROJET_T | null
   guichet?: GUICHET_T | null
 }

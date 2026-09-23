@@ -28,6 +28,8 @@ export function TransactionFormModal({ children, open: controlledOpen, onOpenCha
     setOpen,
     portal,
     setPortal,
+    categories,
+    isLoadingCategories,
     form,
     onSubmit,
     isPending,
@@ -65,14 +67,45 @@ export function TransactionFormModal({ children, open: controlledOpen, onOpenCha
                   </FormItem>
                 )}
               />
-              <FormField control={form.control} name="categorie_id" render={({ field: { onChange, ...field } }) => (
-                <FormItem><FormLabel>ID Catégorie</FormLabel><FormControl><Input type="number" onChange={(e) => onChange(e.target.valueAsNumber || undefined)} {...field} /></FormControl><FormMessage /></FormItem>
-              )} />
+              <FormField
+                control={form.control}
+                name="categorie_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Catégorie</FormLabel>
+                    <Select
+                      disabled={isLoadingCategories}
+                      value={field.value ? String(field.value) : ''}
+                      onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue
+                            placeholder={
+                              isLoadingCategories
+                                ? 'Chargement...'
+                                : 'Sélectionner une catégorie'
+                            }
+                          />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categories.map((cat) => (
+                          <SelectItem key={cat.id} value={String(cat.id)}>
+                            {cat.libelle}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField control={form.control} name="libelle" render={({ field }) => (
                 <FormItem className="col-span-2"><FormLabel>Intitulé</FormLabel><FormControl><Input placeholder="Ex. Frais de transport" {...field} /></FormControl><FormMessage /></FormItem>
               )} />
               <FormField control={form.control} name="montant" render={({ field: { onChange, ...field } }) => (
-                <FormItem><FormLabel>Montant</FormLabel><FormControl><Input type="number" step="0.01" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Montant</FormLabel><FormControl><Input type="number" step="5" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
               )} />
               <FormField control={form.control} name="date" render={({ field }) => (
                 <FormItem><FormLabel>Date</FormLabel><FormControl><Input type="date" {...field} /></FormControl><FormMessage /></FormItem>

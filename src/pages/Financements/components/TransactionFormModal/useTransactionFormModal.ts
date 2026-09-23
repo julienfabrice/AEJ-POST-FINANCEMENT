@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { transactionSchema, type TransactionFormValues } from '@/schema/transactions/transactionSchema'
 import { transactionServices } from '@/services/transactions.services'
+import { categoriesTransactionsServices } from '@/services/categoriesTransactions.services'
 import type { TRANSACTION_T } from '@/types'
 
 const DEFAULT_VALUES: TransactionFormValues = {
@@ -43,6 +44,8 @@ export function useTransactionFormModal({
     [isControlled, onOpenChange],
   )
 
+  const { data: categories = [], isLoading: isLoadingCategories } =
+    categoriesTransactionsServices.useGetAll()
   const { mutate: createTransaction, isPending: isCreating } = transactionServices.useCreate()
   const { mutate: updateTransaction, isPending: isUpdating } = transactionServices.useUpdate()
   const isPending = isCreating || isUpdating
@@ -90,6 +93,8 @@ export function useTransactionFormModal({
     setOpen,
     portal,
     setPortal,
+    categories,
+    isLoadingCategories,
     form,
     onSubmit,
     isPending,

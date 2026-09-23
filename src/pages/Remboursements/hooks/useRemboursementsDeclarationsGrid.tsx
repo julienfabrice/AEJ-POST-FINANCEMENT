@@ -1,5 +1,4 @@
 import { remboursementDeclarationServices } from '@/services/remboursementsDeclarations.services'
-import { promoteursServices } from '@/services/promoteurs.services'
 import { useMemo, useState } from 'react'
 import type { ColDef, ValueFormatterParams, ValueGetterParams } from 'ag-grid-community'
 import Fuse from 'fuse.js'
@@ -16,24 +15,9 @@ const formatMontant = (params: ValueFormatterParams) => {
 }
 
 export function useRemboursementsDeclarationsGrid(searchQuery: string) {
-  const { data: fetchedData = [], isLoading: isDeclarationsLoading } =
-    remboursementDeclarationServices.useGetAll()
-  const { data: promoteurs = [], isLoading: isPromoteursLoading } =
-    promoteursServices.useGetAll()
+  const { data = [], isLoading } = remboursementDeclarationServices.useGetAll()
   const { mutate: deleteMutation } = remboursementDeclarationServices.useDelete()
   const [editingItem, setEditingItem] = useState<REMBOURSEMENT_DECLARATION_T | null>(null)
-
-  const promoteurById = useMemo(
-    () => new Map(promoteurs.map((p) => [p.id, p])),
-    [promoteurs]
-  )
-
-  const enrichedData = useMemo(() => {
-    return fetchedData.map((d) => ({
-      ...d,
-      promoteur: d.promoteur ?? (d.promoteur_id ? promoteurById.get(d.promoteur_id) : null),
-    }))
-  }, [fetchedData, promoteurById])
 
   const columnDefs = useMemo<ColDef<REMBOURSEMENT_DECLARATION_T>[]>(
     () => [
@@ -77,8 +61,8 @@ export function useRemboursementsDeclarationsGrid(searchQuery: string) {
   )
 
   const filteredData = useMemo(() => {
-    if (!searchQuery.trim() || enrichedData.length === 0) return enrichedData
-    const fuse = new Fuse(enrichedData, {
+    if (!searchQuery.trim() || data.length === 0) return data
+    const fuse = new Fuse(data, {
       keys: [
         'reference_banque',
         'promoteur.nom',
@@ -89,7 +73,7 @@ export function useRemboursementsDeclarationsGrid(searchQuery: string) {
       ignoreLocation: true,
     })
     return fuse.search(searchQuery).map((r) => r.item)
-  }, [enrichedData, searchQuery])
+  }, [data, searchQuery])
 
   const modalNode = (
     <RemboursementDeclarationFormModal
@@ -102,7 +86,7 @@ export function useRemboursementsDeclarationsGrid(searchQuery: string) {
   return {
     columnDefs,
     data: filteredData,
-    isLoading: isDeclarationsLoading || isPromoteursLoading,
+    isLoading,
     modalNode,
   }
 }

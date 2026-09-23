@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useUploadDocumentMutation, type DOCUMENT_T } from '@/services/documents.services'
-import { workflowInstancesServices } from '@/services/workflowInstances.services'
+import { workflowInstancesServices } from '@/services/workflow-instance/workflowInstances.services'
 import { etapeDeliverablesServices } from '@/services/workflow/etapeDeliverables.services'
 import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
 import type { WORKFLOW_ETAPE_DELIVERABLE_T } from '@/types/workflow.types'

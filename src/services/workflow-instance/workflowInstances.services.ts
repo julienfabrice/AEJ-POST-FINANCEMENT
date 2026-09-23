@@ -1,29 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { axiosInstance } from '@/constants/axiosInstance'
 import { toast } from 'sonner'
-import type { WORKFLOW_INSTANCE_HISTORY_T, WORKFLOW_INSTANCE_DELIVERABLE_T } from '@/types/workflow.types'
-import type { WorkflowInstancePatchValues, WorkflowHistoryValues } from '@/schema/workflow'
-
-// ─── Hooks ────────────────────────────────────────────────────────────────────
+import type { WORKFLOW_INSTANCE_DELIVERABLE_T } from '@/types/workflow.types'
+import type { WorkflowInstancePatchValues } from '@/schema/workflow'
 
 export const workflowInstancesServices = {
-  /**
-   * POST /workflow-instances/histories
-   * Enregistre l'action effectuée sur une étape (audit trail).
-   */
-  useCreateHistory: () => {
-    return useMutation({
-      mutationFn: async (payload: WorkflowHistoryValues): Promise<WORKFLOW_INSTANCE_HISTORY_T> => {
-        const { data } = await axiosInstance.post('/workflow-instances/histories', payload)
-        return data.data ?? data
-      },
-      onError: (error) => {
-        console.error("Erreur lors de l'enregistrement de l'historique workflow", error)
-        toast.error("Erreur lors de l'enregistrement de l'historique.")
-      },
-    })
-  },
-
   /**
    * PATCH /workflow-instances/instances/{id}
    * Met à jour l'instance : étape courante, statut, completed_at.

@@ -1,5 +1,6 @@
 import { useAuthStore } from '@/store/useAuthStore'
-import { workflowInstancesServices } from '@/services/workflowInstances.services'
+import { workflowInstancesServices } from "@/services/workflow-instance/workflowInstances.services"
+import { workflowHistoriesServices } from "@/services/workflow-instance/histories.services"
 import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
 import { useWorkflowVersionsMap, resolveNextEtape } from './useWorkflowVersionsMap'
 import { WORKFLOW_ADVANCE_DISABLED } from '@/constants/devFlags'
@@ -28,7 +29,7 @@ interface AdvanceWorkflowParams {
  */
 export function useAdvanceWorkflow() {
   const user = useAuthStore((s) => s.user)
-  const createHistory = workflowInstancesServices.useCreateHistory()
+  const createHistory = workflowHistoriesServices.useCreateHistory()
   const patchInstance = workflowInstancesServices.usePatchInstance()
   const { versionsMap } = useWorkflowVersionsMap()
 

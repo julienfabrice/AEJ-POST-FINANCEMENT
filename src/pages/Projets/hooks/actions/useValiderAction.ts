@@ -4,7 +4,7 @@ import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
 import { useProjetsStore } from '@/store/useProjetsStore'
 import { useAdvanceWorkflow } from '../useAdvanceWorkflow'
 import { validerSchema, type ValiderFormValues } from '@/schema/workflowActions/validerSchema'
-import { workflowInstancesServices } from '@/services/workflowInstances.services'
+import { workflowInstancesServices } from '@/services/workflow-instance/workflowInstances.services'
 import { useDeliverableUploads } from '../useDeliverableUploads'
 
 export function useValiderAction() {

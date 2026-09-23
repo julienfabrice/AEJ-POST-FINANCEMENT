@@ -46,6 +46,7 @@ interface BudgetsFiltersProps {
   isLoading?: boolean
   onAddNew: () => void
   onImport?: () => void
+  exportAction?: React.ReactNode
   organismes: Array<{ id: number; nom?: string | null; sigle?: string | null }>
   guichets: Array<{ id: number; nom?: string | null; code?: string | null }>
   secteurs: Array<{ id: number; libelle?: string | null; nom?: string | null }>
@@ -61,6 +62,7 @@ export function BudgetsFilters({
   isLoading,
   onAddNew,
   onImport,
+  exportAction,
   organismes,
   guichets,
   secteurs,
@@ -245,6 +247,8 @@ export function BudgetsFilters({
               </Badge>
             )}
           </Button>
+
+          {exportAction}
 
           {onImport && (
             <Button

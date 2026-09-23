@@ -1,9 +1,13 @@
+import { useMemo } from 'react'
+import dayjs from 'dayjs'
 import { Plus, Search, Upload } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { DataGrid } from '@/components/ui/DataGrid'
+import { ExportButton, type ExportColumn } from '@/components/generics/ExportButton'
+import type { TRANSACTION_T } from '@/types'
 import { TransactionFormModal } from '../components/TransactionFormModal'
 import { TransactionImportModal } from '../components/TransactionImportModal'
 import { useTabDepenses } from '../hooks/useTabDepenses'
@@ -15,6 +19,7 @@ export function TabDepenses() {
     setSearchQuery,
     filteredData,
     columnDefs,
+    catById,
     isCreateOpen,
     setIsCreateOpen,
     isImportOpen,
@@ -22,6 +27,60 @@ export function TabDepenses() {
     toEdit,
     handleCloseModal,
   } = useTabDepenses()
+
+  const exportColumns = useMemo<ExportColumn<TRANSACTION_T>[]>(
+    () => [
+      {
+        header: 'Code Projet',
+        accessor: (t) => t.micro_projet?.code ?? `PROJ-${t.micro_projet_id}`,
+      },
+      {
+        header: 'Intitulé Projet',
+        accessor: (t) => t.micro_projet?.intitule ?? '—',
+      },
+      {
+        header: 'Catégorie',
+        accessor: (t) =>
+          t.categorie?.libelle ??
+          (t.categorie_id
+            ? (catById.get(t.categorie_id) ?? `Catégorie #${t.categorie_id}`)
+            : '—'),
+      },
+      {
+        header: 'Intitulé Dépense',
+        accessor: (t) => t.libelle || '—',
+      },
+      {
+        header: 'Montant (FCFA)',
+        accessor: (t) => Number(t.montant ?? 0),
+      },
+      {
+        header: 'Type',
+        accessor: (t) => t.type ?? '—',
+      },
+      {
+        header: 'Date',
+        accessor: (t) => (t.date ? dayjs(t.date).format('DD/MM/YYYY') : '—'),
+      },
+      {
+        header: 'Mode de Paiement',
+        accessor: (t) => t.mode_paiement ?? '—',
+      },
+      {
+        header: 'Référence Pièce',
+        accessor: (t) => t.reference ?? '—',
+      },
+      {
+        header: 'Statut',
+        accessor: (t) => t.statut ?? '—',
+      },
+      {
+        header: 'Observations',
+        accessor: (t) => t.observations ?? '—',
+      },
+    ],
+    [catById]
+  )
 
   return (
     <>
@@ -51,6 +110,13 @@ export function TabDepenses() {
           {isLoading ? 'Chargement...' : `${filteredData.length} dépense(s)`}
         </span>
         <div className="flex-1" />
+        <ExportButton
+          data={filteredData}
+          columns={exportColumns}
+          fileName="depenses"
+          title="Liste des Dépenses"
+          disabled={filteredData.length === 0}
+        />
         <Button
           variant="outline"
           onClick={() => setIsImportOpen(true)}

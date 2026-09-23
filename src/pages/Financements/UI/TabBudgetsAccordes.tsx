@@ -17,6 +17,7 @@ import { secteurServices } from '@/services/secteurs.services'
 import { agenceRegionaleServices } from '@/services/agences-regionales.services'
 import { BudgetFormModal } from '@/components/generics/BudgetFormModal'
 import { BudgetImportModal } from '../components/BudgetImportModal'
+import { ExportButton, type ExportColumn } from '@/components/generics/ExportButton'
 import { BudgetsFilters } from './BudgetsFilters'
 import { useBudgetsFilters } from '../hooks/useBudgetsFilters'
 import type { BUDGET_T } from '@/types'
@@ -46,6 +47,66 @@ export function TabBudgetsAccordes() {
 
   const guichetById = useMemo(() => new Map(guichets.map((g) => [g.id, g])), [guichets])
   const organismeById = useMemo(() => new Map(organismes.map((o) => [o.id, o])), [organismes])
+
+  const exportColumns = useMemo<ExportColumn<BUDGET_T>[]>(
+    () => [
+      {
+        header: 'Code Projet',
+        accessor: (b) => b.micro_projet?.code ?? `PROJ-${b.micro_projet_id}`,
+      },
+      {
+        header: 'Intitulé Projet',
+        accessor: (b) => b.micro_projet?.intitule ?? b.intitule ?? '—',
+      },
+      {
+        header: 'Organisme / Partenaire',
+        accessor: (b) => {
+          const oId = b.micro_projet?.organisme_id
+          if (!oId) return '—'
+          const org = organismeById.get(oId)
+          return org?.sigle ?? org?.nom ?? '—'
+        },
+      },
+      {
+        header: 'Intitulé Budget',
+        accessor: (b) => b.intitule ?? '—',
+      },
+      {
+        header: 'Montant Accordé',
+        accessor: (b) => Number(b.montant_accorde ?? 0),
+      },
+      {
+        header: 'Source Financement',
+        accessor: (b) => b.source ?? '—',
+      },
+      {
+        header: "Date d'accord",
+        accessor: (b) => (b.date_accord ? dayjs(b.date_accord).format('DD/MM/YYYY') : '—'),
+      },
+      {
+        header: 'Approbation Comité',
+        accessor: (b) => b.statut ?? '—',
+      },
+      {
+        header: 'Convention Signée',
+        accessor: (b) => (b.signature_convention === 'SIGNEE' ? 'Signée' : 'En cours'),
+      },
+      {
+        header: 'Déblocage Effectué',
+        accessor: (b) => (b.deblocage ? 'Débloqué' : 'Non'),
+      },
+      {
+        header: 'Acte de Crédit',
+        accessor: (b) =>
+          b.reception_acte_credit === 'OUI'
+            ? 'Reçu'
+            : b.reception_acte_credit === 'PARTIEL'
+              ? 'Partiel'
+              : 'Non reçu',
+      },
+    ],
+    [organismeById]
+  )
 
   const columnDefs = useMemo<ColDef<BUDGET_T>[]>(() => [
     {
@@ -216,6 +277,15 @@ export function TabBudgetsAccordes() {
         isLoading={isLoading}
         onAddNew={() => setIsCreateOpen(true)}
         onImport={() => setIsImportOpen(true)}
+        exportAction={
+          <ExportButton
+            data={filteredData}
+            columns={exportColumns}
+            fileName="budgets_accordes"
+            title="Liste des Budgets Accordés"
+            disabled={filteredData.length === 0}
+          />
+        }
         organismes={organismes}
         guichets={guichets}
         secteurs={secteurs}

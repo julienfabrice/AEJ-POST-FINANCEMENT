@@ -6,6 +6,7 @@ import { StatusBadge } from '../../EspacePartenaireFinancier/components/StatusBa
 import { ActionsCellRenderer } from '@/pages/Referentiels/components/ActionsCellRenderer'
 import { money } from '@/helpers/money'
 import { transactionServices } from '@/services/transactions.services'
+import { categoriesTransactionsServices } from '@/services/categoriesTransactions.services'
 import type { TRANSACTION_T, TRANSACTION_STATUT_T } from '@/types'
 
 export const TRANSACTION_STATUT_VARIANTS: Record<TRANSACTION_STATUT_T, 'gr' | 'am' | 'rd' | 'gy'> = {
@@ -19,6 +20,12 @@ export const TRANSACTION_STATUT_VARIANTS: Record<TRANSACTION_STATUT_T, 'gr' | 'a
 export function useTabDepenses() {
   const { data: depenses = [], isLoading } = transactionServices.useGetAll()
   const { mutate: deleteTransaction } = transactionServices.useDelete()
+  const { data: categories = [] } = categoriesTransactionsServices.useGetAll()
+
+  const catById = useMemo(
+    () => new Map(categories.map((c) => [c.id, c.libelle])),
+    [categories]
+  )
 
   const [searchQuery, setSearchQuery] = useState('')
   const [toEdit, setToEdit] = useState<TRANSACTION_T | null>(null)
@@ -75,7 +82,11 @@ export function useTabDepenses() {
       field: 'categorie_id',
       headerName: 'Catégorie',
       width: 140,
-      valueGetter: (p) => (p.data?.categorie_id ? `Catégorie #${p.data.categorie_id}` : '—'),
+      valueGetter: (p) =>
+        p.data?.categorie?.libelle ??
+        (p.data?.categorie_id
+          ? (catById.get(p.data.categorie_id) ?? `Catégorie #${p.data.categorie_id}`)
+          : '—'),
       cellRenderer: (p: ICellRendererParams<TRANSACTION_T>) => (
         <span className="text-[13px] text-[#5A6B80]">{p.value}</span>
       ),
@@ -134,10 +145,12 @@ export function useTabDepenses() {
         onDelete: (id: number) => deleteTransaction(Number(id)),
       },
     },
-  ], [deleteTransaction])
+  ], [deleteTransaction, catById])
 
   return {
     depenses,
+    categories,
+    catById,
     isLoading,
     searchQuery,
     setSearchQuery,

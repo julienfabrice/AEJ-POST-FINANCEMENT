@@ -634,20 +634,7 @@ export * from './observations.types'
  */
 export * from './dashboard.types'
 
-/**
- * --- Cadre de résultat (module « Suivi & évaluation », API NON BRANCHÉE) ---
- *
- * Ré-exporté comme `suivi.types` et `dashboard.types` ci-dessus : les écrans,
- * services et schémas importent depuis `@/types` sans connaître le découpage
- * des fichiers.
- *
- * ⚠️ Ces types sont calqués sur un SCHÉMA SQL, pas sur une réponse d'API —
- * l'API n'existe pas encore. Coquilles du schéma reprises telles quelles
- * (`abgrege_cs`, `intutile_cs`, `valeur_cible_indcateur_istr`, `Date_suivi`),
- * incohérences signalées champ par champ : tout le détail est dans
- * `cadreResultat.types.ts`, à relire au moment du branchement.
- */
-export * from './cadreResultat.types'
+
 export interface DISPOSITIF_T {
   id: number
   code: string

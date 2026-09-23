@@ -1,6 +1,4 @@
-import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import React from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -13,9 +11,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { transactionSchema, type TransactionFormValues } from '@/schema/transactions/transactionSchema'
-import { transactionServices } from '@/services/transactions.services'
+import { MicroProjetCombobox } from '@/components/generics/MicroProjetCombobox'
 import type { TRANSACTION_T } from '@/types'
+import { useTransactionFormModal } from './useTransactionFormModal'
 
 interface Props {
   children?: React.ReactNode
@@ -24,79 +22,49 @@ interface Props {
   initialData?: TRANSACTION_T | null
 }
 
-const DEFAULT_VALUES: TransactionFormValues = {
-  micro_projet_id: 0,
-  categorie_id: undefined,
-  libelle: '',
-  type: 'DEPENSE',
-  montant: 0,
-  statut: 'VALIDE',
-  mode_paiement: '',
-  reference: '',
-  observations: '',
-  date: '',
-}
-
 export function TransactionFormModal({ children, open: controlledOpen, onOpenChange, initialData }: Props) {
-  const [internalOpen, setInternalOpen] = useState(false)
-  const isControlled = controlledOpen !== undefined
-  const open = isControlled ? controlledOpen : internalOpen
-
-  const setOpen = (newOpen: boolean) => {
-    if (!isControlled) setInternalOpen(newOpen)
-    onOpenChange?.(newOpen)
-  }
-
-  const { mutate: createTransaction, isPending: isCreating } = transactionServices.useCreate()
-  const { mutate: updateTransaction, isPending: isUpdating } = transactionServices.useUpdate()
-  const isPending = isCreating || isUpdating
-  const isEdit = !!initialData
-
-  const form = useForm<TransactionFormValues>({
-    resolver: zodResolver(transactionSchema),
-    defaultValues: DEFAULT_VALUES,
+  const {
+    open,
+    setOpen,
+    portal,
+    setPortal,
+    form,
+    onSubmit,
+    isPending,
+    isEdit,
+  } = useTransactionFormModal({
+    open: controlledOpen,
+    onOpenChange,
+    initialData,
   })
-
-  useEffect(() => {
-    if (open) {
-      if (initialData) {
-        form.reset({
-          micro_projet_id: initialData.micro_projet_id,
-          categorie_id: initialData.categorie_id ?? undefined,
-          libelle: initialData.libelle,
-          type: initialData.type,
-          montant: Number(initialData.montant),
-          statut: initialData.statut,
-          mode_paiement: initialData.mode_paiement ?? '',
-          reference: initialData.reference ?? '',
-          observations: initialData.observations ?? '',
-          date: initialData.date ?? '',
-        })
-      } else {
-        form.reset(DEFAULT_VALUES)
-      }
-    }
-  }, [open, initialData, form])
-
-  const onSubmit = (values: TransactionFormValues) => {
-    if (isEdit && initialData) {
-      updateTransaction({ id: initialData.id, data: values }, { onSuccess: () => setOpen(false) })
-    } else {
-      createTransaction(values, { onSuccess: () => setOpen(false) })
-    }
-  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {children && <DialogTrigger asChild>{children}</DialogTrigger>}
-      <DialogContent className="sm:max-w-[480px]">
+      <DialogContent ref={setPortal} className="sm:max-w-[480px]">
         <DialogHeader><DialogTitle>{isEdit ? 'Modifier la' : 'Nouvelle'} dépense</DialogTitle></DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-2">
             <div className="grid grid-cols-2 gap-4">
-              <FormField control={form.control} name="micro_projet_id" render={({ field: { onChange, ...field } }) => (
-                <FormItem><FormLabel>ID Micro-projet</FormLabel><FormControl><Input type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
-              )} />
+              <FormField
+                control={form.control}
+                name="micro_projet_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Micro-projet</FormLabel>
+                    <FormControl>
+                      <MicroProjetCombobox
+                        value={field.value}
+                        onChange={field.onChange}
+                        projetInitial={initialData?.micro_projet ?? null}
+                        container={portal}
+                        placeholder="Rechercher..."
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField control={form.control} name="categorie_id" render={({ field: { onChange, ...field } }) => (
                 <FormItem><FormLabel>ID Catégorie</FormLabel><FormControl><Input type="number" onChange={(e) => onChange(e.target.valueAsNumber || undefined)} {...field} /></FormControl><FormMessage /></FormItem>
               )} />

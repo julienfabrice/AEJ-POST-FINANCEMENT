@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from '@/components/ui/dialog'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
@@ -5,6 +6,8 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useRemboursementDeclarationForm } from '../hooks/useRemboursementDeclarationForm'
+import { PromoteurCombobox } from '@/components/generics/PromoteurCombobox'
+import { BudgetCombobox } from '@/components/generics/BudgetCombobox'
 import type { REMBOURSEMENT_DECLARATION_T } from '@/types'
 
 interface Props {
@@ -27,20 +30,61 @@ export function RemboursementDeclarationFormModal({ children, open: controlledOp
     onOpenChange,
   )
 
+  const [portal, setPortal] = useState<HTMLElement | null>(null)
+  const promoteurId = form.watch('promoteur_id')
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {children && <DialogTrigger asChild>{children}</DialogTrigger>}
-      <DialogContent className="sm:max-w-[520px] max-h-[90vh] overflow-y-auto">
+      <DialogContent ref={setPortal} className="sm:max-w-[560px] max-h-[90vh] overflow-y-auto">
         <DialogHeader><DialogTitle>{isEdit ? 'Modifier la' : 'Nouvelle'} déclaration de paiement</DialogTitle></DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-2">
             <div className="grid grid-cols-2 gap-4">
-              <FormField control={form.control} name="promoteur_id" render={({ field: { onChange, ...field } }) => (
-                <FormItem><FormLabel>ID Promoteur</FormLabel><FormControl><Input type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
-              )} />
-              <FormField control={form.control} name="budget_id" render={({ field: { onChange, ...field } }) => (
-                <FormItem><FormLabel>ID Budget</FormLabel><FormControl><Input type="number" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
-              )} />
+              <FormField
+                control={form.control}
+                name="promoteur_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Promoteur</FormLabel>
+                    <FormControl>
+                      <PromoteurCombobox
+                        value={field.value}
+                        onChange={(pId) => {
+                          field.onChange(pId)
+                        }}
+                        promoteurInitial={initialData?.promoteur ?? null}
+                        container={portal}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="budget_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Budget</FormLabel>
+                    <FormControl>
+                      <BudgetCombobox
+                        value={field.value}
+                        onChange={(bId, budget) => {
+                          field.onChange(bId)
+                          if (budget?.micro_projet?.promoteur_id && !form.getValues('promoteur_id')) {
+                            form.setValue('promoteur_id', budget.micro_projet.promoteur_id)
+                          }
+                        }}
+                        budgetInitial={initialData?.budget ?? null}
+                        promoteurId={promoteurId}
+                        container={portal}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField control={form.control} name="montant_declare" render={({ field: { onChange, ...field } }) => (
                 <FormItem><FormLabel>Montant déclaré</FormLabel><FormControl><Input type="number" step="0.01" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
               )} />

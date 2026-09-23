@@ -4,17 +4,8 @@ import { Send, CheckCheck, Undo2 } from 'lucide-react'
 import { remboursementDeclarationServices } from '@/services/remboursementsDeclarations.services'
 import type { REMBOURSEMENT_DECLARATION_T, REMBOURSEMENT_DECLARATION_STATUT_T } from '@/types'
 
-const STATUT_STYLES: Record<REMBOURSEMENT_DECLARATION_STATUT_T, string> = {
-  BROUILLON: 'bg-slate-100 text-slate-700 hover:bg-slate-100 border-0',
-  SOUMIS: 'bg-amber-100 text-amber-700 hover:bg-amber-100 border-0',
-  TRAITE: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-0',
-}
+import { STATUT_LABELS, STATUT_STYLES } from '@/constants/DECLARATION_STATUSES'
 
-const STATUT_LABELS: Record<REMBOURSEMENT_DECLARATION_STATUT_T, string> = {
-  BROUILLON: 'Brouillon',
-  SOUMIS: 'Soumis',
-  TRAITE: 'Traité',
-}
 
 export const RemboursementDeclarationStatutCellRenderer = (params: ICellRendererParams<REMBOURSEMENT_DECLARATION_T>) => {
   const { mutate: validate, isPending } = remboursementDeclarationServices.useValidate()

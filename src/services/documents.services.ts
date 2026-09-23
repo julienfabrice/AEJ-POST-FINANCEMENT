@@ -33,7 +33,6 @@ export function useGetDocuments(micro_projet_id?: number) {
       })
       return data.data ?? data
     },
-    enabled: micro_projet_id !== undefined,
   })
 }
 

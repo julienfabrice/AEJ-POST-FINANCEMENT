@@ -14,11 +14,8 @@ interface Props {
   initialData?: DECAISSEMENT_DECLARATION_T | null
 }
 
-const STATUT_LABELS = {
-  BROUILLON: 'Brouillon',
-  SOUMIS: 'Soumis',
-  TRAITE: 'Traité',
-}
+import { STATUT_LABELS } from '@/constants/DECLARATION_STATUSES'
+
 
 export function DecaissementDeclarationFormModal({ children, open: controlledOpen, onOpenChange, initialData }: Props) {
   const { form, onSubmit, isPending, isEdit, open, setOpen } = useDecaissementDeclarationForm(

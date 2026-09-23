@@ -257,7 +257,8 @@ export function ExaminerModal() {
 
   const handleClose = () => setExaminerModalProjet(null)
 
-  const statutConfig = STATUT_PLAN[MOCK_PLAN.statut] ?? { label: MOCK_PLAN.statut, variant: 'outline' as const }
+  const currentStatut = projet?.plan_decaissement?.statut ?? projet?.statut ?? 'BROUILLON'
+  const statutConfig = STATUT_PLAN[currentStatut] ?? { label: currentStatut, variant: 'outline' as const }
 
   return (
     <Sheet open={!!projet} onOpenChange={(open) => !open && handleClose()}>
@@ -272,18 +273,18 @@ export function ExaminerModal() {
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap mb-1">
                 <code className="text-xs font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
-                  {MOCK_PLAN.code}
+                  {projet?.code ?? 'N/A'}
                 </code>
-                <span className="text-xs text-slate-400">· plan de décaissement · voie {MOCK_PLAN.voie}</span>
+                <span className="text-xs text-slate-400">· plan de décaissement · voie Agence</span>
                 <Badge variant={statutConfig.variant} className="text-[11px]">
                   {statutConfig.label}
                 </Badge>
               </div>
               <SheetTitle className="text-[16px] font-bold text-slate-900 leading-snug">
-                {MOCK_PLAN.titre}
+                {projet?.intitule ?? 'Projet sans titre'}
               </SheetTitle>
               <p className="text-[12.5px] text-slate-500 mt-0.5">
-                {MOCK_PLAN.beneficiaire} · {MOCK_PLAN.agence}
+                {projet?.promoteur ? `${projet.promoteur.prenom} ${projet.promoteur.nom}` : 'Promoteur inconnu'} · {projet?.agence?.libelle || projet?.agence?.nom || 'Agence inconnue'}
               </p>
             </div>
             <button

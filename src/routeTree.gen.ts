@@ -19,7 +19,6 @@ import { Route as AuthenticatedAgentRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedBenefRouteImport } from './routes/_authenticated/_benef'
 import { Route as AuthenticatedCompteRouteImport } from './routes/_authenticated/compte'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
-import { Route as AuthenticatedAgentCadreResultatRouteImport } from './routes/_authenticated/_agent/cadre-resultat'
 import { Route as AuthenticatedAgentDispositifsRouteImport } from './routes/_authenticated/_agent/dispositifs'
 import { Route as AuthenticatedAgentFinancementsRouteImport } from './routes/_authenticated/_agent/financements'
 import { Route as AuthenticatedAgentGuichetsRouteImport } from './routes/_authenticated/_agent/guichets'
@@ -94,12 +93,6 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedAgentCadreResultatRoute =
-  AuthenticatedAgentCadreResultatRouteImport.update({
-    id: '/cadre-resultat',
-    path: '/cadre-resultat',
-    getParentRoute: () => AuthenticatedAgentRoute,
-  } as any)
 const AuthenticatedAgentDispositifsRoute =
   AuthenticatedAgentDispositifsRouteImport.update({
     id: '/dispositifs',
@@ -264,7 +257,6 @@ export interface FileRoutesByFullPath {
   '/setup-password': typeof SetupPasswordRoute
   '/compte': typeof AuthenticatedCompteRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/cadre-resultat': typeof AuthenticatedAgentCadreResultatRoute
   '/dispositifs': typeof AuthenticatedAgentDispositifsRoute
   '/financements': typeof AuthenticatedAgentFinancementsRoute
   '/guichets': typeof AuthenticatedAgentGuichetsRoute
@@ -300,7 +292,6 @@ export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
   '/compte': typeof AuthenticatedCompteRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/cadre-resultat': typeof AuthenticatedAgentCadreResultatRoute
   '/dispositifs': typeof AuthenticatedAgentDispositifsRoute
   '/financements': typeof AuthenticatedAgentFinancementsRoute
   '/guichets': typeof AuthenticatedAgentGuichetsRoute
@@ -340,7 +331,6 @@ export interface FileRoutesById {
   '/_authenticated/compte': typeof AuthenticatedCompteRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
-  '/_authenticated/_agent/cadre-resultat': typeof AuthenticatedAgentCadreResultatRoute
   '/_authenticated/_agent/dispositifs': typeof AuthenticatedAgentDispositifsRoute
   '/_authenticated/_agent/financements': typeof AuthenticatedAgentFinancementsRoute
   '/_authenticated/_agent/guichets': typeof AuthenticatedAgentGuichetsRoute
@@ -378,7 +368,6 @@ export interface FileRouteTypes {
     | '/setup-password'
     | '/compte'
     | '/dashboard'
-    | '/cadre-resultat'
     | '/dispositifs'
     | '/financements'
     | '/guichets'
@@ -414,7 +403,6 @@ export interface FileRouteTypes {
     | '/'
     | '/compte'
     | '/dashboard'
-    | '/cadre-resultat'
     | '/dispositifs'
     | '/financements'
     | '/guichets'
@@ -453,7 +441,6 @@ export interface FileRouteTypes {
     | '/_authenticated/compte'
     | '/_authenticated/dashboard'
     | '/_authenticated/'
-    | '/_authenticated/_agent/cadre-resultat'
     | '/_authenticated/_agent/dispositifs'
     | '/_authenticated/_agent/financements'
     | '/_authenticated/_agent/guichets'
@@ -561,13 +548,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/_agent/cadre-resultat': {
-      id: '/_authenticated/_agent/cadre-resultat'
-      path: '/cadre-resultat'
-      fullPath: '/cadre-resultat'
-      preLoaderRoute: typeof AuthenticatedAgentCadreResultatRouteImport
-      parentRoute: typeof AuthenticatedAgentRoute
     }
     '/_authenticated/_agent/dispositifs': {
       id: '/_authenticated/_agent/dispositifs'
@@ -755,7 +735,6 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAgentRouteChildren {
-  AuthenticatedAgentCadreResultatRoute: typeof AuthenticatedAgentCadreResultatRoute
   AuthenticatedAgentDispositifsRoute: typeof AuthenticatedAgentDispositifsRoute
   AuthenticatedAgentFinancementsRoute: typeof AuthenticatedAgentFinancementsRoute
   AuthenticatedAgentGuichetsRoute: typeof AuthenticatedAgentGuichetsRoute
@@ -783,7 +762,6 @@ interface AuthenticatedAgentRouteChildren {
 }
 
 const AuthenticatedAgentRouteChildren: AuthenticatedAgentRouteChildren = {
-  AuthenticatedAgentCadreResultatRoute: AuthenticatedAgentCadreResultatRoute,
   AuthenticatedAgentDispositifsRoute: AuthenticatedAgentDispositifsRoute,
   AuthenticatedAgentFinancementsRoute: AuthenticatedAgentFinancementsRoute,
   AuthenticatedAgentGuichetsRoute: AuthenticatedAgentGuichetsRoute,

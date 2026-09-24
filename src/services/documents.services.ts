@@ -33,7 +33,6 @@ export function useGetDocuments(micro_projet_id?: number) {
       })
       return data.data ?? data
     },
-    enabled: micro_projet_id !== undefined,
   })
 }
 
@@ -41,11 +40,14 @@ export function useUploadDocumentMutation() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (payload: { file: File; folder: string; micro_projet_id: string }) => {
+    mutationFn: async (payload: { file: File; folder: string; micro_projet_id?: string | number | null }) => {
       const formData = new FormData()
       formData.append('file', payload.file)
       formData.append('folder', payload.folder)
-      formData.append('micro_projet_id', payload.micro_projet_id)
+      
+      if (payload.micro_projet_id) {
+        formData.append('micro_projet_id', payload.micro_projet_id.toString())
+      }
 
       const res = await axiosInstance.post('/documents/upload', formData, {
         headers: {
@@ -56,7 +58,11 @@ export function useUploadDocumentMutation() {
     },
     onSuccess: (_, vars) => {
       toast.success('Document joint et soumis avec succès.')
-      queryClient.invalidateQueries({ queryKey: ['documents', Number(vars.micro_projet_id)] })
+      if (vars.micro_projet_id) {
+        queryClient.invalidateQueries({ queryKey: ['documents', Number(vars.micro_projet_id)] })
+      }
+      // Invalidates all documents lists globally
+      queryClient.invalidateQueries({ queryKey: ['documents'] })
       queryClient.invalidateQueries({ queryKey: ['projets'] })
     },
     onError: (error) => {

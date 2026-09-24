@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { axiosInstance } from '@/constants/axiosInstance'
 import { toast } from 'sonner'
 import type { BUDGET_T, BUDGET_STATUT_T, API_RESPONSE_T } from '@/types'
+import type { BUDGET_CREATE_PAYLOAD_T } from '@/schema/budgets/budgetSchema'
 
 /**
  * L'API renvoie `deblocage` en booléen (GET /budgets), mais la validation
@@ -47,6 +48,18 @@ export const budgetServices = {
       onError: (error) => {
         toast.error("Erreur lors de la création du budget.")
         console.error(error)
+      },
+    })
+  },
+  useCreateMultiple: () => {
+    const queryClient = useQueryClient()
+    return useMutation({
+      mutationFn: async (payload: { budgets: BUDGET_CREATE_PAYLOAD_T[] }) => {
+        const response = await axiosInstance.post('/budgets/multiple', payload)
+        return response.data
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['budgets'] })
       },
     })
   },

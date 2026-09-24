@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import type { BUDGET_T } from '@/types'
 
 export const budgetSchema = z.object({
   micro_projet_id: z.number().int().positive('Le micro-projet est requis.'),
@@ -18,3 +19,10 @@ export const budgetSchema = z.object({
 })
 
 export type BudgetFormValues = z.infer<typeof budgetSchema>
+
+export type BUDGET_CREATE_PAYLOAD_T = Omit<
+  BUDGET_T,
+  'id' | 'micro_projet' | 'created_at' | 'updated_at' | 'valide_par' | 'deblocage'
+> & {
+  deblocage: 'OUI' | 'NON'
+}

@@ -1,114 +1,173 @@
-import { useState } from 'react'
+import { useMemo } from 'react'
 import dayjs from 'dayjs'
+import { Plus, Search, Upload } from 'lucide-react'
 import { Card } from '@/components/ui/card'
-import { StatusBadge } from '../../EspacePartenaireFinancier/components/StatusBadge'
-import { money } from '@/helpers/money'
-import { transactionServices } from '@/services/transactions.services'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
+import { DataGrid } from '@/components/ui/DataGrid'
+import { ExportButton, type ExportColumn } from '@/components/generics/ExportButton'
+import type { TRANSACTION_T } from '@/types'
 import { TransactionFormModal } from '../components/TransactionFormModal'
-import { DeleteConfirmModal } from '@/components/DeleteConfirmModal'
-import type { TRANSACTION_T, TRANSACTION_STATUT_T } from '@/types'
-
-const STATUT_VARIANTS: Record<TRANSACTION_STATUT_T, 'gr' | 'am' | 'rd' | 'gy'> = {
-  BROUILLON: 'gy',
-  SOUMIS: 'am',
-  VALIDE: 'gr',
-  REJETE: 'rd',
-  ANNULE: 'gy',
-}
+import { TransactionImportModal } from '../components/TransactionImportModal'
+import { useTabDepenses } from '../hooks/useTabDepenses'
 
 export function TabDepenses() {
-  const { data: depenses = [], isLoading } = transactionServices.useGetAll()
-  const { mutate: deleteTransaction } = transactionServices.useDelete()
+  const {
+    isLoading,
+    searchQuery,
+    setSearchQuery,
+    filteredData,
+    columnDefs,
+    catById,
+    isCreateOpen,
+    setIsCreateOpen,
+    isImportOpen,
+    setIsImportOpen,
+    toEdit,
+    handleCloseModal,
+  } = useTabDepenses()
 
-  const [toEdit, setToEdit] = useState<TRANSACTION_T | null>(null)
-  const [toDelete, setToDelete] = useState<TRANSACTION_T | null>(null)
+  const exportColumns = useMemo<ExportColumn<TRANSACTION_T>[]>(
+    () => [
+      {
+        header: 'Code Projet',
+        accessor: (t) => t.micro_projet?.code ?? `PROJ-${t.micro_projet_id}`,
+      },
+      {
+        header: 'Intitulé Projet',
+        accessor: (t) => t.micro_projet?.intitule ?? '—',
+      },
+      {
+        header: 'Catégorie',
+        accessor: (t) =>
+          t.categorie?.libelle ??
+          (t.categorie_id
+            ? (catById.get(t.categorie_id) ?? `Catégorie #${t.categorie_id}`)
+            : '—'),
+      },
+      {
+        header: 'Intitulé Dépense',
+        accessor: (t) => t.libelle || '—',
+      },
+      {
+        header: 'Montant (FCFA)',
+        accessor: (t) => Number(t.montant ?? 0),
+      },
+      {
+        header: 'Type',
+        accessor: (t) => t.type ?? '—',
+      },
+      {
+        header: 'Date',
+        accessor: (t) => (t.date ? dayjs(t.date).format('DD/MM/YYYY') : '—'),
+      },
+      {
+        header: 'Mode de Paiement',
+        accessor: (t) => t.mode_paiement ?? '—',
+      },
+      {
+        header: 'Référence Pièce',
+        accessor: (t) => t.reference ?? '—',
+      },
+      {
+        header: 'Statut',
+        accessor: (t) => t.statut ?? '—',
+      },
+      {
+        header: 'Observations',
+        accessor: (t) => t.observations ?? '—',
+      },
+    ],
+    [catById]
+  )
 
   return (
-    <Card className="p-0 overflow-hidden border-[#E5EAF1] shadow-[0_1px_2px_rgba(18,28,41,.05),_0_6px_20px_rgba(18,28,41,.06)]">
-      <TransactionFormModal open={!!toEdit} onOpenChange={(open) => !open && setToEdit(null)} initialData={toEdit} />
-      <DeleteConfirmModal
-        open={!!toDelete}
-        onOpenChange={(open) => !open && setToDelete(null)}
-        itemLabel={toDelete?.libelle}
-        onConfirm={() => toDelete && deleteTransaction(toDelete.id)}
+    <>
+      <TransactionFormModal 
+        open={isCreateOpen || !!toEdit} 
+        onOpenChange={handleCloseModal} 
+        initialData={toEdit} 
       />
 
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse">
-          <thead>
-            <tr>
-              {['Micro-projet', 'Catégorie', 'Intitulé', 'Montant', 'Date', 'Statut', ''].map((h, i) => (
-                <th
-                  key={i}
-                  className={`text-left text-[11px] uppercase tracking-[.05em] text-[#8595A8] font-bold px-[14px] py-[11px] border-b border-[#E5EAF1] bg-[#fafbfd] whitespace-nowrap ${h === '' ? 'text-right' : ''}`}
-                >
-                  {h === '' ? 'Actions' : h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {isLoading && (
-              <tr><td colSpan={7} className="px-[14px] py-6 text-center text-[13px] text-[#8595A8]">Chargement...</td></tr>
-            )}
-            {!isLoading && depenses.length === 0 && (
-              <tr><td colSpan={7} className="px-[14px] py-6 text-center text-[13px] text-[#8595A8]">Aucune dépense.</td></tr>
-            )}
-            {depenses.map((d) => {
-              const projet = d.micro_projet
-              return (
-                <tr key={d.id} className="hover:bg-[#fafbfe] transition-colors">
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px]">
-                    {projet ? (
-                      <>
-                        <span className="inline-flex items-center gap-[5px] text-[11.5px] font-semibold px-[9px] py-[3px] rounded-full bg-[#FBEADE] text-[#C85E18] mr-2">
-                          {projet.code}
-                        </span>
-                        <span className="text-[#5A6B80]">{projet.intitule}</span>
-                      </>
-                    ) : (
-                      <span className="text-[#8595A8]">#{d.micro_projet_id}</span>
-                    )}
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">
-                    {d.categorie_id ? `Catégorie #${d.categorie_id}` : '—'}
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#131C29]">
-                    {d.libelle}
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] font-mono font-semibold text-[#131C29]">
-                    {money(Number(d.montant))}
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">
-                    {d.date ? dayjs(d.date).format('DD/MM/YYYY') : '—'}
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7]">
-                    <StatusBadge label={d.statut} variant={STATUT_VARIANTS[d.statut]} />
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7]">
-                    <div className="flex items-center justify-end gap-1">
-                      <button
-                        onClick={() => setToEdit(d)}
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-[#8595A8] hover:bg-[#EEF2F7] hover:text-[#2D6BD4] transition-colors"
-                        title="Modifier"
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
-                      </button>
-                      <button
-                        onClick={() => setToDelete(d)}
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-[#8595A8] hover:bg-[#FBE7E5] hover:text-[#D6453B] transition-colors"
-                        title="Supprimer"
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
+      <TransactionImportModal
+        open={isImportOpen}
+        onOpenChange={setIsImportOpen}
+      />
+
+      {/* Toolbar */}
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 my-4">
+        <div className="relative w-full sm:w-64">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Input 
+            placeholder="Rechercher une dépense…" 
+            className="pl-9 h-9 bg-white border-slate-200"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+        <span className="text-[12.5px] text-slate-500 whitespace-nowrap">
+          {isLoading ? 'Chargement...' : `${filteredData.length} dépense(s)`}
+        </span>
+        <div className="flex-1" />
+        <ExportButton
+          data={filteredData}
+          columns={exportColumns}
+          fileName="depenses"
+          title="Liste des Dépenses"
+          disabled={filteredData.length === 0}
+        />
+        <Button
+          variant="outline"
+          onClick={() => setIsImportOpen(true)}
+          className="h-9 cursor-pointer border-slate-200 text-slate-700 hover:bg-slate-50"
+        >
+          <Upload className="w-4 h-4 mr-2 text-[#E7722B]" />
+          Importer
+        </Button>
+        <Button onClick={() => setIsCreateOpen(true)} className="h-9 cursor-pointer bg-[#E7722B] text-white hover:bg-[#C85E18]">
+          <Plus className="w-4 h-4 mr-2" />
+          Nouvelle dépense
+        </Button>
       </div>
-    </Card>
+
+      <Card className="p-0 overflow-hidden border-slate-200 rounded-lg shadow-sm">
+        {isLoading ? (
+          <div className="w-full h-[calc(100vh-320px)] flex flex-col">
+            <div className="h-[48px] bg-[#fafbfd] border-b border-[#E5EAF1] flex items-center px-4 gap-4">
+              <Skeleton className="h-4 w-12" />
+              <Skeleton className="h-4 w-32" />
+              <div className="flex-1" />
+              <Skeleton className="h-4 w-16" />
+            </div>
+            <div className="flex-1 p-4 space-y-4">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-4 py-2 border-b border-slate-50 last:border-0">
+                  <Skeleton className="h-5 w-12" />
+                  <Skeleton className="h-5 w-48" />
+                  <div className="flex-1" />
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-7 w-7 rounded-md" />
+                    <Skeleton className="h-7 w-7 rounded-md" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <DataGrid 
+            rowData={filteredData} 
+            columnDefs={columnDefs} 
+            height="calc(100vh - 320px)"
+            rowHeight={55}
+            defaultColDef={{
+              sortable: true,
+              filter: true,
+              resizable: true,
+            }}
+          />
+        )}
+      </Card>
+    </>
   )
 }

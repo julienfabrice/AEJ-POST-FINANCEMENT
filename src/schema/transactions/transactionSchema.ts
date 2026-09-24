@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import type { TRANSACTION_T } from '@/types'
 
 export const transactionSchema = z.object({
   micro_projet_id: z.number().int().positive('Le micro-projet est requis.'),
@@ -15,3 +16,8 @@ export const transactionSchema = z.object({
 })
 
 export type TransactionFormValues = z.infer<typeof transactionSchema>
+
+export type TRANSACTION_CREATE_PAYLOAD_T = Omit<
+  TRANSACTION_T,
+  'id' | 'created_at' | 'updated_at' | 'saisi_par' | 'micro_projet' | 'categorie'
+>

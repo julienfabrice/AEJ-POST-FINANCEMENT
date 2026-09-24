@@ -1,14 +1,15 @@
-import { remboursementDeclarationServices } from '@/services/remboursementsDeclarations.services'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { remboursementDeclarationServices } from '@/services/remboursementsDeclarations.services'
+import { budgetServices } from '@/services/budgets.services'
 import { remboursementDeclarationSchema, type RemboursementDeclarationFormValues } from '@/schema/remboursements-declarations/remboursementDeclarationSchema'
-import type { REMBOURSEMENT_DECLARATION_T } from '@/types'
+import type { BUDGET_T, REMBOURSEMENT_DECLARATION_T } from '@/types'
 
 const DEFAULT_VALUES: RemboursementDeclarationFormValues = {
   promoteur_id: 0,
   budget_id: 0,
-  montant_declare: 0,
+  montant_declare: 10000,
   date_declaree: '',
   reference_banque: '',
   justificatif_path: '',
@@ -30,6 +31,8 @@ export function useRemboursementDeclarationForm(
     if (onOpenChange) onOpenChange(newOpen)
   }
 
+  const [portal, setPortal] = useState<HTMLElement | null>(null)
+
   const { mutate: createMutation, isPending: isCreating } = remboursementDeclarationServices.useCreate()
   const { mutate: updateMutation, isPending: isUpdating } = remboursementDeclarationServices.useUpdate()
 
@@ -40,6 +43,22 @@ export function useRemboursementDeclarationForm(
     resolver: zodResolver(remboursementDeclarationSchema),
     defaultValues: DEFAULT_VALUES,
   })
+
+  const promoteurId = form.watch('promoteur_id')
+  const budgetId = form.watch('budget_id')
+
+  const { data: rawBudgets } = budgetServices.useGetAll()
+  const selectedBudget = useMemo(() => {
+    if (!budgetId) return initialData?.budget ?? null
+    const list = Array.isArray(rawBudgets)
+      ? rawBudgets
+      : Array.isArray((rawBudgets as any)?.data)
+        ? (rawBudgets as any).data
+        : []
+    return list.find((b: any) => b.id === budgetId) ?? initialData?.budget ?? null
+  }, [budgetId, rawBudgets, initialData])
+
+  const microProjetId = selectedBudget?.micro_projet_id ?? selectedBudget?.micro_projet?.id ?? 0
 
   useEffect(() => {
     if (open) {
@@ -60,6 +79,22 @@ export function useRemboursementDeclarationForm(
     }
   }, [open, initialData, form])
 
+  const handleBudgetChange = (
+    bId: number,
+    budget?: BUDGET_T | null,
+    onChangeField?: (val: number) => void
+  ) => {
+    if (onChangeField) {
+      onChangeField(bId)
+    } else {
+      form.setValue('budget_id', bId, { shouldValidate: true })
+    }
+
+    if (budget?.micro_projet?.promoteur_id && !form.getValues('promoteur_id')) {
+      form.setValue('promoteur_id', budget.micro_projet.promoteur_id, { shouldValidate: true })
+    }
+  }
+
   const onSubmit = (values: RemboursementDeclarationFormValues) => {
     if (isEdit && initialData) {
       updateMutation({ id: initialData.id, data: values }, { onSuccess: () => setOpen(false) })
@@ -68,5 +103,20 @@ export function useRemboursementDeclarationForm(
     }
   }
 
-  return { form, onSubmit, isPending, isEdit, open, setOpen }
+  return {
+    form,
+    onSubmit,
+    isPending,
+    isEdit,
+    open,
+    setOpen,
+    portal,
+    setPortal,
+    promoteurId,
+    budgetId,
+    microProjetId,
+    selectedBudget,
+    handleBudgetChange,
+  }
 }
+

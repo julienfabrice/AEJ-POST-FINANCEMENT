@@ -1,99 +1,202 @@
+import { useMemo } from 'react'
+import type { ColDef } from 'ag-grid-community'
 import { Card } from '@/components/ui/card'
+import { DataGrid } from '@/components/ui/DataGrid'
 import { StatusBadge } from '../../EspacePartenaireFinancier/components/StatusBadge'
 import { money } from "@/helpers/money"
-import { MOCK_TRANSMISSION_LOTS } from '@/mock/transmission.mock'
+import type { LOT_TRANSMISSION_T, LOT_MICRO_PROJET_T } from '@/types'
+import { lotsMicroProjetsServices } from '@/services/lotsMicroProjets.services'
+import dayjs from 'dayjs'
 
-export function LotsTransmisTab() {
+function LotDossiersCount({ lotId }: { lotId: number }) {
+  const { data: dossiers = [] } = lotsMicroProjetsServices.useGetAll(lotId)
+  return (
+    <span className="inline-flex items-center justify-center font-bold text-[11.5px] px-2 py-0.5 rounded-full bg-[#E5F0FF] text-[#2D6BD4]">
+      {dossiers.length}
+    </span>
+  )
+}
+
+function LotDossiersList({ lot }: { lot: LOT_TRANSMISSION_T }) {
+  const { data: dossiers = [] } = lotsMicroProjetsServices.useGetAll(lot.id)
+  
+  return (
+    <div className="flex flex-col gap-2">
+      {dossiers.map((d: LOT_MICRO_PROJET_T) => {
+        const p = d.micro_projet || (d as any)
+        return (
+          <div key={p.id} className="bg-white border border-[#E5EAF1] p-3 rounded flex items-center gap-4 hover:border-[#D0D7E2] cursor-pointer transition-colors">
+            <div className="text-[#8595A8]">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <b className="block text-[13px] text-[#131C29] truncate">
+                {p.code} — {p.intitule}
+              </b>
+              <span className="block text-[11.5px] text-[#5A6B80] truncate mt-0.5">
+                Réf. {lot.reference_courrier || '-'} · transmis le {lot.date_transmission ? dayjs(lot.date_transmission).format('DD/MM/YYYY') : '-'} · couverture {lot.taux_recouvrement || 0}% · différé {lot.duree_differee || 0} mois · remboursement {lot.duree_remboursement || 0} mois · convention {lot.reference_convention || '-'}
+              </span>
+            </div>
+            <div className="text-[14px] font-mono font-bold text-[#131C29] shrink-0">
+              {money(Number(p.montant_total) || 0)}
+            </div>
+            <div className="shrink-0">
+              <StatusBadge
+                label={p.workflow_instance ? 'Approuvé' : 'En attente'}
+                variant={p.workflow_instance ? 'gr' : 'am'}
+              />
+            </div>
+          </div>
+        )
+      })}
+      {dossiers.length === 0 && (
+        <div className="text-[12px] text-[#8595A8] italic py-2">
+          Aucun dossier rattaché à ce lot.
+        </div>
+      )}
+    </div>
+  )
+}
+
+interface LotsTransmisTabProps {
+  lots: LOT_TRANSMISSION_T[]
+  isLoading: boolean
+}
+
+export function LotsTransmisTab({ lots, isLoading }: LotsTransmisTabProps) {
+  if (isLoading) {
+    return <div className="p-10 text-center text-[#5A6B80]">Chargement des lots...</div>
+  }
+
+  if (!lots || lots.length === 0) {
+    return (
+      <Card className="p-10 text-center text-[#5A6B80] border-[#E5EAF1] shadow-none">
+        Aucun lot de transmission trouvé.
+      </Card>
+    )
+  }
+
+  const columnDefs = useMemo<ColDef<LOT_TRANSMISSION_T>[]>(() => [
+    {
+      headerName: 'Lot',
+      field: 'code',
+      cellRenderer: (p: any) => (
+        <div className="leading-tight flex flex-col justify-center h-full">
+          <b className="text-[#2D6BD4] font-semibold">{p.data?.code}</b>
+          <span className="text-[#5A6B80] text-[12px] truncate">{p.data?.titre}</span>
+        </div>
+      ),
+      flex: 2,
+      minWidth: 220,
+    },
+    {
+      headerName: 'Guichet',
+      valueGetter: (p) => p.data?.guichet?.code || 'N/A',
+      cellRenderer: (p: any) => (
+        <div className="flex items-center h-full">
+          <span className="inline-flex items-center justify-center font-mono font-semibold text-[11px] px-2.5 py-0.5 rounded-full bg-[#EEF2F7] text-[#5A6B80]">
+            {p.value}
+          </span>
+        </div>
+      ),
+      flex: 1,
+      minWidth: 140,
+    },
+    {
+      headerName: 'Partenaire',
+      valueGetter: (p) => p.data?.organisme?.nom || 'N/A',
+      cellRenderer: (p: any) => (
+        <span className="text-[13px] text-[#131C29]">{p.value}</span>
+      ),
+      flex: 1.5,
+      minWidth: 150,
+    },
+    {
+      headerName: 'Dossiers',
+      cellRenderer: (p: any) => p.data ? (
+        <div className="flex items-center h-full">
+          <LotDossiersCount lotId={p.data.id} />
+        </div>
+      ) : null,
+      width: 100,
+      suppressSizeToFit: true,
+    },
+    {
+      headerName: 'Réf. courrier',
+      field: 'reference_courrier',
+      cellRenderer: (p: any) => (
+        <span className="font-mono text-[#5A6B80] text-[13px]">{p.value || '-'}</span>
+      ),
+      flex: 1,
+      minWidth: 130,
+    },
+    {
+      headerName: 'Transmis le',
+      valueGetter: (p) => p.data?.date_transmission ? dayjs(p.data.date_transmission).format('DD/MM/YYYY') : '-',
+      cellRenderer: (p: any) => (
+        <span className="text-[13px] text-[#5A6B80]">{p.value}</span>
+      ),
+      flex: 1,
+      minWidth: 120,
+    },
+    {
+      headerName: 'Couverture',
+      valueGetter: (p) => p.data?.taux_recouvrement ? `${p.data.taux_recouvrement}%` : '-',
+      cellRenderer: (p: any) => (
+        <span className="text-[13px] text-[#5A6B80]">{p.value}</span>
+      ),
+      width: 110,
+      suppressSizeToFit: true,
+    },
+    {
+      headerName: 'Statut',
+      cellRenderer: (p: any) => {
+        const l = p.data;
+        if (!l) return null;
+        return (
+          <div className="flex items-center h-full">
+            <StatusBadge
+              label={l.statut === 'TRANSMIS' ? 'Transmis au partenaire' : l.statut === 'TRAITE' ? 'Traité' : l.statut === 'REJETE' ? 'Rejeté' : 'Brouillon'}
+              variant={l.statut === 'TRANSMIS' ? 'or' : l.statut === 'TRAITE' ? 'gr' : l.statut === 'REJETE' ? 'rd' : 'gy'}
+            />
+          </div>
+        )
+      },
+      flex: 1,
+      minWidth: 180,
+    },
+    {
+      headerName: 'Actions',
+      cellRenderer: () => (
+        <div className="flex items-center justify-end gap-1 w-full h-full">
+          <button className="w-8 h-8 rounded-full flex items-center justify-center text-[#8595A8] hover:bg-[#EEF2F7] hover:text-[#2D6BD4] transition-colors" title="Modifier">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+          </button>
+          <button className="w-8 h-8 rounded-full flex items-center justify-center text-[#8595A8] hover:bg-[#FBE7E5] hover:text-[#D6453B] transition-colors" title="Supprimer">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          </button>
+        </div>
+      ),
+      width: 100,
+      sortable: false,
+      filter: false,
+      headerClass: 'ag-right-aligned-header',
+    }
+  ], [])
+
   return (
     <div className="space-y-5">
       <Card className="p-0 overflow-hidden border-[#E5EAF1] shadow-[0_1px_2px_rgba(18,28,41,.05),_0_6px_20px_rgba(18,28,41,.06)]">
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr>
-                {[
-                  'Lot',
-                  'Guichet',
-                  'Partenaire',
-                  'Dossiers',
-                  'Réf. courrier',
-                  'Transmis le',
-                  'Couverture',
-                  'Statut',
-                  '',
-                ].map((h, i) => (
-                  <th
-                    key={i}
-                    className={`text-left text-[11px] uppercase tracking-[.05em] text-[#8595A8] font-bold px-[14px] py-[11px] border-b border-[#E5EAF1] bg-[#fafbfd] whitespace-nowrap ${h === '' ? 'text-right' : ''
-                      }`}
-                  >
-                    {h === '' ? 'Actions' : h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {MOCK_TRANSMISSION_LOTS.map((l) => (
-                <tr key={l.id} className="hover:bg-[#fafbfe] transition-colors">
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px]">
-                    <b className="text-[#2D6BD4] font-semibold block">{l.reference}</b>
-                    <span className="text-[#5A6B80] text-[12px]">{l.courrier_titre}</span>
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7]">
-                    <span className="inline-flex font-mono font-semibold text-[11.5px] px-2 py-0.5 rounded-full bg-[#EEF2F7] text-[#5A6B80]">
-                      {l.dispositif_code}
-                    </span>
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#131C29]">
-                    {l.organisme_label}
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7]">
-                    <span className="inline-flex font-bold text-[11.5px] px-2 py-0.5 rounded-full bg-[#E5F0FF] text-[#2D6BD4]">
-                      {l.nb_dossiers}
-                    </span>
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] font-mono text-[#5A6B80]">
-                    {l.courrier_reference}
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">
-                    {l.date_transmission}
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7] text-[13px] text-[#5A6B80]">
-                    {l.taux_couverture}%
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7]">
-                    <StatusBadge
-                      label={
-                        l.statut === 'TRANSMIS'
-                          ? 'Transmis au partenaire'
-                          : l.statut === 'RETOURNE'
-                            ? 'Retourné à l\'AEJ'
-                            : 'Brouillon'
-                      }
-                      variant={l.statut === 'TRANSMIS' ? 'or' : l.statut === 'RETOURNE' ? 'gr' : 'gy'}
-                    />
-                  </td>
-                  <td className="px-[14px] py-[12px] border-b border-[#EEF2F7]">
-                    <div className="flex items-center justify-end gap-1">
-                      <button
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-[#8595A8] hover:bg-[#EEF2F7] hover:text-[#2D6BD4] transition-colors"
-                        title="Modifier"
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
-                      </button>
-                      <button
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-[#8595A8] hover:bg-[#FBE7E5] hover:text-[#D6453B] transition-colors"
-                        title="Supprimer"
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataGrid
+          columnDefs={columnDefs}
+          rowData={lots}
+          domLayout="autoHeight"
+          pagination={false}
+          height="auto"
+          rowHeight={60}
+          headerHeight={44}
+          suppressCellFocus={true}
+        />
       </Card>
 
       <Card className="flex p-0 flex-col border-[#E5EAF1] shadow-[0_1px_2px_rgba(18,28,41,.05)] overflow-hidden">
@@ -101,46 +204,33 @@ export function LotsTransmisTab() {
           <h3 className="text-[14px] font-bold text-[#131C29]">Dossiers par lot</h3>
         </div>
         <div className="p-4 bg-[#fafbfd] flex flex-col gap-6">
-          {MOCK_TRANSMISSION_LOTS.map((l) => (
+          {lots.map((l) => (
             <div key={l.id} className="flex flex-col gap-3">
               <div className="text-[13px] font-semibold text-[#131C29] flex items-center gap-2">
-                {l.reference} · {l.organisme_label}
+                {l.code} · {l.organisme?.nom || 'N/A'}
                 <StatusBadge
                   label={
                     l.statut === 'TRANSMIS'
                       ? 'Transmis'
-                      : l.statut === 'RETOURNE'
-                        ? 'Retourné'
-                        : 'Brouillon'
+                      : l.statut === 'TRAITE'
+                        ? 'Traité'
+                        : l.statut === 'REJETE'
+                          ? 'Rejeté'
+                          : 'Brouillon'
                   }
-                  variant={l.statut === 'TRANSMIS' ? 'or' : l.statut === 'RETOURNE' ? 'gr' : 'gy'}
+                  variant={
+                    l.statut === 'TRANSMIS'
+                      ? 'or'
+                      : l.statut === 'TRAITE'
+                        ? 'gr'
+                        : l.statut === 'REJETE'
+                          ? 'rd'
+                          : 'gy'
+                  }
                 />
               </div>
               <div className="flex flex-col gap-2">
-                {l.dossiers.map((d) => (
-                  <div key={d.id} className="bg-white border border-[#E5EAF1] p-3 rounded flex items-center gap-4 hover:border-[#D0D7E2] cursor-pointer transition-colors">
-                    <div className="text-[#8595A8]">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <b className="block text-[13px] text-[#131C29] truncate">
-                        {d.code} — {d.titre}
-                      </b>
-                      <span className="block text-[11.5px] text-[#5A6B80] truncate mt-0.5">
-                        Réf. {l.courrier_reference} · transmis le {l.date_transmission} · couverture {l.taux_couverture}% · différé {l.duree_differe} mois · remboursement {l.duree_remboursement} mois · convention {l.reference_convention}
-                      </span>
-                    </div>
-                    <div className="text-[14px] font-mono font-bold text-[#131C29] shrink-0">
-                      {money(d.montant)}
-                    </div>
-                    <div className="shrink-0">
-                      <StatusBadge
-                        label={d.approbation === 'APPROUVE' ? 'Approuvé' : d.approbation === 'REJETE' ? 'Rejeté' : 'En attente'}
-                        variant={d.approbation === 'APPROUVE' ? 'gr' : d.approbation === 'REJETE' ? 'rd' : 'am'}
-                      />
-                    </div>
-                  </div>
-                ))}
+                <LotDossiersList lot={l} />
               </div>
             </div>
           ))}

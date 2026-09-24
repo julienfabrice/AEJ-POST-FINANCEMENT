@@ -329,6 +329,7 @@ export function VisiteSuiviFormModal({ children, open: controlledOpen, onOpenCha
             <VisitePhotosSection
               exploitationId={initialData?.id ?? null}
               photosInitiales={initialData?.visite_photos}
+              microProjetId={initialData?.micro_projet_id ?? form.getValues('micro_projet_id') ?? null}
             />
 
             {/* ARBITRAGE : un seul textarea « Observations & recommandations »

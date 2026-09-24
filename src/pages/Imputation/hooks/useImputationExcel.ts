@@ -20,13 +20,13 @@ export function useImputationExcel({ attente, agences, allProjets }: UseImputati
   const [isProcessing, setIsProcessing] = useState(false)
 
   /** Génère et télécharge le canevas Excel */
-  const downloadCanvas = useCallback(() => {
+  const downloadCanvas = useCallback(async () => {
     if (attente.length === 0) {
       toast.info('Aucun dossier à imputer pour générer le canevas.')
       return
     }
     try {
-      generateImputationCanvas(attente, agences)
+      await generateImputationCanvas(attente, agences)
       toast.success('Canevas téléchargé avec succès.')
     } catch (err) {
       console.error(err)

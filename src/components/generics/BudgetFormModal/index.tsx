@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -11,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { MicroProjetCombobox } from '@/components/generics/MicroProjetCombobox'
 import type { BUDGET_T } from '@/types'
 import { useBudgetForm } from './useBudgetForm'
 
@@ -22,34 +24,41 @@ interface Props {
 }
 
 export function BudgetFormModal({ open, onOpenChange, initialData, lockedMicroProjetId }: Props) {
+  const [portal, setPortal] = useState<HTMLElement | null>(null)
   const { form, onSubmit, isPending, isEdit } = useBudgetForm(open, onOpenChange, initialData, lockedMicroProjetId)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[480px]">
+      <DialogContent ref={setPortal} className="sm:max-w-[480px]">
         <DialogHeader><DialogTitle>{isEdit ? 'Modifier le' : 'Créer un'} budget</DialogTitle></DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-2">
             <div className="grid grid-cols-2 gap-4">
-              <FormField control={form.control} name="micro_projet_id" render={({ field: { onChange, ...field } }) => (
-                <FormItem>
-                  <FormLabel>ID Micro-projet</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="number" 
-                      disabled={!!lockedMicroProjetId}
-                      onChange={(e) => onChange(e.target.valueAsNumber || 0)} 
-                      {...field} 
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )} />
+              <FormField
+                control={form.control}
+                name="micro_projet_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Micro-projet</FormLabel>
+                    <FormControl>
+                      <MicroProjetCombobox
+                        value={field.value}
+                        onChange={field.onChange}
+                        projetInitial={initialData?.micro_projet ?? null}
+                        disabled={!!lockedMicroProjetId}
+                        container={portal}
+                        placeholder="Rechercher..."
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField control={form.control} name="intitule" render={({ field }) => (
                 <FormItem><FormLabel>Intitulé du budget</FormLabel><FormControl><Input placeholder="Ex: Matériel agricole" {...field} /></FormControl><FormMessage /></FormItem>
               )} />
               <FormField control={form.control} name="montant_accorde" render={({ field: { onChange, ...field } }) => (
-                <FormItem><FormLabel>Montant accordé</FormLabel><FormControl><Input type="number" step="0.01" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
+                <FormItem><FormLabel>Montant accordé</FormLabel><FormControl><Input type="number" step="5" onChange={(e) => onChange(e.target.valueAsNumber || 0)} {...field} /></FormControl><FormMessage /></FormItem>
               )} />
               <FormField control={form.control} name="source" render={({ field }) => (
                 <FormItem><FormLabel>Source</FormLabel><FormControl><Input placeholder="Ex. AFD, BAD..." {...field} /></FormControl><FormMessage /></FormItem>

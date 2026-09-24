@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import {Pencil, Trash2, Key, Eye, Download} from 'lucide-react'
+import {Pencil, Trash2, Key, Eye, Download, Paperclip} from 'lucide-react'
 import type { ICellRendererParams } from 'ag-grid-community'
 import { toast } from 'sonner'
 import {
@@ -21,6 +21,7 @@ export interface ActionsCellRendererParams extends ICellRendererParams {
   onChangePassword?: (row: any) => void;
   onViewDetails?: (row: any) => void;
   onExport?: (row: any) => void;
+  onAttachments?: (row: any) => void;
   readonly?: boolean;
   readonlyMessage?: string;
 }
@@ -52,7 +53,7 @@ export const ActionsCellRenderer = (params: ActionsCellRendererParams) => {
     if (isReadonly || !params.onDelete || !params.data) return
 
     const itemId = params.data.id
-    const itemLabel = params.data.libelle || params.data.nom || `Élément #${itemId}`
+    const itemLabel = params.data.libelle || params.data.nom || params.data.intitule || `Élément #${itemId}`
 
     toast.error(`Suppression de "${itemLabel}" programmée`, {
       description: (
@@ -89,6 +90,12 @@ export const ActionsCellRenderer = (params: ActionsCellRendererParams) => {
   const handleExport = () => {
       if (params.onExport && params.data) {
           params.onExport(params.data)
+      }
+  }
+
+  const handleAttachments = () => {
+      if (params.onAttachments && params.data) {
+          params.onAttachments(params.data)
       }
   }
 
@@ -137,6 +144,15 @@ export const ActionsCellRenderer = (params: ActionsCellRendererParams) => {
         </button>
     )
 
+    const AttachmentsButton = (
+        <button
+            onClick={handleAttachments}
+            className="flex items-center justify-center w-8 h-8 rounded transition-colors text-slate-400 hover:text-indigo-600 hover:bg-indigo-50"
+        >
+            <Paperclip className="w-4 h-4" />
+        </button>
+    )
+
   return (
     <TooltipProvider delayDuration={200}>
       <div className="flex items-center justify-end gap-1 h-full">
@@ -160,6 +176,17 @@ export const ActionsCellRenderer = (params: ActionsCellRendererParams) => {
                       </div>
                   </TooltipTrigger>
                   <TooltipContent>Voir les détails</TooltipContent>
+              </Tooltip>
+          )}
+
+         {params.onAttachments && (
+              <Tooltip>
+                  <TooltipTrigger asChild>
+                      <div className="inline-block">
+                          {AttachmentsButton}
+                      </div>
+                  </TooltipTrigger>
+                  <TooltipContent>Pièces jointes</TooltipContent>
               </Tooltip>
           )}
 

@@ -19,6 +19,7 @@ interface MicroProjetComboboxProps {
   /** Cible du portail — la Dialog qui contient le formulaire. */
   container?: HTMLElement | null
   disabled?: boolean
+  placeholder?: string
   /**
    * Injectés par `<FormControl>` (Slot Radix) et RELAYÉS jusqu'au `<input>` :
    * ce composant est une fonction, sans cette déclaration explicite les trois
@@ -65,6 +66,7 @@ export function MicroProjetCombobox({
   projetInitial,
   container,
   disabled,
+  placeholder = 'Rechercher un micro-projet…',
   id,
   'aria-describedby': ariaDescribedBy,
   'aria-invalid': ariaInvalid,
@@ -103,7 +105,7 @@ export function MicroProjetCombobox({
       onOpenChange={setOpen}
       isLoading={isFetching}
       total={data?.total}
-      placeholder="Rechercher un micro-projet par code ou intitulé…"
+      placeholder={placeholder}
       emptyMessage="Aucun micro-projet ne correspond."
       disabled={disabled}
       container={container}

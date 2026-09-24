@@ -1,3 +1,5 @@
+import type { MICRO_PROJET_T } from './promoteurs.types';
+
 export type ZUSTAND_T<T> = {
   (partial: T | Partial<T> | ((state: T) => T | Partial<T>), replace?: false): void;
   (state: T | ((state: T) => T), replace: true): void;
@@ -381,7 +383,18 @@ export interface LOT_TRANSMISSION_T {
   updated_at?: string
   organisme?: ORGANISME_FINANCEMENT_T | null
   guichet?: GUICHET_T | null
-  dossiers?: import('./promoteurs.types').MICRO_PROJET_T[]
+  dossiers?: MICRO_PROJET_T[]
+}
+
+export interface LOT_MICRO_PROJET_T {
+  id: number
+  lot_id: number
+  micro_projet_id: number
+  statut: string
+  created_at?: string
+  updated_at?: string
+  lot?: LOT_TRANSMISSION_T
+  micro_projet?: MICRO_PROJET_T
 }
 
 // --- Décaissements (schema.v2.sql, section 15) ---
@@ -594,6 +607,25 @@ export * from './workflow.types'
 export type TRANSACTION_TYPE_T = 'DEPENSE' | 'RECETTE'
 export type TRANSACTION_STATUT_T = 'BROUILLON' | 'SOUMIS' | 'VALIDE' | 'REJETE' | 'ANNULE'
 
+export interface CATEGORIE_TRANSACTION_T {
+  id: number
+  code: string
+  libelle: string
+  description?: string | null
+  niveau: number
+  parent_id?: number | null
+  created_at?: string
+  updated_at?: string
+  parent?: CATEGORIE_TRANSACTION_T | null
+  children?: CATEGORIE_TRANSACTION_T[]
+}
+
+export interface CATEGORIES_TRANSACTIONS_API_RESPONSE_T {
+  Message?: string
+  message?: string
+  data: CATEGORIE_TRANSACTION_T[]
+}
+
 export interface TRANSACTION_T {
   id: number
   micro_projet_id: number
@@ -612,6 +644,7 @@ export interface TRANSACTION_T {
   created_at?: string
   updated_at?: string
   micro_projet?: import('./promoteurs.types').MICRO_PROJET_T
+  categorie?: CATEGORIE_TRANSACTION_T | null
 }
 
 /**
@@ -634,26 +667,20 @@ export * from './observations.types'
  */
 export * from './dashboard.types'
 
-/**
- * --- Cadre de résultat (module « Suivi & évaluation », API NON BRANCHÉE) ---
- *
- * Ré-exporté comme `suivi.types` et `dashboard.types` ci-dessus : les écrans,
- * services et schémas importent depuis `@/types` sans connaître le découpage
- * des fichiers.
- *
- * ⚠️ Ces types sont calqués sur un SCHÉMA SQL, pas sur une réponse d'API —
- * l'API n'existe pas encore. Coquilles du schéma reprises telles quelles
- * (`abgrege_cs`, `intutile_cs`, `valeur_cible_indcateur_istr`, `Date_suivi`),
- * incohérences signalées champ par champ : tout le détail est dans
- * `cadreResultat.types.ts`, à relire au moment du branchement.
- */
-export * from './cadreResultat.types'
+
+export interface DISPOSITIF_WORKFLOW_VERSION_T {
+  id?: number | string | null
+  code?: string | null
+  name?: string | null
+  [key: string]: unknown
+}
+
 export interface DISPOSITIF_T {
   id: number
   code: string
   projet_id?: number | null
   guichet_id?: number | null
-  workflow_version?: any | null // we can refine this later
+  workflow_version?: DISPOSITIF_WORKFLOW_VERSION_T | null
   intitule: string
   budget_alloue: string | number
   montant_min: string | number
@@ -665,6 +692,6 @@ export interface DISPOSITIF_T {
   nbre_micro_projet_prevu: number
   created_at?: string
   updated_at?: string
-  projet?: any | null
+  projet?: PROJET_T | null
   guichet?: GUICHET_T | null
 }

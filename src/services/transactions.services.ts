@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { axiosInstance } from '@/constants/axiosInstance'
 import { toast } from 'sonner'
 import type { TRANSACTION_T, API_RESPONSE_T } from '@/types'
+import type { TRANSACTION_CREATE_PAYLOAD_T } from '@/schema/transactions/transactionSchema'
 
 export const transactionServices = {
   useGetAll: () => {
@@ -37,6 +38,18 @@ export const transactionServices = {
       onError: (error) => {
         toast.error("Erreur lors de la création de la dépense.")
         console.error(error)
+      },
+    })
+  },
+  useCreateMultiple: () => {
+    const queryClient = useQueryClient()
+    return useMutation({
+      mutationFn: async (payload: { transactions: TRANSACTION_CREATE_PAYLOAD_T[] }) => {
+        const response = await axiosInstance.post('/transactions/multiple', payload)
+        return response.data
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['transactions'] })
       },
     })
   },

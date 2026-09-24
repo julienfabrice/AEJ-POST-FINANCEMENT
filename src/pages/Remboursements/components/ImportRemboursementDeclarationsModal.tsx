@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import dayjs from 'dayjs'
 import { ImportInExcelOrJsonModal } from '@/components/generics/ImportInExcelOrJsonModal'
 import { parseRawFile, normalizeExcelKey, type GenericTemplateConfig } from '@/helpers/genericExcel'
 import type { ImportRowBase, ImportColumnDef, FieldGuideSection } from '@/components/generics/ImportInExcelOrJsonModal'
-import { axiosInstance } from '@/constants/axiosInstance'
+import { remboursementDeclarationServices } from '@/services/remboursementsDeclarations.services'
+import type { REMBOURSEMENT_DECLARATION_CREATE_PAYLOAD_T } from '@/schema/remboursements-declarations/remboursementDeclarationSchema'
 
 interface DeclarationImportRow extends ImportRowBase {
   promoteur_id?: number
@@ -23,7 +23,6 @@ interface Props {
 
 export function ImportRemboursementDeclarationsModal({ children }: Props) {
   const [open, setOpen] = useState(false)
-  const queryClient = useQueryClient()
 
   const columns: ImportColumnDef<DeclarationImportRow>[] = [
     { header: 'ID Promoteur', accessorKey: 'promoteur_id' },
@@ -130,14 +129,12 @@ export function ImportRemboursementDeclarationsModal({ children }: Props) {
     })
   }
 
-  const handleImportRows = async (validRows: DeclarationImportRow[]) => {
-    let successCount = 0
-    let errorCount = 0
+  const { mutateAsync: createMultipleDeclarations } = remboursementDeclarationServices.useCreateMultiple()
 
-    // Importation séquentielle
-    for (const row of validRows) {
-      try {
-        await axiosInstance.post('/remboursements-declarations', {
+  const handleImportRows = async (validRows: DeclarationImportRow[]) => {
+    try {
+      const payload: { declarations: REMBOURSEMENT_DECLARATION_CREATE_PAYLOAD_T[] } = {
+        declarations: validRows.map((row) => ({
           promoteur_id: row.promoteur_id!,
           budget_id: row.budget_id!,
           montant_declare: row.montant_declare!,
@@ -145,21 +142,17 @@ export function ImportRemboursementDeclarationsModal({ children }: Props) {
           reference_banque: row.reference_banque || null,
           observations: row.observations || null,
           statut: (row.statut as any) || 'BROUILLON',
-        })
-        successCount++
-      } catch (e) {
-        errorCount++
+          justificatif_path: null,
+        })),
       }
-    }
 
-    // Invalider le cache pour rafraîchir la liste
-    queryClient.invalidateQueries({ queryKey: ['remboursements-declarations'] })
-    
-    if (successCount > 0) {
-      toast.success(`${successCount} déclaration(s) importée(s) avec succès !`)
-    }
-    if (errorCount > 0) {
-      toast.error(`${errorCount} déclaration(s) n'ont pas pu être importée(s).`)
+      await createMultipleDeclarations(payload)
+      toast.success(`${validRows.length} déclaration(s) importée(s) avec succès !`)
+      setOpen(false)
+    } catch (err: any) {
+      console.error('Erreur importation massive de déclarations', err)
+      const msg = err.response?.data?.message || err.message || "Erreur lors de l'importation."
+      toast.error(msg)
     }
   }
 

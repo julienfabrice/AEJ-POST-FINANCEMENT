@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { axiosInstance } from '@/constants/axiosInstance'
 import { toast } from 'sonner'
 import type { REMBOURSEMENT_DECLARATION_T, REMBOURSEMENT_DECLARATION_STATUT_T, API_RESPONSE_T } from '@/types'
+import type { REMBOURSEMENT_DECLARATION_CREATE_PAYLOAD_T } from '@/schema/remboursements-declarations/remboursementDeclarationSchema'
 
 export const remboursementDeclarationServices = {
   useGetAll: () => {
@@ -37,6 +38,18 @@ export const remboursementDeclarationServices = {
       onError: (error) => {
         toast.error('Erreur lors de la création de la déclaration.')
         console.error(error)
+      },
+    })
+  },
+  useCreateMultiple: () => {
+    const queryClient = useQueryClient()
+    return useMutation({
+      mutationFn: async (payload: { declarations: REMBOURSEMENT_DECLARATION_CREATE_PAYLOAD_T[] }) => {
+        const response = await axiosInstance.post('/remboursements-declarations/multiple', payload)
+        return response.data
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['remboursements-declarations'] })
       },
     })
   },

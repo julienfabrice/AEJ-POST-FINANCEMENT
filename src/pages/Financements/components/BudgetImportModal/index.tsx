@@ -1,7 +1,7 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { axiosInstance } from '@/constants/axiosInstance'
 import { money } from '@/helpers/money'
+import { budgetServices } from '@/services/budgets.services'
+import type { BUDGET_CREATE_PAYLOAD_T } from '@/schema/budgets/budgetSchema'
 import {
   type ParsedBudgetRow,
   parseBudgetFile,
@@ -119,44 +119,37 @@ const GUIDE_SECTIONS: FieldGuideSection[] = [
 ]
 
 export function BudgetImportModal({ open, onOpenChange }: BudgetImportModalProps) {
-  const queryClient = useQueryClient()
+  const { mutateAsync: createMultipleBudgets } = budgetServices.useCreateMultiple()
 
   const handleImportRows = async (validRows: ParsedBudgetRow[]) => {
-    let successCount = 0
-    let failureCount = 0
-
-    for (const row of validRows) {
-      try {
-        await axiosInstance.post('/budgets', {
+    try {
+      const payload: { budgets: BUDGET_CREATE_PAYLOAD_T[] } = {
+        budgets: validRows.map((row) => ({
           micro_projet_id: row.micro_projet_id,
           intitule: row.intitule,
           montant_accorde: row.montant_accorde,
+          date_accord: row.date_accord || null,
+          source: row.source || null,
           devise: row.devise || 'FCFA',
-          source: row.source || '',
-          date_accord: row.date_accord || '',
-          statut: row.statut,
-          signature_convention: row.signature_convention,
-          date_signature: row.date_signature || '',
+          statut: row.statut as any,
           deblocage: row.deblocage ? 'OUI' : 'NON',
-          date_deblocage: row.date_deblocage || '',
-          reception_acte_credit: row.reception_acte_credit,
-          date_reception: row.date_reception || '',
-          observations: row.observations || '',
-        })
-        successCount++
-      } catch (err) {
-        console.error('Erreur importation budget ligne ' + row.index, err)
-        failureCount++
+          date_deblocage: row.date_deblocage || null,
+          signature_convention: (row.signature_convention || 'NON_SIGNEE') as any,
+          date_signature: row.date_signature || null,
+          reception_acte_credit: (row.reception_acte_credit || 'NON') as any,
+          date_reception: row.date_reception || null,
+          observations: row.observations || null,
+        })),
       }
-    }
 
-    queryClient.invalidateQueries({ queryKey: ['budgets'] })
-
-    if (successCount > 0) {
-      toast.success(`${successCount} budget(s) importé(s) avec succès !`)
-    }
-    if (failureCount > 0) {
-      toast.error(`${failureCount} budget(s) n'ont pas pu être importés.`)
+      await createMultipleBudgets(payload)
+      
+      toast.success(`${validRows.length} budget(s) importé(s) avec succès !`)
+      onOpenChange(false)
+    } catch (err: any) {
+      console.error('Erreur importation massive de budgets', err)
+      const msg = err.response?.data?.message || err.message || "Erreur lors de l'importation."
+      toast.error(msg)
     }
   }
 

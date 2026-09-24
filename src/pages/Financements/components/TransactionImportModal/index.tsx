@@ -1,7 +1,7 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { axiosInstance } from '@/constants/axiosInstance'
 import { money } from '@/helpers/money'
+import { transactionServices } from '@/services/transactions.services'
+import type { TRANSACTION_CREATE_PAYLOAD_T } from '@/schema/transactions/transactionSchema'
 import {
   type ParsedTransactionRow,
   parseTransactionFile,
@@ -107,40 +107,35 @@ const GUIDE_SECTIONS: FieldGuideSection[] = [
 ]
 
 export function TransactionImportModal({ open, onOpenChange }: TransactionImportModalProps) {
-  const queryClient = useQueryClient()
+  const { mutateAsync: createMultipleTransactions } = transactionServices.useCreateMultiple()
 
   const handleImportRows = async (validRows: ParsedTransactionRow[]) => {
-    let successCount = 0
-    let failureCount = 0
-
-    for (const row of validRows) {
-      try {
-        await axiosInstance.post('/transactions', {
+    try {
+      const payload: { transactions: TRANSACTION_CREATE_PAYLOAD_T[] } = {
+        transactions: validRows.map((row) => ({
           micro_projet_id: row.micro_projet_id,
-          categorie_id: row.categorie_id,
+          promoteur_id: null,
+          categorie_id: row.categorie_id || null,
           libelle: row.libelle,
           montant: row.montant,
           type: row.type,
-          date: row.date || '',
-          mode_paiement: row.mode_paiement || '',
-          reference: row.reference || '',
+          date: row.date || null,
+          mode_paiement: row.mode_paiement || null,
+          reference: row.reference || null,
           statut: row.statut,
-          observations: row.observations || '',
-        })
-        successCount++
-      } catch (err) {
-        console.error('Erreur importation dépense ligne ' + row.index, err)
-        failureCount++
+          observations: row.observations || null,
+          justificatif_path: null,
+        })),
       }
-    }
 
-    queryClient.invalidateQueries({ queryKey: ['transactions'] })
-
-    if (successCount > 0) {
-      toast.success(`${successCount} dépense(s) importée(s) avec succès !`)
-    }
-    if (failureCount > 0) {
-      toast.error(`${failureCount} dépense(s) n'ont pas pu être importées.`)
+      await createMultipleTransactions(payload)
+      
+      toast.success(`${validRows.length} dépense(s) importée(s) avec succès !`)
+      onOpenChange(false)
+    } catch (err: any) {
+      console.error('Erreur importation massive de dépenses', err)
+      const msg = err.response?.data?.message || err.message || "Erreur lors de l'importation."
+      toast.error(msg)
     }
   }
 

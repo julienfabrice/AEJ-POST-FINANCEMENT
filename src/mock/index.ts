@@ -1,6 +1,5 @@
 export * from './projets.mock'
 export * from './dashboard.mock'
-export * from './indicateurs.mock'
 export * from './espacePartenaireFinancier.mock'
 export * from './remboursements.mock'
 export * from './suivi.mock'

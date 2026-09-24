@@ -97,6 +97,8 @@ export function useTransmission() {
     }
   }
 
+  const { data: lotsTransmission = [], isLoading: isLoadingLots } = lotsTransmissionServices.useGetAll()
+
   return {
     activeTab,
     setActiveTab,
@@ -107,6 +109,8 @@ export function useTransmission() {
     isLoadingProjets,
     dispositifs,
     isLoadingDispositifs,
+    lotsTransmission,
+    isLoadingLots,
     handleSelectAll,
     toggleDossier,
     handleSubmit,

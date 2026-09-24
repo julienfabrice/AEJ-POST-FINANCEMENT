@@ -1,3 +1,5 @@
+import type { MICRO_PROJET_T } from './promoteurs.types';
+
 export type ZUSTAND_T<T> = {
   (partial: T | Partial<T> | ((state: T) => T | Partial<T>), replace?: false): void;
   (state: T | ((state: T) => T), replace: true): void;
@@ -381,7 +383,18 @@ export interface LOT_TRANSMISSION_T {
   updated_at?: string
   organisme?: ORGANISME_FINANCEMENT_T | null
   guichet?: GUICHET_T | null
-  dossiers?: import('./promoteurs.types').MICRO_PROJET_T[]
+  dossiers?: MICRO_PROJET_T[]
+}
+
+export interface LOT_MICRO_PROJET_T {
+  id: number
+  lot_id: number
+  micro_projet_id: number
+  statut: string
+  created_at?: string
+  updated_at?: string
+  lot?: LOT_TRANSMISSION_T
+  micro_projet?: MICRO_PROJET_T
 }
 
 // --- Décaissements (schema.v2.sql, section 15) ---

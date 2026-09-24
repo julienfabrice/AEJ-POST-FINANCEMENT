@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { MOCK_TRANSMISSION_LOTS } from '@/mock/transmission.mock'
+
 import { useTransmission } from './hooks/useTransmission'
 import { TransmissionHeader } from './UI/TransmissionHeader'
 import { ComposerLotTab } from './UI/ComposerLotTab'
@@ -18,6 +18,8 @@ export function TransmissionPage() {
     isLoadingProjets,
     dispositifs,
     isLoadingDispositifs,
+    lotsTransmission,
+    isLoadingLots,
     handleSubmit,
     isSubmitting,
   } = useTransmission()
@@ -53,7 +55,7 @@ export function TransmissionPage() {
             >
               Lots transmis
               <span className="bg-[#EEF2F7] text-[#5A6B80] px-2 py-0.5 rounded-full text-[11px]">
-                {MOCK_TRANSMISSION_LOTS.length}
+                {isLoadingLots ? '...' : lotsTransmission.length}
               </span>
             </TabsTrigger>
           </TabsList>
@@ -76,7 +78,7 @@ export function TransmissionPage() {
         </TabsContent>
 
         <TabsContent value="lots" className="mt-5 outline-none">
-          <LotsTransmisTab />
+          <LotsTransmisTab lots={lotsTransmission} isLoading={isLoadingLots} />
         </TabsContent>
       </Tabs>
     </div>

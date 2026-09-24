@@ -1,7 +1,5 @@
 import { useMemo } from 'react'
 import type { ColDef } from 'ag-grid-community'
-import Fuse from 'fuse.js'
-
 import { useSecteursGrid } from './secteurs/useSecteursGrid'
 import { useSousSecteursGrid } from './sous-secteurs/useSousSecteursGrid'
 import { usePiecesIdentiteGrid } from './pieces-identites/usePiecesIdentiteGrid'
@@ -10,15 +8,9 @@ import { useIndicateursGrid } from './indicateurs/useIndicateursGrid'
 import { useTypeEntreprisesGrid } from './type-entreprises/useTypeEntreprisesGrid'
 import { useTypeEmploisGrid } from './type-emplois/useTypeEmploisGrid'
 
-import {
-  MOCK_TYPE_EMPLOIS,
-  
-} from '@/mock'
-
 export type ReferentielTab = 'secteurs' | 'sous_secteurs' | 'type_entreprises' | 'pieces_identite' | 'situation_matrimoniale' | 'type_emplois' | 'indicateurs'
 
 export function useReferentielsGrid(activeTab: ReferentielTab, searchQuery: string) {
-  // Hooks spécifiques
   const { columnDefs: secteursDefs, data: secteursData, isLoading: secteursLoading, modalNode: secteursModal } = useSecteursGrid(searchQuery)
   const { columnDefs: sousSecteursDefs, data: sousSecteursData, isLoading: sousSecteursLoading, modalNode: sousSecteursModal } = useSousSecteursGrid(searchQuery)
   const { columnDefs: piecesDefs, data: piecesData, isLoading: piecesLoading } = usePiecesIdentiteGrid(searchQuery)
@@ -51,19 +43,7 @@ export function useReferentielsGrid(activeTab: ReferentielTab, searchQuery: stri
     if (activeTab === 'type_entreprises') return typeEntreprisesData
     if (activeTab === 'type_emplois') return typeEmploisData
 
-    let currentMock: any[] = []
-    switch (activeTab) {
-      case 'type_emplois': currentMock = MOCK_TYPE_EMPLOIS; break;
-      }
-
-    if (!searchQuery.trim()) return currentMock
-
-    const fuse = new Fuse(currentMock, {
-      keys: ['libelle', 'secteur', 'id', 'unite', 'type_valeur'],
-      threshold: 0.3,
-      ignoreLocation: true
-    })
-    return fuse.search(searchQuery).map(res => res.item)
+    return []
   }, [activeTab, searchQuery, secteursData, sousSecteursData, piecesData, situationsData, indicateursData, typeEntreprisesData, typeEmploisData])
 
   const isLoading = activeTab === 'secteurs' ? secteursLoading : activeTab === 'sous_secteurs' ? sousSecteursLoading : activeTab === 'pieces_identite' ? piecesLoading : activeTab === 'situation_matrimoniale' ? situationsLoading : activeTab === 'indicateurs' ? indicateursLoading : activeTab === 'type_entreprises' ? typeEntreprisesLoading : activeTab === 'type_emplois' ? typeEmploisLoading : false

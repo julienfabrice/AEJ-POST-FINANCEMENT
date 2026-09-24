@@ -1,14 +1,16 @@
-import { useState } from 'react'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { money } from "@/helpers/money"
-import {
-  MOCK_PARTENAIRES_OPTS,
-} from '@/mock/transmission.mock'
+import { organismeServices } from '@/services/organismes.services'
+import { Upload, FileSpreadsheet } from 'lucide-react'
+import { ImportRepartitionDialog } from './ImportRepartitionDialog'
+import { useComposerLotTab } from '../hooks/useComposerLotTab'
+import { DocumentUploadOrPicker } from '@/components/generics/DocumentUploadOrPicker'
 import type { MICRO_PROJET_T } from '@/types/promoteurs.types'
 import type { DISPOSITIF_T } from '@/types'
 
@@ -39,30 +41,23 @@ export function ComposerLotTab({
   handleSubmit,
   isSubmitting,
 }: ComposerLotTabProps) {
-  
-  const currentDispo = dispositifs.find(d => d.id.toString() === selectedGuichet)
+  const { data: organismes = [], isLoading: isLoadingOrganismes } = organismeServices.useGetAll()
 
-  const [formData, setFormData] = useState({
-    organisme_id: MOCK_PARTENAIRES_OPTS[0].value,
-    reference: `LOT-${currentDispo?.code || 'AGR'}-2024-001`,
-    fichier_repartition: `repartition_${currentDispo?.code?.toLowerCase() || 'agr'}.xlsx`,
-    courrier_fichier: 'courrier_transmission.pdf',
-    courrier_reference: 'CRT-2024-0150',
-    date_transmission: new Date().toISOString().slice(0, 10),
-    titre_courrier: `Transmission lot ${currentDispo?.code || 'AGR'}`,
-    taux_couverture: 80,
-    duree_differe: 3,
-    duree_remboursement: 24,
-    reference_convention: 'CONV-2024-0075',
-  })
-
-  const handleChange = (field: string, value: string | number) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-  }
-
-  const onSubmit = () => {
-    handleSubmit(formData)
-  }
+  const {
+    form,
+    importOpen,
+    setImportOpen,
+    onSubmit,
+    handleImported,
+    downloadCanvas,
+  } = useComposerLotTab(
+    selectedGuichet,
+    dispositifs,
+    projetsEligibles,
+    selectedDossiers,
+    toggleDossier,
+    handleSubmit
+  )
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-5 items-start">
@@ -92,9 +87,13 @@ export function ComposerLotTab({
           </div>
 
           <div className="flex items-center gap-2">
-            <Button variant="outline" className="h-8 text-[12px] gap-1.5 bg-[#fafbfd]">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <Button variant="outline" className="h-8 text-[12px] gap-1.5 bg-[#fafbfd]" onClick={() => setImportOpen(true)}>
+              <Upload className="w-3.5 h-3.5" />
               Importer la répartition
+            </Button>
+            <Button variant="outline" className="h-8 text-[12px] gap-1.5 bg-[#fafbfd]" onClick={() => downloadCanvas()}>
+              <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+              Télécharger le modèle
             </Button>
             <Button variant="outline" className="h-8 text-[12px]" onClick={handleSelectAll}>
               Tout sélectionner
@@ -138,90 +137,204 @@ export function ComposerLotTab({
       <Card className="flex flex-col border-[#E5EAF1] shadow-[0_1px_2px_rgba(18,28,41,.05)] p-5">
         <h3 className="text-[14px] font-bold text-[#131C29] mb-5">Courrier de transmission</h3>
 
-        <div className="flex flex-col gap-4">
-          <div className="space-y-1.5">
-            <Label className="text-[12px] text-[#5A6B80]">Partenaire financier *</Label>
-            <Select value={formData.organisme_id} onValueChange={(val) => handleChange('organisme_id', val)}>
-              <SelectTrigger className="h-9 text-[13px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {MOCK_PARTENAIRES_OPTS.map(o => (
-                  <SelectItem key={o.value} value={o.value} className="text-[13px]">{o.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+        <Form {...form}>
+          <form onSubmit={onSubmit} className="flex flex-col gap-4">
+            <FormField
+              control={form.control}
+              name="organisme_id"
+              render={({ field }) => (
+                <FormItem className="space-y-1.5">
+                  <FormLabel className="text-[12px] text-[#5A6B80]">Partenaire financier *</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value?.toString()}>
+                    <FormControl>
+                      <SelectTrigger className="h-9 text-[13px]">
+                        <SelectValue placeholder={isLoadingOrganismes ? "Chargement..." : "Sélectionner..."} />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {organismes.map(o => (
+                        <SelectItem key={o.id} value={o.id.toString()} className="text-[13px]">
+                          {o.nom}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage className="text-[11px]" />
+                </FormItem>
+              )}
+            />
 
-          <div className="space-y-1.5">
-            <Label className="text-[12px] text-[#5A6B80]">Référence du lot</Label>
-            <Input className="h-9 text-[13px]" value={formData.reference} onChange={(e) => handleChange('reference', e.target.value)} />
-          </div>
+            <FormField
+              control={form.control}
+              name="reference"
+              render={({ field }) => (
+                <FormItem className="space-y-1.5">
+                  <FormLabel className="text-[12px] text-[#5A6B80]">Référence du lot</FormLabel>
+                  <FormControl>
+                    <Input className="h-9 text-[13px]" {...field} />
+                  </FormControl>
+                  <FormMessage className="text-[11px]" />
+                </FormItem>
+              )}
+            />
 
-          <div className="space-y-1.5">
-            <Label className="text-[12px] text-[#5A6B80]">Fichier Excel de répartition</Label>
-            <Input className="h-9 text-[13px]" value={formData.fichier_repartition} onChange={(e) => handleChange('fichier_repartition', e.target.value)} />
-          </div>
+            <FormField
+              control={form.control}
+              name="fichier_repartition"
+              render={({ field }) => (
+                <FormItem className="space-y-1.5">
+                  <FormLabel className="text-[12px] text-[#5A6B80]">Fichier Excel de répartition</FormLabel>
+                  <FormControl>
+                    <DocumentUploadOrPicker
+                      value={field.value}
+                      onChange={field.onChange}
+                      folder="Répartition"
+                      accept=".xlsx,.xls"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-[11px]" />
+                </FormItem>
+              )}
+            />
 
-          <div className="space-y-1.5">
-            <Label className="text-[12px] text-[#5A6B80]">Courrier (pièce jointe)</Label>
-            <Input className="h-9 text-[13px]" value={formData.courrier_fichier} onChange={(e) => handleChange('courrier_fichier', e.target.value)} />
-          </div>
+            <FormField
+              control={form.control}
+              name="courrier_fichier"
+              render={({ field }) => (
+                <FormItem className="space-y-1.5">
+                  <FormLabel className="text-[12px] text-[#5A6B80]">Courrier (pièce jointe)</FormLabel>
+                  <FormControl>
+                    <DocumentUploadOrPicker
+                      value={field.value}
+                      onChange={field.onChange}
+                      folder="Courriers"
+                      accept=".pdf,.doc,.docx"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-[11px]" />
+                </FormItem>
+              )}
+            />
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label className="text-[12px] text-[#5A6B80]">Réf. du courrier *</Label>
-              <Input className="h-9 text-[13px]" value={formData.courrier_reference} onChange={(e) => handleChange('courrier_reference', e.target.value)} />
+            <div className="grid grid-cols-2 gap-3">
+              <FormField
+                control={form.control}
+                name="courrier_reference"
+                render={({ field }) => (
+                  <FormItem className="space-y-1.5">
+                    <FormLabel className="text-[12px] text-[#5A6B80]">Réf. du courrier *</FormLabel>
+                    <FormControl>
+                      <Input className="h-9 text-[13px]" {...field} />
+                    </FormControl>
+                    <FormMessage className="text-[11px]" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="date_transmission"
+                render={({ field }) => (
+                  <FormItem className="space-y-1.5">
+                    <FormLabel className="text-[12px] text-[#5A6B80]">Date de transmission</FormLabel>
+                    <FormControl>
+                      <Input type="date" className="h-9 text-[13px]" {...field} />
+                    </FormControl>
+                    <FormMessage className="text-[11px]" />
+                  </FormItem>
+                )}
+              />
             </div>
-            <div className="space-y-1.5">
-              <Label className="text-[12px] text-[#5A6B80]">Date de transmission</Label>
-              <Input type="date" className="h-9 text-[13px]" value={formData.date_transmission} onChange={(e) => handleChange('date_transmission', e.target.value)} />
-            </div>
-          </div>
 
-          <div className="space-y-1.5">
-            <Label className="text-[12px] text-[#5A6B80]">Titre du courrier</Label>
-            <Input className="h-9 text-[13px]" value={formData.titre_courrier} onChange={(e) => handleChange('titre_courrier', e.target.value)} />
-          </div>
+            <FormField
+              control={form.control}
+              name="titre_courrier"
+              render={({ field }) => (
+                <FormItem className="space-y-1.5">
+                  <FormLabel className="text-[12px] text-[#5A6B80]">Titre du courrier</FormLabel>
+                  <FormControl>
+                    <Input className="h-9 text-[13px]" {...field} />
+                  </FormControl>
+                  <FormMessage className="text-[11px]" />
+                </FormItem>
+              )}
+            />
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label className="text-[12px] text-[#5A6B80]">Taux couverture (%)</Label>
-              <Input type="number" className="h-9 text-[13px]" value={formData.taux_couverture} onChange={(e) => handleChange('taux_couverture', Number(e.target.value))} />
+            <div className="grid grid-cols-2 gap-3">
+              <FormField
+                control={form.control}
+                name="taux_couverture"
+                render={({ field }) => (
+                  <FormItem className="space-y-1.5">
+                    <FormLabel className="text-[12px] text-[#5A6B80]">Taux couverture (%)</FormLabel>
+                    <FormControl>
+                      <Input type="number" className="h-9 text-[13px]" {...field} />
+                    </FormControl>
+                    <FormMessage className="text-[11px]" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="duree_differe"
+                render={({ field }) => (
+                  <FormItem className="space-y-1.5">
+                    <FormLabel className="text-[12px] text-[#5A6B80]">Différé (mois)</FormLabel>
+                    <FormControl>
+                      <Input type="number" className="h-9 text-[13px]" {...field} />
+                    </FormControl>
+                    <FormMessage className="text-[11px]" />
+                  </FormItem>
+                )}
+              />
             </div>
-            <div className="space-y-1.5">
-              <Label className="text-[12px] text-[#5A6B80]">Différé (mois)</Label>
-              <Input type="number" className="h-9 text-[13px]" value={formData.duree_differe} onChange={(e) => handleChange('duree_differe', Number(e.target.value))} />
-            </div>
-          </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label className="text-[12px] text-[#5A6B80]">Durée rembt. (mois)</Label>
-              <Input type="number" className="h-9 text-[13px]" value={formData.duree_remboursement} onChange={(e) => handleChange('duree_remboursement', Number(e.target.value))} />
+            <div className="grid grid-cols-2 gap-3">
+              <FormField
+                control={form.control}
+                name="duree_remboursement"
+                render={({ field }) => (
+                  <FormItem className="space-y-1.5">
+                    <FormLabel className="text-[12px] text-[#5A6B80]">Durée rembt. (mois)</FormLabel>
+                    <FormControl>
+                      <Input type="number" className="h-9 text-[13px]" {...field} />
+                    </FormControl>
+                    <FormMessage className="text-[11px]" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="reference_convention"
+                render={({ field }) => (
+                  <FormItem className="space-y-1.5">
+                    <FormLabel className="text-[12px] text-[#5A6B80]">Réf. convention</FormLabel>
+                    <FormControl>
+                      <Input className="h-9 text-[13px]" {...field} />
+                    </FormControl>
+                    <FormMessage className="text-[11px]" />
+                  </FormItem>
+                )}
+              />
             </div>
-            <div className="space-y-1.5">
-              <Label className="text-[12px] text-[#5A6B80]">Réf. convention</Label>
-              <Input className="h-9 text-[13px]" value={formData.reference_convention} onChange={(e) => handleChange('reference_convention', e.target.value)} />
-            </div>
-          </div>
 
-          <div className="bg-[#fafbfd] border border-dashed border-[#D0D7E2] rounded p-3 text-[12px] text-[#5A6B80] flex gap-2 items-start mt-2">
-            <svg className="shrink-0 mt-0.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-            <span>Modèles « courrier de transmission » et « fichier Excel de répartition » <em>— à fournir par l'AEJ</em></span>
-          </div>
-
-          <Button 
-            className="w-full mt-2 bg-[#131C29] hover:bg-[#2D6BD4] transition-colors gap-2 text-[13px] font-semibold h-10 text-white"
-            onClick={onSubmit}
-            disabled={isSubmitting}
-          >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            {isSubmitting ? 'Transmission en cours...' : 'Transmettre le lot au partenaire'}
-          </Button>
-        </div>
+            <Button 
+              type="submit"
+              className="w-full mt-2 bg-[#131C29] hover:bg-[#2D6BD4] transition-colors gap-2 text-[13px] font-semibold h-10 text-white"
+              disabled={isSubmitting}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              {isSubmitting ? 'Transmission en cours...' : 'Transmettre le lot au partenaire'}
+            </Button>
+          </form>
+        </Form>
       </Card>
+
+      <ImportRepartitionDialog
+        open={importOpen}
+        onOpenChange={setImportOpen}
+        projetsEligibles={projetsEligibles}
+        onImported={handleImported}
+      />
     </div>
   )
 }
-

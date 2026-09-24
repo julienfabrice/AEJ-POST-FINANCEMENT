@@ -1,5 +1,9 @@
-import { MOCK_AGENCES_IMPUTATION } from '@/mock/imputation.mock'
+import { agenceRegionaleServices } from '@/services/agences-regionales.services'
 
-export function agenceLibelle(id: string) {
-  return MOCK_AGENCES_IMPUTATION.find((a) => a.id === id)?.libelle ?? id
+export function useAgenceLibelle() {
+  const { data: agences = [] } = agenceRegionaleServices.useGetAll()
+
+  return (id: number | string) => {
+    return agences.find((a) => a.id.toString() === id.toString())?.nom ?? id.toString()
+  }
 }

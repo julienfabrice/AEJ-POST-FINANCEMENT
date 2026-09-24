@@ -52,7 +52,7 @@ export function DocumentUploadOrPicker({
       const res = await uploadMutation.mutateAsync({
         file,
         folder,
-        micro_projet_id: microProjetId ? String(microProjetId) : '0',
+        micro_projet_id: microProjetId ? String(microProjetId) : undefined,
       })
       const path = res?.path ?? res?.data?.path ?? res?.url ?? res?.data?.url ?? res?.file_path ?? file.name
       onChange(path, null)

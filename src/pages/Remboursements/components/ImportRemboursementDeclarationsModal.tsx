@@ -5,7 +5,6 @@ import { ImportInExcelOrJsonModal } from '@/components/generics/ImportInExcelOrJ
 import { parseRawFile, normalizeExcelKey, type GenericTemplateConfig } from '@/helpers/genericExcel'
 import type { ImportRowBase, ImportColumnDef, FieldGuideSection } from '@/components/generics/ImportInExcelOrJsonModal'
 import { remboursementDeclarationServices } from '@/services/remboursementsDeclarations.services'
-import type { REMBOURSEMENT_DECLARATION_CREATE_PAYLOAD_T } from '@/schema/remboursements-declarations/remboursementDeclarationSchema'
 
 interface DeclarationImportRow extends ImportRowBase {
   promoteur_id?: number
@@ -129,12 +128,16 @@ export function ImportRemboursementDeclarationsModal({ children }: Props) {
     })
   }
 
-  const { mutateAsync: createMultipleDeclarations } = remboursementDeclarationServices.useCreateMultiple()
+  const { mutateAsync: createDeclaration } = remboursementDeclarationServices.useCreate()
 
   const handleImportRows = async (validRows: DeclarationImportRow[]) => {
-    try {
-      const payload: { declarations: REMBOURSEMENT_DECLARATION_CREATE_PAYLOAD_T[] } = {
-        declarations: validRows.map((row) => ({
+    let successCount = 0
+    let errorCount = 0
+
+    // Importation séquentielle car l'API /multiple n'existe pas encore
+    for (const row of validRows) {
+      try {
+        await createDeclaration({
           promoteur_id: row.promoteur_id!,
           budget_id: row.budget_id!,
           montant_declare: row.montant_declare!,
@@ -142,18 +145,20 @@ export function ImportRemboursementDeclarationsModal({ children }: Props) {
           reference_banque: row.reference_banque || null,
           observations: row.observations || null,
           statut: (row.statut as any) || 'BROUILLON',
-          justificatif_path: null,
-        })),
+        })
+        successCount++
+      } catch (e) {
+        errorCount++
       }
-
-      await createMultipleDeclarations(payload)
-      toast.success(`${validRows.length} déclaration(s) importée(s) avec succès !`)
-      setOpen(false)
-    } catch (err: any) {
-      console.error('Erreur importation massive de déclarations', err)
-      const msg = err.response?.data?.message || err.message || "Erreur lors de l'importation."
-      toast.error(msg)
     }
+    if (successCount > 0) {
+      toast.success(`${successCount} déclaration(s) importée(s) avec succès !`)
+    }
+    if (errorCount > 0) {
+      toast.error(`${errorCount} déclaration(s) n'ont pas pu être importée(s).`)
+    }
+    
+    setOpen(false)
   }
 
   return (

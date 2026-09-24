@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import type { REMBOURSEMENT_DECLARATION_T } from '@/types'
 
 export const remboursementDeclarationSchema = z.object({
   promoteur_id: z.number().int().positive('Le promoteur est requis.'),
@@ -13,8 +12,3 @@ export const remboursementDeclarationSchema = z.object({
 })
 
 export type RemboursementDeclarationFormValues = z.infer<typeof remboursementDeclarationSchema>
-
-export type REMBOURSEMENT_DECLARATION_CREATE_PAYLOAD_T = Omit<
-  REMBOURSEMENT_DECLARATION_T,
-  'id' | 'created_at' | 'updated_at' | 'promoteur' | 'budget'
->

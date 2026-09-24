@@ -44,14 +44,14 @@ export function useComposerLotTab(
     handleSubmit(values)
   })
 
-  const handleImported = (ids: string[], filePath: string) => {
+  const handleImported = (ids: string[], source: string | File) => {
     ids.forEach((id) => {
       if (!selectedDossiers.has(id)) {
         toggleDossier(id)
       }
     })
-    if (filePath) {
-      form.setValue('fichier_repartition', filePath, { shouldValidate: true, shouldDirty: true })
+    if (source) {
+      form.setValue('fichier_repartition', source, { shouldValidate: true, shouldDirty: true })
     }
     toast.success(`${ids.length} dossier(s) rattaché(s) au lot`)
   }

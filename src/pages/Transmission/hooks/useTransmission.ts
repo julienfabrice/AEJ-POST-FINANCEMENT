@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from 'react'
 import { getRouteApi, useNavigate } from '@tanstack/react-router'
+import { useUploadDocumentMutation } from '@/services/documents.services'
 import { toast } from 'sonner'
 import { projetsServices } from '@/services/projets.services'
 import { dispositifServices } from '@/services/dispositifs.services'
@@ -64,15 +65,37 @@ export function useTransmission() {
   }, [])
 
   const createLotMutation = lotsTransmissionServices.useCreate()
+  const uploadMutation = useUploadDocumentMutation()
   const { advance, isAdvancing } = useAdvanceWorkflow()
 
   const handleSubmit = async (values: any) => {
     try {
+      let finalFichier = values.fichier_repartition
+      let finalCourrier = values.courrier_fichier
+      
+      if (finalFichier instanceof File) {
+        const uploadRes = await uploadMutation.mutateAsync({
+          file: finalFichier,
+          folder: 'Répartition',
+        })
+        finalFichier = uploadRes?.path ?? uploadRes?.data?.path ?? uploadRes?.url ?? uploadRes?.data?.url ?? uploadRes?.file_path ?? finalFichier.name
+      }
+
+      if (finalCourrier instanceof File) {
+        const uploadRes = await uploadMutation.mutateAsync({
+          file: finalCourrier,
+          folder: 'Courriers',
+        })
+        finalCourrier = uploadRes?.path ?? uploadRes?.data?.path ?? uploadRes?.url ?? uploadRes?.data?.url ?? uploadRes?.file_path ?? finalCourrier.name
+      }
+
       await createLotMutation.mutateAsync({
         ...values,
+        fichier_repartition: finalFichier,
+        courrier_fichier: finalCourrier,
         guichet_id: Number(selectedGuichet),
         organisme_id: 1, // À ajuster selon l'utilisateur
-        statut: 'EN_ATTENTE',
+        statut: 'TRANSMIS',
       })
 
       // Avancer le workflow pour tous les projets sélectionnés
@@ -114,6 +137,6 @@ export function useTransmission() {
     handleSelectAll,
     toggleDossier,
     handleSubmit,
-    isSubmitting: createLotMutation.isPending || isAdvancing,
+    isSubmitting: createLotMutation.isPending || isAdvancing || uploadMutation.isPending,
   }
 }

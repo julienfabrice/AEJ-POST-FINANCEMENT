@@ -19,7 +19,7 @@ interface ImportRepartitionDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   projetsEligibles: MICRO_PROJET_T[]
-  onImported: (projetIds: string[], filePath: string) => void
+  onImported: (projetIds: string[], source: string | File) => void
 }
 
 export function ImportRepartitionDialog({
@@ -34,7 +34,7 @@ export function ImportRepartitionDialog({
     inconnus,
     selectedIds,
     error,
-    uploadedFilePath,
+    uploadedFile,
     resetState,
     toggleSelection,
     handleFileChange,
@@ -46,7 +46,7 @@ export function ImportRepartitionDialog({
   }
 
   const handleValidate = () => {
-    onImported(Array.from(selectedIds), uploadedFilePath)
+    onImported(Array.from(selectedIds), uploadedFile as string | File)
     handleOpenChange(false)
   }
 
@@ -73,10 +73,11 @@ export function ImportRepartitionDialog({
               )}
               <div className="bg-white rounded-md border p-4">
                 <DocumentUploadOrPicker
-                  value={uploadedFilePath}
+                  value={typeof uploadedFile === 'string' ? uploadedFile : uploadedFile?.name}
                   onChange={handleFileChange}
                   folder="Répartition"
                   accept=".xlsx,.xls"
+                  localOnly={true}
                 />
               </div>
 

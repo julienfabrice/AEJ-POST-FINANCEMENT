@@ -3,8 +3,8 @@ import { z } from 'zod'
 export const transmissionFormSchema = z.object({
   organisme_id: z.string().min(1, "Partenaire financier requis"),
   reference: z.string().optional(),
-  fichier_repartition: z.string().optional(),
-  courrier_fichier: z.string().optional(),
+  fichier_repartition: z.any().optional(),
+  courrier_fichier: z.any().optional(),
   courrier_reference: z.string().min(1, "Référence du courrier requise"),
   date_transmission: z.string().optional(),
   titre_courrier: z.string().optional(),

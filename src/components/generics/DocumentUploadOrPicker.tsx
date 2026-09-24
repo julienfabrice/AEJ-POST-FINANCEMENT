@@ -9,9 +9,9 @@ import { cn } from '@/lib/utils'
 
 export interface DocumentUploadOrPickerProps {
   /** Chemin ou URL du document sélectionné/téléversé */
-  value?: string | null
+  value?: string | File | null
   /** Callback appelée avec le path/url du document (et le document complet si sélectionné depuis l'existant) */
-  onChange: (path: string, document?: DOCUMENT_T | null) => void
+  onChange: (path: string, document?: DOCUMENT_T | null, file?: File | null) => void
   /** ID du micro-projet pour filtrer les documents existants et lier l'upload */
   microProjetId?: number | null
   /** Dossier de destination lors de l'upload (ex: 'Remboursements', 'Workflow', etc.) */
@@ -21,6 +21,8 @@ export interface DocumentUploadOrPickerProps {
   disabled?: boolean
   className?: string
   placeholder?: string
+  /** Si vrai, le fichier n'est pas uploadé automatiquement, le composant retourne simplement le fichier sélectionné */
+  localOnly?: boolean
 }
 
 export function DocumentUploadOrPicker({
@@ -31,6 +33,7 @@ export function DocumentUploadOrPicker({
   accept = '.pdf,.png,.jpg,.jpeg,.doc,.docx,.xls,.xlsx',
   disabled = false,
   className,
+  localOnly = false,
 }: DocumentUploadOrPickerProps) {
   const [activeTab, setActiveTab] = useState<'upload' | 'existing'>('upload')
   const [isPickerOpen, setIsPickerOpen] = useState(false)
@@ -47,6 +50,12 @@ export function DocumentUploadOrPicker({
     if (!file) return
 
     setSelectedFileName(file.name)
+    
+    if (localOnly) {
+      onChange(file.name, null, file)
+      return
+    }
+
     setIsUploading(true)
     try {
       const res = await uploadMutation.mutateAsync({
@@ -55,7 +64,7 @@ export function DocumentUploadOrPicker({
         micro_projet_id: microProjetId ? String(microProjetId) : undefined,
       })
       const path = res?.path ?? res?.data?.path ?? res?.url ?? res?.data?.url ?? res?.file_path ?? file.name
-      onChange(path, null)
+      onChange(path, null, file)
     } catch (error) {
       console.error("Erreur lors de l'upload du document :", error)
     } finally {
@@ -74,7 +83,10 @@ export function DocumentUploadOrPicker({
     setSelectedFileName('')
   }
 
-  const displayFileName = selectedFileName || (value ? value.split('/').pop() : '')
+  const isPdf = typeof value === 'string' ? value.endsWith('.pdf') : (value as File)?.type === 'application/pdf'
+  const isHttp = typeof value === 'string' ? value.startsWith('http') : false
+  const stringValue = typeof value === 'string' ? value : (value as File)?.name || ''
+  const displayFileName = selectedFileName || (typeof value === 'string' ? value.split('/').pop() : stringValue)
 
   return (
     <div className={cn('space-y-2', className)}>
@@ -82,16 +94,16 @@ export function DocumentUploadOrPicker({
       {value ? (
         <div className="flex items-center justify-between gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-xs">
           <div className="flex items-center gap-2 min-w-0">
-            <FileTypeIcon type={value.endsWith('.pdf') ? 'application/pdf' : undefined} className="h-4 w-4 shrink-0" />
-            <span className="truncate font-medium text-slate-700" title={value}>
+            <FileTypeIcon type={isPdf ? 'application/pdf' : undefined} className="h-4 w-4 shrink-0" />
+            <span className="truncate font-medium text-slate-700" title={stringValue}>
               {displayFileName}
             </span>
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0">
-            {value.startsWith('http') && (
+            {isHttp && (
               <a
-                href={value}
+                href={stringValue}
                 target="_blank"
                 rel="noreferrer"
                 className="text-slate-400 hover:text-[#E7722B] transition-colors p-1"

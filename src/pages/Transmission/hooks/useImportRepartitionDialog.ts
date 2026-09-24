@@ -9,7 +9,7 @@ export function useImportRepartitionDialog(projetsEligibles: MICRO_PROJET_T[]) {
   const [inconnus, setInconnus] = useState<{ code: string; row: ExcelRow }[]>([])
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [error, setError] = useState<string | null>(null)
-  const [uploadedFilePath, setUploadedFilePath] = useState<string>('')
+  const [uploadedFile, setUploadedFile] = useState<string | File>('')
 
   const resetState = () => {
     setStep('idle')
@@ -17,7 +17,7 @@ export function useImportRepartitionDialog(projetsEligibles: MICRO_PROJET_T[]) {
     setInconnus([])
     setSelectedIds(new Set())
     setError(null)
-    setUploadedFilePath('')
+    setUploadedFile('')
   }
 
   const toggleSelection = (id: string) => {
@@ -27,18 +27,19 @@ export function useImportRepartitionDialog(projetsEligibles: MICRO_PROJET_T[]) {
     setSelectedIds(next)
   }
 
-  const handleFileChange = async (path: string) => {
-    if (!path) {
+  const handleFileChange = async (path: string, _doc?: any, file?: File | null) => {
+    if (!path && !file) {
       resetState()
       return
     }
     
-    setUploadedFilePath(path)
+    const source = file || path
+    setUploadedFile(source)
     setStep('parsing')
     setError(null)
     
     try {
-      const res = await parseFile(path)
+      const res = await parseFile(source)
       setReconnus(res.reconnus)
       setInconnus(res.inconnus)
       setSelectedIds(new Set(res.reconnus.map((r) => r.projet.id.toString())))
@@ -56,7 +57,7 @@ export function useImportRepartitionDialog(projetsEligibles: MICRO_PROJET_T[]) {
     inconnus,
     selectedIds,
     error,
-    uploadedFilePath,
+    uploadedFile,
     resetState,
     toggleSelection,
     handleFileChange,

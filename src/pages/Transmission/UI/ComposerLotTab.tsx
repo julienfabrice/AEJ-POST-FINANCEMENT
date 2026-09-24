@@ -187,9 +187,10 @@ export function ComposerLotTab({
                   <FormControl>
                     <DocumentUploadOrPicker
                       value={field.value}
-                      onChange={field.onChange}
+                      onChange={(path, _doc, file) => field.onChange(file || path)}
                       folder="Répartition"
                       accept=".xlsx,.xls"
+                      localOnly={true}
                     />
                   </FormControl>
                   <FormMessage className="text-[11px]" />
@@ -206,9 +207,10 @@ export function ComposerLotTab({
                   <FormControl>
                     <DocumentUploadOrPicker
                       value={field.value}
-                      onChange={field.onChange}
+                      onChange={(path, _doc, file) => field.onChange(file || path)}
                       folder="Courriers"
                       accept=".pdf,.doc,.docx"
+                      localOnly={true}
                     />
                   </FormControl>
                   <FormMessage className="text-[11px]" />

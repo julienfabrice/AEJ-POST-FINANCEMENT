@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useParams } from '@tanstack/react-router'
 import { versionServices } from '@/services/workflow/versions.services'
 import { projetsServices } from '@/services/projets.services'
-import { MOCK_WORKFLOW } from '@/mock/guichet-workflow.mock'
 import { Route } from '@/routes/_authenticated/_agent/dispositif-workflow/$workflowId'
 import type { WORKFLOW_ETAPE_T } from '@/types'
 
@@ -45,11 +44,11 @@ export function useDispositifWorkflow() {
     .sort((a, b) => a.order - b.order)
 
   // Format legacy pour les cycles (identifiant par `n`) — utilisé pour la recherche et la progression
-  const wf = _realWorkflowVersion ? {
-    id: _realWorkflowVersion.id,
-    title: _realWorkflowVersion.workflow.name,
-    code: _realWorkflowVersion.workflow.code,
-    version: _realWorkflowVersion.version,
+  const wf = {
+    id: _realWorkflowVersion?.id || 0,
+    title: _realWorkflowVersion?.workflow?.name || '',
+    code: _realWorkflowVersion?.workflow?.code || '',
+    version: _realWorkflowVersion?.version || 1,
     cycles: rootEtapes.map(e => ({
       n: e.order,
       code: e.code,
@@ -66,7 +65,7 @@ export function useDispositifWorkflow() {
           note: sub.description,
         }))
     }))
-  } : MOCK_WORKFLOW
+  }
 
   // startN : premier order des étapes racines du workflow réel, ou 6 par défaut (AGR)
   const startN = rootEtapes.length > 0

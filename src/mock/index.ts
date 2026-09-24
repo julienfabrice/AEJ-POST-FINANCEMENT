@@ -1,4 +1,3 @@
-export * from './jeunes.mock'
 export * from './projets.mock'
 export * from './dashboard.mock'
 export * from './referentiels.mock'
